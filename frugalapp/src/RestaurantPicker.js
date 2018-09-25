@@ -1,19 +1,11 @@
 import React, { Component } from "react";
 import _ from "lodash";
-import {
-  StyleSheet,
-  View,
-  TextInput,
-  FlatList,
-  KeyboardAvoidingView,
-  Text
-} from "react-native";
+import { StyleSheet, View, TextInput, FlatList, Text } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import api from "./API";
 import { Entypo } from "@expo/vector-icons";
 import RestaurantSuggestion from "./RestaurantSuggestion";
 import LocationPrompt from "./LocationPrompt";
-import emitter from "tiny-emitter/instance";
 import { Permissions, Location } from "expo";
 
 export default class RestaurantPicker extends Component {
@@ -70,15 +62,10 @@ export default class RestaurantPicker extends Component {
   };
 
   componentDidMount() {
-    emitter.on("focus-picker", this._focusInput);
     this._setLocation();
   }
 
-  componentWillUnmount() {
-    emitter.off("focus-picker", this._focusInput);
-  }
-
-  _focusInput = () => {
+  focusInput = () => {
     this._input.focus();
   };
 

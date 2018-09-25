@@ -1,13 +1,43 @@
 import React, { Component } from "react";
-import { StyleSheet, TextInput, View, Keyboard } from "react-native";
+import {
+  StyleSheet,
+  TextInput,
+  View,
+  Keyboard,
+  TouchableOpacity,
+  Text
+} from "react-native";
 import Swiper from "react-native-swiper";
 import RestaurantPicker from "./RestaurantPicker";
 import EditSpecial from "./EditSpecial";
 import PlacePreview from "./PlacePreview";
+import emitter from "tiny-emitter/instance";
+
+import { BLUE } from "./Colors";
 
 export default class SubmitScreen extends Component {
   state = {
     place: null
+  };
+
+  componentDidMount() {
+    emitter.on("focus-picker", this._scrollSwiper);
+  }
+
+  componentWillUnmount() {
+    emitter.off("focus-picker", this._scrollSwiper);
+  }
+
+  _scrollSwiper = () => {
+    if (this._swiper && this._swiper.state.index > 0) {
+      const distance = -this._swiper.state.index;
+      this._swiper.scrollBy(distance, true);
+      setTimeout(() => {
+        this._picker.focusInput();
+      }, 500);
+    } else {
+      this._picker.focusInput();
+    }
   };
 
   _onChangeText = field => text => {
@@ -40,13 +70,15 @@ export default class SubmitScreen extends Component {
         bounces
         showsPagination={false}
         alwaysBounceHorizontal
-        ref={ref => (this._swiper = ref)}
+        ref={ref => {
+          this._swiper = ref;
+        }}
         keyboardShouldPersistTaps="always"
         keyboardDismissMode="none"
         loop={false}
         onMomentumScrollEnd={this._blurKeyboard}
       >
-        <RestaurantPicker {...pickerProps} />
+        <RestaurantPicker ref={ref => (this._picker = ref)} {...pickerProps} />
         <EditSpecial>
           <PlacePreview place={this.state.place} />
           <TextInput
@@ -81,6 +113,21 @@ export default class SubmitScreen extends Component {
               value={this.state.endTime}
             />
           </View>
+          <TextInput
+            placeholder="Post Code"
+            style={[styles.input, styles.title]}
+            placeholderTextColor="#333"
+            onChangeText={this._onChangeText("postCode")}
+            value={this.state.postCode}
+          />
+          <View style={styles.submit}>
+            <TouchableOpacity
+              style={styles.submitBtn}
+              onPress={this._submitForm}
+            >
+              <Text style={styles.submitText}>Submit Happy Hour</Text>
+            </TouchableOpacity>
+          </View>
         </EditSpecial>
       </Swiper>
     );
@@ -108,5 +155,22 @@ const styles = StyleSheet.create({
   time: {
     height: 44,
     flex: 1
+  },
+  submit: {
+    margin: 5,
+    height: 44,
+    backgroundColor: BLUE,
+    borderRadius: 8
+  },
+  submitBtn: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  submitText: {
+    fontSize: 16,
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: "500"
   }
 });

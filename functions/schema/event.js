@@ -7,11 +7,14 @@ const event = {
       description: { type: "text" },
       location: { type: "text" },
       coordinates: { type: "geo_point" },
+      photos: { enabled: false },
+      phone: { enabled: false },
+      days: { enabled: false },
       start: { enabled: false },
       end: { enabled: false },
       street: { type: "text" },
-      neighborhood: { type: "text" },
-      city: { type: "text" }
+      neighborhood: { type: "keyword" },
+      city: { type: "keyword" }
     }
   }
 };

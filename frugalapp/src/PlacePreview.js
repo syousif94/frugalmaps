@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { View, StyleSheet, Text, Image } from "react-native";
+import { RED } from "./Colors";
 
 export default class PlacePreview extends Component {
   render() {
@@ -7,7 +8,7 @@ export default class PlacePreview extends Component {
 
     if (!place) {
       return (
-        <View style={[styles.container, styles.empty]}>
+        <View style={styles.empty}>
           <Text style={styles.instruction}>
             Select a restaurant from the previous page first
           </Text>
@@ -30,7 +31,17 @@ const styles = StyleSheet.create({
     height: 180
   },
   empty: {
+    margin: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    backgroundColor: RED,
     justifyContent: "center",
     alignItems: "center"
+  },
+  instruction: {
+    fontWeight: "600",
+    color: "#fff",
+    textAlign: "center"
   }
 });

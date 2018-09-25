@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
+import { RED } from "./Colors";
+
 export default class CalendarListHeader extends Component {
   render() {
     const { item, index, section } = this.props;
@@ -16,7 +18,7 @@ export default class CalendarListHeader extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#D80056"
+    backgroundColor: RED
   },
   images: {
     height: 200,

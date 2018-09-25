@@ -5,12 +5,13 @@ import { SafeAreaView } from "react-navigation";
 export default class EditSpecial extends Component {
   render() {
     return (
-      <ScrollView style={styles.scroll}>
-        <SafeAreaView style={styles.container}>
-          {this.props.children}
-          <KeyboardAvoidingView behavior="padding" />
-        </SafeAreaView>
-      </ScrollView>
+      <KeyboardAvoidingView style={styles.scroll} behavior="padding">
+        <ScrollView style={styles.scroll} keyboardShouldPersistTaps="handled">
+          <SafeAreaView style={styles.container}>
+            {this.props.children}
+          </SafeAreaView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     );
   }
 }

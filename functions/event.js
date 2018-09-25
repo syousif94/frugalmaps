@@ -1,22 +1,18 @@
 const elastic = require("./elastic");
+const google = require("./google");
 const event = require("./schema/event");
 
 function createEvent(req, res) {
-  const {
-    id,
-    postCode,
+  const { id, title, description, place, startTime, endTime, days } = req.body;
+
+  const post = {
     title,
     description,
     place,
-    startTime,
-    endTime
-  } = req.body;
-
-  if (!postCode) {
-    res.send({
-      error: "Invalid Code"
-    });
-  }
+    days,
+    start: startTime,
+    end: endTime
+  };
 
   res.send(200);
 }
