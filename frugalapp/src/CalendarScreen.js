@@ -14,7 +14,7 @@ const event = {
   start: "16:00",
   end: "20:00",
   street: "24 Blah Street",
-  area: "Lido",
+  neighborhood: "Lido",
   city: "Newport Beach"
 };
 
