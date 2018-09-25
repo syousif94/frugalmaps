@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, TextInput, View } from "react-native";
+import { StyleSheet, TextInput, View, Text } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import { SafeAreaView } from "react-navigation";
 
@@ -7,6 +7,9 @@ export default class LocationBox extends Component {
   render() {
     return (
       <SafeAreaView style={styles.container}>
+        <View style={styles.title}>
+          <Text style={styles.titleText}>Happy Hours</Text>
+        </View>
         <View style={styles.search}>
           <Entypo name="magnifying-glass" size={18} color="#000" />
           <TextInput
@@ -23,6 +26,16 @@ export default class LocationBox extends Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff"
+  },
+  title: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 5
+  },
+  titleText: {
+    fontWeight: "600",
+    fontSize: 18,
+    color: "#000"
   },
   search: {
     margin: 10,

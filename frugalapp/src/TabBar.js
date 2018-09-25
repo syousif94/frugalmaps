@@ -8,18 +8,30 @@ import {
 } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import moment from "moment";
+import emitter from "tiny-emitter/instance";
+
+import { BLUE } from "./Colors";
 
 class Calendar extends Component {
   render() {
+    const { selected, index, onPress } = this.props;
+
+    const dateStyle = [styles.dateText];
+    const textStyle = [styles.text];
+    if (selected === index) {
+      dateStyle.push(styles.blueText);
+      textStyle.push(styles.blueText);
+    }
+
     const today = moment();
     const date = today.format("M/D");
     const day = today.format("dddd");
     return (
-      <TouchableOpacity style={styles.tab} onPress={this.props.onPress}>
+      <TouchableOpacity style={styles.tab} onPress={onPress}>
         <View style={styles.icon}>
-          <Text style={styles.dateText}>{date}</Text>
+          <Text style={dateStyle}>{date}</Text>
         </View>
-        <Text style={styles.text}>{day}</Text>
+        <Text style={textStyle}>{day}</Text>
       </TouchableOpacity>
     );
   }
@@ -27,12 +39,20 @@ class Calendar extends Component {
 
 class Upload extends Component {
   render() {
+    const { selected, index, onPress } = this.props;
+
+    let iconColor = "#000";
+    const textStyle = [styles.text];
+    if (selected === index) {
+      iconColor = BLUE;
+      textStyle.push(styles.blueText);
+    }
     return (
-      <TouchableOpacity style={styles.tab} onPress={this.props.onPress}>
+      <TouchableOpacity style={styles.tab} onPress={onPress}>
         <View style={styles.icon}>
-          <Entypo name="circle-with-plus" size={18} color="#000" />
+          <Entypo name="circle-with-plus" size={18} color={iconColor} />
         </View>
-        <Text style={styles.text}>Submit</Text>
+        <Text style={textStyle}>Submit</Text>
       </TouchableOpacity>
     );
   }
@@ -40,12 +60,20 @@ class Upload extends Component {
 
 class Map extends Component {
   render() {
+    const { selected, index, onPress } = this.props;
+
+    let iconColor = "#000";
+    const textStyle = [styles.text];
+    if (selected === index) {
+      iconColor = BLUE;
+      textStyle.push(styles.blueText);
+    }
     return (
       <TouchableOpacity style={styles.tab} onPress={this.props.onPress}>
         <View style={styles.icon}>
-          <Entypo name="map" size={18} color="#000" />
+          <Entypo name="map" size={18} color={iconColor} />
         </View>
-        <Text style={styles.text}>Map</Text>
+        <Text style={textStyle}>Map</Text>
       </TouchableOpacity>
     );
   }
@@ -62,6 +90,7 @@ export default class TabBar extends Component {
 
   _onSubmit = () => {
     this.props.navigation.navigate("Submit");
+    emitter.emit("focus-picker");
   };
 
   render() {
@@ -106,5 +135,8 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 10,
     fontWeight: "500"
+  },
+  blueText: {
+    color: BLUE
   }
 });

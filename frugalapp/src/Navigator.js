@@ -18,7 +18,8 @@ const MainScreen = createBottomTabNavigator(
   },
   {
     initialRoute: "Calendar",
-    tabBarComponent: TabBar
+    tabBarComponent: TabBar,
+    lazy: false
   }
 );
 

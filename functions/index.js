@@ -1,6 +1,7 @@
 const functions = require("firebase-functions");
 
 require("dotenv").config();
+require("isomorphic-fetch");
 
 const cors = require("cors");
 const bodyParser = require("body-parser");
