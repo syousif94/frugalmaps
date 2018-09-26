@@ -16,6 +16,8 @@ import { Constants } from "expo";
 
 const bottomPadding = Platform.OS === "ios" && Constants.statusBarHeight > 40;
 
+console.log({ bottomPadding });
+
 class Calendar extends Component {
   render() {
     const { selected, index, onPress } = this.props;
