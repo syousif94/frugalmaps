@@ -82,8 +82,8 @@ export default class RestaurantPicker extends Component {
 
   _renderItem = data => (
     <RestaurantSuggestion
-      onPress={this.props.select}
       {...data}
+      onPress={this.props.select}
       key={data.item.place_id}
     />
   );
@@ -96,7 +96,7 @@ export default class RestaurantPicker extends Component {
       <View style={styles.container}>
         <SafeAreaView>
           <View style={styles.title}>
-            <Text style={styles.titleText}>Submit a Happy Hour</Text>
+            <Text style={styles.titleText}>Submit a Special</Text>
           </View>
           <View style={styles.search}>
             <Entypo name="magnifying-glass" size={18} color="#000" />

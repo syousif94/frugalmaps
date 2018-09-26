@@ -12,7 +12,7 @@ export default class RestaurantSuggestion extends Component {
     const { item, index } = this.props;
 
     return (
-      <TouchableOpacity style={styles.item}>
+      <TouchableOpacity style={styles.item} onPress={this._onPress}>
         <Text style={styles.name}>{item.name}</Text>
         <Text style={styles.address}>{item.formatted_address}</Text>
       </TouchableOpacity>

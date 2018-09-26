@@ -8,7 +8,7 @@ export default class LocationBox extends Component {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.title}>
-          <Text style={styles.titleText}>Happy Hours</Text>
+          <Text style={styles.titleText}>Specials</Text>
         </View>
         <View style={styles.search}>
           <Entypo name="magnifying-glass" size={18} color="#000" />

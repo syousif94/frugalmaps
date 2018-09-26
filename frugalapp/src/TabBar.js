@@ -4,13 +4,17 @@ import {
   View,
   SafeAreaView,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  Platform
 } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import moment from "moment";
 import emitter from "tiny-emitter/instance";
 
 import { BLUE } from "./Colors";
+import { Constants } from "expo";
+
+const bottomPadding = Platform.OS === "ios" && Constants.statusBarHeight > 40;
 
 class Calendar extends Component {
   render() {
@@ -124,7 +128,7 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   tab: {
-    justifyContent: "space-between",
+    justifyContent: bottomPadding ? "space-between" : "center",
     alignItems: "center",
     flex: 1
   },

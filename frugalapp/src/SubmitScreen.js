@@ -14,6 +14,7 @@ import PlacePreview from "./PlacePreview";
 import emitter from "tiny-emitter/instance";
 
 import { BLUE } from "./Colors";
+import DayPicker from "./DayPicker";
 
 export default class SubmitScreen extends Component {
   state = {
@@ -29,6 +30,9 @@ export default class SubmitScreen extends Component {
   }
 
   _scrollSwiper = () => {
+    if (this.state.place) {
+      return;
+    }
     if (this._swiper && this._swiper.state.index > 0) {
       const distance = -this._swiper.state.index;
       this._swiper.scrollBy(distance, true);
@@ -87,6 +91,7 @@ export default class SubmitScreen extends Component {
             placeholderTextColor="#333"
             value={this.state.title}
             onChangeText={this._onChangeText("title")}
+            clearButtonMode="always"
           />
           <TextInput
             placeholder="Description"
@@ -96,7 +101,9 @@ export default class SubmitScreen extends Component {
             blurOnSubmit
             value={this.state.description}
             onChangeText={this._onChangeText("description")}
+            clearButtonMode="always"
           />
+          <DayPicker />
           <View style={styles.row}>
             <TextInput
               placeholder="Start Time"
@@ -104,6 +111,7 @@ export default class SubmitScreen extends Component {
               placeholderTextColor="#333"
               onChangeText={this._onChangeText("startTime")}
               value={this.state.startTime}
+              clearButtonMode="always"
             />
             <TextInput
               placeholder="End Time"
@@ -111,10 +119,11 @@ export default class SubmitScreen extends Component {
               placeholderTextColor="#333"
               onChangeText={this._onChangeText("endTime")}
               value={this.state.endTime}
+              clearButtonMode="always"
             />
           </View>
           <TextInput
-            placeholder="Post Code"
+            placeholder="Admin Code"
             style={[styles.input, styles.title]}
             placeholderTextColor="#333"
             onChangeText={this._onChangeText("postCode")}
@@ -125,7 +134,7 @@ export default class SubmitScreen extends Component {
               style={styles.submitBtn}
               onPress={this._submitForm}
             >
-              <Text style={styles.submitText}>Submit Happy Hour</Text>
+              <Text style={styles.submitText}>Submit Special</Text>
             </TouchableOpacity>
           </View>
         </EditSpecial>
