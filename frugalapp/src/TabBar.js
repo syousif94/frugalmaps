@@ -14,9 +14,7 @@ import emitter from "tiny-emitter/instance";
 import { BLUE } from "./Colors";
 import { Constants } from "expo";
 
-const bottomPadding = Platform.OS === "ios" && Constants.statusBarHeight > 40;
-
-console.log({ bottomPadding });
+const notched = Platform.OS === "ios" && Constants.statusBarHeight > 40;
 
 class Calendar extends Component {
   render() {
@@ -123,16 +121,17 @@ const styles = StyleSheet.create({
     height: 50,
     flexDirection: "row"
   },
-  icon: {
-    paddingTop: 7,
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center"
-  },
   tab: {
-    justifyContent: bottomPadding ? "space-between" : "center",
+    justifyContent: notched ? "space-between" : "center",
     alignItems: "center",
     flex: 1
+  },
+  icon: {
+    paddingBottom: notched ? 0 : 2,
+    paddingTop: notched ? 7 : 0,
+    flex: notched ? 1 : null,
+    justifyContent: "center",
+    alignItems: "center"
   },
   dateText: {
     fontSize: 16,

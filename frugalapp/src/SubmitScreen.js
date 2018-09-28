@@ -31,6 +31,9 @@ export default class SubmitScreen extends Component {
 
   _scrollSwiper = () => {
     if (this.state.place) {
+      if (this._swiper.state.index === 0) {
+        this._swiper.scrollBy(1, false);
+      }
       return;
     }
     if (this._swiper && this._swiper.state.index > 0) {
@@ -54,10 +57,32 @@ export default class SubmitScreen extends Component {
     this.setState({
       place
     });
+    this._form.scrollToTop();
     this._swiper.scrollBy(1, true);
   };
 
-  _submitForm = () => {};
+  _submitForm = () => {
+    const {
+      title,
+      description,
+      startTime,
+      endTime,
+      postCode,
+      place
+    } = this.state;
+
+    const { selected } = this._days.state;
+
+    console.log({
+      title,
+      description,
+      startTime,
+      endTime,
+      postCode,
+      selected,
+      place
+    });
+  };
 
   _blurKeyboard = () => {
     Keyboard.dismiss();
@@ -83,8 +108,9 @@ export default class SubmitScreen extends Component {
         onMomentumScrollEnd={this._blurKeyboard}
       >
         <RestaurantPicker ref={ref => (this._picker = ref)} {...pickerProps} />
-        <EditSpecial>
+        <EditSpecial ref={ref => (this._form = ref)}>
           <PlacePreview place={this.state.place} />
+          <Text style={styles.instruction}>What's the special?</Text>
           <TextInput
             placeholder="Title"
             style={[styles.input, styles.title]}
@@ -92,7 +118,9 @@ export default class SubmitScreen extends Component {
             value={this.state.title}
             onChangeText={this._onChangeText("title")}
             clearButtonMode="always"
+            autoCapitalize="words"
           />
+          <Text style={styles.instruction}>Briefly describe it.</Text>
           <TextInput
             placeholder="Description"
             style={[styles.input, styles.description]}
@@ -101,9 +129,12 @@ export default class SubmitScreen extends Component {
             blurOnSubmit
             value={this.state.description}
             onChangeText={this._onChangeText("description")}
-            clearButtonMode="always"
           />
-          <DayPicker />
+          <Text style={styles.instruction}>Select the days.</Text>
+          <DayPicker ref={ref => (this._days = ref)} />
+          <Text style={styles.instruction}>
+            Format hours like 6:30pm. Leave blank if all day.
+          </Text>
           <View style={styles.row}>
             <TextInput
               placeholder="Start Time"
@@ -122,12 +153,14 @@ export default class SubmitScreen extends Component {
               clearButtonMode="always"
             />
           </View>
+          <Text style={styles.instruction}>Only admins can post for now.</Text>
           <TextInput
             placeholder="Admin Code"
             style={[styles.input, styles.title]}
             placeholderTextColor="#333"
             onChangeText={this._onChangeText("postCode")}
             value={this.state.postCode}
+            autoCorrect={false}
           />
           <View style={styles.submit}>
             <TouchableOpacity
@@ -155,7 +188,7 @@ const styles = StyleSheet.create({
     height: 44
   },
   description: {
-    height: 200,
+    height: 110,
     paddingTop: 8
   },
   row: {
@@ -181,5 +214,10 @@ const styles = StyleSheet.create({
     color: "#fff",
     textAlign: "center",
     fontWeight: "500"
+  },
+  instruction: {
+    marginTop: 5,
+    marginHorizontal: 5,
+    color: "#a9a9a9"
   }
 });
