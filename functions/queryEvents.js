@@ -15,8 +15,8 @@ function queryEvents(req, res) {
   });
 
   query
-    .then(res => {
-      const hits = res.hits.hits;
+    .then(results => {
+      const hits = results.hits.hits;
 
       res.send({
         hits

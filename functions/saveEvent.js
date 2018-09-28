@@ -38,7 +38,7 @@ function createEvent(req, res) {
 
       const photoLinks = place.photos.map(photo => {
         const url = `${photoBase}${photo.photo_reference}`;
-        return fetch(url).then(res => res.headers.Location);
+        return fetch(url).then(res => res.url);
       });
 
       Promise.all(photoLinks)
@@ -102,7 +102,7 @@ function createEvent(req, res) {
       if (id) {
         save = elastic.update({
           index: event.index,
-          type: events.type,
+          type: event.type,
           id,
           body: {
             doc: body
@@ -111,7 +111,7 @@ function createEvent(req, res) {
       } else {
         save = elastic.index({
           index: event.index,
-          type: events.type,
+          type: event.type,
           body
         });
       }
