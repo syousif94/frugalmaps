@@ -17,7 +17,8 @@ app.get("/", (req, res) => {
 
 app.post("/places/suggest", require("./places/suggest"));
 
-app.post("/event", require("./event"));
+app.post("/save-event", require("./saveEvent"));
+app.post("/query-events", require("./queryEvents"));
 
 // not as clean, but a better endpoint to consume
 const api = functions.https.onRequest((request, response) => {

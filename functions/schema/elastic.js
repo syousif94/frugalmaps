@@ -2,6 +2,7 @@ require("dotenv").config();
 require("isomorphic-fetch");
 
 const client = require("../elastic");
+const event = require("./event");
 
 function indexExists(indexName) {
   return client.indices.exists({
@@ -28,7 +29,8 @@ function initializeIndex(mapping) {
   return indexExists(mapping.index)
     .then(exists => {
       if (exists) {
-        throw new Error("Index exists");
+        console.log("index exists");
+        return;
       }
 
       return createIndex(mapping.index);
@@ -36,15 +38,30 @@ function initializeIndex(mapping) {
     .then(() => {
       return putMapping(mapping);
     })
+    .then(() => {
+      console.log(`created ${mapping.index}`);
+      return;
+    })
     .catch(error => {
       console.log(error);
     });
 }
 
+function initializeEvents() {
+  return initializeIndex(event);
+}
+
 function deleteIndex(indexName) {
-  return client.indices.delete({
-    index: indexName
-  });
+  return client.indices
+    .delete({
+      index: indexName
+    })
+    .then(() => console.log(`deleted ${indexName}`))
+    .catch(error => console.log(error));
+}
+
+function deleteEvents() {
+  return deleteIndex(event.index);
 }
 
 module.exports = {
@@ -52,5 +69,7 @@ module.exports = {
   createIndex,
   putMapping,
   deleteIndex,
-  initializeIndex
+  initializeIndex,
+  initializeEvents,
+  deleteEvents
 };

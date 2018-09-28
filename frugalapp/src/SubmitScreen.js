@@ -5,7 +5,8 @@ import {
   View,
   Keyboard,
   TouchableOpacity,
-  Text
+  Text,
+  AsyncStorage
 } from "react-native";
 import Swiper from "react-native-swiper";
 import RestaurantPicker from "./RestaurantPicker";
@@ -23,11 +24,27 @@ export default class SubmitScreen extends Component {
 
   componentDidMount() {
     emitter.on("focus-picker", this._scrollSwiper);
+    this._restorePostCode();
   }
 
   componentWillUnmount() {
     emitter.off("focus-picker", this._scrollSwiper);
   }
+
+  _restorePostCode = async () => {
+    try {
+      const value = await AsyncStorage.getItem("postCode");
+      if (value !== null) {
+        this.setState({
+          postCode: value
+        });
+      }
+    } catch (error) {
+      console.log({
+        postCodeError: error
+      });
+    }
+  };
 
   _scrollSwiper = () => {
     if (this.state.place) {
@@ -51,6 +68,9 @@ export default class SubmitScreen extends Component {
     this.setState({
       [field]: text
     });
+    if (field === "postCode") {
+      AsyncStorage.setItem("postCode", text);
+    }
   };
 
   _selectRestaurant = place => {
@@ -161,6 +181,7 @@ export default class SubmitScreen extends Component {
             onChangeText={this._onChangeText("postCode")}
             value={this.state.postCode}
             autoCorrect={false}
+            autoCapitalize="none"
           />
           <View style={styles.submit}>
             <TouchableOpacity
