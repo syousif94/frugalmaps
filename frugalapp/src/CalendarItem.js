@@ -1,5 +1,12 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  ScrollView,
+  Image
+} from "react-native";
 import { Entypo } from "@expo/vector-icons";
 
 class Button extends Component {
@@ -34,7 +41,12 @@ class Button extends Component {
 
 export default class CalendarItem extends Component {
   render() {
-    const { item, index, section } = this.props;
+    const {
+      item: { _source: item },
+      index,
+      section
+    } = this.props;
+    console.log(item);
     return (
       <View style={styles.container}>
         <View style={styles.info}>
@@ -42,11 +54,38 @@ export default class CalendarItem extends Component {
           <View style={styles.locationInfo}>
             <Text style={styles.locationText}>{item.location}</Text>
             <Text style={styles.timeText}>
-              {item.start} - {item.end}
+              {item.start || "Open"} - {item.end || "Close"}
             </Text>
           </View>
         </View>
-        <View style={styles.images} />
+        <ScrollView style={styles.images} horizontal>
+          {item.photos.map(uri => {
+            const size = uri.split("=s")[1];
+            const [width, height] = size
+              .split("-h")
+              .map(dimension => Number(dimension));
+
+            const source = {
+              uri,
+              height,
+              width
+            };
+
+            const imageWidth = (200 / height) * width;
+
+            console.log({
+              imageWidth
+            });
+
+            return (
+              <Image
+                key={uri}
+                source={source}
+                style={[styles.image, { width: imageWidth }]}
+              />
+            );
+          })}
+        </ScrollView>
         <View style={styles.info}>
           <Text style={styles.descriptionText}>{item.description}</Text>
           <View style={styles.actions}>
@@ -68,6 +107,11 @@ const styles = StyleSheet.create({
     height: 200,
     backgroundColor: "#f2f2f2"
   },
+  image: {
+    resizeMode: "contain",
+    height: 200,
+    backgroundColor: "#000"
+  },
   info: {
     padding: 10
   },
@@ -77,6 +121,9 @@ const styles = StyleSheet.create({
   titleText: {
     fontWeight: "600",
     color: "#000"
+  },
+  timeText: {
+    marginLeft: 3
   },
   actions: {
     flexDirection: "row",

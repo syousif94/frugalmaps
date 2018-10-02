@@ -2,8 +2,7 @@ import React, { Component } from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import { BLUE } from "./Colors";
-
-const DAYS = ["S", "M", "T", "W", "Th", "F", "Sa"];
+import Events from "./Events";
 
 export default class DayPicker extends Component {
   state = {
@@ -34,7 +33,7 @@ export default class DayPicker extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {DAYS.map((day, index) => {
+        {Events.days.map((day, index) => {
           const onPress = this._select.bind(null, index);
           return (
             <TouchableOpacity onPress={onPress} style={styles.btn} key={index}>

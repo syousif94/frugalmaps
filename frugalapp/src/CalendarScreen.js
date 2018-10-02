@@ -1,47 +1,45 @@
 import React, { Component } from "react";
 import { StyleSheet, View, SectionList } from "react-native";
+import _ from "lodash";
+import api from "./API";
 
 import Item from "./CalendarItem";
 import LocationBox from "./LocationBox";
 import Header from "./CalendarListHeader";
-
-const event = {
-  placeId: null,
-  title: "$2 Tacos!",
-  description: "Random Bar has dank aff tacos every tuesday.",
-  location: "Random Bar",
-  coordinates: [],
-  start: "16:00",
-  end: "20:00",
-  street: "24 Blah Street",
-  neighborhood: "Lido",
-  city: "Newport Beach"
-};
-
-const days = [
-  { title: "Monday", data: [event, event, event, event] },
-  { title: "Tuesday", data: [event, event, event] },
-  { title: "Wednesday", data: [event, event, event, event, event, event] },
-  { title: "Thursday", data: [event, event, event, event, event] },
-  { title: "Friday", data: [event, event, event, event, event] },
-  { title: "Saturday", data: [event, event, event, event] },
-  { title: "Sunday", data: [event, event, event, event] }
-];
+import Provider, { Consumer } from "./Events";
 
 export default class CalendarScreen extends Component {
+  state = {
+    refreshing: false,
+    data: []
+  };
+
   render() {
     return (
-      <View style={styles.container}>
-        <LocationBox />
-        <SectionList
-          style={styles.list}
-          renderItem={data => <Item {...data} key={data.index} />}
-          renderSectionHeader={data => <Header {...data} key={data.index} />}
-          ItemSeparatorComponent={() => <View style={styles.divider} />}
-          sections={days}
-          keyExtractor={(item, index) => item + index}
-        />
-      </View>
+      <Provider>
+        <Consumer>
+          {({ refreshing, data, fetch }) => {
+            console.log(data);
+            return (
+              <View style={styles.container}>
+                <LocationBox />
+                <SectionList
+                  onRefresh={() => fetch()}
+                  refreshing={refreshing}
+                  style={styles.list}
+                  renderItem={data => <Item {...data} key={data.index} />}
+                  renderSectionHeader={data => (
+                    <Header {...data} key={data.index} />
+                  )}
+                  ItemSeparatorComponent={() => <View style={styles.divider} />}
+                  sections={data}
+                  keyExtractor={(item, index) => item + index}
+                />
+              </View>
+            );
+          }}
+        </Consumer>
+      </Provider>
     );
   }
 }
