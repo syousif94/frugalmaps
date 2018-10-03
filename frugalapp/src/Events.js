@@ -33,13 +33,15 @@ class Events extends Component {
       const res = await api("query-events");
       const hits = res.hits;
 
-      const data = Events.initial();
+      const allDays = Events.initial();
 
       hits.every(hit => {
         hit._source.days.forEach(day => {
-          data[day].data.push(hit);
+          allDays[day].data.push(hit);
         });
       });
+
+      const data = allDays.filter(day => day.data.length);
 
       this.setState({
         refreshing: false,

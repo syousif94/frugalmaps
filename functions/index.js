@@ -19,6 +19,7 @@ app.post("/places/suggest", require("./places/suggest"));
 
 app.post("/save-event", require("./saveEvent"));
 app.post("/query-events", require("./queryEvents"));
+app.post("/delete-event", require("./deleteEvent"));
 
 // not as clean, but a better endpoint to consume
 const api = functions.https.onRequest((request, response) => {

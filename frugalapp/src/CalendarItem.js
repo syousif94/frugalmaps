@@ -9,6 +9,62 @@ import {
 } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 
+export default class CalendarItem extends Component {
+  static imageHeight = 220;
+
+  render() {
+    const {
+      item: { _source: item },
+      index,
+      section
+    } = this.props;
+    return (
+      <View style={styles.container}>
+        <View style={styles.info}>
+          <Text style={styles.titleText}>{item.title}</Text>
+          <View style={styles.locationInfo}>
+            <Text style={styles.locationText}>{item.location}</Text>
+            <Text style={styles.timeText}>
+              {item.start || "Open"} - {item.end || "Close"}
+            </Text>
+          </View>
+        </View>
+        <ScrollView style={styles.images} horizontal>
+          {item.photos.map(photo => {
+            const { url: uri, height, width } = photo;
+
+            const source = {
+              uri
+            };
+
+            const imageWidth = (CalendarItem.imageHeight / height) * width;
+
+            console.log({
+              imageWidth
+            });
+
+            return (
+              <Image
+                key={uri}
+                source={source}
+                style={[styles.image, { width: imageWidth }]}
+              />
+            );
+          })}
+        </ScrollView>
+        <View style={styles.info}>
+          <Text style={styles.descriptionText}>{item.description}</Text>
+          <View style={styles.actions}>
+            <Button action="share" />
+            <Button action="directions" />
+            <Button action="notify" />
+          </View>
+        </View>
+      </View>
+    );
+  }
+}
+
 class Button extends Component {
   render() {
     const { action } = this.props;
@@ -39,78 +95,19 @@ class Button extends Component {
   }
 }
 
-export default class CalendarItem extends Component {
-  render() {
-    const {
-      item: { _source: item },
-      index,
-      section
-    } = this.props;
-    console.log(item);
-    return (
-      <View style={styles.container}>
-        <View style={styles.info}>
-          <Text style={styles.titleText}>{item.title}</Text>
-          <View style={styles.locationInfo}>
-            <Text style={styles.locationText}>{item.location}</Text>
-            <Text style={styles.timeText}>
-              {item.start || "Open"} - {item.end || "Close"}
-            </Text>
-          </View>
-        </View>
-        <ScrollView style={styles.images} horizontal>
-          {item.photos.map(uri => {
-            const size = uri.split("=s")[1];
-            const [width, height] = size
-              .split("-h")
-              .map(dimension => Number(dimension));
-
-            const source = {
-              uri,
-              height,
-              width
-            };
-
-            const imageWidth = (200 / height) * width;
-
-            console.log({
-              imageWidth
-            });
-
-            return (
-              <Image
-                key={uri}
-                source={source}
-                style={[styles.image, { width: imageWidth }]}
-              />
-            );
-          })}
-        </ScrollView>
-        <View style={styles.info}>
-          <Text style={styles.descriptionText}>{item.description}</Text>
-          <View style={styles.actions}>
-            <Button action="share" />
-            <Button action="directions" />
-            <Button action="notify" />
-          </View>
-        </View>
-      </View>
-    );
-  }
-}
-
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff"
   },
   images: {
-    height: 200,
+    height: CalendarItem.imageHeight,
     backgroundColor: "#f2f2f2"
   },
   image: {
     resizeMode: "contain",
-    height: 200,
-    backgroundColor: "#000"
+    height: CalendarItem.imageHeight,
+    backgroundColor: "#000",
+    marginRight: 2
   },
   info: {
     padding: 10

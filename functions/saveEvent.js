@@ -38,7 +38,11 @@ function createEvent(req, res) {
 
       const photoLinks = place.photos.map(photo => {
         const url = `${photoBase}${photo.photo_reference}`;
-        return fetch(url).then(res => res.url);
+        return fetch(url).then(res => ({
+          url: res.url,
+          height: photo.height,
+          width: photo.width
+        }));
       });
 
       Promise.all(photoLinks)

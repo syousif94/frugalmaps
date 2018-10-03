@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { StyleSheet, View, SectionList } from "react-native";
 import _ from "lodash";
-import api from "./API";
 
 import Item from "./CalendarItem";
 import LocationBox from "./LocationBox";
@@ -19,7 +18,6 @@ export default class CalendarScreen extends Component {
       <Provider>
         <Consumer>
           {({ refreshing, data, fetch }) => {
-            console.log(data);
             return (
               <View style={styles.container}>
                 <LocationBox />
