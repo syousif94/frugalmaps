@@ -6,14 +6,20 @@ import api from "./API";
 import { Entypo } from "@expo/vector-icons";
 import RestaurantSuggestion from "./RestaurantSuggestion";
 import LocationPrompt from "./LocationPrompt";
-import { Permissions, Location } from "expo";
+import { Consumer as LocationConsumer } from "./Location";
 
-export default class RestaurantPicker extends Component {
+export default React.forwardRef((props, ref) => (
+  <LocationConsumer>
+    {({ location }) => (
+      <RestaurantPicker location={location} ref={ref} {...props} />
+    )}
+  </LocationConsumer>
+));
+
+class RestaurantPicker extends Component {
   state = {
     data: []
   };
-
-  _location;
 
   constructor(props) {
     super(props);
@@ -22,8 +28,10 @@ export default class RestaurantPicker extends Component {
       try {
         let query = `input=${text}&types=establishment`;
 
-        if (this._location) {
-          query = `${query}${this._location}`;
+        if (this.props.location) {
+          const { longitude, latitude } = this.props.location;
+          const locationQuery = `&location=${latitude},${longitude}&radius=10000`;
+          query = `${query}${locationQuery}`;
         }
 
         const res = await api("places/suggest", {
@@ -41,28 +49,6 @@ export default class RestaurantPicker extends Component {
         console.log(error);
       }
     }, 50);
-  }
-
-  _setLocation = async () => {
-    const { status: locationStatus } = await Permissions.getAsync(
-      Permissions.LOCATION
-    );
-
-    if (locationStatus !== "granted") {
-      return;
-    }
-
-    const {
-      coords: { latitude, longitude }
-    } = await Location.getCurrentPositionAsync({
-      enableHighAccuracy: false
-    });
-
-    this._location = `&location=${latitude},${longitude}&radius=10000`;
-  };
-
-  componentDidMount() {
-    this._setLocation();
   }
 
   focusInput = () => {

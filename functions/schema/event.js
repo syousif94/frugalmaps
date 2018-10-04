@@ -7,6 +7,7 @@ const event = {
       description: { type: "text" },
       location: { type: "text" },
       coordinates: { type: "geo_point" },
+      type: { type: "keyword" },
       placeid: { enabled: false },
       photos: { enabled: false },
       phone: { enabled: false },
@@ -17,7 +18,9 @@ const event = {
       address: { enabled: false },
       street: { type: "text" },
       neighborhood: { type: "keyword" },
-      city: { type: "keyword" }
+      city: { type: "keyword" },
+      state: { type: "keyword" },
+      shortState: { enabled: false }
     }
   }
 };

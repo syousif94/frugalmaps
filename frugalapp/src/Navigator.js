@@ -4,6 +4,9 @@ import { createBottomTabNavigator } from "react-navigation";
 import MapScreen from "./MapScreen";
 import CalendarScreen from "./CalendarScreen";
 import SubmitScreen from "./SubmitScreen";
+import EventProvider from "./Events";
+import LocationProvider from "./Location";
+import LocationResultsProvider from "./LocationResults";
 
 import TabBar from "./TabBar";
 
@@ -22,6 +25,14 @@ const MainScreen = createBottomTabNavigator(
 
 export default class Navigator extends Component {
   render() {
-    return <MainScreen />;
+    return (
+      <LocationProvider>
+        <EventProvider>
+          <LocationResultsProvider>
+            <MainScreen />
+          </LocationResultsProvider>
+        </EventProvider>
+      </LocationProvider>
+    );
   }
 }

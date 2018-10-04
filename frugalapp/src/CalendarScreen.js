@@ -5,7 +5,9 @@ import _ from "lodash";
 import Item from "./CalendarItem";
 import LocationBox from "./LocationBox";
 import Header from "./CalendarListHeader";
-import Provider, { Consumer } from "./Events";
+import LocationUIProvider from "./LocationUI";
+import { Consumer as EventConsumer } from "./Events";
+import LocationList from "./LocationList";
 
 export default class CalendarScreen extends Component {
   state = {
@@ -15,8 +17,8 @@ export default class CalendarScreen extends Component {
 
   render() {
     return (
-      <Provider>
-        <Consumer>
+      <LocationUIProvider>
+        <EventConsumer>
           {({ refreshing, data, fetch }) => {
             return (
               <View style={styles.container}>
@@ -33,11 +35,12 @@ export default class CalendarScreen extends Component {
                   sections={data}
                   keyExtractor={(item, index) => item + index}
                 />
+                <LocationList />
               </View>
             );
           }}
-        </Consumer>
-      </Provider>
+        </EventConsumer>
+      </LocationUIProvider>
     );
   }
 }
