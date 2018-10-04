@@ -18,15 +18,26 @@ export default class CalendarItem extends Component {
       index,
       section
     } = this.props;
+
+    let timeSpan;
+
+    if (item.start && item.end) {
+      timeSpan = `${item.start} - ${item.end}`;
+    } else if (item.start) {
+      timeSpan = `Starts at ${item.start}`;
+    } else if (item.end) {
+      timeSpan = `Ends at ${item.end}`;
+    } else {
+      timeSpan = `All Day`;
+    }
+
     return (
       <View style={styles.container}>
         <View style={styles.info}>
           <Text style={styles.titleText}>{item.title}</Text>
           <View style={styles.locationInfo}>
+            <Text style={styles.timeText}>{timeSpan}</Text>
             <Text style={styles.locationText}>{item.location}</Text>
-            <Text style={styles.timeText}>
-              {item.start || "Open"} - {item.end || "Close"}
-            </Text>
           </View>
         </View>
         <ScrollView style={styles.images} horizontal>
@@ -38,10 +49,6 @@ export default class CalendarItem extends Component {
             };
 
             const imageWidth = (CalendarItem.imageHeight / height) * width;
-
-            console.log({
-              imageWidth
-            });
 
             return (
               <Image
@@ -113,7 +120,9 @@ const styles = StyleSheet.create({
     padding: 10
   },
   locationInfo: {
-    flexDirection: "row"
+    marginTop: 2,
+    flexDirection: "row-reverse",
+    justifyContent: "space-between"
   },
   titleText: {
     fontWeight: "600",
