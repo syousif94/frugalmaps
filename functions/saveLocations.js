@@ -6,7 +6,7 @@ const location = require("./schema/location");
 
 module.exports = function saveLocations(city, state) {
   const cityAddress = `${city.long_name}, ${state.long_name}`;
-  const cityID = _.kebabCase(`${city.long_name} ${state.short_name}`);
+  const cityID = _.kebabCase(cityAddress);
 
   const promises = [[cityID, cityAddress, "city"]].map(
     ([id, address, type]) => {
@@ -26,6 +26,7 @@ module.exports = function saveLocations(city, state) {
               return elastic.index({
                 index: location.index,
                 type: location.type,
+                id,
                 body: {
                   name: address,
                   type,

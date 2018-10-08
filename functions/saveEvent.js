@@ -97,6 +97,16 @@ function createEvent(req, res) {
 
       const coordinates = [lng, lat];
 
+      let cityText;
+      if (city && state) {
+        cityText = `${city.long_name}, ${state.long_name}`;
+      }
+
+      let neighborhoodText;
+      if (neighborhood && cityText) {
+        neighborhoodText = `${neighborhood.long_name}, ${cityText}`;
+      }
+
       const body = {
         title,
         description,
@@ -116,8 +126,8 @@ function createEvent(req, res) {
         photos,
         phone,
         website,
-        neighborhood: neighborhood && neighborhood.long_name,
-        city: city && city.long_name,
+        neighborhood: neighborhoodText,
+        city: cityText,
         state: state && state.long_name,
         shortState: state && state.short_name
       };
