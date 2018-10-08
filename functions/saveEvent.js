@@ -1,6 +1,7 @@
 const elastic = require("./elastic");
 const servicesApi = require("./google");
 const event = require("./schema/event");
+const indexLocations = require("./saveLocations");
 
 const photoBase = `https://maps.googleapis.com/maps/api/place/photo?key=${
   process.env.GOOGLE
@@ -138,7 +139,9 @@ function createEvent(req, res) {
         });
       }
 
-      return save;
+      const saveLocations = indexLocations(neighborhood, city, state);
+
+      return Promise.all([save, ...saveLocations]);
     })
     .then(() => {
       res.send(200);
