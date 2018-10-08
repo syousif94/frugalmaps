@@ -4,47 +4,41 @@ const elastic = require("./elastic");
 const servicesApi = require("./google");
 const location = require("./schema/location");
 
-module.exports = function saveLocations(neighborhood, city, state) {
+module.exports = function saveLocations(city, state) {
   const cityAddress = `${city.long_name}, ${state.long_name}`;
   const cityID = _.kebabCase(`${city.long_name} ${state.short_name}`);
 
-  const neighborhoodAddress = `${neighborhood.long_name}, ${cityAddress}`;
-  const neighborhoodID = _.kebabCase(
-    `${neighborhood.long_name} ${city.long_name} ${state.short_name}`
-  );
-
-  const promises = [
-    [neighborhoodID, neighborhoodAddress, "neighborhood"],
-    [cityID, cityAddress, "city"]
-  ].map(([id, address, type]) => {
-    return elastic
-      .exists({
-        index: location.index,
-        type: location.type,
-        id
-      })
-      .then(exists => {
-        if (exists) {
-          return;
-        }
-
-        return getGeometry(address).then(
-          ({ placeid, bounds, location: coordinates }) => {
-            return elastic.index({
-              index: location.index,
-              type: location.type,
-              body: {
-                name: address,
-                type,
-                placeid,
-                bounds,
-                coordinates
-              }
-            });
+  const promises = [[cityID, cityAddress, "city"]].map(
+    ([id, address, type]) => {
+      return elastic
+        .exists({
+          index: location.index,
+          type: location.type,
+          id
+        })
+        .then(exists => {
+          if (exists) {
+            return;
           }
-        );
-      });
-  });
+
+          return getGeometry(address).then(
+            ({ placeid, bounds, location: coordinates }) => {
+              return elastic.index({
+                index: location.index,
+                type: location.type,
+                body: {
+                  name: address,
+                  type,
+                  placeid,
+                  bounds,
+                  coordinates
+                }
+              });
+            }
+          );
+        });
+    }
+  );
 
   return promises;
 };
@@ -53,7 +47,7 @@ function getGeometry(address) {
   return new Promise((resolve, reject) => {
     servicesApi.geocode(
       {
-        address: address
+        address
       },
       (err, response) => {
         if (err) {

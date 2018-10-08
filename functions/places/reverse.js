@@ -6,7 +6,7 @@ module.exports = function reverseLocation(req, res) {
   servicesApi.reverseGeocode(
     {
       latlng: [lat, lng],
-      result_type: ["city"]
+      result_type: ["locality"]
     },
     (err, response) => {
       if (err) {
@@ -17,7 +17,7 @@ module.exports = function reverseLocation(req, res) {
       }
 
       res.send({
-        city: response.json.result
+        city: response.json.results[0]
       });
     }
   );

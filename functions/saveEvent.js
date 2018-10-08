@@ -16,7 +16,8 @@ function createEvent(req, res) {
     start,
     end,
     days,
-    postCode
+    postCode,
+    type
   } = req.body;
 
   if (postCode !== process.env.POSTCODE) {
@@ -102,6 +103,7 @@ function createEvent(req, res) {
         days,
         start,
         end,
+        type,
         url,
         rating,
         priceLevel,
@@ -139,7 +141,7 @@ function createEvent(req, res) {
         });
       }
 
-      const saveLocations = indexLocations(neighborhood, city, state);
+      const saveLocations = indexLocations(city, state);
 
       return Promise.all([save, ...saveLocations]);
     })
