@@ -8,19 +8,23 @@ const event = {
       location: { type: "text" },
       coordinates: { type: "geo_point" },
       type: { type: "keyword" },
+      priceLevel: { enabled: false },
+      rating: { enabled: false },
       placeid: { enabled: false },
+      website: { enabled: false },
       photos: { enabled: false },
       phone: { enabled: false },
       days: { enabled: false },
       start: { enabled: false },
       end: { enabled: false },
+      periods: { enabled: false },
       hours: { enabled: false },
       address: { enabled: false },
-      street: { type: "text" },
       neighborhood: { type: "keyword" },
       city: { type: "keyword" },
       state: { type: "keyword" },
-      shortState: { enabled: false }
+      shortState: { enabled: false },
+      url: { enabled: false }
     }
   }
 };

@@ -3,6 +3,7 @@ require("isomorphic-fetch");
 
 const client = require("../elastic");
 const event = require("./event");
+const location = require("./location");
 
 function indexExists(indexName) {
   return client.indices.exists({
@@ -47,10 +48,6 @@ function initializeIndex(mapping) {
     });
 }
 
-function initializeEvents() {
-  return initializeIndex(event);
-}
-
 function deleteIndex(indexName) {
   return client.indices
     .delete({
@@ -60,16 +57,29 @@ function deleteIndex(indexName) {
     .catch(error => console.log(error));
 }
 
+function mapEvents() {
+  return initializeIndex(event);
+}
+
 function deleteEvents() {
   return deleteIndex(event.index);
 }
 
+function mapLocations() {
+  return initializeIndex(location);
+}
+
+function deleteLocations() {
+  return deleteIndex(location.index);
+}
+
 module.exports = {
-  indexExists,
-  createIndex,
-  putMapping,
-  deleteIndex,
-  initializeIndex,
-  initializeEvents,
-  deleteEvents
+  events: {
+    map: mapEvents,
+    delete: deleteEvents
+  },
+  locations: {
+    map: mapLocations,
+    delete: deleteLocations
+  }
 };

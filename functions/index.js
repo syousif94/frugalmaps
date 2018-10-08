@@ -16,7 +16,8 @@ app.get("/", (req, res) => {
 });
 
 app.post("/places/suggest", require("./places/suggest"));
-app.post("/places/popular", require("./places/popular"));
+// app.post("/places/popular", require("./places/popular"));
+app.post("/places/reverse", require("./places/reverse"));
 
 app.post("/save-event", require("./saveEvent"));
 app.post("/query-events", require("./queryEvents"));

@@ -67,12 +67,13 @@ function createEvent(req, res) {
           location: { lat, lng }
         },
         formatted_address: address,
-        address_components
+        address_components,
+        price_level: priceLevel,
+        rating,
+        website,
+        url,
+        opening_hours: { periods, weekday_text: hours }
       } = place;
-
-      const street = address_components.find(
-        component => component.types.indexOf("route") > -1
-      );
 
       const neighborhood = address_components.find(
         component => component.types.indexOf("neighborhood") > -1
@@ -82,6 +83,16 @@ function createEvent(req, res) {
         component => component.types.indexOf("locality") > -1
       );
 
+      let state = address_components.find(
+        component => component.types.indexOf("administrative_area_level_1") > -1
+      );
+
+      if (!state) {
+        state = address_components.find(
+          component => component.types.indexOf("country") > -1
+        );
+      }
+
       const coordinates = [lng, lat];
 
       const body = {
@@ -90,15 +101,22 @@ function createEvent(req, res) {
         days,
         start,
         end,
+        url,
+        rating,
+        priceLevel,
+        periods,
+        hours,
         placeid,
         location,
         address,
         coordinates,
         photos,
         phone,
-        street: street && street.long_name,
+        website,
         neighborhood: neighborhood && neighborhood.long_name,
-        city: city && city.long_name
+        city: city && city.long_name,
+        state: state && state.long_name,
+        shortState: state && state.short_name
       };
 
       let save;

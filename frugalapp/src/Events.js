@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Alert } from "react-native";
 import _ from "lodash";
 import api from "./API";
 
@@ -17,7 +18,7 @@ class Events extends Component {
   ];
 
   state = {
-    refreshing: false,
+    refreshing: true,
     data: Events.initial()
   };
 
@@ -48,7 +49,10 @@ class Events extends Component {
         data
       });
     } catch (error) {
-      console.log(error);
+      this.setState({
+        refreshing: false
+      });
+      Alert.alert("Something Went Wrong", error);
     }
   };
   render() {
