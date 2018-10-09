@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   image: {
     resizeMode: "contain",
     height: CalendarItem.imageHeight,
-    backgroundColor: "#000",
+    backgroundColor: "#e0e0e0",
     marginRight: 2
   },
   info: {

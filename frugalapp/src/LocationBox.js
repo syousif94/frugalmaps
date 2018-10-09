@@ -49,7 +49,7 @@ class LocationBox extends Component {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.title}>
-          <Text style={styles.titleText}>LitCal</Text>
+          <Text style={styles.titleText}>Lit Cal</Text>
         </View>
         <View style={styles.search} onLayout={this._onLayout}>
           <Entypo name="magnifying-glass" size={18} color="#000" />

@@ -32,6 +32,7 @@ class Events extends Component {
         refreshing: true
       });
       const res = await api("query-events");
+      const text = res.text;
       const hits = res.hits;
 
       const allDays = Events.initial();
