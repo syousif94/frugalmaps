@@ -1,5 +1,6 @@
 import { Permissions, Location as ExpoLocation } from "expo";
 import { combineEpics } from "redux-observable";
+import { Observable } from "rxjs/Observable";
 
 import api from "../API";
 import * as Location from "./location";
@@ -40,11 +41,11 @@ const coordinates = action$ =>
 
 const completions = (action$, store) =>
   action$
-    .ofType(Location.types.completions)
-    .filter(action => action.payload.text.length)
+    .ofType(Location.types.set)
+    .filter(action => action.payload.text && action.payload.text.length)
     .throttleTime(50)
-    .switchMap(
-      defer(async action => {
+    .switchMap(action =>
+      Observable.defer(async () => {
         try {
           const text = action.payload.text;
 
@@ -96,8 +97,24 @@ const suggestions = (action$, store) =>
 
           const res = await request;
 
+          const suggestions = [];
+
+          if (res.nearby && res.nearby.length) {
+            suggestions.push({
+              title: "Closest",
+              data: res.nearby
+            });
+          }
+
+          if (res.popular && res.popular.length) {
+            suggestions.push({
+              title: "Popular",
+              data: res.popular
+            });
+          }
+
           return Location.actions.set({
-            completions: [res.nearby, res.popular]
+            suggestions
           });
         } catch (error) {
           console.log({ completions: error });

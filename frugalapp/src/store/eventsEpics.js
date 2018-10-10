@@ -10,46 +10,53 @@ const events = action$ =>
   action$
     .ofType(Events.types.set)
     .filter(action => action.payload.refreshing)
-    .switchMap(() =>
+    .switchMap(action =>
       Observable.defer(async () => {
         let coordinates;
 
         let request;
 
-        const { status: locationStatus } = await Permissions.getAsync(
-          Permissions.LOCATION
-        );
-
-        if (locationStatus === "granted") {
-          const {
-            coords: { latitude, longitude }
-          } = await ExpoLocation.getCurrentPositionAsync({
-            enableHighAccuracy: false
-          });
-
-          coordinates = {
-            latitude,
-            longitude
-          };
-
+        if (action.payload.bounds) {
           request = api("query-events", {
-            lat: latitude,
-            lng: longitude
+            bounds: action.payload.bounds
           });
         } else {
-          request = api("query-events");
+          const { status: locationStatus } = await Permissions.getAsync(
+            Permissions.LOCATION
+          );
+
+          if (locationStatus === "granted") {
+            const {
+              coords: { latitude, longitude }
+            } = await ExpoLocation.getCurrentPositionAsync({
+              enableHighAccuracy: false
+            });
+
+            coordinates = {
+              latitude,
+              longitude
+            };
+
+            request = api("query-events", {
+              lat: latitude,
+              lng: longitude
+            });
+          } else {
+            request = api("query-events");
+          }
         }
 
         const res = await request;
         return { res, coordinates };
       })
         .switchMap(({ res, coordinates }) => {
-          const searchText = res.text;
+          const text = res.text;
           const data = res.hits;
           return Observable.of(
             Location.actions.set({
               coordinates,
-              searchText
+              text,
+              bounds: action.payload.bounds ? undefined : null
             }),
             Events.actions.set({
               refreshing: false,

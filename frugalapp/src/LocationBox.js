@@ -4,8 +4,21 @@ import { Entypo } from "@expo/vector-icons";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import * as Location from "./store/location";
+import emitter from "tiny-emitter/instance";
 
 class LocationBox extends Component {
+  componentDidMount() {
+    emitter.on("blur-location-box", this._blur);
+  }
+
+  componentWillUnmount() {
+    emitter.off("blur-location-box", this._blur);
+  }
+
+  _blur = () => {
+    this._input.blur();
+  };
+
   _onLayout = e => {
     const {
       nativeEvent: {
@@ -34,12 +47,15 @@ class LocationBox extends Component {
 
   _onChangeText = text => {
     this.props.set({
-      searchText: text
+      text
     });
   };
 
   render() {
-    const { value } = this.props;
+    const { text, focused, refreshing, bounds } = this.props;
+
+    const value = bounds ? "Map" : text;
+
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.title}>
@@ -48,15 +64,17 @@ class LocationBox extends Component {
         <View style={styles.search} onLayout={this._onLayout}>
           <Entypo name="magnifying-glass" size={18} color="#000" />
           <TextInput
-            placeholder="Locating..."
+            ref={ref => (this._input = ref)}
+            placeholder={refreshing ? "Locating..." : "City"}
             style={styles.input}
             placeholderTextColor="#333"
-            returnKeyType="search"
+            returnKeyType="done"
             onChangeText={this._onChangeText}
             value={value}
             onFocus={this._onFocus}
             onBlur={this._onBlur}
             autoCapitalize="words"
+            clearButtonMode={focused ? "always" : "never"}
           />
         </View>
       </SafeAreaView>
@@ -65,7 +83,10 @@ class LocationBox extends Component {
 }
 
 const mapStateToProps = state => ({
-  value: state.location.searchText
+  text: state.location.text,
+  bounds: state.location.bounds,
+  focused: state.location.focused,
+  refreshing: state.events.refreshing
 });
 
 const mapDispatchToProps = {
@@ -102,7 +123,8 @@ const styles = StyleSheet.create({
   input: {
     height: 44,
     fontSize: 16,
-    paddingHorizontal: 10,
-    flex: 1
+    paddingLeft: 10,
+    flex: 1,
+    marginRight: 12
   }
 });
