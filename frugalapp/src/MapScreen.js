@@ -1,11 +1,16 @@
 import React, { Component } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { MapView } from "expo";
+import { connect } from "react-redux";
+import { FontAwesome } from "@expo/vector-icons";
+import emitter from "tiny-emitter/instance";
+import _ from "lodash";
+
+import * as Location from "./store/location";
+import * as Events from "./store/events";
 import LocationBox from "./LocationBox";
 import LocationList from "./LocationList";
-import { FontAwesome } from "@expo/vector-icons";
 import { BLUE } from "./Colors";
-import emitter from "tiny-emitter/instance";
 
 class LocateMe extends Component {
   render() {
@@ -19,8 +24,19 @@ class LocateMe extends Component {
   }
 }
 
-export default class MapScreen extends Component {
-  _search = true;
+class MapScreen extends Component {
+  _search = false;
+
+  _frame;
+
+  constructor(props) {
+    super(props);
+
+    this._onRegionChangeComplete = _.debounce(
+      this._onRegionChangeComplete,
+      100
+    );
+  }
 
   componentDidMount() {
     emitter.on("fit-bounds", this._fitBounds);
@@ -42,15 +58,53 @@ export default class MapScreen extends Component {
         longitude: bounds.southwest.lng
       }
     ];
-    this._map.fitToCoordinates(coords);
+    this._map.fitToCoordinates(coords, { animated: false });
   };
 
-  _onRegionChangeComplete = () => {
-    console.log("region changed");
+  _onRegionChangeComplete = async () => {
+    if (this._search && this._frame) {
+      const { x, y, height, width } = this._frame;
 
-    if (this._search) {
-      console.log("should set bounds and search");
+      const northeast = ({
+        latitude: lat,
+        longitude: lng
+      } = await this._map.coordinateForPoint({ y, x: x + width }));
+
+      const southwest = ({
+        latitude: lat,
+        longitude: lng
+      } = await this._map.coordinateForPoint({ y: y + height, x }));
+
+      const bounds = {
+        northeast,
+        southwest
+      };
+
+      this.props.setLocation({
+        bounds
+      });
+      this.props.setEvents({
+        refreshing: true,
+        bounds
+      });
     }
+
+    this._search = true;
+  };
+
+  _setFrame = e => {
+    const {
+      nativeEvent: {
+        layout: { x, y, height, width }
+      }
+    } = e;
+
+    this._frame = {
+      x,
+      y,
+      height,
+      width
+    };
   };
 
   render() {
@@ -58,6 +112,7 @@ export default class MapScreen extends Component {
       <View style={styles.container}>
         <LocationBox />
         <MapView
+          onLayout={this._setFrame}
           ref={ref => (this._map = ref)}
           style={styles.map}
           initialRegion={{
@@ -74,6 +129,16 @@ export default class MapScreen extends Component {
     );
   }
 }
+
+const mapDispatchToProps = {
+  setEvents: Events.actions.set,
+  setLocation: Location.actions.set
+};
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(MapScreen);
 
 const styles = StyleSheet.create({
   container: {

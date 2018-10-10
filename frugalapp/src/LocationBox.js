@@ -54,7 +54,15 @@ class LocationBox extends Component {
   render() {
     const { text, focused, refreshing, bounds } = this.props;
 
-    const value = bounds ? "Map" : text;
+    let value = text;
+
+    if (bounds) {
+      const { northeast, southwest } = bounds;
+
+      value = `${northeast.lat.toFixed(4)}, ${southwest.lng.toFixed(
+        4
+      )} to ${southwest.lat.toFixed(4)}, ${northeast.lng.toFixed(4)}`;
+    }
 
     return (
       <SafeAreaView style={styles.container}>

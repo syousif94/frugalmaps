@@ -27,7 +27,8 @@ class LocationSuggestion extends Component {
     });
 
     setLocation({
-      text
+      text,
+      bounds: null
     });
 
     emitter.emit("blur-location-box");

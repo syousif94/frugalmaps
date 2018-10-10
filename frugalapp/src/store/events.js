@@ -5,6 +5,18 @@ const mutations = ["set"];
 
 export const { actions, types } = createActions(mutations, "events");
 
+function mapDay(state = 0, { type, payload }) {
+  switch (type) {
+    case types.set:
+      if (payload.mapDay !== undefined) {
+        return payload.mapDay;
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
 function refreshing(state = true, { type, payload }) {
   switch (type) {
     case types.set:
@@ -55,5 +67,6 @@ function data(state = [], { type, payload }) {
 
 export default combineReducers({
   refreshing,
-  data
+  data,
+  mapDay
 });
