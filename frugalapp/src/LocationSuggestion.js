@@ -31,6 +31,7 @@ class LocationSuggestion extends Component {
     });
 
     emitter.emit("blur-location-box");
+    emitter.emit("fit-bounds", bounds);
   };
 
   _renderCount = () => {

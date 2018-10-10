@@ -5,6 +5,7 @@ import LocationBox from "./LocationBox";
 import LocationList from "./LocationList";
 import { FontAwesome } from "@expo/vector-icons";
 import { BLUE } from "./Colors";
+import emitter from "tiny-emitter/instance";
 
 class LocateMe extends Component {
   render() {
@@ -19,11 +20,45 @@ class LocateMe extends Component {
 }
 
 export default class MapScreen extends Component {
+  _search = true;
+
+  componentDidMount() {
+    emitter.on("fit-bounds", this._fitBounds);
+  }
+
+  componentWillUnmount() {
+    emitter.off("fit-bounds", this._fitBounds);
+  }
+
+  _fitBounds = bounds => {
+    this._search = false;
+    const coords = [
+      {
+        latitude: bounds.northeast.lat,
+        longitude: bounds.northeast.lng
+      },
+      {
+        latitude: bounds.southwest.lat,
+        longitude: bounds.southwest.lng
+      }
+    ];
+    this._map.fitToCoordinates(coords);
+  };
+
+  _onRegionChangeComplete = () => {
+    console.log("region changed");
+
+    if (this._search) {
+      console.log("should set bounds and search");
+    }
+  };
+
   render() {
     return (
       <View style={styles.container}>
         <LocationBox />
         <MapView
+          ref={ref => (this._map = ref)}
           style={styles.map}
           initialRegion={{
             latitude: 37.78825,
@@ -31,6 +66,7 @@ export default class MapScreen extends Component {
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421
           }}
+          onRegionChangeComplete={this._onRegionChangeComplete}
         />
         <LocateMe />
         <LocationList />
