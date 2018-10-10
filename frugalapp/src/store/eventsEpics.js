@@ -5,7 +5,6 @@ import { Observable } from "rxjs/Observable";
 import api from "../API";
 import * as Events from "./events";
 import * as Location from "./location";
-import { defer } from "./lib";
 
 const events = action$ =>
   action$

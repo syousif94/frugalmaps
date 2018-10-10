@@ -57,10 +57,10 @@ export default class SubmitScreen extends Component {
       const distance = -this._swiper.state.index;
       this._swiper.scrollBy(distance, true);
       setTimeout(() => {
-        this._picker.focusInput();
+        this._picker.getWrappedInstance().focusInput();
       }, 500);
     } else {
-      this._picker.focusInput();
+      this._picker.getWrappedInstance().focusInput();
     }
   };
 
@@ -127,7 +127,12 @@ export default class SubmitScreen extends Component {
         loop={false}
         onMomentumScrollEnd={this._blurKeyboard}
       >
-        <RestaurantPicker ref={ref => (this._picker = ref)} {...pickerProps} />
+        <RestaurantPicker
+          ref={ref => {
+            this._picker = ref;
+          }}
+          {...pickerProps}
+        />
         <EditSpecial ref={ref => (this._form = ref)}>
           <PlacePreview place={this.state.place} />
           <Text style={styles.instruction}>What's the special?</Text>

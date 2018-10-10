@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import {
   Keyboard,
-  View,
   KeyboardAvoidingView,
   Text,
   TouchableOpacity,
@@ -10,8 +9,11 @@ import {
 } from "react-native";
 import { BLUE } from "./Colors";
 import { Permissions } from "expo";
+import { connect } from "react-redux";
 
-export default class LocationPrompt extends Component {
+import * as Location from "./store/location";
+
+class LocationPrompt extends Component {
   state = {
     buttonOpacity: new Animated.Value(0)
   };
@@ -33,7 +35,24 @@ export default class LocationPrompt extends Component {
   }
 
   _promptLocation = async () => {
-    await Permissions.askAsync(Permissions.LOCATION);
+    const { status: locationStatus } = await Permissions.askAsync(
+      Permissions.LOCATION
+    );
+
+    if (locationStatus !== "granted") {
+      return;
+    }
+
+    this.props.coordinates();
+    this._setButtonOpacity(0);
+  };
+
+  _setButtonOpacity = opacity => {
+    Animated.timing(
+      this.state.buttonOpacity,
+      { duration: 150, toValue: opacity },
+      { useNativeDriver: true }
+    ).start();
   };
 
   _keyboardWillShow = async () => {
@@ -42,20 +61,12 @@ export default class LocationPrompt extends Component {
     );
 
     if (locationStatus !== "granted") {
-      Animated.timing(
-        this.state.buttonOpacity,
-        { duration: 150, toValue: 1 },
-        { useNativeDriver: true }
-      ).start();
+      this._setButtonOpacity(1);
     }
   };
 
   _keyboardWillHide = () => {
-    Animated.timing(
-      this.state.buttonOpacity,
-      { duration: 150, toValue: 0 },
-      { useNativeDriver: true }
-    ).start();
+    this._setButtonOpacity(0);
   };
 
   render() {
@@ -68,7 +79,7 @@ export default class LocationPrompt extends Component {
     return (
       <KeyboardAvoidingView behavior="padding">
         <Animated.View style={buttonStyle}>
-          <TouchableOpacity style={styles.btn}>
+          <TouchableOpacity style={styles.btn} onPress={this._promptLocation}>
             <Text style={styles.title}>Enable Location Access</Text>
             <Text style={styles.subtitle}>
               Search is better with location access
@@ -79,6 +90,15 @@ export default class LocationPrompt extends Component {
     );
   }
 }
+
+const mapDispatchToProps = {
+  coordinates: Location.actions.coordinates
+};
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(LocationPrompt);
 
 const styles = StyleSheet.create({
   btnContainer: {

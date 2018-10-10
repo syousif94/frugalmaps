@@ -41,7 +41,7 @@ const makeEvents = hits => {
   return initial.filter(day => day.data.length);
 };
 
-function data(state = makeEvents(), { type, payload }) {
+function data(state = [], { type, payload }) {
   switch (type) {
     case types.set:
       if (payload.data !== undefined) {

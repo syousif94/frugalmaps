@@ -1,20 +1,12 @@
 import React, { Component } from "react";
 import _ from "lodash";
 import { StyleSheet, View, TextInput, FlatList, Text } from "react-native";
+import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
 import api from "./API";
 import { Entypo } from "@expo/vector-icons";
 import RestaurantSuggestion from "./RestaurantSuggestion";
 import LocationPrompt from "./LocationPrompt";
-import { Consumer as LocationConsumer } from "./Location";
-
-export default React.forwardRef((props, ref) => (
-  <LocationConsumer>
-    {({ location }) => (
-      <RestaurantPicker location={location} ref={ref} {...props} />
-    )}
-  </LocationConsumer>
-));
 
 class RestaurantPicker extends Component {
   state = {
@@ -115,6 +107,17 @@ class RestaurantPicker extends Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  location: state.location.coordinates
+});
+
+export default connect(
+  mapStateToProps,
+  null,
+  null,
+  { withRef: true }
+)(RestaurantPicker);
 
 const styles = StyleSheet.create({
   container: {
