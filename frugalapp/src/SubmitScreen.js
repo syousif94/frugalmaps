@@ -12,10 +12,11 @@ import Swiper from "react-native-swiper";
 import RestaurantPicker from "./RestaurantPicker";
 import EditSpecial from "./EditSpecial";
 import PlacePreview from "./PlacePreview";
+import EventTypePicker from "./EventTypePicker";
 import emitter from "tiny-emitter/instance";
 
 import { BLUE } from "./Colors";
-import DayPicker from "./DayPicker";
+import DayPicker from "./SubmitDayPicker";
 
 export default class SubmitScreen extends Component {
   state = {
@@ -135,6 +136,8 @@ export default class SubmitScreen extends Component {
         />
         <EditSpecial ref={ref => (this._form = ref)}>
           <PlacePreview place={this.state.place} />
+          <Text style={styles.instruction}>What kind of special?</Text>
+          <EventTypePicker ref={ref => (this._eventType = ref)} />
           <Text style={styles.instruction}>What's the special?</Text>
           <TextInput
             placeholder="Title"
@@ -178,7 +181,9 @@ export default class SubmitScreen extends Component {
               clearButtonMode="always"
             />
           </View>
-          <Text style={styles.instruction}>Only admins can post for now.</Text>
+          <Text style={styles.instruction}>
+            Leave blank unless you have one.
+          </Text>
           <TextInput
             placeholder="Admin Code"
             style={[styles.input, styles.title]}
@@ -226,6 +231,7 @@ const styles = StyleSheet.create({
   },
   submit: {
     margin: 5,
+    marginTop: 20,
     height: 44,
     backgroundColor: BLUE,
     borderRadius: 8

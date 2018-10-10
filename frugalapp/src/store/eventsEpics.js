@@ -1,10 +1,35 @@
 import { Permissions, Location as ExpoLocation } from "expo";
 import { combineEpics } from "redux-observable";
 import { Observable } from "rxjs/Observable";
+import emitter from "tiny-emitter/instance";
 
 import api from "../API";
 import * as Events from "./events";
 import * as Location from "./location";
+
+const makeEvents = hits => {
+  const initial = [
+    { title: "Sunday", data: [] },
+    { title: "Monday", data: [] },
+    { title: "Tuesday", data: [] },
+    { title: "Wednesday", data: [] },
+    { title: "Thursday", data: [] },
+    { title: "Friday", data: [] },
+    { title: "Saturday", data: [] }
+  ];
+
+  if (!hits) {
+    return initial;
+  }
+
+  hits.every(hit => {
+    hit._source.days.forEach(day => {
+      initial[day].data.push(hit);
+    });
+  });
+
+  return initial.filter(day => day.data.length);
+};
 
 const events = action$ =>
   action$
@@ -49,9 +74,22 @@ const events = action$ =>
         const res = await request;
         return { res, coordinates };
       })
+        .retry(2)
         .switchMap(({ res, coordinates }) => {
-          const text = res.text;
-          const data = res.hits;
+          const { text, hits, bounds } = res;
+
+          if (bounds !== undefined) {
+            emitter.emit("fit-bounds", bounds);
+          }
+
+          const data = makeEvents(hits);
+
+          let day;
+
+          if (data.length) {
+            day = data[0].title;
+          }
+
           return Observable.of(
             Location.actions.set({
               coordinates,
@@ -60,15 +98,18 @@ const events = action$ =>
             }),
             Events.actions.set({
               refreshing: false,
-              data
+              data,
+              day
             })
           );
         })
         .catch(error => {
           console.log({ events: error });
-          return Events.actions.set({
-            refreshing: false
-          });
+          return Observable.of(
+            Events.actions.set({
+              refreshing: false
+            })
+          );
         })
     );
 

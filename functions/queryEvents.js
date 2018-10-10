@@ -3,7 +3,7 @@ const event = require("./schema/event");
 const servicesApi = require("./google");
 
 function queryEvents(req, res) {
-  const { bounds, lat, lng } = req.body;
+  const { bounds: queryBounds, lat, lng } = req.body;
 
   const body = {
     query: {
@@ -16,8 +16,10 @@ function queryEvents(req, res) {
 
   let query;
 
-  if (bounds) {
-    const { northeast, southwest } = bounds;
+  let bounds;
+
+  if (queryBounds) {
+    const { northeast, southwest } = queryBounds;
 
     const coordinates = {
       top_left: [southwest.lng, northeast.lat],
@@ -59,8 +61,9 @@ function queryEvents(req, res) {
     });
     query = reverseGeocode.then(geocode => {
       text = geocode.formatted_address;
+      bounds = geocode.geometry.bounds;
 
-      const { northeast, southwest } = geocode.geometry.bounds;
+      const { northeast, southwest } = bounds;
 
       const coordinates = {
         top_left: [southwest.lng, northeast.lat],
@@ -98,6 +101,7 @@ function queryEvents(req, res) {
       const hits = results.hits.hits;
 
       res.send({
+        bounds,
         text,
         hits
       });

@@ -5,11 +5,11 @@ const mutations = ["set"];
 
 export const { actions, types } = createActions(mutations, "events");
 
-function mapDay(state = 0, { type, payload }) {
+function day(state = null, { type, payload }) {
   switch (type) {
     case types.set:
-      if (payload.mapDay !== undefined) {
-        return payload.mapDay;
+      if (payload.day !== undefined) {
+        return payload.day;
       }
       return state;
     default:
@@ -29,35 +29,11 @@ function refreshing(state = true, { type, payload }) {
   }
 }
 
-const makeEvents = hits => {
-  const initial = [
-    { title: "Sunday", data: [] },
-    { title: "Monday", data: [] },
-    { title: "Tuesday", data: [] },
-    { title: "Wednesday", data: [] },
-    { title: "Thursday", data: [] },
-    { title: "Friday", data: [] },
-    { title: "Saturday", data: [] }
-  ];
-
-  if (!hits) {
-    return initial;
-  }
-
-  hits.every(hit => {
-    hit._source.days.forEach(day => {
-      initial[day].data.push(hit);
-    });
-  });
-
-  return initial.filter(day => day.data.length);
-};
-
 function data(state = [], { type, payload }) {
   switch (type) {
     case types.set:
       if (payload.data !== undefined) {
-        return makeEvents(payload.data);
+        return payload.data;
       }
       return state;
     default:
@@ -68,5 +44,5 @@ function data(state = [], { type, payload }) {
 export default combineReducers({
   refreshing,
   data,
-  mapDay
+  day
 });

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import InputScrollView from "react-native-input-scroll-view";
-import { ScrollView, StyleSheet, KeyboardAvoidingView } from "react-native";
+import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 
 export default class EditSpecial extends Component {
