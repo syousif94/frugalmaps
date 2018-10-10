@@ -2,20 +2,8 @@ import React, { Component } from "react";
 import { StyleSheet, TextInput, View, Text } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import { SafeAreaView } from "react-navigation";
-import { Consumer as ResultsConsumer } from "./LocationResults";
-import { Consumer as UIConsumer } from "./LocationUI";
-
-export default props => (
-  <ResultsConsumer>
-    {({ value, onChangeText }) => (
-      <UIConsumer>
-        {({ set }) => (
-          <LocationBox value={value} onChangeText={onChangeText} set={set} />
-        )}
-      </UIConsumer>
-    )}
-  </ResultsConsumer>
-);
+import { connect } from "react-redux";
+import * as Location from "./store/location";
 
 class LocationBox extends Component {
   _onLayout = e => {
@@ -44,8 +32,14 @@ class LocationBox extends Component {
     });
   };
 
+  _onChangeText = text => {
+    this.props.set({
+      searchText: text
+    });
+  };
+
   render() {
-    const { onChangeText, value } = this.props;
+    const { value } = this.props;
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.title}>
@@ -58,7 +52,7 @@ class LocationBox extends Component {
             style={styles.input}
             placeholderTextColor="#333"
             returnKeyType="search"
-            onChangeText={onChangeText}
+            onChangeText={this._onChangeText}
             value={value}
             onFocus={this._onFocus}
             onBlur={this._onBlur}
@@ -69,6 +63,19 @@ class LocationBox extends Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  value: state.location.searchText
+});
+
+const mapDispatchToProps = {
+  set: Location.actions.set
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LocationBox);
 
 const styles = StyleSheet.create({
   container: {

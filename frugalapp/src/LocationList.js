@@ -7,28 +7,10 @@ import {
   Text
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
+import { connect } from "react-redux";
 
-import { Consumer as ResultsConsumer } from "./LocationResults";
-import { Consumer as UIConsumer } from "./LocationUI";
+import * as Location from "./store/location";
 import LocationSuggestion from "./LocationSuggestion";
-
-export default props => (
-  <ResultsConsumer>
-    {({ refreshing, data, suggested }) => (
-      <UIConsumer>
-        {({ focused, listTop }) => (
-          <LocationList
-            refreshing={refreshing}
-            data={data}
-            suggested={suggested}
-            focused={focused}
-            listTop={listTop}
-          />
-        )}
-      </UIConsumer>
-    )}
-  </ResultsConsumer>
-);
 
 class LocationList extends Component {
   _renderItem = data => (
@@ -38,7 +20,7 @@ class LocationList extends Component {
   _keyExtractor = (item, index) => item.place_id;
 
   render() {
-    const { refreshing, data, suggested, focused, listTop } = this.props;
+    const { completions, suggestions, focused, listTop } = this.props;
 
     if (!focused || !listTop) {
       return null;
@@ -64,6 +46,15 @@ class LocationList extends Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  completions: state.location.completions,
+  suggestions: state.location.suggestions,
+  focused: state.location.focused,
+  listTop: state.location.listTop
+});
+
+export default connect(mapStateToProps)(LocationList);
 
 const styles = StyleSheet.create({
   container: {

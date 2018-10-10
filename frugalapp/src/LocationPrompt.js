@@ -10,15 +10,8 @@ import {
 } from "react-native";
 import { BLUE } from "./Colors";
 import { Permissions } from "expo";
-import { Consumer as LocationConsumer } from "./Location";
 
-export default () => (
-  <LocationConsumer>
-    {({ getLocation }) => <LocationPrompt getLocation={getLocation} />}
-  </LocationConsumer>
-);
-
-class LocationPrompt extends Component {
+export default class LocationPrompt extends Component {
   state = {
     buttonOpacity: new Animated.Value(0)
   };
@@ -41,8 +34,6 @@ class LocationPrompt extends Component {
 
   _promptLocation = async () => {
     await Permissions.askAsync(Permissions.LOCATION);
-
-    this.props.getLocation();
   };
 
   _keyboardWillShow = async () => {

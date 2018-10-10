@@ -19,9 +19,11 @@
     "react-native-swiper": "^1.5.13",
     "react-navigation": "^2.15.0",
     "react-redux": "^5.0.7",
-    "redux": "^4.0.0",
-    "redux-observable": "^1.0.0",
-    "rxjs": "^6.3.3",
+    "redux": "3",
+    "redux-logger": "^3.0.6",
+    "redux-observable": "0",
+    "reselect": "^4.0.0",
+    "rxjs": "5",
     "tiny-emitter": "^2.0.2"
   }
 }

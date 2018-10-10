@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "frugalapp",
-    "description": "This project is really great.",
-    "slug": "frugalapp",
+    "name": "LitCal",
+    "description": "LitCal lists nearby brunches, happy hours, and daily specials.",
+    "slug": "litcal",
     "privacy": "public",
     "sdkVersion": "30.0.0",
     "platforms": ["ios", "android"],
@@ -17,9 +17,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     }
