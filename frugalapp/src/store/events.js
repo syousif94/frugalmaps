@@ -1,9 +1,30 @@
 import { combineReducers } from "redux";
+import { createSelector } from "reselect";
 import { createActions } from "./lib";
 
 const mutations = ["set"];
 
 export const { actions, types } = createActions(mutations, "events");
+
+export const markers = createSelector(
+  state => state.events.day,
+  state => state.events.data,
+  (day, data) => {
+    if (!day) {
+      return [];
+    }
+
+    const dayEvents = data.find(datum => {
+      return datum.title === day;
+    });
+
+    if (!dayEvents) {
+      return [];
+    }
+
+    return dayEvents.data;
+  }
+);
 
 function day(state = null, { type, payload }) {
   switch (type) {

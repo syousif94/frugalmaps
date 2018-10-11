@@ -135,7 +135,7 @@ class DayPicker extends Component {
             {data.map(day => {
               const onPress = this._selectDay.bind(null, day.title);
               const textStyle = [styles.dayText];
-              if (day.title === this.props.day) {
+              if (day.title === this.props.day && open) {
                 textStyle.push(styles.selectedDay);
               }
               return (
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     height: 42,
-    width: 44,
+    width: 30,
     justifyContent: "center",
     alignItems: "center"
   }

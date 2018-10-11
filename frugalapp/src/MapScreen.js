@@ -108,6 +108,8 @@ class MapScreen extends Component {
   };
 
   render() {
+    const { markers } = this.props;
+
     return (
       <View style={styles.container}>
         <LocationBox />
@@ -123,7 +125,25 @@ class MapScreen extends Component {
               longitudeDelta: 0.0421
             }}
             onRegionChangeComplete={this._onRegionChangeComplete}
-          />
+          >
+            {markers.map(marker => {
+              const { _id, _source: item } = marker;
+
+              const coordinate = {
+                latitude: item.coordinates[1],
+                longitude: item.coordinates[0]
+              };
+
+              return (
+                <MapView.Marker
+                  title={item.title}
+                  description={item.description}
+                  key={_id}
+                  coordinate={coordinate}
+                />
+              );
+            })}
+          </MapView>
         </View>
         <DayPicker />
         <LocateMe />
@@ -133,13 +153,17 @@ class MapScreen extends Component {
   }
 }
 
+const mapStateToProps = state => ({
+  markers: Events.markers(state)
+});
+
 const mapDispatchToProps = {
   setEvents: Events.actions.set,
   setLocation: Location.actions.set
 };
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(MapScreen);
 
