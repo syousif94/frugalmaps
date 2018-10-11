@@ -12,6 +12,7 @@ import LocationBox from "./LocationBox";
 import LocationList from "./LocationList";
 import LocateMe from "./MapLocateButton";
 import DayPicker from "./MapDayPicker";
+import MapMarker from "./MapMarker";
 
 class MapScreen extends Component {
   _search = false;
@@ -126,22 +127,10 @@ class MapScreen extends Component {
             }}
             onRegionChangeComplete={this._onRegionChangeComplete}
           >
-            {markers.map(marker => {
-              const { _id, _source: item } = marker;
+            {markers.map(data => {
+              const { _id } = data;
 
-              const coordinate = {
-                latitude: item.coordinates[1],
-                longitude: item.coordinates[0]
-              };
-
-              return (
-                <MapView.Marker
-                  title={item.title}
-                  description={item.description}
-                  key={_id}
-                  coordinate={coordinate}
-                />
-              );
+              return <MapMarker data={data} key={_id} />;
             })}
           </MapView>
         </View>
