@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { StyleSheet, View, SectionList } from "react-native";
 import _ from "lodash";
 import { connect } from "react-redux";
+import emitter from "tiny-emitter/instance";
 
 import Item from "./CalendarItem";
 import LocationBox from "./LocationBox";
@@ -12,7 +13,16 @@ import * as Events from "./store/events";
 class CalendarScreen extends Component {
   componentDidMount() {
     this.props.fetch();
+    emitter.on("calendar-top", this._scrollToTop);
   }
+
+  componentWillUnmount() {
+    emitter.off("calendar-top", this._scrollToTop);
+  }
+
+  _scrollToTop = () => {
+    this._list.getScrollResponder().scrollTo({ x: 0, y: 0, animated: false });
+  };
 
   _refresh = () => {
     this.props.fetch();
@@ -25,6 +35,9 @@ class CalendarScreen extends Component {
       <View style={styles.container}>
         <LocationBox />
         <SectionList
+          ref={ref => {
+            this._list = ref;
+          }}
           onRefresh={this._refresh}
           refreshing={refreshing}
           style={styles.list}

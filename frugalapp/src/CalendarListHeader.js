@@ -4,8 +4,9 @@ import { StyleSheet, Text, View } from "react-native";
 import { RED } from "./Colors";
 
 export default class CalendarListHeader extends Component {
+  static height = 36;
   render() {
-    const { item, index, section } = this.props;
+    const { section } = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.info}>
@@ -18,17 +19,13 @@ export default class CalendarListHeader extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: RED
-  },
-  images: {
-    height: 200,
-    backgroundColor: "#f2f2f2"
+    backgroundColor: RED,
+    height: CalendarListHeader.height
   },
   info: {
-    padding: 10
-  },
-  locationInfo: {
-    flexDirection: "row"
+    paddingHorizontal: 10,
+    flex: 1,
+    justifyContent: "center"
   },
   titleText: {
     fontWeight: "600",

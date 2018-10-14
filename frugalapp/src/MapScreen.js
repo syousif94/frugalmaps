@@ -83,6 +83,8 @@ class MapScreen extends Component {
         southwest
       };
 
+      emitter.emit("calendar-top");
+
       this.props.setLocation({
         bounds
       });

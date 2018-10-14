@@ -13,6 +13,8 @@ class LocationSuggestion extends Component {
     let bounds;
     let text;
 
+    emitter.emit("calendar-top");
+
     if (section && section.title !== "Suggestions") {
       bounds = item._source.bounds;
       text = item._source.name;
