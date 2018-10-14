@@ -8,9 +8,11 @@ import {
   Platform
 } from "react-native";
 import { Entypo } from "@expo/vector-icons";
+import { connect } from "react-redux";
 import moment from "moment";
 import emitter from "tiny-emitter/instance";
 
+import * as Location from "./store/location";
 import { BLUE } from "./Colors";
 import { Constants } from "expo";
 
@@ -83,7 +85,7 @@ class Map extends Component {
   }
 }
 
-export default class TabBar extends Component {
+class TabBar extends Component {
   _onMap = () => {
     this.props.navigation.navigate("Map");
   };
@@ -97,10 +99,21 @@ export default class TabBar extends Component {
     emitter.emit("focus-picker");
   };
 
+  _onLayout = e => {
+    const {
+      nativeEvent: {
+        layout: { height }
+      }
+    } = e;
+    this.props.set({
+      listBottom: height
+    });
+  };
+
   render() {
     const selected = this.props.navigation.state.index;
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} onLayout={this._onLayout}>
         <View style={styles.footer}>
           <Calendar selected={selected} onPress={this._onCalendar} index={0} />
           <Upload selected={selected} index={1} onPress={this._onSubmit} />
@@ -110,6 +123,15 @@ export default class TabBar extends Component {
     );
   }
 }
+
+const mapDispatchToProps = {
+  set: Location.actions.set
+};
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(TabBar);
 
 const styles = StyleSheet.create({
   container: {

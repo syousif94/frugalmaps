@@ -29,6 +29,18 @@ function listTop(state = null, { type, payload }) {
   }
 }
 
+function listBottom(state = null, { type, payload }) {
+  switch (type) {
+    case types.set:
+      if (payload.listBottom !== undefined) {
+        return payload.listBottom;
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
 function focused(state = false, { type, payload }) {
   switch (type) {
     case types.set:
@@ -96,5 +108,6 @@ export default combineReducers({
   text,
   bounds,
   suggestions,
-  completions
+  completions,
+  listBottom
 });

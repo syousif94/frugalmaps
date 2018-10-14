@@ -13,7 +13,7 @@ class LocationSuggestion extends Component {
     let bounds;
     let text;
 
-    if (section) {
+    if (section && section.title !== "Suggestions") {
       bounds = item._source.bounds;
       text = item._source.name;
     } else {
@@ -38,7 +38,7 @@ class LocationSuggestion extends Component {
   _renderCount = () => {
     const { item, section } = this.props;
 
-    if (!section) {
+    if (!section || section.title === "Suggestions") {
       return null;
     }
 
@@ -65,7 +65,7 @@ class LocationSuggestion extends Component {
 
     let addressText = "";
 
-    if (section) {
+    if (section && section.title !== "Suggestions") {
       const [city, state] = item._source.name.split(", ");
       name = city;
       addressText = state;

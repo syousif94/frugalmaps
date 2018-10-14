@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     marginRight: 2
   },
   info: {
-    marginTop: 2
+    marginTop: 4
   },
   titleText: {
     fontWeight: "600",

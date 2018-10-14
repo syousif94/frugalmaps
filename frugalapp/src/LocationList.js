@@ -1,80 +1,78 @@
 import React, { Component } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  KeyboardAvoidingView,
-  SectionList
-} from "react-native";
-import { SafeAreaView } from "react-navigation";
+import { View, Text, StyleSheet, Keyboard, SectionList } from "react-native";
 import { connect } from "react-redux";
 
 import * as Location from "./store/location";
 import LocationSuggestion from "./LocationSuggestion";
 
 class LocationList extends Component {
-  _renderItem = data => (
-    <LocationSuggestion {...data} key={data.item.place_id} />
-  );
+  state = {
+    keyboardHeight: 0
+  };
+
+  componentDidMount() {
+    this.keyboardWillShowListener = Keyboard.addListener(
+      "keyboardWillShow",
+      this._keyboardWillShow
+    );
+  }
+
+  componentWillUnmount() {
+    this.keyboardWillShowListener.remove();
+  }
+
+  _keyboardWillShow = e => {
+    this.setState({
+      keyboardHeight: e.endCoordinates.height
+    });
+  };
 
   _renderSectionItem = data => (
     <LocationSuggestion {...data} key={data.section.title + data.index} />
   );
 
-  _keyExtractor = (item, index) => item.place_id;
-
   _renderList = () => {
     const { completions, suggestions, text } = this.props;
 
+    let data = suggestions;
+
     if (text && text.length) {
-      return (
-        <FlatList
-          style={styles.list}
-          data={completions}
-          renderItem={this._renderItem}
-          keyExtractor={this._keyExtractor}
-          keyboardDismissMode="none"
-          keyboardShouldPersistTaps="handled"
-          alwaysBounceVertical
-          ItemSeparatorComponent={() => <View style={styles.divider} />}
-        />
-      );
-    } else {
-      return (
-        <SectionList
-          style={styles.list}
-          renderItem={this._renderSectionItem}
-          renderSectionHeader={data => (
-            <View style={styles.sectionHeader} key={data.index}>
-              <Text style={styles.sectionText}>{data.section.title}</Text>
-            </View>
-          )}
-          ItemSeparatorComponent={() => <View style={styles.divider} />}
-          sections={suggestions}
-          keyExtractor={(item, index) => item + index}
-          keyboardDismissMode="none"
-          keyboardShouldPersistTaps="handled"
-          alwaysBounceVertical
-        />
-      );
-    }
-  };
-
-  render() {
-    const { focused, listTop } = this.props;
-
-    if (!focused || !listTop) {
-      return null;
+      data = [{ title: "Suggestions", data: completions }, ...suggestions];
     }
 
     return (
-      <View style={[styles.container, { top: listTop }]}>
-        <SafeAreaView style={styles.flex}>
-          <KeyboardAvoidingView behavior="padding" style={styles.flex}>
-            {this._renderList()}
-          </KeyboardAvoidingView>
-        </SafeAreaView>
+      <SectionList
+        style={styles.list}
+        renderItem={this._renderSectionItem}
+        renderSectionHeader={data => (
+          <View style={styles.sectionHeader} key={data.index}>
+            <Text style={styles.sectionText}>{data.section.title}</Text>
+          </View>
+        )}
+        ItemSeparatorComponent={() => <View style={styles.divider} />}
+        sections={data}
+        keyExtractor={(item, index) => item + index}
+        keyboardDismissMode="none"
+        keyboardShouldPersistTaps="handled"
+        alwaysBounceVertical
+      />
+    );
+  };
+
+  render() {
+    const { focused, listTop, listBottom } = this.props;
+
+    if (!focused || !listTop || !listBottom) {
+      return null;
+    }
+
+    const { keyboardHeight } = this.state;
+
+    const paddingBottom = keyboardHeight - listBottom;
+
+    return (
+      <View style={[styles.container, { top: listTop, paddingBottom }]}>
+        {this._renderList()}
       </View>
     );
   }
@@ -85,6 +83,7 @@ const mapStateToProps = state => ({
   suggestions: state.location.suggestions,
   focused: state.location.focused,
   listTop: state.location.listTop,
+  listBottom: state.location.listBottom,
   text: state.location.text
 });
 
