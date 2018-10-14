@@ -25,6 +25,13 @@ export default class MapMarker extends Component {
       timeSpan = `All Day`;
     }
 
+    const location = item.location
+      .replace(/^(the |a )/gi, "")
+      .replace(" ", "")
+      .toUpperCase();
+
+    const spot = `${location.slice(0, 2)}\n${location.slice(2, 4)}`;
+
     return (
       <MapView.Marker
         title={item.title}
@@ -32,8 +39,8 @@ export default class MapMarker extends Component {
         coordinate={coordinate}
         image={require("../assets/pin.png")}
       >
-        <View style={styles.number}>
-          <Text style={styles.numberText}>1</Text>
+        <View style={styles.spot}>
+          <Text style={styles.spotText}>{spot}</Text>
         </View>
         <MapView.Callout>
           <ScrollView style={styles.images} horizontal>
@@ -68,18 +75,22 @@ export default class MapMarker extends Component {
 }
 
 const styles = StyleSheet.create({
-  number: {
+  spot: {
     position: "absolute",
-    top: 2,
+    top: 4,
     left: 0,
     width: 18,
+    justifyContent: "center",
     alignItems: "center",
     backgroundColor: "transparent"
   },
-  numberText: {
+  spotText: {
+    paddingLeft: 1.5,
+    lineHeight: 6,
+    textAlign: "center",
     color: "#fff",
-    fontSize: 14,
-    fontWeight: "500"
+    fontSize: 6,
+    fontWeight: "700"
   },
   images: {
     width: 250,

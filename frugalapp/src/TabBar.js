@@ -75,7 +75,7 @@ class Map extends Component {
       textStyle.push(styles.blueText);
     }
     return (
-      <TouchableOpacity style={styles.tab} onPress={this.props.onPress}>
+      <TouchableOpacity style={styles.tab} onPress={onPress}>
         <View style={styles.icon}>
           <Entypo name="map" size={18} color={iconColor} />
         </View>

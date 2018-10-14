@@ -2,6 +2,7 @@ import { Permissions, Location as ExpoLocation } from "expo";
 import { combineEpics } from "redux-observable";
 import { Observable } from "rxjs/Observable";
 import emitter from "tiny-emitter/instance";
+import moment from "moment";
 
 import api from "../API";
 import * as Events from "./events";
@@ -31,7 +32,7 @@ const makeEvents = hits => {
   return initial.filter(day => day.data.length);
 };
 
-const events = action$ =>
+const events = (action$, store) =>
   action$
     .ofType(Events.types.set)
     .filter(action => action.payload.refreshing)
@@ -86,8 +87,30 @@ const events = action$ =>
 
           let day;
 
+          const {
+            events: { day: storeDay }
+          } = store.getState();
+
+          let today = moment().format("dddd");
+
           if (data.length) {
-            day = data[0].title;
+            if (storeDay) {
+              const storeDayData = data.find(data => data.title === storeDay);
+
+              if (storeDayData) {
+                day = storeDay;
+              }
+            }
+
+            const todayData = data.find(data => data.title === today);
+
+            if (todayData) {
+              day = today;
+            }
+
+            if (!day) {
+              day = data[0].title;
+            }
           }
 
           return Observable.of(
