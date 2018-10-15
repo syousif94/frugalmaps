@@ -1,13 +1,19 @@
 import React, { Component } from "react";
-import { createBottomTabNavigator } from "react-navigation";
+import {
+  createBottomTabNavigator,
+  createStackNavigator
+} from "react-navigation";
 
 import MapScreen from "./MapScreen";
 import CalendarScreen from "./CalendarScreen";
 import SubmitScreen from "./SubmitScreen";
 
+import PublishedScreen from "./PublishedScreen";
+import SubmissionsScreen from "./SubmissionsScreen";
+
 import TabBar from "./TabBar";
 
-const MainScreen = createBottomTabNavigator(
+const TabScreen = createBottomTabNavigator(
   {
     Calendar: CalendarScreen,
     Submit: SubmitScreen,
@@ -17,6 +23,18 @@ const MainScreen = createBottomTabNavigator(
     initialRoute: "Calendar",
     tabBarComponent: TabBar,
     lazy: false
+  }
+);
+
+const MainScreen = createStackNavigator(
+  {
+    Home: TabScreen,
+    Published: PublishedScreen,
+    Submissions: SubmissionsScreen
+  },
+  {
+    initialRoute: "Home",
+    headerMode: "none"
   }
 );
 

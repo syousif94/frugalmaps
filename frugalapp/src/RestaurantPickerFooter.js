@@ -1,20 +1,29 @@
 import React, { Component } from "react";
 import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
+import { withNavigation } from "react-navigation";
 
-export default class Footer extends Component {
+class Footer extends Component {
+  _onPressPublished = () => {
+    this.props.navigation.navigate("Published");
+  };
+
+  _onPressSubmissions = () => {
+    this.props.navigation.navigate("Submissions");
+  };
+
   render() {
     const { data } = this.props;
     return (
       <View style={styles.container}>
         {data.length ? <View style={styles.divider} /> : null}
-        <TouchableOpacity style={styles.btn}>
+        <TouchableOpacity style={styles.btn} onPress={this._onPressSubmissions}>
           <Text style={styles.btnText}>Submissions</Text>
           <View style={styles.count}>
             <Text style={styles.countText}>0</Text>
           </View>
         </TouchableOpacity>
         <View style={styles.divider} />
-        <TouchableOpacity style={styles.btn}>
+        <TouchableOpacity style={styles.btn} onPress={this._onPressPublished}>
           <Text style={styles.btnText}>Published</Text>
           <View style={styles.count}>
             <Text style={styles.countText}>0</Text>
@@ -25,6 +34,8 @@ export default class Footer extends Component {
     );
   }
 }
+
+export default withNavigation(Footer);
 
 const styles = StyleSheet.create({
   container: {
