@@ -250,6 +250,6 @@ const styles = StyleSheet.create({
   instruction: {
     marginTop: 5,
     marginHorizontal: 5,
-    color: "#a9a9a9"
+    color: "#555"
   }
 });

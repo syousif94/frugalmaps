@@ -5,7 +5,9 @@ import {
   Text,
   TouchableOpacity,
   Animated,
-  StyleSheet
+  StyleSheet,
+  Linking,
+  Alert
 } from "react-native";
 import { BLUE } from "./Colors";
 import { Permissions } from "expo";
@@ -15,7 +17,8 @@ import * as Location from "./store/location";
 
 class LocationPrompt extends Component {
   state = {
-    buttonOpacity: new Animated.Value(0)
+    buttonOpacity: new Animated.Value(0),
+    hidden: true
   };
 
   componentDidMount() {
@@ -35,6 +38,26 @@ class LocationPrompt extends Component {
   }
 
   _promptLocation = async () => {
+    const { status: askStatus } = await Permissions.getAsync(
+      Permissions.LOCATION
+    );
+
+    if (askStatus === "denied") {
+      Alert.alert(
+        "Permission Denied",
+        "To enable location, tap Open Settings, then tap on Location, and finally tap on While Using the App.",
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Open Settings",
+            onPress: () => {
+              Linking.openURL("app-settings:");
+            }
+          }
+        ]
+      );
+    }
+
     const { status: locationStatus } = await Permissions.askAsync(
       Permissions.LOCATION
     );
@@ -48,11 +71,22 @@ class LocationPrompt extends Component {
   };
 
   _setButtonOpacity = opacity => {
+    if (opacity === 1) {
+      this.setState({
+        hidden: false
+      });
+    }
     Animated.timing(
       this.state.buttonOpacity,
       { duration: 150, toValue: opacity },
       { useNativeDriver: true }
-    ).start();
+    ).start(() => {
+      if (opacity === 0) {
+        this.setState({
+          hidden: true
+        });
+      }
+    });
   };
 
   _keyboardWillShow = async () => {
@@ -69,23 +103,35 @@ class LocationPrompt extends Component {
     this._setButtonOpacity(0);
   };
 
-  render() {
+  _renderButton = () => {
+    if (this.props.hidden) {
+      return null;
+    }
+
     const buttonStyle = [
       styles.btnContainer,
       {
         opacity: this.state.buttonOpacity
       }
     ];
+
     return (
-      <KeyboardAvoidingView behavior="padding">
-        <Animated.View style={buttonStyle}>
-          <TouchableOpacity style={styles.btn} onPress={this._promptLocation}>
-            <Text style={styles.title}>Enable Location Access</Text>
-            <Text style={styles.subtitle}>
-              Search is better with location access
-            </Text>
-          </TouchableOpacity>
-        </Animated.View>
+      <Animated.View style={buttonStyle}>
+        <TouchableOpacity style={styles.btn} onPress={this._promptLocation}>
+          <Text style={styles.title}>Enable Location Access</Text>
+          <Text style={styles.subtitle}>
+            Search is better with location access
+          </Text>
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  };
+
+  render() {
+    const offset = this.state.visible ? 0 : -44;
+    return (
+      <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={offset}>
+        {this._renderButton()}
       </KeyboardAvoidingView>
     );
   }

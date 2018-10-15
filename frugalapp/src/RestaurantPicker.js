@@ -7,6 +7,7 @@ import api from "./API";
 import { Entypo } from "@expo/vector-icons";
 import RestaurantSuggestion from "./RestaurantSuggestion";
 import LocationPrompt from "./LocationPrompt";
+import Footer from "./RestaurantPickerFooter";
 
 class RestaurantPicker extends Component {
   state = {
@@ -68,6 +69,8 @@ class RestaurantPicker extends Component {
 
   _keyExtractor = (item, index) => item.place_id;
 
+  _renderFooter = () => <Footer data={this.state.data} />;
+
   render() {
     const { onChangeText, ...props } = this.props;
     return (
@@ -93,6 +96,7 @@ class RestaurantPicker extends Component {
         </SafeAreaView>
         <View style={styles.divider} />
         <FlatList
+          ListFooterComponent={this._renderFooter}
           style={styles.list}
           data={this.state.data}
           renderItem={this._renderItem}
