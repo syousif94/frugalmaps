@@ -102,10 +102,12 @@ const events = (action$, store) =>
               }
             }
 
-            const todayData = data.find(data => data.title === today);
+            if (!day) {
+              const todayData = data.find(data => data.title === today);
 
-            if (todayData) {
-              day = today;
+              if (todayData) {
+                day = today;
+              }
             }
 
             if (!day) {
