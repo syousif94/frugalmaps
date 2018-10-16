@@ -3,14 +3,13 @@ import { createLogger } from "redux-logger";
 import { createEpicMiddleware } from "redux-observable";
 import reducers from "./reducers";
 import epics from "./epics";
-
-const dev = process.env.NODE_ENV === "development";
+import { DEV } from "../Constants";
 
 const epicMiddleware = createEpicMiddleware(epics);
 
 let middleware = [epicMiddleware];
 
-if (dev) {
+if (DEV) {
   middleware = [createLogger(), ...middleware];
 }
 
