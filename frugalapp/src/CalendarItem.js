@@ -7,10 +7,31 @@ import {
   ScrollView,
   Image
 } from "react-native";
+import { FacebookAds } from "expo";
 import { Entypo } from "@expo/vector-icons";
 
 export default class CalendarItem extends Component {
   static imageHeight = 220;
+
+  _renderAd = () => {
+    const { index, section } = this.props;
+
+    if (index + 1 === section.data.length) {
+      return (
+        <View style={styles.ad}>
+          <FacebookAds.BannerView
+            style={{ marginTop: -20 }}
+            placementId="1931177036970533_1956753154412921"
+            type="standard"
+            onPress={() => console.log("click")}
+            onError={err => console.log("error", err)}
+          />
+        </View>
+      );
+    }
+
+    return null;
+  };
 
   render() {
     const {
@@ -67,6 +88,7 @@ export default class CalendarItem extends Component {
             <Button action="notify" />
           </View>
         </View>
+        {this._renderAd()}
       </View>
     );
   }
@@ -146,5 +168,9 @@ const styles = StyleSheet.create({
   actionText: {
     marginLeft: 13,
     fontWeight: "600"
+  },
+  ad: {
+    height: 50,
+    overflow: "hidden"
   }
 });
