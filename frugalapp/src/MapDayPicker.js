@@ -34,11 +34,21 @@ class DayPicker extends Component {
     }
   }
 
+  close = () => {
+    if (this.state.open && this.props.day) {
+      this._closePicker(this.props.day);
+    }
+  };
+
   _selectDay = day => {
     this.props.set({
       day
     });
 
+    this._closePicker(day);
+  };
+
+  _closePicker = day => {
     const index = this.props.data.findIndex(datum => {
       return datum.title === day;
     });
@@ -170,7 +180,9 @@ const mapDispatchToProps = {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
+  null,
+  { withRef: true }
 )(DayPicker);
 
 const styles = StyleSheet.create({

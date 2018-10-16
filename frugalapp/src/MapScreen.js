@@ -32,6 +32,9 @@ class MapScreen extends Component {
         if (!this._search) {
           this._search = true;
         }
+        if (this._dayPicker) {
+          this._dayPicker.getWrappedInstance().close();
+        }
         return false;
       },
       onStartShouldSetPanResponderCapture: (evt, gestureState) => false,
@@ -136,7 +139,7 @@ class MapScreen extends Component {
             })}
           </MapView>
         </View>
-        <DayPicker />
+        <DayPicker ref={ref => (this._dayPicker = ref)} />
         <LocateMe />
         <LocationList />
       </View>
