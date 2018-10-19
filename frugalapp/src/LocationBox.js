@@ -108,7 +108,9 @@ export default connect(
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
+    borderBottomWidth: 1,
+    borderColor: "#e0e0e0"
   },
   title: {
     justifyContent: "center",
