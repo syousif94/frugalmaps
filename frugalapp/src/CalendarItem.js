@@ -16,7 +16,7 @@ export default class CalendarItem extends Component {
   _renderAd = () => {
     const { index, section } = this.props;
 
-    if (index + 1 === section.data.length) {
+    if (index === 0) {
       return (
         <View style={styles.ad}>
           <FacebookAds.BannerView
@@ -35,9 +35,7 @@ export default class CalendarItem extends Component {
 
   render() {
     const {
-      item: { _source: item },
-      index,
-      section
+      item: { _source: item }
     } = this.props;
 
     let timeSpan;
@@ -54,6 +52,7 @@ export default class CalendarItem extends Component {
 
     return (
       <View style={styles.container}>
+        {this._renderAd()}
         <View style={styles.info}>
           <Text style={styles.titleText}>{item.title}</Text>
           <View style={styles.locationInfo}>
@@ -88,7 +87,6 @@ export default class CalendarItem extends Component {
             <Button action="notify" />
           </View>
         </View>
-        {this._renderAd()}
       </View>
     );
   }
