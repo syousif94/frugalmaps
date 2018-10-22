@@ -38,6 +38,18 @@ function day(state = null, { type, payload }) {
   }
 }
 
+function initialized(state = false, { type, payload }) {
+  switch (type) {
+    case types.set:
+      if (payload.initialized !== undefined) {
+        return payload.initialized;
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
 function refreshing(state = true, { type, payload }) {
   switch (type) {
     case types.set:
@@ -65,5 +77,6 @@ function data(state = [], { type, payload }) {
 export default combineReducers({
   refreshing,
   data,
-  day
+  day,
+  initialized
 });

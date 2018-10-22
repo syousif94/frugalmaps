@@ -88,7 +88,7 @@ function queryEvents(req, res) {
       });
     });
   } else {
-    text = "Most Recent";
+    text = "Recently Added";
     query = elastic.search({
       index: event.index,
       type: event.type,

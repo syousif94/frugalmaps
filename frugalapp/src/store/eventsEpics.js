@@ -124,7 +124,8 @@ const events = (action$, store) =>
             Events.actions.set({
               refreshing: false,
               data,
-              day
+              day,
+              initialized: true
             })
           );
         })
@@ -132,7 +133,8 @@ const events = (action$, store) =>
           console.log({ events: error });
           return Observable.of(
             Events.actions.set({
-              refreshing: false
+              refreshing: false,
+              initialized: true
             })
           );
         })
