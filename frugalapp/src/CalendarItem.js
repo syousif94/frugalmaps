@@ -5,10 +5,13 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
-  Image
+  Image,
+  Linking,
+  AsyncStorage,
+  Alert
 } from "react-native";
-import { FacebookAds } from "expo";
-import { Entypo } from "@expo/vector-icons";
+import { FacebookAds, Notifications } from "expo";
+import { Entypo, MaterialIcons } from "@expo/vector-icons";
 
 export default class CalendarItem extends Component {
   static imageHeight = 220;
@@ -82,9 +85,9 @@ export default class CalendarItem extends Component {
         <View style={styles.info}>
           <Text style={styles.descriptionText}>{item.description}</Text>
           <View style={styles.actions}>
-            <Button action="share" />
-            <Button action="directions" />
-            <Button action="notify" />
+            <Button action="directions" {...this.props} />
+            <Button action="notify" {...this.props} />
+            <Button action="go" {...this.props} />
           </View>
         </View>
       </View>
@@ -93,6 +96,53 @@ export default class CalendarItem extends Component {
 }
 
 class Button extends Component {
+  _onPress = async () => {
+    const {
+      action,
+      item: { _id: id, _source: item },
+      section: { iso }
+    } = this.props;
+    switch (action) {
+      case "notify":
+        try {
+          const existingNotificationId = await AsyncStorage.getItem(
+            `${id}${iso}`
+          );
+
+          if (existingNotificationId) {
+            await Notifications.cancelScheduledNotificationAsync(
+              existingNotificationId
+            );
+            return;
+          }
+
+          const title = `${item.title}`;
+          const body = `${item.location}`;
+
+          const notificationId = await Notifications.scheduleLocalNotificationAsync(
+            {
+              title,
+              body,
+              data: { id, iso }
+            },
+            { time: Date.now() + 5000, repeat: "week" }
+          );
+
+          await AsyncStorage.setItem(`${id}${iso}`, notificationId);
+        } catch (error) {
+          Alert.alert("Error", error.message);
+        }
+        break;
+      case "go":
+        Linking.openURL(item.url);
+        break;
+      case "directions":
+        break;
+      default:
+        return null;
+    }
+  };
+
   render() {
     const { action } = this.props;
     let icon;
@@ -102,9 +152,9 @@ class Button extends Component {
         icon = <Entypo name="bell" size={18} color="#000" />;
         text = "Remind Me";
         break;
-      case "share":
-        icon = <Entypo name="forward" size={18} color="#000" />;
-        text = "Share";
+      case "go":
+        icon = <MaterialIcons name="directions" size={20} color="#000" />;
+        text = "Directions";
         break;
       case "directions":
         icon = <Entypo name="map" size={18} color="#000" />;
@@ -114,7 +164,7 @@ class Button extends Component {
         return null;
     }
     return (
-      <TouchableOpacity style={styles.action}>
+      <TouchableOpacity style={styles.action} onPress={this._onPress}>
         {icon}
         <Text style={styles.actionText}>{text}</Text>
       </TouchableOpacity>

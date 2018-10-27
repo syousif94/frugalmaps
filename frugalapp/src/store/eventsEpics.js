@@ -10,13 +10,13 @@ import * as Location from "./location";
 
 const makeEvents = hits => {
   const initial = [
-    { title: "Sunday", data: [] },
-    { title: "Monday", data: [] },
-    { title: "Tuesday", data: [] },
-    { title: "Wednesday", data: [] },
-    { title: "Thursday", data: [] },
-    { title: "Friday", data: [] },
-    { title: "Saturday", data: [] }
+    { title: "Sunday", data: [], iso: 7, away: 0 },
+    { title: "Monday", data: [], iso: 1, away: 0 },
+    { title: "Tuesday", data: [], iso: 2, away: 0 },
+    { title: "Wednesday", data: [], iso: 3, away: 0 },
+    { title: "Thursday", data: [], iso: 4, away: 0 },
+    { title: "Friday", data: [], iso: 5, away: 0 },
+    { title: "Saturday", data: [], iso: 6, away: 0 }
   ];
 
   if (!hits) {
@@ -29,7 +29,20 @@ const makeEvents = hits => {
     });
   });
 
-  return initial.filter(day => day.data.length);
+  const today = moment().weekday();
+
+  const todayIndex = initial.findIndex(({ iso }) => iso === today);
+
+  const todayAndAfter = initial.slice(todayIndex, 7);
+
+  const beforeToday = initial.slice(0, todayIndex);
+
+  return [...todayAndAfter, ...beforeToday]
+    .map((day, index) => {
+      day.away = index;
+      return day;
+    })
+    .filter(day => day.data.length);
 };
 
 const events = (action$, store) =>

@@ -1,14 +1,15 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import { View, Image, Text, StyleSheet } from "react-native";
 
-export default class CalendarEmpty extends Component {
+class CalendarEmpty extends Component {
   render() {
     return (
       <View style={styles.container}>
         <Image source={require("../assets/sadCalendarLarge.png")} />
         <Text style={styles.headerText}>No Specials Found</Text>
         <Text style={styles.subText}>
-          We don't have any data for this location yet.
+          We don't have any data for {this.props.text} yet.
         </Text>
         <Text style={styles.subText}>
           You can submit some yourself or browse trending cities and recently
@@ -22,6 +23,12 @@ export default class CalendarEmpty extends Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  text: state.location.text
+});
+
+export default connect(mapStateToProps)(CalendarEmpty);
 
 const styles = StyleSheet.create({
   container: {
