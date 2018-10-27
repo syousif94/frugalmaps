@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { FacebookAds, Notifications } from "expo";
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
+import { RED } from "./Colors";
 
 export default class CalendarItem extends Component {
   static imageHeight = 220;
@@ -96,23 +97,32 @@ export default class CalendarItem extends Component {
 }
 
 class Button extends Component {
+  state = {
+    notify: false
+  };
+
   _onPress = async () => {
     const {
       action,
       item: { _id: id, _source: item },
       section: { iso }
     } = this.props;
+
     switch (action) {
       case "notify":
         try {
-          const existingNotificationId = await AsyncStorage.getItem(
-            `${id}${iso}`
-          );
+          const itemId = `${id}${iso}`;
+
+          const existingNotificationId = await AsyncStorage.getItem(itemId);
 
           if (existingNotificationId) {
             await Notifications.cancelScheduledNotificationAsync(
               existingNotificationId
             );
+            await AsyncStorage.removeItem(itemId);
+            this.setState({
+              notify: false
+            });
             return;
           }
 
@@ -128,7 +138,10 @@ class Button extends Component {
             { time: Date.now() + 5000, repeat: "week" }
           );
 
-          await AsyncStorage.setItem(`${id}${iso}`, notificationId);
+          await AsyncStorage.setItem(itemId, notificationId);
+          this.setState({
+            notify: true
+          });
         } catch (error) {
           Alert.alert("Error", error.message);
         }
@@ -143,21 +156,77 @@ class Button extends Component {
     }
   };
 
+  componentDidMount() {
+    this._areNotificationsEnabled();
+  }
+
+  _areNotificationsEnabled = async () => {
+    if (this.props.action !== "notify") {
+      return;
+    }
+
+    const {
+      action,
+      item: { _id: id, _source: item },
+      section: { iso }
+    } = this.props;
+
+    try {
+      const existingNotificationId = await AsyncStorage.getItem(`${id}${iso}`);
+
+      if (existingNotificationId) {
+        this.setState({
+          notify: true
+        });
+      }
+    } catch (error) {
+      this.setState({
+        notify: false
+      });
+      Alert.alert("Error", error.message);
+    }
+  };
+
+  _renderNotificationsEnabled = () => {
+    if (this.props.action === "notify" && this.state.notify) {
+      return <View style={styles.notificaitonsEnabled} />;
+    }
+
+    return null;
+  };
+
+  _renderIcon = () => {
+    const { action } = this.props;
+
+    switch (action) {
+      case "notify":
+        return (
+          <View>
+            <Entypo name="bell" size={18} color="#000" />
+            {this._renderNotificationsEnabled()}
+          </View>
+        );
+      case "go":
+        return <MaterialIcons name="directions" size={20} color="#000" />;
+      case "directions":
+        return <Entypo name="map" size={18} color="#000" />;
+        break;
+      default:
+        return null;
+    }
+  };
+
   render() {
     const { action } = this.props;
-    let icon;
     let text;
     switch (action) {
       case "notify":
-        icon = <Entypo name="bell" size={18} color="#000" />;
         text = "Remind Me";
         break;
       case "go":
-        icon = <MaterialIcons name="directions" size={20} color="#000" />;
         text = "Directions";
         break;
       case "directions":
-        icon = <Entypo name="map" size={18} color="#000" />;
         text = "Map";
         break;
       default:
@@ -165,7 +234,7 @@ class Button extends Component {
     }
     return (
       <TouchableOpacity style={styles.action} onPress={this._onPress}>
-        {icon}
+        {this._renderIcon()}
         <Text style={styles.actionText}>{text}</Text>
       </TouchableOpacity>
     );
@@ -216,6 +285,15 @@ const styles = StyleSheet.create({
   actionText: {
     marginLeft: 13,
     fontWeight: "600"
+  },
+  notificaitonsEnabled: {
+    position: "absolute",
+    top: -4,
+    right: -4,
+    height: 6,
+    width: 6,
+    borderRadius: 3,
+    backgroundColor: RED
   },
   ad: {
     height: 50,
