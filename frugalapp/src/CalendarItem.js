@@ -86,7 +86,7 @@ export default class CalendarItem extends Component {
         <View style={styles.info}>
           <Text style={styles.descriptionText}>{item.description}</Text>
           <View style={styles.actions}>
-            <Button action="directions" {...this.props} />
+            <Button action="info" {...this.props} />
             <Button action="notify" {...this.props} />
             <Button action="go" {...this.props} />
           </View>
@@ -177,7 +177,7 @@ class Button extends Component {
       case "go":
         Linking.openURL(item.url);
         break;
-      case "directions":
+      case "info":
         break;
       default:
         return null;
@@ -236,8 +236,8 @@ class Button extends Component {
         );
       case "go":
         return <MaterialIcons name="directions" size={21} color="#000" />;
-      case "directions":
-        return <Entypo name="map" size={18} color="#000" />;
+      case "info":
+        return <Entypo name="info-with-circle" size={18} color="#000" />;
         break;
       default:
         return null;
@@ -254,8 +254,8 @@ class Button extends Component {
       case "go":
         text = "Directions";
         break;
-      case "directions":
-        text = "Map";
+      case "info":
+        text = "More Info";
         break;
       default:
         return null;
@@ -311,13 +311,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6
   },
   actionText: {
-    marginLeft: 13,
+    marginLeft: 8,
     fontWeight: "600"
   },
   notificaitonsEnabled: {
     position: "absolute",
     top: -4,
-    right: -4,
+    right: -1,
     height: 6,
     width: 6,
     borderRadius: 3,

@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 
-import { Entypo } from "@expo/vector-icons";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import { BLUE } from "./Colors";
 import * as Events from "./store/events";
 
@@ -177,7 +177,13 @@ class DayPicker extends Component {
             })}
           </Animated.View>
           <Animated.View style={iconStyle} pointerEvents={iconEvents}>
-            <Entypo name="select-arrows" size={18} color={BLUE} />
+            <Ionicons
+              style={{ marginBottom: -6 }}
+              name="ios-arrow-up"
+              size={12}
+              color={"#777"}
+            />
+            <Ionicons name="ios-arrow-down" size={12} color={"#777"} />
           </Animated.View>
         </TouchableOpacity>
       </Animated.View>

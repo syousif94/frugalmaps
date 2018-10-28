@@ -10,6 +10,7 @@ import SubmitScreen from "./SubmitScreen";
 
 import PublishedScreen from "./PublishedScreen";
 import SubmissionsScreen from "./SubmissionsScreen";
+// import Info from "./InfoScreen";
 
 import TabBar from "./TabBar";
 
@@ -31,6 +32,7 @@ const MainScreen = createStackNavigator(
     Home: TabScreen,
     Published: PublishedScreen,
     Submissions: SubmissionsScreen
+    // Info: InfoScreen
   },
   {
     initialRoute: "Home",
