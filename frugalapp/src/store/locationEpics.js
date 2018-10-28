@@ -43,7 +43,7 @@ const completions = (action$, store) =>
   action$
     .ofType(Location.types.set)
     .filter(action => action.payload.text && action.payload.text.length)
-    .throttleTime(50)
+    .debounceTime(15)
     .switchMap(action =>
       Observable.defer(async () => {
         try {

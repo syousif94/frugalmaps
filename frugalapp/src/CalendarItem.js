@@ -10,9 +10,12 @@ import {
   AsyncStorage,
   Alert
 } from "react-native";
+import { connect } from "react-redux";
 import { FacebookAds, Notifications, Permissions } from "expo";
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
 import { RED } from "./Colors";
+import { withNavigation } from "react-navigation";
+import * as Events from "./store/events";
 
 export default class CalendarItem extends Component {
   static imageHeight = 220;
@@ -86,7 +89,7 @@ export default class CalendarItem extends Component {
         <View style={styles.info}>
           <Text style={styles.descriptionText}>{item.description}</Text>
           <View style={styles.actions}>
-            <Button action="info" {...this.props} />
+            <MoreInfoButton action="info" {...this.props} />
             <Button action="notify" {...this.props} />
             <Button action="go" {...this.props} />
           </View>
@@ -109,6 +112,17 @@ class Button extends Component {
     } = this.props;
 
     switch (action) {
+      case "go":
+        Linking.openURL(item.url);
+        break;
+      case "info":
+        this.props.set({
+          selectedEvent: {
+            data: this.props.item
+          }
+        });
+        this.props.navigation.navigate("Info");
+        break;
       case "notify":
         try {
           const itemId = `${id}${iso}`;
@@ -174,11 +188,6 @@ class Button extends Component {
           Alert.alert("Error", error.message);
         }
         break;
-      case "go":
-        Linking.openURL(item.url);
-        break;
-      case "info":
-        break;
       default:
         return null;
     }
@@ -238,7 +247,6 @@ class Button extends Component {
         return <MaterialIcons name="directions" size={21} color="#000" />;
       case "info":
         return <Entypo name="info-with-circle" size={18} color="#000" />;
-        break;
       default:
         return null;
     }
@@ -268,6 +276,15 @@ class Button extends Component {
     );
   }
 }
+
+NavButton = withNavigation(Button);
+
+MoreInfoButton = connect(
+  null,
+  {
+    set: Events.actions.set
+  }
+)(NavButton);
 
 const styles = StyleSheet.create({
   container: {

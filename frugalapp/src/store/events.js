@@ -74,9 +74,35 @@ function data(state = [], { type, payload }) {
   }
 }
 
+function selectedEvent(state = { id: null, data: null }, { type, payload }) {
+  switch (type) {
+    case types.set:
+      if (payload.selectedId !== undefined) {
+        return {
+          id: payload.selectedId,
+          data: null
+        };
+      }
+      if (payload.selectedEvent !== undefined) {
+        if (payload.selectedEvent.id && payload.selectedEvent.id === state.id) {
+          return payload.selectedEvent;
+        } else {
+          return {
+            id: payload.selectedEvent.data._id,
+            data: payload.selectedEvent.data
+          };
+        }
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
 export default combineReducers({
   refreshing,
   data,
   day,
-  initialized
+  initialized,
+  selectedEvent
 });
