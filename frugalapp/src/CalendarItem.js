@@ -10,7 +10,7 @@ import {
   AsyncStorage,
   Alert
 } from "react-native";
-import { FacebookAds, Notifications } from "expo";
+import { FacebookAds, Notifications, Permissions } from "expo";
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
 import { RED } from "./Colors";
 
@@ -126,6 +126,34 @@ class Button extends Component {
             return;
           }
 
+          const { status: askStatus } = await Permissions.getAsync(
+            Permissions.NOTIFICATIONS
+          );
+
+          if (askStatus === "denied") {
+            Alert.alert(
+              "Permission Denied",
+              "To enable notifications, tap Open Settings and then toggle the Notifications switch.",
+              [
+                { text: "Cancel", style: "cancel" },
+                {
+                  text: "Open Settings",
+                  onPress: () => {
+                    Linking.openURL("app-settings:");
+                  }
+                }
+              ]
+            );
+          }
+
+          const { status } = await Permissions.askAsync(
+            Permissions.NOTIFICATIONS
+          );
+
+          if (status !== "granted") {
+            return;
+          }
+
           const title = `${item.title}`;
           const body = `${item.location}`;
 
@@ -135,7 +163,7 @@ class Button extends Component {
               body,
               data: { id, iso }
             },
-            { time: Date.now() + 5000, repeat: "week" }
+            { time: Date.now() + 3000, repeat: "week" }
           );
 
           await AsyncStorage.setItem(itemId, notificationId);
@@ -207,7 +235,7 @@ class Button extends Component {
           </View>
         );
       case "go":
-        return <MaterialIcons name="directions" size={20} color="#000" />;
+        return <MaterialIcons name="directions" size={21} color="#000" />;
       case "directions":
         return <Entypo name="map" size={18} color="#000" />;
         break;

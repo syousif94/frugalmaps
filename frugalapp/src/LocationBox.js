@@ -73,7 +73,7 @@ class LocationBox extends Component {
           <Entypo name="magnifying-glass" size={18} color="#000" />
           <TextInput
             ref={ref => (this._input = ref)}
-            placeholder={refreshing ? "Locating..." : "City or Restaurant"}
+            placeholder={refreshing ? "Locating..." : "Search cities..."}
             style={styles.input}
             placeholderTextColor="#333"
             returnKeyType="done"

@@ -148,6 +148,19 @@ class DayPicker extends Component {
               if (day.title === this.props.day && open) {
                 textStyle.push(styles.selectedDay);
               }
+
+              let relativeText;
+
+              switch (6) {
+                case 0:
+                  relativeText = "Today";
+                  break;
+                case 1:
+                  relativeText = "Tomorrrow";
+                  break;
+                default:
+                  relativeText = `${3} days away`;
+              }
               return (
                 <TouchableOpacity
                   style={styles.dayBtn}
@@ -156,6 +169,9 @@ class DayPicker extends Component {
                   onPress={onPress}
                 >
                   <Text style={textStyle}>{day.title}</Text>
+                  <View style={styles.relative}>
+                    <Text style={styles.relativeText}>{relativeText}</Text>
+                  </View>
                 </TouchableOpacity>
               );
             })}
@@ -190,7 +206,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 12,
     left: 12,
-    width: 140,
+    width: 200,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#e0e0e0",
@@ -202,11 +218,28 @@ const styles = StyleSheet.create({
   },
   dayBtn: {
     paddingLeft: 12,
+    paddingRight: 28,
+    paddingBottom: 2,
     height: 44,
-    justifyContent: "center"
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between"
   },
   dayText: {
-    fontSize: 16
+    fontSize: 14,
+    fontWeight: "600"
+  },
+  relative: {
+    marginLeft: 10,
+    paddingVertical: 3,
+    paddingHorizontal: 5,
+    borderRadius: 4,
+    backgroundColor: "#6C7B80"
+  },
+  relativeText: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "600"
   },
   selectedDay: {
     color: BLUE
@@ -215,7 +248,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     right: 0,
-    height: 42,
+    height: 40,
     width: 30,
     justifyContent: "center",
     alignItems: "center"

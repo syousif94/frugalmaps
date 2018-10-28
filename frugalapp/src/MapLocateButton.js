@@ -9,7 +9,7 @@ export default class LocateMe extends Component {
     return (
       <View style={styles.locate}>
         <TouchableOpacity style={styles.btn}>
-          <FontAwesome name="location-arrow" size={18} color={BLUE} />
+          <FontAwesome name="location-arrow" size={16} color={BLUE} />
         </TouchableOpacity>
       </View>
     );
