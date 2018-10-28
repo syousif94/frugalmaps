@@ -2,12 +2,13 @@ const elastic = require("./elastic");
 const servicesApi = require("./google");
 const event = require("./schema/event");
 const indexLocations = require("./saveLocations");
+const { db } = require("./firebase.js");
 
 const photoBase = `https://maps.googleapis.com/maps/api/place/photo?key=${
   process.env.GOOGLE
 }&maxheight=800&photoreference=`;
 
-function createEvent(req, res) {
+const createEvent = async (req, res) => {
   const {
     id,
     placeid,
@@ -21,9 +22,31 @@ function createEvent(req, res) {
   } = req.body;
 
   if (postCode !== process.env.POSTCODE) {
-    res.send({
-      error: "Missing Post Code"
-    });
+    if (id || postCode !== "") {
+      res.send({
+        error: "Invalid Code"
+      });
+      return;
+    }
+
+    const doc = {
+      placeid,
+      title,
+      description,
+      days,
+      type
+    };
+
+    if (start) {
+      doc.start = start;
+    }
+    if (end) {
+      doc.end = end;
+    }
+
+    await db.collection("submissions").add(doc);
+
+    res.send(doc);
     return;
   }
 
@@ -59,7 +82,7 @@ function createEvent(req, res) {
     });
   });
 
-  placeQuery
+  await placeQuery
     .then(place => {
       const {
         photos,
@@ -164,6 +187,6 @@ function createEvent(req, res) {
         error: error.message
       });
     });
-}
+};
 
 module.exports = createEvent;
