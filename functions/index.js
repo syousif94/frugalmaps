@@ -23,7 +23,7 @@ app.post("/save-event", require("./saveEvent"));
 app.post("/query-events", require("./queryEvents"));
 app.post("/delete-event", require("./deleteEvent"));
 
-// app.post("/events/published", require("./events/published"));
+app.post("/events/published", require("./events/published"));
 // app.post("/events/submissions", require("./events/submissions"));
 
 // not as clean, but a better endpoint to consume

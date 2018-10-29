@@ -3,6 +3,10 @@ const event = {
   type: "event",
   body: {
     properties: {
+      updatedAt: {
+        type: "date",
+        format: "epoch_millis"
+      },
       title: { type: "text" },
       description: { type: "text" },
       location: { type: "text" },

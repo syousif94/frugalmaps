@@ -1,4 +1,5 @@
 const elastic = require("./elastic");
+const moment = require("moment");
 const servicesApi = require("./google");
 const event = require("./schema/event");
 const indexLocations = require("./saveLocations");
@@ -8,7 +9,18 @@ const photoBase = `https://maps.googleapis.com/maps/api/place/photo?key=${
   process.env.GOOGLE
 }&maxheight=800&photoreference=`;
 
-const createEvent = async (req, res) => {
+function formatTime(str) {
+  const date = moment(str, ["h:ma", "H:m"]);
+  const isValid = date.isValid();
+  if (isValid) {
+    const str = date.format("H:mm");
+    return str;
+  } else {
+    throw new Error("Invalid Time");
+  }
+}
+
+async function createEvent(req, res) {
   const {
     id,
     placeid,
@@ -82,111 +94,118 @@ const createEvent = async (req, res) => {
     });
   });
 
-  await placeQuery
-    .then(place => {
-      const {
-        photos,
-        international_phone_number: phone,
-        name: location,
-        geometry: {
-          location: { lat, lng }
-        },
-        formatted_address: address,
-        address_components,
-        price_level: priceLevel,
-        rating,
-        website,
-        url,
-        opening_hours: { periods, weekday_text: hours }
-      } = place;
+  try {
+    const {
+      photos,
+      international_phone_number: phone,
+      name: location,
+      geometry: {
+        location: { lat, lng }
+      },
+      formatted_address: address,
+      address_components,
+      price_level: priceLevel,
+      rating,
+      website,
+      url,
+      opening_hours: { periods, weekday_text: hours }
+    } = await placeQuery;
 
-      const neighborhood = address_components.find(
-        component => component.types.indexOf("neighborhood") > -1
+    const neighborhood = address_components.find(
+      component => component.types.indexOf("neighborhood") > -1
+    );
+
+    const city = address_components.find(
+      component => component.types.indexOf("locality") > -1
+    );
+
+    let state = address_components.find(
+      component => component.types.indexOf("administrative_area_level_1") > -1
+    );
+
+    if (!state) {
+      state = address_components.find(
+        component => component.types.indexOf("country") > -1
       );
+    }
 
-      const city = address_components.find(
-        component => component.types.indexOf("locality") > -1
-      );
+    const coordinates = [lng, lat];
 
-      let state = address_components.find(
-        component => component.types.indexOf("administrative_area_level_1") > -1
-      );
+    let cityText;
+    if (city && state) {
+      cityText = `${city.long_name}, ${state.long_name}`;
+    }
 
-      if (!state) {
-        state = address_components.find(
-          component => component.types.indexOf("country") > -1
-        );
-      }
+    let neighborhoodText;
+    if (neighborhood && cityText) {
+      neighborhoodText = `${neighborhood.long_name}, ${cityText}`;
+    }
 
-      const coordinates = [lng, lat];
+    let startTime;
+    let endTime;
 
-      let cityText;
-      if (city && state) {
-        cityText = `${city.long_name}, ${state.long_name}`;
-      }
+    if (start) {
+      startTime = formatTime(start);
+    }
+    if (end) {
+      endTime = formatTime(end);
+    }
 
-      let neighborhoodText;
-      if (neighborhood && cityText) {
-        neighborhoodText = `${neighborhood.long_name}, ${cityText}`;
-      }
+    const body = {
+      updatedAt: Date.now(),
+      title,
+      description,
+      days,
+      start: startTime,
+      end: endTime,
+      type,
+      url,
+      rating,
+      priceLevel,
+      periods,
+      hours,
+      placeid,
+      location,
+      address,
+      coordinates,
+      photos,
+      phone,
+      website,
+      neighborhood: neighborhoodText,
+      city: cityText,
+      state: state && state.long_name,
+      shortState: state && state.short_name
+    };
 
-      const body = {
-        title,
-        description,
-        days,
-        start,
-        end,
-        type,
-        url,
-        rating,
-        priceLevel,
-        periods,
-        hours,
-        placeid,
-        location,
-        address,
-        coordinates,
-        photos,
-        phone,
-        website,
-        neighborhood: neighborhoodText,
-        city: cityText,
-        state: state && state.long_name,
-        shortState: state && state.short_name
-      };
+    let save;
 
-      let save;
-
-      if (id) {
-        save = elastic.update({
-          index: event.index,
-          type: event.type,
-          id,
-          body: {
-            doc: body
-          }
-        });
-      } else {
-        save = elastic.index({
-          index: event.index,
-          type: event.type,
-          body
-        });
-      }
-
-      const saveLocations = indexLocations(city, state);
-
-      return Promise.all([save, ...saveLocations]);
-    })
-    .then(() => {
-      res.send(200);
-      return;
-    })
-    .catch(error => {
-      res.send({
-        error: error.message
+    if (id) {
+      save = elastic.update({
+        index: event.index,
+        type: event.type,
+        id,
+        body: {
+          doc: body
+        }
       });
+    } else {
+      save = elastic.index({
+        index: event.index,
+        type: event.type,
+        body
+      });
+    }
+
+    const saveLocations = indexLocations(city, state);
+
+    await Promise.all([save, ...saveLocations]);
+
+    res.send(200);
+  } catch (error) {
+    res.send({
+      error: error.message
     });
-};
+  }
+}
 
 module.exports = createEvent;
