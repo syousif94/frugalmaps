@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 
-import { Entypo, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { BLUE } from "./Colors";
 import * as Events from "./store/events";
 
@@ -144,9 +144,9 @@ class DayPicker extends Component {
           <Animated.View style={daysStyle}>
             {data.map(day => {
               const onPress = this._selectDay.bind(null, day.title);
-              const textStyle = [styles.dayText];
+              const dotStyle = [styles.dot];
               if (day.title === this.props.day && open) {
-                textStyle.push(styles.selectedDay);
+                dotStyle.push(styles.selectedDay);
               }
 
               let relativeText;
@@ -168,17 +168,21 @@ class DayPicker extends Component {
                   disabled={!open}
                   onPress={onPress}
                 >
-                  <Text style={textStyle}>{day.title}</Text>
-                  <View style={styles.relative}>
-                    <Text style={styles.relativeText}>{relativeText}</Text>
+                  <View style={styles.dayInfo}>
+                    <Text style={styles.dayText}>{day.title}</Text>
+                    <View style={styles.relative}>
+                      <Text style={styles.relativeText}>{relativeText}</Text>
+                    </View>
                   </View>
+
+                  <View style={dotStyle} />
                 </TouchableOpacity>
               );
             })}
           </Animated.View>
           <Animated.View style={iconStyle} pointerEvents={iconEvents}>
             <Ionicons
-              style={{ marginBottom: -6 }}
+              style={styles.iconTop}
               name="ios-arrow-up"
               size={12}
               color={"#777"}
@@ -223,13 +227,17 @@ const styles = StyleSheet.create({
     flex: 1
   },
   dayBtn: {
-    paddingLeft: 12,
-    paddingRight: 28,
     paddingBottom: 2,
     height: 44,
     flexDirection: "row",
+    alignItems: "center"
+  },
+  dayInfo: {
+    marginLeft: 12,
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    flex: 1
   },
   dayText: {
     fontSize: 14,
@@ -247,8 +255,17 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600"
   },
+  dot: {
+    marginRight: 13,
+    marginLeft: 11,
+    height: 4,
+    width: 4,
+    borderRadius: 2,
+    backgroundColor: BLUE,
+    opacity: 0
+  },
   selectedDay: {
-    color: BLUE
+    opacity: 1
   },
   icon: {
     position: "absolute",
@@ -258,5 +275,8 @@ const styles = StyleSheet.create({
     width: 30,
     justifyContent: "center",
     alignItems: "center"
+  },
+  iconTop: {
+    marginBottom: -6
   }
 });

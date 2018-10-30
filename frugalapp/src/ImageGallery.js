@@ -17,6 +17,11 @@ import * as Events from "./store/events";
 const ImageGallery = ({ doc, height, set, navigation }) => {
   const { _source: item } = doc;
 
+  const touchableStyle = {
+    height,
+    flexDirection: "row"
+  };
+
   return (
     <View>
       <ScrollView style={[styles.images, { height }]} horizontal>
@@ -30,12 +35,7 @@ const ImageGallery = ({ doc, height, set, navigation }) => {
             navigation.navigate("Info");
           }}
         >
-          <View
-            style={{
-              height,
-              flexDirection: "row"
-            }}
-          >
+          <View style={touchableStyle}>
             {item.photos.map(photo => {
               const { url: uri, height: imageHeight, width } = photo;
 
@@ -58,9 +58,7 @@ const ImageGallery = ({ doc, height, set, navigation }) => {
       </ScrollView>
       <View pointerEvents="none" style={styles.action}>
         <Entypo name="info-with-circle" size={16} color="#fff" />
-        {height < 200 ? null : (
-          <Text style={[styles.actionText, { color: "#fff" }]}>More Info</Text>
-        )}
+        {height < 200 ? null : <Text style={styles.actionText}>More Info</Text>}
       </View>
     </View>
   );
@@ -95,6 +93,7 @@ const styles = StyleSheet.create({
   },
   actionText: {
     marginLeft: 8,
-    fontWeight: "600"
+    fontWeight: "600",
+    color: "#fff"
   }
 });
