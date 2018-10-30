@@ -11,6 +11,7 @@ import { MapView } from "expo";
 
 export default class MapMarker extends Component {
   static imageHeight = 150;
+  static offset = { x: 0, y: -14 };
 
   state = {
     height: MapMarker.imageHeight
@@ -56,7 +57,7 @@ export default class MapMarker extends Component {
     const spot = `${location.slice(0, 2)}\n${location.slice(2, 4)}`;
 
     return (
-      <MapView.Marker coordinate={coordinate}>
+      <MapView.Marker coordinate={coordinate} centerOffset={MapMarker.offset}>
         <View style={styles.marker}>
           <Image source={require("../assets/pin.png")} style={styles.marker} />
           <View style={styles.spot}>
