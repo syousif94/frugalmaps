@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { AppLoading } from "expo";
 import {
   createBottomTabNavigator,
   createStackNavigator

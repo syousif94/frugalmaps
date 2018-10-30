@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   info: {
-    height: 300
+    height: 220
   },
   loading: {
     justifyContent: "center",

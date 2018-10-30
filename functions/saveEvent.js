@@ -13,7 +13,7 @@ function formatTime(str) {
   const date = moment(str, ["h:ma", "H:m"]);
   const isValid = date.isValid();
   if (isValid) {
-    const str = date.format("H:mm");
+    const str = date.format("HHmm");
     return str;
   } else {
     throw new Error("Invalid Time");

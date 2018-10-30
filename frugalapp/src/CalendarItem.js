@@ -4,6 +4,7 @@ import {
   Text,
   View,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   ScrollView,
   Image,
   Linking,
@@ -12,18 +13,18 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import { FacebookAds, Notifications, Permissions } from "expo";
-import { Entypo, MaterialIcons } from "@expo/vector-icons";
+import { Entypo, MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import { RED } from "./Colors";
 import { withNavigation } from "react-navigation";
 import * as Events from "./store/events";
 
-export default class CalendarItem extends Component {
+class CalendarItem extends Component {
   static imageHeight = 220;
 
   _renderAd = () => {
     const { index, section } = this.props;
 
-    if (index === 0) {
+    if (index === 0 && section.index === 0) {
       return (
         <View style={styles.ad}>
           <FacebookAds.BannerView
@@ -60,37 +61,75 @@ export default class CalendarItem extends Component {
     return (
       <View style={styles.container}>
         {this._renderAd()}
+        <View>
+          <ScrollView style={styles.images} horizontal>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                this.props.set({
+                  selectedEvent: {
+                    data: this.props.item
+                  }
+                });
+                this.props.navigation.navigate("Info");
+              }}
+            >
+              <View
+                style={{
+                  height: CalendarItem.imageHeight,
+                  flexDirection: "row"
+                }}
+              >
+                {item.photos.map(photo => {
+                  const { url: uri, height, width } = photo;
+
+                  const source = {
+                    uri
+                  };
+
+                  const imageWidth =
+                    (CalendarItem.imageHeight / height) * width;
+
+                  return (
+                    <Image
+                      key={uri}
+                      source={source}
+                      style={[styles.image, { width: imageWidth }]}
+                    />
+                  );
+                })}
+              </View>
+            </TouchableWithoutFeedback>
+          </ScrollView>
+          <View
+            pointerEvents="none"
+            style={{
+              position: "absolute",
+              bottom: 6,
+              right: 6,
+              flexDirection: "row",
+              backgroundColor: "rgba(0,0,0,0.5)",
+              borderRadius: 6,
+              alignItems: "center",
+              paddingHorizontal: 7,
+              paddingVertical: 4
+            }}
+          >
+            <Entypo name="info-with-circle" size={16} color="#fff" />
+            <Text style={[styles.actionText, { color: "#fff" }]}>
+              More Info
+            </Text>
+          </View>
+        </View>
         <View style={styles.info}>
           <Text style={styles.titleText}>{item.title}</Text>
           <View style={styles.locationInfo}>
             <Text style={styles.timeText}>{timeSpan}</Text>
             <Text style={styles.locationText}>{item.location}</Text>
           </View>
-        </View>
-        <ScrollView style={styles.images} horizontal>
-          {item.photos.map(photo => {
-            const { url: uri, height, width } = photo;
-
-            const source = {
-              uri
-            };
-
-            const imageWidth = (CalendarItem.imageHeight / height) * width;
-
-            return (
-              <Image
-                key={uri}
-                source={source}
-                style={[styles.image, { width: imageWidth }]}
-              />
-            );
-          })}
-        </ScrollView>
-        <View style={styles.info}>
           <Text style={styles.descriptionText}>{item.description}</Text>
           <View style={styles.actions}>
-            <MoreInfoButton action="info" {...this.props} />
             <Button action="notify" {...this.props} />
+            <Button action="save" {...this.props} />
             <Button action="go" {...this.props} />
           </View>
         </View>
@@ -99,9 +138,17 @@ export default class CalendarItem extends Component {
   }
 }
 
+export default connect(
+  null,
+  {
+    set: Events.actions.set
+  }
+)(withNavigation(CalendarItem));
+
 class Button extends Component {
   state = {
-    notify: false
+    notify: false,
+    starred: false
   };
 
   _onPress = async () => {
@@ -115,13 +162,10 @@ class Button extends Component {
       case "go":
         Linking.openURL(item.url);
         break;
-      case "info":
-        this.props.set({
-          selectedEvent: {
-            data: this.props.item
-          }
+      case "save":
+        this.setState({
+          starred: !this.state.starred
         });
-        this.props.navigation.navigate("Info");
         break;
       case "notify":
         try {
@@ -245,8 +289,10 @@ class Button extends Component {
         );
       case "go":
         return <MaterialIcons name="directions" size={21} color="#000" />;
-      case "info":
-        return <Entypo name="info-with-circle" size={18} color="#000" />;
+      case "save":
+        const { starred } = this.state;
+        const color = starred ? "#F5C440" : "#000";
+        return <FontAwesome name="star" size={18} color={color} />;
       default:
         return null;
     }
@@ -262,8 +308,8 @@ class Button extends Component {
       case "go":
         text = "Directions";
         break;
-      case "info":
-        text = "More Info";
+      case "save":
+        text = "Star";
         break;
       default:
         return null;
@@ -276,15 +322,6 @@ class Button extends Component {
     );
   }
 }
-
-NavButton = withNavigation(Button);
-
-MoreInfoButton = connect(
-  null,
-  {
-    set: Events.actions.set
-  }
-)(NavButton);
 
 const styles = StyleSheet.create({
   container: {
@@ -333,8 +370,8 @@ const styles = StyleSheet.create({
   },
   notificaitonsEnabled: {
     position: "absolute",
-    top: -4,
-    right: -1,
+    top: -1,
+    right: -2,
     height: 6,
     width: 6,
     borderRadius: 3,

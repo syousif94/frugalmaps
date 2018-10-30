@@ -128,9 +128,8 @@ class LocationPrompt extends Component {
   };
 
   render() {
-    const offset = this.state.visible ? 0 : -44;
     return (
-      <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={offset}>
+      <KeyboardAvoidingView behavior="padding">
         {this._renderButton()}
       </KeyboardAvoidingView>
     );

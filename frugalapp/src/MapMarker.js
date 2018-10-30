@@ -1,9 +1,32 @@
 import React, { Component } from "react";
-import { StyleSheet, ScrollView, Image, View, Text } from "react-native";
+import {
+  StyleSheet,
+  ScrollView,
+  Image,
+  View,
+  Text,
+  ImageBackground
+} from "react-native";
 import { MapView } from "expo";
 
 export default class MapMarker extends Component {
   static imageHeight = 150;
+
+  state = {
+    height: MapMarker.imageHeight
+  };
+
+  _updateHeight = e => {
+    const {
+      nativeEvent: {
+        layout: { height }
+      }
+    } = e;
+
+    this.setState({
+      height: height + MapMarker.imageHeight
+    });
+  };
 
   render() {
     const { _source: item } = this.props.data;
@@ -33,40 +56,46 @@ export default class MapMarker extends Component {
     const spot = `${location.slice(0, 2)}\n${location.slice(2, 4)}`;
 
     return (
-      <MapView.Marker
-        title={item.title}
-        description={item.description}
-        coordinate={coordinate}
-        image={require("../assets/pin.png")}
-      >
-        <View style={styles.spot}>
-          <Text style={styles.spotText}>{spot}</Text>
+      <MapView.Marker coordinate={coordinate}>
+        <View style={styles.marker}>
+          <Image source={require("../assets/pin.png")} style={styles.marker} />
+          <View style={styles.spot}>
+            <Text style={styles.spotText}>{spot}</Text>
+          </View>
         </View>
+
         <MapView.Callout>
-          <ScrollView style={styles.images} horizontal>
-            {item.photos.map(photo => {
-              const { url: uri, height, width } = photo;
+          <View
+            style={{
+              width: 250,
+              height: this.state.height
+            }}
+          >
+            <ScrollView style={styles.images} horizontal>
+              {item.photos.map(photo => {
+                const { url: uri, height, width } = photo;
 
-              const source = {
-                uri
-              };
+                const source = {
+                  uri
+                };
 
-              const imageWidth = (MapMarker.imageHeight / height) * width;
+                const imageWidth = (MapMarker.imageHeight / height) * width;
 
-              return (
-                <Image
-                  key={uri}
-                  source={source}
-                  style={[styles.image, { width: imageWidth }]}
-                />
-              );
-            })}
-          </ScrollView>
-          <View style={styles.info}>
-            <Text style={styles.titleText}>{item.title}</Text>
-            <Text style={styles.locationText}>{item.location}</Text>
-            <Text style={styles.infoText}>{timeSpan}</Text>
-            <Text style={styles.infoText}>{item.description}</Text>
+                return (
+                  <Image
+                    key={uri}
+                    source={source}
+                    style={[styles.image, { width: imageWidth }]}
+                  />
+                );
+              })}
+            </ScrollView>
+            <View style={styles.info} onLayout={this._updateHeight}>
+              <Text style={styles.titleText}>{item.title}</Text>
+              <Text style={styles.locationText}>{item.location}</Text>
+              <Text style={styles.infoText}>{timeSpan}</Text>
+              <Text style={styles.infoText}>{item.description}</Text>
+            </View>
           </View>
         </MapView.Callout>
       </MapView.Marker>
@@ -75,6 +104,10 @@ export default class MapMarker extends Component {
 }
 
 const styles = StyleSheet.create({
+  marker: {
+    width: 20,
+    height: 28
+  },
   spot: {
     position: "absolute",
     top: 4,
@@ -104,7 +137,7 @@ const styles = StyleSheet.create({
     marginRight: 2
   },
   info: {
-    marginTop: 4
+    paddingTop: 4
   },
   titleText: {
     fontWeight: "600",

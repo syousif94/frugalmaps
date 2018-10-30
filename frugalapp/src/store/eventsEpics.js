@@ -42,7 +42,8 @@ const makeEvents = hits => {
       day.away = index;
       return day;
     })
-    .filter(day => day.data.length);
+    .filter(day => day.data.length)
+    .map((day, index) => ({ ...day, index }));
 };
 
 const events = (action$, store) =>
