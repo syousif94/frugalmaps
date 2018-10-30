@@ -51,7 +51,7 @@ class Calendar extends Component {
     }
 
     const today = moment();
-    const date = today.format("M/D");
+    const date = today.format("MMM D");
     const day = today.format("dddd");
     return (
       <TouchableOpacity style={styles.tab} onPress={onPress}>

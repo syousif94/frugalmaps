@@ -4,23 +4,16 @@ import {
   Text,
   View,
   TouchableOpacity,
-  TouchableWithoutFeedback,
-  ScrollView,
-  Image,
   Linking,
   AsyncStorage,
   Alert
 } from "react-native";
-import { connect } from "react-redux";
 import { FacebookAds, Notifications, Permissions } from "expo";
 import { Entypo, MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import { RED } from "./Colors";
-import { withNavigation } from "react-navigation";
-import * as Events from "./store/events";
+import ImageGallery from "./ImageGallery";
 
 class CalendarItem extends Component {
-  static imageHeight = 220;
-
   _renderAd = () => {
     const { index, section } = this.props;
 
@@ -61,65 +54,7 @@ class CalendarItem extends Component {
     return (
       <View style={styles.container}>
         {this._renderAd()}
-        <View>
-          <ScrollView style={styles.images} horizontal>
-            <TouchableWithoutFeedback
-              onPress={() => {
-                this.props.set({
-                  selectedEvent: {
-                    data: this.props.item
-                  }
-                });
-                this.props.navigation.navigate("Info");
-              }}
-            >
-              <View
-                style={{
-                  height: CalendarItem.imageHeight,
-                  flexDirection: "row"
-                }}
-              >
-                {item.photos.map(photo => {
-                  const { url: uri, height, width } = photo;
-
-                  const source = {
-                    uri
-                  };
-
-                  const imageWidth =
-                    (CalendarItem.imageHeight / height) * width;
-
-                  return (
-                    <Image
-                      key={uri}
-                      source={source}
-                      style={[styles.image, { width: imageWidth }]}
-                    />
-                  );
-                })}
-              </View>
-            </TouchableWithoutFeedback>
-          </ScrollView>
-          <View
-            pointerEvents="none"
-            style={{
-              position: "absolute",
-              bottom: 6,
-              right: 6,
-              flexDirection: "row",
-              backgroundColor: "rgba(0,0,0,0.5)",
-              borderRadius: 6,
-              alignItems: "center",
-              paddingHorizontal: 7,
-              paddingVertical: 4
-            }}
-          >
-            <Entypo name="info-with-circle" size={16} color="#fff" />
-            <Text style={[styles.actionText, { color: "#fff" }]}>
-              More Info
-            </Text>
-          </View>
-        </View>
+        <ImageGallery doc={this.props.item} height={220} />
         <View style={styles.info}>
           <Text style={styles.titleText}>{item.title}</Text>
           <View style={styles.locationInfo}>
@@ -138,12 +73,7 @@ class CalendarItem extends Component {
   }
 }
 
-export default connect(
-  null,
-  {
-    set: Events.actions.set
-  }
-)(withNavigation(CalendarItem));
+export default CalendarItem;
 
 class Button extends Component {
   state = {
@@ -326,16 +256,6 @@ class Button extends Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff"
-  },
-  images: {
-    height: CalendarItem.imageHeight,
-    backgroundColor: "#f2f2f2"
-  },
-  image: {
-    resizeMode: "contain",
-    height: CalendarItem.imageHeight,
-    backgroundColor: "#e0e0e0",
-    marginRight: 2
   },
   info: {
     padding: 10

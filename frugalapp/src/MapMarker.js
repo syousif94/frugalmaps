@@ -1,13 +1,9 @@
 import React, { Component } from "react";
-import {
-  StyleSheet,
-  ScrollView,
-  Image,
-  View,
-  Text,
-  ImageBackground
-} from "react-native";
+import { StyleSheet, Image, View, Text } from "react-native";
+
 import { MapView } from "expo";
+
+import ImageGallery from "./ImageGallery";
 
 export default class MapMarker extends Component {
   static imageHeight = 150;
@@ -56,6 +52,11 @@ export default class MapMarker extends Component {
 
     const spot = `${location.slice(0, 2)}\n${location.slice(2, 4)}`;
 
+    const calloutStyle = {
+      width: 250,
+      height: this.state.height
+    };
+
     return (
       <MapView.Marker coordinate={coordinate} centerOffset={MapMarker.offset}>
         <View style={styles.marker}>
@@ -66,31 +67,8 @@ export default class MapMarker extends Component {
         </View>
 
         <MapView.Callout>
-          <View
-            style={{
-              width: 250,
-              height: this.state.height
-            }}
-          >
-            <ScrollView style={styles.images} horizontal>
-              {item.photos.map(photo => {
-                const { url: uri, height, width } = photo;
-
-                const source = {
-                  uri
-                };
-
-                const imageWidth = (MapMarker.imageHeight / height) * width;
-
-                return (
-                  <Image
-                    key={uri}
-                    source={source}
-                    style={[styles.image, { width: imageWidth }]}
-                  />
-                );
-              })}
-            </ScrollView>
+          <View style={calloutStyle}>
+            <ImageGallery doc={this.props.data} height={150} />
             <View style={styles.info} onLayout={this._updateHeight}>
               <Text style={styles.titleText}>{item.title}</Text>
               <Text style={styles.locationText}>{item.location}</Text>
@@ -125,17 +103,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 6,
     fontWeight: "700"
-  },
-  images: {
-    width: 250,
-    height: MapMarker.imageHeight,
-    backgroundColor: "#f2f2f2"
-  },
-  image: {
-    resizeMode: "contain",
-    height: MapMarker.imageHeight,
-    backgroundColor: "#e0e0e0",
-    marginRight: 2
   },
   info: {
     paddingTop: 4
