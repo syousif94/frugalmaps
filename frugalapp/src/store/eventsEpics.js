@@ -23,7 +23,7 @@ const makeEvents = hits => {
     return initial;
   }
 
-  hits.every(hit => {
+  hits.forEach(hit => {
     hit._source.days.forEach(day => {
       initial[day].data.push(hit);
     });
@@ -97,7 +97,7 @@ const events = (action$, store) =>
             emitter.emit("fit-bounds", bounds);
           }
 
-          const data = makeEvents(hits);
+          const calendar = makeEvents(hits);
 
           let day;
 
@@ -105,11 +105,13 @@ const events = (action$, store) =>
             events: { day: storeDay }
           } = store.getState();
 
-          let today = moment().format("dddd");
+          // let today = moment().format("dddd");
 
-          if (data.length) {
+          if (calendar.length) {
             if (storeDay) {
-              const storeDayData = data.find(data => data.title === storeDay);
+              const storeDayData = calendar.find(
+                data => data.title === storeDay
+              );
 
               if (storeDayData) {
                 day = storeDay;
@@ -117,16 +119,20 @@ const events = (action$, store) =>
             }
 
             if (!day) {
-              const todayData = data.find(data => data.title === today);
-
-              if (todayData) {
-                day = today;
-              }
+              day = "All Events";
             }
 
-            if (!day) {
-              day = data[0].title;
-            }
+            // if (!day) {
+            //   const todayData = calendar.find(data => data.title === today);
+
+            //   if (todayData) {
+            //     day = today;
+            //   }
+            // }
+
+            // if (!day) {
+            //   day = calendar[0].title;
+            // }
           }
 
           return Observable.of(
@@ -136,8 +142,9 @@ const events = (action$, store) =>
               bounds: action.payload.bounds ? undefined : null
             }),
             Events.actions.set({
+              data: hits,
               refreshing: false,
-              data,
+              calendar,
               day,
               initialized: true
             })

@@ -91,7 +91,7 @@ const mapStateToProps = state => ({
   initialized: state.events.initialized,
   listTop: state.location.listTop,
   refreshing: state.events.refreshing,
-  data: state.events.data
+  data: state.events.calendar
 });
 
 const mapDispatchToProps = {

@@ -26,7 +26,7 @@ class DayPicker extends Component {
         return datum.title === next.day;
       });
 
-      const toValue = index * -44;
+      const toValue = (index + 1) * -44;
 
       this.setState({
         translateDays: new Animated.Value(toValue)
@@ -53,7 +53,7 @@ class DayPicker extends Component {
       return datum.title === day;
     });
 
-    const toValue = index * -44;
+    const toValue = (index + 1) * -44;
 
     Animated.parallel([
       Animated.timing(
@@ -80,10 +80,10 @@ class DayPicker extends Component {
 
   _openPicker = () => {
     const { data } = this.props;
-    if (data.length < 2) {
+    if (data.length < 1) {
       return;
     }
-    const height = this.props.data.length * 44;
+    const height = (this.props.data.length + 1) * 44;
     Animated.parallel([
       Animated.timing(
         this.state.iconOpacity,
@@ -120,7 +120,7 @@ class DayPicker extends Component {
 
     const daysStyle = [
       {
-        height: data.length * 44,
+        height: (data.length + 1) * 44,
         transform: [{ translateY: translateDays }]
       }
     ];
@@ -134,6 +134,8 @@ class DayPicker extends Component {
 
     const iconEvents = open ? "none" : "auto";
 
+    const calendar = [{ title: "All Events" }, ...data];
+
     return (
       <Animated.View style={constainerStyle}>
         <TouchableOpacity
@@ -142,7 +144,7 @@ class DayPicker extends Component {
           onPress={this._openPicker}
         >
           <Animated.View style={daysStyle}>
-            {data.map(day => {
+            {calendar.map(day => {
               const onPress = this._selectDay.bind(null, day.title);
               const dotStyle = [styles.dot];
               if (day.title === this.props.day && open) {
@@ -151,7 +153,9 @@ class DayPicker extends Component {
 
               let relativeText;
 
-              switch (6) {
+              switch (day.away) {
+                case undefined:
+                  break;
                 case 0:
                   relativeText = "Today";
                   break;
@@ -159,7 +163,7 @@ class DayPicker extends Component {
                   relativeText = "Tomorrrow";
                   break;
                 default:
-                  relativeText = `${3} days away`;
+                  relativeText = `${day.away} days away`;
               }
               return (
                 <TouchableOpacity
@@ -170,9 +174,11 @@ class DayPicker extends Component {
                 >
                   <View style={styles.dayInfo}>
                     <Text style={styles.dayText}>{day.title}</Text>
-                    <View style={styles.relative}>
-                      <Text style={styles.relativeText}>{relativeText}</Text>
-                    </View>
+                    {day.away === undefined ? null : (
+                      <View style={styles.relative}>
+                        <Text style={styles.relativeText}>{relativeText}</Text>
+                      </View>
+                    )}
                   </View>
 
                   <View style={dotStyle} />
@@ -197,7 +203,7 @@ class DayPicker extends Component {
 
 const mapStateToProps = state => ({
   day: state.events.day,
-  data: state.events.data
+  data: state.events.calendar
 });
 
 const mapDispatchToProps = {

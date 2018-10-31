@@ -9,12 +9,17 @@ export const { actions, types } = createActions(mutations, "events");
 export const markers = createSelector(
   state => state.events.day,
   state => state.events.data,
-  (day, data) => {
+  state => state.events.calendar,
+  (day, data, calendar) => {
     if (!day) {
       return [];
     }
 
-    const dayEvents = data.find(datum => {
+    if (day === "All Events") {
+      return data;
+    }
+
+    const dayEvents = calendar.find(datum => {
       return datum.title === day;
     });
 
@@ -74,6 +79,18 @@ function data(state = [], { type, payload }) {
   }
 }
 
+function calendar(state = [], { type, payload }) {
+  switch (type) {
+    case types.set:
+      if (payload.calendar !== undefined) {
+        return payload.calendar;
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
 function selectedEvent(state = { id: null, data: null }, { type, payload }) {
   switch (type) {
     case types.set:
@@ -102,6 +119,7 @@ function selectedEvent(state = { id: null, data: null }, { type, payload }) {
 export default combineReducers({
   refreshing,
   data,
+  calendar,
   day,
   initialized,
   selectedEvent
