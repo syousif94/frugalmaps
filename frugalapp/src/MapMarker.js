@@ -33,6 +33,38 @@ export default class MapMarker extends Component {
       longitude: item.coordinates[0]
     };
 
+    const location = item.location
+      .replace(/^(the |a )/gi, "")
+      .replace(" ", "")
+      .toUpperCase();
+
+    const spot = `${location.slice(0, 2)}\n${location.slice(2, 4)}`;
+
+    return (
+      <MapView.Marker coordinate={coordinate} centerOffset={MapMarker.offset}>
+        <View style={styles.marker}>
+          <Image source={require("../assets/pin.png")} style={styles.marker} />
+          <View style={styles.spot}>
+            <Text style={styles.spotText}>{spot}</Text>
+          </View>
+        </View>
+        {this._renderCallout()}
+      </MapView.Marker>
+    );
+  }
+
+  _renderCallout = () => {
+    if (this.props.disabled) {
+      return null;
+    }
+
+    const { _source: item } = this.props.data;
+
+    const calloutStyle = {
+      width: 250,
+      height: this.state.height
+    };
+
     let timeSpan;
 
     if (item.start && item.end) {
@@ -45,41 +77,20 @@ export default class MapMarker extends Component {
       timeSpan = `All Day`;
     }
 
-    const location = item.location
-      .replace(/^(the |a )/gi, "")
-      .replace(" ", "")
-      .toUpperCase();
-
-    const spot = `${location.slice(0, 2)}\n${location.slice(2, 4)}`;
-
-    const calloutStyle = {
-      width: 250,
-      height: this.state.height
-    };
-
     return (
-      <MapView.Marker coordinate={coordinate} centerOffset={MapMarker.offset}>
-        <View style={styles.marker}>
-          <Image source={require("../assets/pin.png")} style={styles.marker} />
-          <View style={styles.spot}>
-            <Text style={styles.spotText}>{spot}</Text>
+      <MapView.Callout>
+        <View style={calloutStyle}>
+          <ImageGallery doc={this.props.data} height={MapMarker.imageHeight} />
+          <View style={styles.info} onLayout={this._updateHeight}>
+            <Text style={styles.titleText}>{item.title}</Text>
+            <Text style={styles.locationText}>{item.location}</Text>
+            <Text style={styles.infoText}>{timeSpan}</Text>
+            <Text style={styles.infoText}>{item.description}</Text>
           </View>
         </View>
-
-        <MapView.Callout>
-          <View style={calloutStyle}>
-            <ImageGallery doc={this.props.data} height={150} />
-            <View style={styles.info} onLayout={this._updateHeight}>
-              <Text style={styles.titleText}>{item.title}</Text>
-              <Text style={styles.locationText}>{item.location}</Text>
-              <Text style={styles.infoText}>{timeSpan}</Text>
-              <Text style={styles.infoText}>{item.description}</Text>
-            </View>
-          </View>
-        </MapView.Callout>
-      </MapView.Marker>
+      </MapView.Callout>
     );
-  }
+  };
 }
 
 const styles = StyleSheet.create({

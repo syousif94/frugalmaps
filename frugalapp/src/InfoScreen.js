@@ -2,12 +2,27 @@ import React, { Component } from "react";
 import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
 import { MapView } from "expo";
 import { connect } from "react-redux";
+import ImageGallery from "./ImageGallery";
+import { INITIAL_REGION } from "./Constants";
+import MapMarker from "./MapMarker";
 
 class InfoScreen extends Component {
+  state = {
+    mapType: "standard"
+  };
+
   componentDidMount() {
     if (!this.props.event.data) {
     }
   }
+
+  _focusAnnotation = () => {
+    const [longitude, latitude] = this.props.event.data._source.coordinates;
+    const coords = [{ latitude, longitude }];
+    this._map.fitToCoordinates(coords, {
+      animated: false
+    });
+  };
 
   _renderInfo = () => {
     const {
@@ -36,20 +51,23 @@ class InfoScreen extends Component {
   };
 
   render() {
+    const {
+      event: { data }
+    } = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.map}>
           <MapView
             ref={ref => (this._map = ref)}
             style={styles.map}
-            initialRegion={{
-              latitude: 37.78825,
-              longitude: -122.4324,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421
-            }}
-          />
+            initialRegion={INITIAL_REGION}
+            mapType={this.state.mapType}
+            onMapReady={this._focusAnnotation}
+          >
+            <MapMarker data={data} key={data._id} disabled />;
+          </MapView>
         </View>
+        <ImageGallery doc={data} disabled height={160} />
         {this._renderInfo()}
       </View>
     );
@@ -71,7 +89,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   info: {
-    height: 220
+    height: 300
   },
   loading: {
     justifyContent: "center",

@@ -14,7 +14,7 @@ import { Entypo } from "@expo/vector-icons";
 
 import * as Events from "./store/events";
 
-const ImageGallery = ({ doc, height, set, navigation }) => {
+const ImageGallery = ({ doc, height, set, navigation, disabled }) => {
   const { _source: item } = doc;
 
   const touchableStyle = {
@@ -26,6 +26,7 @@ const ImageGallery = ({ doc, height, set, navigation }) => {
     <View>
       <ScrollView style={[styles.images, { height }]} horizontal>
         <TouchableWithoutFeedback
+          disabled={disabled}
           onPress={() => {
             set({
               selectedEvent: {
@@ -56,10 +57,19 @@ const ImageGallery = ({ doc, height, set, navigation }) => {
           </View>
         </TouchableWithoutFeedback>
       </ScrollView>
-      <View pointerEvents="none" style={styles.action}>
-        <Entypo name="info-with-circle" size={16} color="#fff" />
-        {height < 200 ? null : <Text style={styles.actionText}>More Info</Text>}
-      </View>
+      <Icon disabled={disabled} height={height} />
+    </View>
+  );
+};
+
+const Icon = ({ disabled, height }) => {
+  if (disabled) {
+    return null;
+  }
+  return (
+    <View pointerEvents="none" style={styles.action}>
+      <Entypo name="info-with-circle" size={16} color="#fff" />
+      {height < 200 ? null : <Text style={styles.actionText}>More Info</Text>}
     </View>
   );
 };

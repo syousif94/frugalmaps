@@ -4,4 +4,11 @@ export const DAYS = ["S", "M", "T", "W", "Th", "F", "Sa"];
 
 export const DEV = process.env.NODE_ENV === "development";
 
+export const INITIAL_REGION = {
+  latitude: 33.229236835987024,
+  longitude: -97.667684070742538,
+  latitudeDelta: 36.821960277931375,
+  longitudeDelta: 67.450574587921707
+};
+
 export const { height: HEIGHT, width: WIDTH } = Dimensions.get("window");

@@ -6,6 +6,8 @@ import { connect } from "react-redux";
 import emitter from "tiny-emitter/instance";
 import _ from "lodash";
 
+import { INITIAL_REGION } from "./Constants";
+
 import * as Location from "./store/location";
 import * as Events from "./store/events";
 import LocationBox from "./LocationBox";
@@ -124,12 +126,7 @@ class MapScreen extends Component {
             onLayout={this._setFrame}
             ref={ref => (this._map = ref)}
             style={styles.map}
-            initialRegion={{
-              latitude: 37.78825,
-              longitude: -122.4324,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421
-            }}
+            initialRegion={INITIAL_REGION}
             onRegionChangeComplete={this._onRegionChangeComplete}
           >
             {markers.map(data => {

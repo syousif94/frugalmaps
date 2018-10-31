@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import * as Location from "./store/location";
 import emitter from "tiny-emitter/instance";
+import moment from "moment";
 
 class LocationBox extends Component {
   componentDidMount() {
@@ -64,10 +65,16 @@ class LocationBox extends Component {
       )} to ${southwest.lat.toFixed(4)}, ${northeast.lng.toFixed(4)}`;
     }
 
+    const today = moment();
+    const date = today.format("MMM D, YYYY");
+    const day = today.format("dddd");
+
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.title}>
-          <Text style={styles.titleText}>Lit Cal</Text>
+          <Text style={styles.titleText}>
+            {day}, {date}
+          </Text>
         </View>
         <View style={styles.search} onLayout={this._onLayout}>
           <Entypo name="magnifying-glass" size={18} color="#000" />
