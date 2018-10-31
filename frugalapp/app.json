@@ -17,7 +17,8 @@
     "facebookAppId": "1688723777922359",
     "facebookDisplayName": "LitCal",
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "checkAutomatically": "ON_ERROR_RECOVERY"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
