@@ -19,7 +19,7 @@ export default class PlacePreview extends Component {
         }
       ];
 
-      this._map.fitToCoordinates(coords);
+      this._map.fitToCoordinates(coords, { animated: false });
     }
   }
 

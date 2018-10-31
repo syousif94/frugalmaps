@@ -14,6 +14,7 @@ const event = {
       type: { type: "keyword" },
       placeid: { type: "keyword" },
       priceLevel: { enabled: false },
+      viewport: { enabled: false },
       rating: { enabled: false },
       website: { enabled: false },
       photos: { enabled: false },

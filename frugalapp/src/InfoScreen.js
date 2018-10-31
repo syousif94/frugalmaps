@@ -17,11 +17,20 @@ class InfoScreen extends Component {
   }
 
   _focusAnnotation = () => {
-    const [longitude, latitude] = this.props.event.data._source.coordinates;
-    const coords = [{ latitude, longitude }];
-    this._map.fitToCoordinates(coords, {
-      animated: false
-    });
+    const viewport = this.props.event.data._source.viewport;
+
+    const coords = [
+      {
+        latitude: viewport.northeast.lat,
+        longitude: viewport.northeast.lng
+      },
+      {
+        latitude: viewport.southwest.lat,
+        longitude: viewport.southwest.lng
+      }
+    ];
+
+    this._map.fitToCoordinates(coords, { animated: false });
   };
 
   _renderInfo = () => {

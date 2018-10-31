@@ -100,7 +100,8 @@ async function createEvent(req, res) {
       international_phone_number: phone,
       name: location,
       geometry: {
-        location: { lat, lng }
+        location: { lat, lng },
+        viewport
       },
       formatted_address: address,
       address_components,
@@ -168,6 +169,7 @@ async function createEvent(req, res) {
       location,
       address,
       coordinates,
+      viewport,
       photos,
       phone,
       website,
