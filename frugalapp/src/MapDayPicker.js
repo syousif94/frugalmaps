@@ -21,7 +21,10 @@ class DayPicker extends Component {
   };
 
   componentWillReceiveProps(next) {
-    if (!this.state.open && next.day && next.day !== this.props.day) {
+    const closed = !this.state.open;
+    const differentDay = next.day && next.day !== this.props.day;
+    const differentData = next.data !== this.props.data;
+    if (closed && (differentDay || differentData)) {
       const index = next.data.findIndex(datum => {
         return datum.title === next.day;
       });
