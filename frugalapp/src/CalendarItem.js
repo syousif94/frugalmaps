@@ -54,13 +54,19 @@ class CalendarItem extends Component {
     return (
       <View style={styles.container}>
         {this._renderAd()}
+        <View style={styles.info}>
+          <View style={styles.locationInfo}>
+            <Text style={styles.timeText}>{timeSpan}</Text>
+            <Text style={styles.titleText}>{item.location}</Text>
+          </View>
+          <View style={styles.locationInfo}>
+            <Text style={styles.descriptionText}>{timeSpan}</Text>
+            <Text style={styles.descriptionText}>{item.city}</Text>
+          </View>
+        </View>
         <ImageGallery doc={this.props.item} height={220} />
         <View style={styles.info}>
           <Text style={styles.titleText}>{item.title}</Text>
-          <View style={styles.locationInfo}>
-            <Text style={styles.timeText}>{timeSpan}</Text>
-            <Text style={styles.locationText}>{item.location}</Text>
-          </View>
           <Text style={styles.descriptionText}>{item.description}</Text>
           <View style={styles.actions}>
             <Button action="notify" {...this.props} />
@@ -261,7 +267,6 @@ const styles = StyleSheet.create({
     padding: 10
   },
   locationInfo: {
-    marginTop: 2,
     flexDirection: "row-reverse",
     justifyContent: "space-between"
   },
@@ -271,6 +276,11 @@ const styles = StyleSheet.create({
   },
   timeText: {
     marginLeft: 3
+  },
+  descriptionText: {
+    marginTop: 3,
+    color: '#444',
+    fontSize: 12
   },
   actions: {
     flexDirection: "row",

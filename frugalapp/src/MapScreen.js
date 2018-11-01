@@ -15,6 +15,7 @@ import LocationList from "./LocationList";
 import LocateMe from "./MapLocateButton";
 import DayPicker from "./MapDayPicker";
 import MapMarker from "./MapMarker";
+import MapLoading from "./MapLoading";
 
 class MapScreen extends Component {
   _search = false;
@@ -128,6 +129,8 @@ class MapScreen extends Component {
             style={styles.map}
             initialRegion={INITIAL_REGION}
             onRegionChangeComplete={this._onRegionChangeComplete}
+            showsCompass={false}
+            rotateEnabled={false}
           >
             {markers.map(data => {
               const { _id } = data;
@@ -135,6 +138,7 @@ class MapScreen extends Component {
               return <MapMarker data={data} key={_id} />;
             })}
           </MapView>
+          <MapLoading />
         </View>
         <DayPicker ref={ref => (this._dayPicker = ref)} />
         <LocateMe />

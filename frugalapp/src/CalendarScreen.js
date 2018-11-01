@@ -63,6 +63,10 @@ class CalendarScreen extends Component {
   render() {
     const { refreshing, data } = this.props;
 
+    const containerStyle = {
+      paddingBottom: data.length ? 200 : 0
+    };
+
     return (
       <View style={styles.container}>
         <LocationBox />
@@ -70,6 +74,7 @@ class CalendarScreen extends Component {
           ref={ref => {
             this._list = ref;
           }}
+          contentContainerStyle={containerStyle}
           onRefresh={this._refresh}
           refreshing={refreshing}
           style={styles.list}
@@ -106,10 +111,11 @@ export default connect(
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fefefe"
+    backgroundColor: "#efefef"
   },
   list: {
-    flex: 1
+    flex: 1,
+    backgroundColor: "#efefef"
   },
   divider: {
     height: 1,

@@ -66,15 +66,12 @@ class LocationBox extends Component {
     }
 
     const today = moment();
-    const date = today.format("MMM D, YYYY");
     const day = today.format("dddd");
 
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.title}>
-          <Text style={styles.titleText}>
-            {day}, {date}
-          </Text>
+          <Text style={styles.titleText}>{day}</Text>
         </View>
         <View style={styles.search} onLayout={this._onLayout}>
           <Entypo name="magnifying-glass" size={18} color="#000" />
