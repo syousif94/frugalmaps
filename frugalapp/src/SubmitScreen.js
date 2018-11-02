@@ -136,13 +136,36 @@ export default class SubmitScreen extends Component {
         />
         <EditSpecial ref={ref => (this._form = ref)}>
           <PlacePreview place={this.state.place} />
-          <Text style={styles.instruction}>What kind of special?</Text>
-          <EventTypePicker ref={ref => (this._eventType = ref)} />
+          <Text style={styles.instruction}>Select the days.</Text>
+          <DayPicker ref={ref => (this._days = ref)} />
+          <Text style={styles.instruction}>
+            Like 6:30pm. Leave blank for opening or closing.
+          </Text>
+          <View style={styles.row}>
+            <TextInput
+              placeholder="Start Time"
+              style={[styles.input, styles.time]}
+              placeholderTextColor="#999"
+              onChangeText={this._onChangeText("startTime")}
+              value={this.state.startTime}
+              clearButtonMode="always"
+              keyboardType="numbers-and-punctuation"
+            />
+            <TextInput
+              placeholder="End Time"
+              style={[styles.input, styles.time]}
+              placeholderTextColor="#999"
+              onChangeText={this._onChangeText("endTime")}
+              value={this.state.endTime}
+              clearButtonMode="always"
+              keyboardType="numbers-and-punctuation"
+            />
+          </View>
           <Text style={styles.instruction}>What's the special?</Text>
           <TextInput
             placeholder="Title"
             style={[styles.input, styles.title]}
-            placeholderTextColor="#333"
+            placeholderTextColor="#999"
             value={this.state.title}
             onChangeText={this._onChangeText("title")}
             clearButtonMode="always"
@@ -151,43 +174,22 @@ export default class SubmitScreen extends Component {
           <Text style={styles.instruction}>Briefly describe it.</Text>
           <TextInput
             placeholder="Description"
-            style={[styles.input, styles.description]}
             multiline
-            placeholderTextColor="#333"
+            style={[styles.input, styles.description]}
+            placeholderTextColor="#999"
             blurOnSubmit
             value={this.state.description}
             onChangeText={this._onChangeText("description")}
           />
-          <Text style={styles.instruction}>Select the days.</Text>
-          <DayPicker ref={ref => (this._days = ref)} />
-          <Text style={styles.instruction}>
-            Format hours like 6:30pm. Leave blank if all day.
-          </Text>
-          <View style={styles.row}>
-            <TextInput
-              placeholder="Start Time"
-              style={[styles.input, styles.time]}
-              placeholderTextColor="#333"
-              onChangeText={this._onChangeText("startTime")}
-              value={this.state.startTime}
-              clearButtonMode="always"
-            />
-            <TextInput
-              placeholder="End Time"
-              style={[styles.input, styles.time]}
-              placeholderTextColor="#333"
-              onChangeText={this._onChangeText("endTime")}
-              value={this.state.endTime}
-              clearButtonMode="always"
-            />
-          </View>
+          <Text style={styles.instruction}>What kind of special?</Text>
+          <EventTypePicker ref={ref => (this._eventType = ref)} />
           <Text style={styles.instruction}>
             Leave blank unless you have one.
           </Text>
           <TextInput
             placeholder="Admin Code"
             style={[styles.input, styles.title]}
-            placeholderTextColor="#333"
+            placeholderTextColor="#999"
             onChangeText={this._onChangeText("postCode")}
             value={this.state.postCode}
             autoCorrect={false}
@@ -218,16 +220,17 @@ const styles = StyleSheet.create({
   title: {
     height: 44
   },
-  description: {
-    height: 110,
-    paddingTop: 8
-  },
   row: {
     flexDirection: "row"
   },
   time: {
     height: 44,
     flex: 1
+  },
+  description: {
+    lineHeight: 18,
+    paddingTop: (44 - 18) / 2,
+    paddingBottom: (44 - 18) / 2
   },
   submit: {
     margin: 5,
@@ -245,7 +248,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#fff",
     textAlign: "center",
-    fontWeight: "500"
+    fontWeight: "600"
   },
   instruction: {
     marginTop: 5,

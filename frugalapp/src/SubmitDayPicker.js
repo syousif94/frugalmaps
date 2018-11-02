@@ -9,22 +9,22 @@ export default class DayPicker extends Component {
     selected: []
   };
 
-  _select = index => {
-    const selectedIndex = this.state.selected.indexOf(index);
+  _select = day => {
+    const selectedIndex = this.state.selected.indexOf(day);
     if (selectedIndex > -1) {
-      const selected = this.state.selected.filter(i => i !== index);
+      const selected = this.state.selected.filter(i => i !== day);
       this.setState({
         selected
       });
     } else {
       this.setState({
-        selected: [...this.state.selected, index]
+        selected: [...this.state.selected, day]
       });
     }
   };
 
-  _renderCheck = index => {
-    if (this.state.selected.indexOf(index) > -1) {
+  _renderCheck = day => {
+    if (this.state.selected.indexOf(day) > -1) {
       return <Entypo name="check" size={18} color={BLUE} />;
     }
     return null;
@@ -34,11 +34,11 @@ export default class DayPicker extends Component {
     return (
       <View style={styles.container}>
         {DAYS.map((day, index) => {
-          const onPress = this._select.bind(null, index);
+          const onPress = this._select.bind(null, day);
           return (
             <TouchableOpacity onPress={onPress} style={styles.btn} key={index}>
               <Text style={styles.text}>{day}</Text>
-              <View style={styles.checkBox}>{this._renderCheck(index)}</View>
+              <View style={styles.checkBox}>{this._renderCheck(day)}</View>
             </TouchableOpacity>
           );
         })}

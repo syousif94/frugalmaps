@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { RED, BLUE } from "./Colors";
 import { MapView, Linking } from "expo";
+import { INITIAL_REGION } from "./Constants";
 
 export default class PlacePreview extends Component {
   componentDidUpdate(previous) {
@@ -40,6 +41,11 @@ export default class PlacePreview extends Component {
     if (!place) {
       return (
         <View style={styles.empty}>
+          <MapView
+            style={styles.map}
+            pointerEvents="none"
+            initialRegion={INITIAL_REGION}
+          />
           <Text style={styles.instruction}>
             Select a restaurant from the previous page first
           </Text>
@@ -54,11 +60,6 @@ export default class PlacePreview extends Component {
 
     return (
       <View style={styles.container}>
-        <Text style={styles.name}>{place.name}</Text>
-        <Text style={styles.address}>{place.formatted_address}</Text>
-        <TouchableOpacity onPress={this._call} style={styles.callBtn}>
-          <Text style={styles.phone}>{place.international_phone_number}</Text>
-        </TouchableOpacity>
         <MapView
           ref={ref => (this._map = ref)}
           style={styles.map}
@@ -72,6 +73,11 @@ export default class PlacePreview extends Component {
             center={coordinate}
           />
         </MapView>
+        <Text style={styles.name}>{place.name}</Text>
+        <Text style={styles.address}>{place.formatted_address}</Text>
+        <TouchableOpacity onPress={this._call} style={styles.callBtn}>
+          <Text style={styles.phone}>{place.international_phone_number}</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -79,34 +85,35 @@ export default class PlacePreview extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    height: 190,
     margin: 5
   },
   map: {
-    marginTop: 5,
-    flex: 1,
-    borderRadius: 8
+    height: 190,
+    borderRadius: 8,
+    alignSelf: "stretch"
   },
   empty: {
     margin: 5,
     paddingVertical: 10,
     paddingHorizontal: 8,
-    borderRadius: 8,
+    borderRadius: 12,
     backgroundColor: RED,
     justifyContent: "center",
     alignItems: "center"
   },
   instruction: {
+    marginTop: 10,
     fontWeight: "600",
     color: "#fff",
     textAlign: "center"
   },
   name: {
+    marginTop: 5,
     fontWeight: "500"
   },
   address: {
     marginTop: 2,
-    color: "#a9a9a9"
+    color: "#555"
   },
   callBtn: {},
   phone: {

@@ -13,6 +13,20 @@ import { Entypo, MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import { RED } from "./Colors";
 import ImageGallery from "./ImageGallery";
 
+function formatTime(time) {
+  let hours = parseInt(time.substring(0, 2), 10);
+  let meridian = "am";
+  if (hours > 12) {
+    hours = hours - 12;
+    meridian = "pm";
+  } else if (hours === 0) {
+    hours = 12;
+  }
+
+  const minutes = time.substring(2);
+  return `${hours}:${minutes}${meridian}`;
+}
+
 class CalendarItem extends Component {
   _renderAd = () => {
     const { index, section } = this.props;
@@ -36,7 +50,8 @@ class CalendarItem extends Component {
 
   render() {
     const {
-      item: { _source: item }
+      item: { _source: item },
+      section: { iso }
     } = this.props;
 
     let timeSpan;
@@ -44,9 +59,27 @@ class CalendarItem extends Component {
     if (item.start && item.end) {
       timeSpan = `${item.start} - ${item.end}`;
     } else if (item.start) {
-      timeSpan = `Starts at ${item.start}`;
+      const period = item.periods.find(period => {
+        const time = parseInt(item.start, 10);
+        const close = parseInt(period.close.time, 10);
+        const open = parseInt(period.open.time, 10);
+        const beforeClose =
+          (time > open && time < close && period.close.day === iso) ||
+          (time > open && period.open.day === iso);
+        return beforeClose;
+      });
+      timeSpan = `${formatTime(item.start)} - ${formatTime(period.close.time)}`;
     } else if (item.end) {
-      timeSpan = `Ends at ${item.end}`;
+      const period = item.periods.find(period => {
+        const time = parseInt(item.end, 10);
+        const close = parseInt(period.close.time, 10);
+        const open = parseInt(period.open.time, 10);
+        const afterOpen =
+          (time > open && time < close && period.open.day === iso) ||
+          (time < close && period.close.day === iso);
+        return afterOpen;
+      });
+      timeSpan = `${formatTime(period.open.time)} - ${formatTime(item.end)}`;
     } else {
       timeSpan = `All Day`;
     }
@@ -279,7 +312,7 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     marginTop: 3,
-    color: '#444',
+    color: "#444",
     fontSize: 12
   },
   actions: {

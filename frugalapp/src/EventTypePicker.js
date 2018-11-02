@@ -3,10 +3,10 @@ import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import { BLUE } from "./Colors";
 
 export default class EventTypePicker extends Component {
-  static types = ["Happy Hour", "Brunch", "Daily"];
+  static types = ["Brunch", "Happy Hour", "Food"];
 
   state = {
-    selected: EventTypePicker.types[0]
+    selected: EventTypePicker.types[1]
   };
 
   _select = text => {
@@ -26,6 +26,12 @@ export default class EventTypePicker extends Component {
           if (selected === text) {
             typeStyle.push(styles.selected);
             textStyle.push(styles.selectedText);
+          }
+
+          if (index === 1) {
+            typeStyle.push({
+              flex: 1.4
+            });
           }
 
           const onPress = this._select.bind(null, text);
@@ -49,9 +55,9 @@ const styles = StyleSheet.create({
     flexDirection: "row"
   },
   type: {
+    flex: 1,
     margin: 4,
     height: 44,
-    flex: 1,
     backgroundColor: "#ededed",
     borderRadius: 8
   },
@@ -67,6 +73,7 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   selectedText: {
-    color: "#fff"
+    color: "#fff",
+    fontWeight: "600"
   }
 });

@@ -18,7 +18,7 @@ import { Constants } from "expo";
 
 const notched = Platform.OS === "ios" && Constants.statusBarHeight > 40;
 
-class Star extends Component {
+class Settings extends Component {
   render() {
     const { selected, index, onPress } = this.props;
 
@@ -31,9 +31,9 @@ class Star extends Component {
     return (
       <TouchableOpacity style={styles.tab} onPress={onPress}>
         <View style={styles.icon}>
-          <FontAwesome name="star" size={18} color={iconColor} />
+          <Entypo name="cog" size={20} color={iconColor} />
         </View>
-        <Text style={textStyle}>Starred</Text>
+        <Text style={textStyle}>Prefs</Text>
       </TouchableOpacity>
     );
   }
@@ -137,9 +137,8 @@ class TabBar extends Component {
       <SafeAreaView style={styles.container} onLayout={this._onLayout}>
         <View style={styles.footer}>
           <Calendar selected={selected} onPress={this._onCalendar} index={0} />
-          <Map selected={selected} index={2} onPress={this._onMap} />
-          <Star selected={selected} index={3} onPress={this._onMap} />
           <Upload selected={selected} index={1} onPress={this._onSubmit} />
+          <Map selected={selected} index={2} onPress={this._onMap} />
         </View>
       </SafeAreaView>
     );

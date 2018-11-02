@@ -64,7 +64,7 @@ class CalendarScreen extends Component {
     const { refreshing, data } = this.props;
 
     const containerStyle = {
-      paddingBottom: data.length ? 200 : 0
+      paddingBottom: data.length ? 110 : 0
     };
 
     return (
