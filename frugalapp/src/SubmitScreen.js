@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import {
   StyleSheet,
   TextInput,
@@ -9,6 +10,7 @@ import {
   AsyncStorage
 } from "react-native";
 import Swiper from "react-native-swiper";
+import * as Submission from "./store/submission";
 import RestaurantPicker from "./RestaurantPicker";
 import EditSpecial from "./EditSpecial";
 import PlacePreview from "./PlacePreview";
@@ -18,11 +20,20 @@ import emitter from "tiny-emitter/instance";
 import { BLUE } from "./Colors";
 import DayPicker from "./SubmitDayPicker";
 
-export default class SubmitScreen extends Component {
-  state = {
-    place: null
-  };
+const mapStateToProps = state => ({
+  title: state.submission.title,
+  description: state.submission.description,
+  startTime: state.submission.startTime,
+  endTime: state.submission.endTime,
+  postCode: state.submission.postCode,
+  place: state.submission.place
+});
 
+const mapDispatchToProps = {
+  set: Submission.actions.set
+};
+
+class SubmitScreen extends Component {
   componentDidMount() {
     emitter.on("focus-picker", this._scrollSwiper);
     this._restorePostCode();
@@ -66,7 +77,7 @@ export default class SubmitScreen extends Component {
   };
 
   _onChangeText = field => text => {
-    this.setState({
+    this.props.set({
       [field]: text
     });
     if (field === "postCode") {
@@ -75,7 +86,7 @@ export default class SubmitScreen extends Component {
   };
 
   _selectRestaurant = place => {
-    this.setState({
+    this.props.set({
       place
     });
     this._form.scrollToTop();
@@ -90,7 +101,7 @@ export default class SubmitScreen extends Component {
       endTime,
       postCode,
       place
-    } = this.state;
+    } = this.props;
 
     const { selected } = this._days.state;
 
@@ -111,7 +122,7 @@ export default class SubmitScreen extends Component {
 
   render() {
     const pickerProps = {
-      value: this.state.restaurant,
+      value: this.props.restaurant,
       onChangeText: this._onChangeText("restaurant"),
       select: this._selectRestaurant
     };
@@ -135,7 +146,7 @@ export default class SubmitScreen extends Component {
           {...pickerProps}
         />
         <EditSpecial ref={ref => (this._form = ref)}>
-          <PlacePreview place={this.state.place} />
+          <PlacePreview place={this.props.place} />
           <Text style={styles.instruction}>Select the days.</Text>
           <DayPicker ref={ref => (this._days = ref)} />
           <Text style={styles.instruction}>
@@ -147,7 +158,7 @@ export default class SubmitScreen extends Component {
               style={[styles.input, styles.time]}
               placeholderTextColor="#999"
               onChangeText={this._onChangeText("startTime")}
-              value={this.state.startTime}
+              value={this.props.startTime}
               clearButtonMode="always"
               keyboardType="numbers-and-punctuation"
             />
@@ -156,7 +167,7 @@ export default class SubmitScreen extends Component {
               style={[styles.input, styles.time]}
               placeholderTextColor="#999"
               onChangeText={this._onChangeText("endTime")}
-              value={this.state.endTime}
+              value={this.props.endTime}
               clearButtonMode="always"
               keyboardType="numbers-and-punctuation"
             />
@@ -166,7 +177,7 @@ export default class SubmitScreen extends Component {
             placeholder="Title"
             style={[styles.input, styles.title]}
             placeholderTextColor="#999"
-            value={this.state.title}
+            value={this.props.title}
             onChangeText={this._onChangeText("title")}
             clearButtonMode="always"
             autoCapitalize="words"
@@ -178,11 +189,11 @@ export default class SubmitScreen extends Component {
             style={[styles.input, styles.description]}
             placeholderTextColor="#999"
             blurOnSubmit
-            value={this.state.description}
+            value={this.props.description}
             onChangeText={this._onChangeText("description")}
           />
           <Text style={styles.instruction}>What kind of special?</Text>
-          <EventTypePicker ref={ref => (this._eventType = ref)} />
+          <EventTypePicker />
           <Text style={styles.instruction}>
             Leave blank unless you have one.
           </Text>
@@ -191,7 +202,7 @@ export default class SubmitScreen extends Component {
             style={[styles.input, styles.title]}
             placeholderTextColor="#999"
             onChangeText={this._onChangeText("postCode")}
-            value={this.state.postCode}
+            value={this.props.postCode}
             autoCorrect={false}
             autoCapitalize="none"
           />
@@ -208,6 +219,11 @@ export default class SubmitScreen extends Component {
     );
   }
 }
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SubmitScreen);
 
 const styles = StyleSheet.create({
   input: {

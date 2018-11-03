@@ -105,8 +105,6 @@ const events = (action$, store) =>
             events: { day: storeDay }
           } = store.getState();
 
-          // let today = moment().format("dddd");
-
           if (calendar.length) {
             if (storeDay) {
               const storeDayData = calendar.find(
@@ -121,18 +119,6 @@ const events = (action$, store) =>
             if (!day) {
               day = "All Events";
             }
-
-            // if (!day) {
-            //   const todayData = calendar.find(data => data.title === today);
-
-            //   if (todayData) {
-            //     day = today;
-            //   }
-            // }
-
-            // if (!day) {
-            //   day = calendar[0].title;
-            // }
           }
 
           return Observable.of(

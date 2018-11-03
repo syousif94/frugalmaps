@@ -12,20 +12,7 @@ import { FacebookAds, Notifications, Permissions } from "expo";
 import { Entypo, MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import { RED } from "./Colors";
 import ImageGallery from "./ImageGallery";
-
-function formatTime(time) {
-  let hours = parseInt(time.substring(0, 2), 10);
-  let meridian = "am";
-  if (hours > 12) {
-    hours = hours - 12;
-    meridian = "pm";
-  } else if (hours === 0) {
-    hours = 12;
-  }
-
-  const minutes = time.substring(2);
-  return `${hours}:${minutes}${meridian}`;
-}
+import { makeHours } from "./Time";
 
 class CalendarItem extends Component {
   _renderAd = () => {
@@ -33,9 +20,9 @@ class CalendarItem extends Component {
 
     if (index === 0 && section.index === 0) {
       return (
-        <View style={styles.ad}>
+        <View style={styles.adContainer}>
           <FacebookAds.BannerView
-            style={{ marginTop: -20 }}
+            style={styles.ad}
             placementId="1931177036970533_1956753154412921"
             type="standard"
             onPress={() => console.log("click")}
@@ -54,46 +41,18 @@ class CalendarItem extends Component {
       section: { iso }
     } = this.props;
 
-    let timeSpan;
-
-    if (item.start && item.end) {
-      timeSpan = `${item.start} - ${item.end}`;
-    } else if (item.start) {
-      const period = item.periods.find(period => {
-        const time = parseInt(item.start, 10);
-        const close = parseInt(period.close.time, 10);
-        const open = parseInt(period.open.time, 10);
-        const beforeClose =
-          (time > open && time < close && period.close.day === iso) ||
-          (time > open && period.open.day === iso);
-        return beforeClose;
-      });
-      timeSpan = `${formatTime(item.start)} - ${formatTime(period.close.time)}`;
-    } else if (item.end) {
-      const period = item.periods.find(period => {
-        const time = parseInt(item.end, 10);
-        const close = parseInt(period.close.time, 10);
-        const open = parseInt(period.open.time, 10);
-        const afterOpen =
-          (time > open && time < close && period.open.day === iso) ||
-          (time < close && period.close.day === iso);
-        return afterOpen;
-      });
-      timeSpan = `${formatTime(period.open.time)} - ${formatTime(item.end)}`;
-    } else {
-      timeSpan = `All Day`;
-    }
+    const hours = makeHours(item, iso);
 
     return (
       <View style={styles.container}>
         {this._renderAd()}
         <View style={styles.info}>
           <View style={styles.locationInfo}>
-            <Text style={styles.timeText}>{timeSpan}</Text>
+            <Text style={styles.timeText}>{hours}</Text>
             <Text style={styles.titleText}>{item.location}</Text>
           </View>
           <View style={styles.locationInfo}>
-            <Text style={styles.descriptionText}>{timeSpan}</Text>
+            <Text style={styles.descriptionText}>{hours}</Text>
             <Text style={styles.descriptionText}>{item.city}</Text>
           </View>
         </View>
@@ -340,8 +299,11 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     backgroundColor: RED
   },
-  ad: {
+  adContainer: {
     height: 50,
     overflow: "hidden"
+  },
+  ad: {
+    marginTop: -20
   }
 });
