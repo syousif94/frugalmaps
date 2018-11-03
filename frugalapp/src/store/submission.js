@@ -114,6 +114,18 @@ function days(state = [], { type, payload }) {
   }
 }
 
+function saving(state = false, { type, payload }) {
+  switch (type) {
+    case types.set:
+      if (payload.saving !== undefined) {
+        return payload.saving;
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
 export default combineReducers({
   id,
   eventType,
@@ -123,5 +135,6 @@ export default combineReducers({
   endTime,
   postCode,
   place,
-  days
+  days,
+  saving
 });

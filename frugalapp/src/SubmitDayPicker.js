@@ -1,30 +1,36 @@
 import React, { Component } from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { connect } from "react-redux";
 import { Entypo } from "@expo/vector-icons";
 import { BLUE } from "./Colors";
 import { DAYS } from "./Constants";
+import * as Submission from "./store/submission";
 
-export default class DayPicker extends Component {
-  state = {
-    selected: []
-  };
+const mapStateToProps = state => ({
+  days: state.submission.days
+});
 
+const mapDispatchToProps = {
+  set: Submission.actions.set
+};
+
+class DayPicker extends Component {
   _select = day => {
-    const selectedIndex = this.state.selected.indexOf(day);
+    const selectedIndex = this.props.days.indexOf(day);
     if (selectedIndex > -1) {
-      const selected = this.state.selected.filter(i => i !== day);
-      this.setState({
-        selected
+      const days = this.props.days.filter(i => i !== day);
+      this.props.set({
+        days
       });
     } else {
-      this.setState({
-        selected: [...this.state.selected, day]
+      this.props.set({
+        days: [...this.props.days, day]
       });
     }
   };
 
   _renderCheck = day => {
-    if (this.state.selected.indexOf(day) > -1) {
+    if (this.props.days.indexOf(day) > -1) {
       return <Entypo name="check" size={18} color={BLUE} />;
     }
     return null;
@@ -46,6 +52,11 @@ export default class DayPicker extends Component {
     );
   }
 }
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(DayPicker);
 
 const styles = StyleSheet.create({
   container: {

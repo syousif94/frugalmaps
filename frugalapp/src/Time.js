@@ -1,3 +1,10 @@
+import moment from "moment";
+
+export function validateTime(str) {
+  const date = moment(str, ["h:ma", "H:m"]);
+  return date.isValid();
+}
+
 export function formatTime(time) {
   let hours = parseInt(time.substring(0, 2), 10);
   let meridian = "am";

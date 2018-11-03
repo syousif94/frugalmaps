@@ -47,7 +47,7 @@ class SubmitScreen extends Component {
     try {
       const value = await AsyncStorage.getItem("postCode");
       if (value !== null) {
-        this.setState({
+        this.props.set({
           postCode: value
         });
       }
@@ -59,7 +59,7 @@ class SubmitScreen extends Component {
   };
 
   _scrollSwiper = () => {
-    if (this.state.place) {
+    if (this.props.place) {
       if (this._swiper.state.index === 0) {
         this._swiper.scrollBy(1, false);
       }
@@ -94,25 +94,8 @@ class SubmitScreen extends Component {
   };
 
   _submitForm = () => {
-    const {
-      title,
-      description,
-      startTime,
-      endTime,
-      postCode,
-      place
-    } = this.props;
-
-    const { selected } = this._days.state;
-
-    console.log({
-      title,
-      description,
-      startTime,
-      endTime,
-      postCode,
-      selected,
-      place
+    this.props.set({
+      saving: true
     });
   };
 
@@ -148,7 +131,7 @@ class SubmitScreen extends Component {
         <EditSpecial ref={ref => (this._form = ref)}>
           <PlacePreview place={this.props.place} />
           <Text style={styles.instruction}>Select the days.</Text>
-          <DayPicker ref={ref => (this._days = ref)} />
+          <DayPicker />
           <Text style={styles.instruction}>
             Like 6:30pm. Leave blank for opening or closing.
           </Text>
