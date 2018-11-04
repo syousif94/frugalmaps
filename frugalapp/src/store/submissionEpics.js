@@ -83,9 +83,15 @@ const saveEvent = (action$, store) =>
         }
 
         const payload = {
-          placeid: place.eventType,
+          placeid: place.place_id,
           title,
-          description
+          description,
+          days,
+          type: eventType,
+          id,
+          start: startTime.length ? startTime : null,
+          end: endTime.length ? endTime : null,
+          postCode: postCode.trim().length ? postCode : null
         };
 
         const res = await api("save-event", payload);

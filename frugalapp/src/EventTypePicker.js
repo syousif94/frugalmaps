@@ -1,18 +1,30 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import * as Submission from "./store/submission";
 import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import { BLUE } from "./Colors";
 
-export default class EventTypePicker extends Component {
+const mapStateToProps = state => ({
+  eventType: state.submission.eventType
+});
+
+const mapDispatchToProps = {
+  set: Submission.actions.set
+};
+
+class EventTypePicker extends Component {
   static types = ["Brunch", "Happy Hour", "Food"];
 
-  state = {
-    selected: EventTypePicker.types[1]
-  };
-
   _select = text => {
-    this.setState({
-      selected: text
-    });
+    if (this.props.eventType === text) {
+      this.props.set({
+        eventType: null
+      });
+    } else {
+      this.props.set({
+        eventType: text
+      });
+    }
   };
 
   render() {
@@ -48,6 +60,11 @@ export default class EventTypePicker extends Component {
     );
   }
 }
+
+connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(EventTypePicker);
 
 const styles = StyleSheet.create({
   container: {

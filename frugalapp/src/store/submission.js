@@ -18,7 +18,7 @@ function id(state = null, { type, payload }) {
   }
 }
 
-function eventType(state = "Happy Hour", { type, payload }) {
+function eventType(state = null, { type, payload }) {
   switch (type) {
     case types.set:
       if (payload.eventType !== undefined) {

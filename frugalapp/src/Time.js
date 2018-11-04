@@ -2,7 +2,9 @@ import moment from "moment";
 
 export function validateTime(str) {
   const date = moment(str, ["h:ma", "H:m"]);
-  return date.isValid();
+  const validDate = date.isValid();
+  const containsMeridian = str.indexOf("am") > -1 || str.indexOf("pm") > -1;
+  return validDate && containsMeridian;
 }
 
 export function formatTime(time) {
