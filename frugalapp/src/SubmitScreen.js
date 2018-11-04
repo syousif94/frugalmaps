@@ -19,6 +19,7 @@ import emitter from "tiny-emitter/instance";
 
 import { BLUE } from "./Colors";
 import DayPicker from "./SubmitDayPicker";
+import { validSubmission } from "./ValidateSubmission";
 
 const mapStateToProps = state => ({
   title: state.submission.title,
@@ -94,9 +95,11 @@ class SubmitScreen extends Component {
   };
 
   _submitForm = () => {
-    this.props.set({
-      saving: true
-    });
+    if (validSubmission()) {
+      this.props.set({
+        saving: true
+      });
+    }
   };
 
   _blurKeyboard = () => {

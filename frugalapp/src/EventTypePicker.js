@@ -28,14 +28,14 @@ class EventTypePicker extends Component {
   };
 
   render() {
-    const { selected } = this.state;
+    const { eventType } = this.props;
     return (
       <View style={styles.container}>
         {EventTypePicker.types.map((text, index) => {
           const typeStyle = [styles.type];
           const textStyle = [styles.btnText];
 
-          if (selected === text) {
+          if (eventType === text) {
             typeStyle.push(styles.selected);
             textStyle.push(styles.selectedText);
           }
@@ -61,7 +61,7 @@ class EventTypePicker extends Component {
   }
 }
 
-connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(EventTypePicker);

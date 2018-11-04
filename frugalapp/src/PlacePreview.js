@@ -35,6 +35,16 @@ export default class PlacePreview extends Component {
     Linking.openURL(url).catch(err => console.log(err));
   };
 
+  _website = () => {
+    const { place } = this.props;
+
+    if (!place || !place.website) {
+      return;
+    }
+
+    Linking.openURL(place.website).catch(err => console.log(err));
+  };
+
   render() {
     const { place } = this.props;
 
@@ -77,6 +87,9 @@ export default class PlacePreview extends Component {
         <Text style={styles.address}>{place.formatted_address}</Text>
         <TouchableOpacity onPress={this._call} style={styles.callBtn}>
           <Text style={styles.phone}>{place.international_phone_number}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={this._website} style={styles.callBtn}>
+          <Text style={styles.phone}>{place.website}</Text>
         </TouchableOpacity>
       </View>
     );
