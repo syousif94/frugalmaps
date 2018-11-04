@@ -202,7 +202,7 @@ async function createEvent(req, res) {
 
     await Promise.all([save, ...saveLocations]);
 
-    res.send(200);
+    res.send({});
   } catch (error) {
     res.send({
       error: error.message

@@ -15,22 +15,22 @@ const mapDispatchToProps = {
 };
 
 class DayPicker extends Component {
-  _select = day => {
-    const selectedIndex = this.props.days.indexOf(day);
+  _select = index => {
+    const selectedIndex = this.props.days.indexOf(index);
     if (selectedIndex > -1) {
-      const days = this.props.days.filter(i => i !== day);
+      const days = this.props.days.filter(i => i !== index);
       this.props.set({
         days
       });
     } else {
       this.props.set({
-        days: [...this.props.days, day]
+        days: [...this.props.days, index]
       });
     }
   };
 
-  _renderCheck = day => {
-    if (this.props.days.indexOf(day) > -1) {
+  _renderCheck = index => {
+    if (this.props.days.indexOf(index) > -1) {
       return <Entypo name="check" size={18} color={BLUE} />;
     }
     return null;
@@ -40,11 +40,11 @@ class DayPicker extends Component {
     return (
       <View style={styles.container}>
         {DAYS.map((day, index) => {
-          const onPress = this._select.bind(null, day);
+          const onPress = this._select.bind(null, index);
           return (
             <TouchableOpacity onPress={onPress} style={styles.btn} key={index}>
               <Text style={styles.text}>{day}</Text>
-              <View style={styles.checkBox}>{this._renderCheck(day)}</View>
+              <View style={styles.checkBox}>{this._renderCheck(index)}</View>
             </TouchableOpacity>
           );
         })}
