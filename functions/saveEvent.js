@@ -23,6 +23,7 @@ function formatTime(str) {
 async function createEvent(req, res) {
   const {
     id,
+    fid,
     placeid,
     title,
     description,
@@ -34,7 +35,7 @@ async function createEvent(req, res) {
   } = req.body;
 
   if (postCode !== process.env.POSTCODE) {
-    if (id || postCode !== "") {
+    if (id || fid || postCode !== "") {
       res.send({
         error: "Invalid Code"
       });
@@ -201,6 +202,13 @@ async function createEvent(req, res) {
     const saveLocations = indexLocations(city, state);
 
     await Promise.all([save, ...saveLocations]);
+
+    if (fid) {
+      await db
+        .collection("submissions")
+        .doc(fid)
+        .delete();
+    }
 
     res.send({});
   } catch (error) {

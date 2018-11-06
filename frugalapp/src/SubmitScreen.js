@@ -7,7 +7,8 @@ import {
   Keyboard,
   TouchableOpacity,
   Text,
-  AsyncStorage
+  AsyncStorage,
+  Alert
 } from "react-native";
 import Swiper from "react-native-swiper";
 import * as Submission from "./store/submission";
@@ -17,17 +18,21 @@ import PlacePreview from "./PlacePreview";
 import EventTypePicker from "./EventTypePicker";
 import emitter from "tiny-emitter/instance";
 
-import { BLUE } from "./Colors";
+import { BLUE, RED } from "./Colors";
 import DayPicker from "./SubmitDayPicker";
 import { validSubmission } from "./ValidateSubmission";
 
 const mapStateToProps = state => ({
+  id: state.submission.id,
+  fid: state.submission.fid,
   title: state.submission.title,
   description: state.submission.description,
   startTime: state.submission.startTime,
   endTime: state.submission.endTime,
   postCode: state.submission.postCode,
-  place: state.submission.place
+  place: state.submission.place,
+  saving: state.submission.saving,
+  deleting: state.submission.deleting
 });
 
 const mapDispatchToProps = {
@@ -102,8 +107,58 @@ class SubmitScreen extends Component {
     }
   };
 
+  _deletePost = () => {
+    Alert.alert("Are you sure?", "Deleting a post cannot be undone", [
+      {
+        text: "Delete",
+        onPress: () => {
+          this.props.set({
+            deleting: true
+          });
+        },
+        style: "destructive"
+      },
+      { text: "Cancel", style: "cancel" }
+    ]);
+  };
+
   _blurKeyboard = () => {
     Keyboard.dismiss();
+  };
+
+  _renderDelete = () => {
+    if (!this.props.id) {
+      return null;
+    }
+
+    const text = this.props.deleting ? "Deleting..." : "Delete Special";
+
+    return (
+      <View style={[styles.btnContainer, styles.delete]}>
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={this._deletePost}
+          disabled={this.props.saving || this.props.deleting}
+        >
+          <Text style={styles.btnText}>{text}</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  _renderSubmit = () => {
+    const text = this.props.saving ? "Saving..." : "Submit Special";
+    return (
+      <View style={[styles.btnContainer, styles.submit]}>
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={this._submitForm}
+          disabled={this.props.saving || this.props.deleting}
+        >
+          <Text style={styles.btnText}>{text}</Text>
+        </TouchableOpacity>
+      </View>
+    );
   };
 
   render() {
@@ -192,14 +247,8 @@ class SubmitScreen extends Component {
             autoCorrect={false}
             autoCapitalize="none"
           />
-          <View style={styles.submit}>
-            <TouchableOpacity
-              style={styles.submitBtn}
-              onPress={this._submitForm}
-            >
-              <Text style={styles.submitText}>Submit Special</Text>
-            </TouchableOpacity>
-          </View>
+          {this._renderSubmit()}
+          {this._renderDelete()}
         </EditSpecial>
       </Swiper>
     );
@@ -234,19 +283,24 @@ const styles = StyleSheet.create({
     paddingTop: (44 - 18) / 2,
     paddingBottom: (44 - 18) / 2
   },
-  submit: {
-    margin: 5,
-    marginTop: 20,
+  btnContainer: {
     height: 44,
-    backgroundColor: BLUE,
-    borderRadius: 8
+    borderRadius: 8,
+    margin: 5
   },
-  submitBtn: {
+  submit: {
+    marginTop: 20,
+    backgroundColor: BLUE
+  },
+  delete: {
+    backgroundColor: RED
+  },
+  btn: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center"
   },
-  submitText: {
+  btnText: {
     fontSize: 16,
     color: "#fff",
     textAlign: "center",

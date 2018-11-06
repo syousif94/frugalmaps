@@ -1,5 +1,4 @@
 import { combineReducers } from "redux";
-import { createSelector } from "reselect";
 import { createActions } from "./lib";
 
 const mutations = ["set"];
@@ -11,6 +10,18 @@ function id(state = null, { type, payload }) {
     case types.set:
       if (payload.id !== undefined) {
         return payload.id;
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
+function fid(state = null, { type, payload }) {
+  switch (type) {
+    case types.set:
+      if (payload.fid !== undefined) {
+        return payload.fid;
       }
       return state;
     default:
@@ -126,8 +137,21 @@ function saving(state = false, { type, payload }) {
   }
 }
 
+function deleting(state = false, { type, payload }) {
+  switch (type) {
+    case types.set:
+      if (payload.deleting !== undefined) {
+        return payload.deleting;
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
 export default combineReducers({
   id,
+  fid,
   eventType,
   title,
   description,
@@ -136,5 +160,6 @@ export default combineReducers({
   postCode,
   place,
   days,
-  saving
+  saving,
+  deleting
 });
