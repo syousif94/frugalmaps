@@ -4,6 +4,7 @@ import { StyleSheet, Image, View, Text } from "react-native";
 import { MapView } from "expo";
 
 import ImageGallery from "./ImageGallery";
+import { makeHours } from "./Time";
 
 export default class MapMarker extends Component {
   static imageHeight = 150;
@@ -65,17 +66,10 @@ export default class MapMarker extends Component {
       height: this.state.height
     };
 
-    let timeSpan;
+    const ISO_DAYS = [1, 2, 3, 4, 5, 6, 0];
+    const iso = ISO_DAYS[item.days[0]];
 
-    if (item.start && item.end) {
-      timeSpan = `${item.start} - ${item.end}`;
-    } else if (item.start) {
-      timeSpan = `Starts at ${item.start}`;
-    } else if (item.end) {
-      timeSpan = `Ends at ${item.end}`;
-    } else {
-      timeSpan = `All Day`;
-    }
+    const hours = makeHours(item, iso);
 
     return (
       <MapView.Callout>
@@ -84,7 +78,7 @@ export default class MapMarker extends Component {
           <View style={styles.info} onLayout={this._updateHeight}>
             <Text style={styles.titleText}>{item.title}</Text>
             <Text style={styles.locationText}>{item.location}</Text>
-            <Text style={styles.infoText}>{timeSpan}</Text>
+            <Text style={styles.infoText}>{hours}</Text>
             <Text style={styles.infoText}>{item.description}</Text>
           </View>
         </View>
