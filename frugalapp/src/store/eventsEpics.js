@@ -37,13 +37,6 @@ const makeEvents = hits => {
 
   const beforeToday = initial.slice(0, todayIndex);
 
-  console.log({
-    today,
-    todayIndex,
-    todayAndAfter,
-    beforeToday
-  });
-
   return [...todayAndAfter, ...beforeToday]
     .map((day, index) => {
       day.away = index;
