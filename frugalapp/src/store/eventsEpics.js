@@ -16,7 +16,7 @@ const makeEvents = hits => {
     { title: "Thursday", data: [], iso: 4, away: 0 },
     { title: "Friday", data: [], iso: 5, away: 0 },
     { title: "Saturday", data: [], iso: 6, away: 0 },
-    { title: "Sunday", data: [], iso: 7, away: 0 }
+    { title: "Sunday", data: [], iso: 0, away: 0 }
   ];
 
   if (!hits) {
@@ -31,11 +31,18 @@ const makeEvents = hits => {
 
   const today = moment().weekday();
 
-  const todayIndex = initial.findIndex((_, index) => index === today);
+  const todayIndex = initial.findIndex(day => day.iso === today);
 
   const todayAndAfter = initial.slice(todayIndex, 7);
 
   const beforeToday = initial.slice(0, todayIndex);
+
+  console.log({
+    today,
+    todayIndex,
+    todayAndAfter,
+    beforeToday
+  });
 
   return [...todayAndAfter, ...beforeToday]
     .map((day, index) => {
