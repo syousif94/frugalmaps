@@ -21,6 +21,8 @@ class LocationPrompt extends Component {
     hidden: true
   };
 
+  _appState = AppState.currentState;
+
   componentDidMount() {
     this.keyboardWillShowListener = Keyboard.addListener(
       "keyboardWillShow",
@@ -30,11 +32,13 @@ class LocationPrompt extends Component {
       "keyboardWillHide",
       this._keyboardWillHide
     );
+    AppState.addEventListener("change", this._handleAppStateChange);
   }
 
   componentWillUnmount() {
     this.keyboardWillShowListener.remove();
     this.keyboardWillHideListener.remove();
+    AppState.removeEventListener("change", this._handleAppStateChange);
   }
 
   _promptLocation = async () => {
@@ -51,8 +55,6 @@ class LocationPrompt extends Component {
           {
             text: "Open Settings",
             onPress: () => {
-              this._appState = AppState.currentState;
-              AppState.addEventListener("change", this._handleAppStateChange);
               Linking.openURL("app-settings:");
             }
           }
@@ -75,7 +77,8 @@ class LocationPrompt extends Component {
   _handleAppStateChange = async nextAppState => {
     if (
       this._appState.match(/inactive|background/) &&
-      nextAppState === "active"
+      nextAppState === "active" &&
+      !this.state.hidden
     ) {
       const { status: locationStatus } = await Permissions.getAsync(
         Permissions.LOCATION
@@ -85,8 +88,6 @@ class LocationPrompt extends Component {
         this.props.coordinates();
         this._setButtonOpacity(0);
       }
-
-      AppState.removeEventListener("change", this._handleAppStateChange);
     }
 
     this._appState = nextAppState;
