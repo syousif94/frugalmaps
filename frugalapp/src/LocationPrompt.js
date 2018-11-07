@@ -85,9 +85,11 @@ class LocationPrompt extends Component {
         this.props.coordinates();
         this._setButtonOpacity(0);
       }
+
+      AppState.removeEventListener("change", this._handleAppStateChange);
     }
 
-    AppState.removeEventListener("change", this._handleAppStateChange);
+    this._appState = nextAppState;
   };
 
   _setButtonOpacity = opacity => {
