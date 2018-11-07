@@ -16,6 +16,7 @@
   "dependencies": {
     "@google-cloud/firestore": "^0.18.0",
     "@google/maps": "0.3.1",
+    "@turf/turf": "^5.1.6",
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
     "dotenv": "^6.0.0",
