@@ -10,6 +10,7 @@ import Header from "./CalendarListHeader";
 import LocationList from "./LocationList";
 import CalendarEmpty from "./CalendarEmpty";
 import * as Events from "./store/events";
+import { ANDROID } from "./Constants";
 
 class CalendarScreen extends Component {
   componentDidMount() {
@@ -30,6 +31,10 @@ class CalendarScreen extends Component {
   };
 
   _renderInitial = () => {
+    if (ANDROID) {
+      return null;
+    }
+
     const { initialized, listTop } = this.props;
 
     if (initialized || !listTop) {

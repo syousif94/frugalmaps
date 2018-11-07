@@ -4,7 +4,7 @@ import { MapView } from "expo";
 import { connect } from "react-redux";
 import ImageGallery from "./ImageGallery";
 import { INITIAL_REGION } from "./Constants";
-import MapMarker from "./MapMarker";
+import MapMarker from "./MapMarker.ios";
 
 class InfoScreen extends Component {
   state = {
@@ -48,8 +48,6 @@ class InfoScreen extends Component {
 
     const { _source: item } = data;
 
-    console.log({ data });
-
     return (
       <View style={[styles.info, styles.loaded]}>
         <Text style={styles.boldText}>{item.title}</Text>
@@ -71,13 +69,11 @@ class InfoScreen extends Component {
             style={styles.map}
             initialRegion={INITIAL_REGION}
             mapType={this.state.mapType}
-            onMapReady={this._focusAnnotation}
+            // onMapReady={this._focusAnnotation}
           >
             <MapMarker data={data} key={data._id} disabled />;
           </MapView>
         </View>
-        <ImageGallery doc={data} disabled height={160} />
-        {this._renderInfo()}
       </View>
     );
   }
@@ -95,7 +91,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff"
   },
   map: {
-    flex: 1
+    height: 200
   },
   info: {
     height: 300

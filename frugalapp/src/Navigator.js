@@ -5,6 +5,7 @@ import {
   createStackNavigator
 } from "react-navigation";
 
+import { ANDROID } from "./Constants";
 import MapScreen from "./MapScreen";
 import CalendarScreen from "./CalendarScreen";
 import SubmitScreen from "./SubmitScreen";
@@ -25,7 +26,7 @@ const TabScreen = createBottomTabNavigator(
   {
     initialRoute: "Calendar",
     tabBarComponent: TabBar,
-    lazy: false
+    lazy: ANDROID
   }
 );
 

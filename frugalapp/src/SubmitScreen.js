@@ -202,6 +202,7 @@ class SubmitScreen extends Component {
               value={this.props.startTime}
               clearButtonMode="always"
               keyboardType="numbers-and-punctuation"
+              underlineColorAndroid="transparent"
             />
             <TextInput
               placeholder="End Time"
@@ -211,6 +212,7 @@ class SubmitScreen extends Component {
               value={this.props.endTime}
               clearButtonMode="always"
               keyboardType="numbers-and-punctuation"
+              underlineColorAndroid="transparent"
             />
           </View>
           <Text style={styles.instruction}>What's the special?</Text>
@@ -222,6 +224,7 @@ class SubmitScreen extends Component {
             onChangeText={this._onChangeText("title")}
             clearButtonMode="always"
             autoCapitalize="words"
+            underlineColorAndroid="transparent"
           />
           <Text style={styles.instruction}>Briefly describe it.</Text>
           <TextInput
@@ -232,6 +235,7 @@ class SubmitScreen extends Component {
             blurOnSubmit
             value={this.props.description}
             onChangeText={this._onChangeText("description")}
+            underlineColorAndroid="transparent"
           />
           <Text style={styles.instruction}>What kind of special?</Text>
           <EventTypePicker />
@@ -246,6 +250,7 @@ class SubmitScreen extends Component {
             value={this.props.postCode}
             autoCorrect={false}
             autoCapitalize="none"
+            underlineColorAndroid="transparent"
           />
           {this._renderSubmit()}
           {this._renderDelete()}

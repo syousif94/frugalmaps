@@ -1,4 +1,4 @@
-import { Dimensions } from "react-native";
+import { Dimensions, Platform } from "react-native";
 
 export const DAYS = ["M", "T", "W", "Th", "F", "Sa", "S"];
 
@@ -12,3 +12,8 @@ export const INITIAL_REGION = {
 };
 
 export const { height: HEIGHT, width: WIDTH } = Dimensions.get("window");
+
+const os = Platform.OS;
+
+export const ANDROID = os === "android";
+export const IOS = os === "ios";

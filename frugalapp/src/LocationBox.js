@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import { StyleSheet, TextInput, View, Text } from "react-native";
+import { Constants } from "expo";
 import { Entypo } from "@expo/vector-icons";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import * as Location from "./store/location";
 import emitter from "tiny-emitter/instance";
 import moment from "moment";
+import { IOS } from "./Constants";
 
 class LocationBox extends Component {
   componentDidMount() {
@@ -87,6 +89,7 @@ class LocationBox extends Component {
             onBlur={this._onBlur}
             autoCapitalize="words"
             clearButtonMode={focused ? "always" : "never"}
+            underlineColorAndroid="transparent"
           />
         </View>
       </SafeAreaView>
@@ -112,6 +115,7 @@ export default connect(
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: IOS ? 0 : Constants.statusBarHeight,
     backgroundColor: "#fff",
     borderBottomWidth: 1,
     borderColor: "#e0e0e0"
@@ -119,7 +123,8 @@ const styles = StyleSheet.create({
   title: {
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 5
+    paddingTop: IOS ? 5 : 10,
+    paddingBottom: IOS ? 5 : 0
   },
   titleText: {
     fontWeight: "600",

@@ -13,6 +13,7 @@ import { Entypo, MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import { RED } from "./Colors";
 import ImageGallery from "./ImageGallery";
 import { makeHours } from "./Time";
+import { IOS } from "./Constants";
 
 class CalendarItem extends Component {
   _renderAd = () => {
@@ -304,6 +305,6 @@ const styles = StyleSheet.create({
     overflow: "hidden"
   },
   ad: {
-    marginTop: -20
+    marginTop: IOS ? -20 : 0
   }
 });
