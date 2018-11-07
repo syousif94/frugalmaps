@@ -6,7 +6,8 @@ import {
   Animated,
   StyleSheet,
   Linking,
-  Alert
+  Alert,
+  AppState
 } from "react-native";
 import { BLUE } from "./Colors";
 import { Permissions } from "expo";
@@ -50,6 +51,8 @@ class LocationPrompt extends Component {
           {
             text: "Open Settings",
             onPress: () => {
+              this._appState = AppState.currentState;
+              AppState.addEventListener("change", this._handleAppStateChange);
               Linking.openURL("app-settings:");
             }
           }
@@ -67,6 +70,24 @@ class LocationPrompt extends Component {
 
     this.props.coordinates();
     this._setButtonOpacity(0);
+  };
+
+  _handleAppStateChange = async nextAppState => {
+    if (
+      this._appState.match(/inactive|background/) &&
+      nextAppState === "active"
+    ) {
+      const { status: locationStatus } = await Permissions.getAsync(
+        Permissions.LOCATION
+      );
+
+      if (locationStatus === "granted") {
+        this.props.coordinates();
+        this._setButtonOpacity(0);
+      }
+    }
+
+    AppState.removeEventListener("change", this._handleAppStateChange);
   };
 
   _setButtonOpacity = opacity => {
