@@ -8,6 +8,7 @@ import {
   Text
 } from "react-native";
 import { connect } from "react-redux";
+import _ from "lodash";
 
 import { withNavigation } from "react-navigation";
 import { Entypo } from "@expo/vector-icons";
@@ -37,23 +38,26 @@ const ImageGallery = ({ doc, height, set, navigation, disabled }) => {
           }}
         >
           <View style={touchableStyle}>
-            {item.photos.map(photo => {
-              const { url: uri, height: imageHeight, width } = photo;
+            {_(item.photos)
+              .shuffle()
+              .map(photo => {
+                const { url: uri, height: imageHeight, width } = photo;
 
-              const source = {
-                uri
-              };
+                const source = {
+                  uri
+                };
 
-              const imageWidth = (height / imageHeight) * width;
+                const imageWidth = (height / imageHeight) * width;
 
-              return (
-                <Image
-                  key={uri}
-                  source={source}
-                  style={[styles.image, { width: imageWidth, height }]}
-                />
-              );
-            })}
+                return (
+                  <Image
+                    key={uri}
+                    source={source}
+                    style={[styles.image, { width: imageWidth, height }]}
+                  />
+                );
+              })
+              .value()}
           </View>
         </TouchableWithoutFeedback>
       </ScrollView>
