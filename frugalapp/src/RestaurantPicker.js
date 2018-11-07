@@ -1,6 +1,13 @@
 import React, { Component } from "react";
 import _ from "lodash";
-import { StyleSheet, View, TextInput, FlatList, Text } from "react-native";
+import {
+  StyleSheet,
+  View,
+  TextInput,
+  FlatList,
+  Text,
+  KeyboardAvoidingView
+} from "react-native";
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
 import api from "./API";
@@ -95,18 +102,20 @@ class RestaurantPicker extends Component {
           </View>
         </SafeAreaView>
         <View style={styles.divider} />
-        <FlatList
-          ListFooterComponent={this._renderFooter}
-          style={styles.list}
-          data={this.state.data}
-          renderItem={this._renderItem}
-          keyExtractor={this._keyExtractor}
-          keyboardDismissMode="none"
-          keyboardShouldPersistTaps="handled"
-          alwaysBounceVertical
-          ItemSeparatorComponent={() => <View style={styles.divider} />}
-        />
-        <LocationPrompt />
+        <KeyboardAvoidingView style={styles.list} behavior="padding">
+          <FlatList
+            ListFooterComponent={this._renderFooter}
+            style={styles.list}
+            data={this.state.data}
+            renderItem={this._renderItem}
+            keyExtractor={this._keyExtractor}
+            keyboardDismissMode="none"
+            keyboardShouldPersistTaps="handled"
+            alwaysBounceVertical
+            ItemSeparatorComponent={() => <View style={styles.divider} />}
+          />
+          <LocationPrompt />
+        </KeyboardAvoidingView>
       </View>
     );
   }

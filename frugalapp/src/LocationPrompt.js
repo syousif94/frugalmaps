@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import {
   Keyboard,
-  KeyboardAvoidingView,
   Text,
   TouchableOpacity,
   Animated,
@@ -103,8 +102,8 @@ class LocationPrompt extends Component {
     this._setButtonOpacity(0);
   };
 
-  _renderButton = () => {
-    if (this.props.hidden) {
+  render() {
+    if (this.state.hidden) {
       return null;
     }
 
@@ -124,14 +123,6 @@ class LocationPrompt extends Component {
           </Text>
         </TouchableOpacity>
       </Animated.View>
-    );
-  };
-
-  render() {
-    return (
-      <KeyboardAvoidingView behavior="padding">
-        {this._renderButton()}
-      </KeyboardAvoidingView>
     );
   }
 }

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { View, Text, StyleSheet, Keyboard, SectionList } from "react-native";
 import { connect } from "react-redux";
 
-import * as Location from "./store/location";
+import LocationPrompt from "./LocationPrompt";
 import LocationSuggestion from "./LocationSuggestion";
 
 class LocationList extends Component {
@@ -73,6 +73,7 @@ class LocationList extends Component {
     return (
       <View style={[styles.container, { top: listTop, paddingBottom }]}>
         {this._renderList()}
+        <LocationPrompt />
       </View>
     );
   }
@@ -98,9 +99,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderTopWidth: 1,
     borderColor: "#e0e0e0"
-  },
-  flex: {
-    flex: 1
   },
   list: {
     flex: 1
