@@ -5,7 +5,7 @@ import "rxjs";
 import { FacebookAds } from "expo";
 import Navigator from "./src/Navigator";
 import store from "./src/store";
-import { DEV } from "./src/Constants";
+import { DEV, IOS } from "./src/Constants";
 import { AppLoading } from "expo";
 import cache from "./src/CacheAssets";
 
@@ -23,8 +23,10 @@ const App = () => (
 
 export default class extends Component {
   componentDidMount() {
-    StatusBar.setHidden(false);
-    StatusBar.setBarStyle("dark-content");
+    if (IOS) {
+      StatusBar.setHidden(false);
+      StatusBar.setBarStyle("dark-content");
+    }
   }
 
   state = {

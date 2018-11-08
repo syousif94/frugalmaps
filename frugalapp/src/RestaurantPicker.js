@@ -15,6 +15,7 @@ import { Entypo } from "@expo/vector-icons";
 import RestaurantSuggestion from "./RestaurantSuggestion";
 import LocationPrompt from "./LocationPrompt";
 import Footer from "./RestaurantPickerFooter";
+import { IOS } from "./Constants";
 
 class RestaurantPicker extends Component {
   state = {
@@ -102,7 +103,11 @@ class RestaurantPicker extends Component {
           </View>
         </SafeAreaView>
         <View style={styles.divider} />
-        <KeyboardAvoidingView style={styles.list} behavior="padding">
+        <KeyboardAvoidingView
+          style={styles.list}
+          behavior="padding"
+          enabled={IOS}
+        >
           <FlatList
             ListFooterComponent={this._renderFooter}
             style={styles.list}

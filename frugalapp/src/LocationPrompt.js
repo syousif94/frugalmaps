@@ -14,6 +14,7 @@ import { Permissions } from "expo";
 import { connect } from "react-redux";
 
 import * as Location from "./store/location";
+import { IOS } from "./Constants";
 
 class LocationPrompt extends Component {
   state = {
@@ -24,12 +25,14 @@ class LocationPrompt extends Component {
   _appState = AppState.currentState;
 
   componentDidMount() {
+    const show = IOS ? "keyboardWillShow" : "keyboardDidShow";
+    const hide = IOS ? "keyboardWillHide" : "keyboardDidHide";
     this.keyboardWillShowListener = Keyboard.addListener(
-      "keyboardWillShow",
+      show,
       this._keyboardWillShow
     );
     this.keyboardWillHideListener = Keyboard.addListener(
-      "keyboardWillHide",
+      hide,
       this._keyboardWillHide
     );
     AppState.addEventListener("change", this._handleAppStateChange);

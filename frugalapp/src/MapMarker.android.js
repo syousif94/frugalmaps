@@ -1,13 +1,12 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, WebView } from "react-native";
 
 import { MapView } from "expo";
 
-import ImageGallery from "./ImageGallery";
 import { makeHours } from "./Time";
 
 export default class MapMarker extends Component {
-  static imageHeight = 90;
+  static imageHeight = 120;
   static offset = { x: 0, y: -14 };
 
   state = {
@@ -76,15 +75,15 @@ export default class MapMarker extends Component {
 
     const hours = makeHours(item, iso);
 
+    const source =
+      this.state.height === MapMarker.imageHeight
+        ? null
+        : { html: calloutHTML(item) };
+
     return (
       <MapView.Callout>
-        <View style={calloutStyle}>
-          <ImageGallery
-            doc={this.props.data}
-            height={MapMarker.imageHeight}
-            width={250}
-            // key={`${this.state.height}${id}`}
-          />
+        <View style={calloutStyle} key={`${this.state.height}`}>
+          <WebView style={{ height: MapMarker.imageHeight }} source={source} />
           <View style={styles.info} onLayout={this._updateHeight}>
             <Text style={styles.titleText}>{item.title}</Text>
             <Text style={styles.locationText}>{item.location}</Text>
@@ -96,6 +95,34 @@ export default class MapMarker extends Component {
     );
   };
 }
+
+const calloutHTML = item => {
+  return `
+    <html>
+      <head>
+      <style>
+        html, body {
+          margin: 0;
+          padding: 0;
+        }
+
+        #img {
+          height: 100%;
+          width: 100%;
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: cover;
+        }
+      </style>
+      </head>
+      <body>
+      <div id="img" style="background-image: url('${
+        item.photos[0].url
+      }')"></div>
+      </body>
+    </html>
+  `;
+};
 
 const styles = StyleSheet.create({
   marker: {

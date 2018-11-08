@@ -5,9 +5,10 @@ import {
   SafeAreaView,
   Text,
   TouchableOpacity,
-  Platform
+  Platform,
+  Keyboard
 } from "react-native";
-import { Entypo, FontAwesome } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import moment from "moment";
 import emitter from "tiny-emitter/instance";
@@ -15,6 +16,7 @@ import emitter from "tiny-emitter/instance";
 import * as Location from "./store/location";
 import { BLUE } from "./Colors";
 import { Constants } from "expo";
+import { ANDROID, IOS } from "./Constants";
 
 const notched = Platform.OS === "ios" && Constants.statusBarHeight > 40;
 
@@ -107,6 +109,44 @@ class Map extends Component {
 }
 
 class TabBar extends Component {
+  state = {
+    hidden: false
+  };
+
+  componentDidMount() {
+    if (IOS) {
+      return;
+    }
+    this.keyboardWillShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      this._keyboardWillShow
+    );
+    this.keyboardWillHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      this._keyboardWillHide
+    );
+  }
+
+  componentWillUnmount() {
+    if (IOS) {
+      return;
+    }
+    this.keyboardWillShowListener.remove();
+    this.keyboardWillHideListener.remove();
+  }
+
+  _keyboardWillShow = () => {
+    this.setState({
+      hidden: true
+    });
+  };
+
+  _keyboardWillHide = () => {
+    this.setState({
+      hidden: false
+    });
+  };
+
   _onMap = () => {
     this.props.navigation.navigate("Map");
   };
@@ -121,6 +161,9 @@ class TabBar extends Component {
   };
 
   _onLayout = e => {
+    if (ANDROID) {
+      return;
+    }
     const {
       nativeEvent: {
         layout: { height }
@@ -132,6 +175,9 @@ class TabBar extends Component {
   };
 
   render() {
+    if (this.state.hidden) {
+      return <View />;
+    }
     const selected = this.props.navigation.state.index;
     return (
       <SafeAreaView style={styles.container} onLayout={this._onLayout}>

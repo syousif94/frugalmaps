@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 
 import LocationPrompt from "./LocationPrompt";
 import LocationSuggestion from "./LocationSuggestion";
+import { IOS } from "./Constants";
 
 class LocationList extends Component {
   state = {
@@ -62,7 +63,7 @@ class LocationList extends Component {
   render() {
     const { focused, listTop, listBottom } = this.props;
 
-    if (!focused || !listTop || !listBottom) {
+    if (!focused || !listTop || (IOS && !listBottom)) {
       return null;
     }
 

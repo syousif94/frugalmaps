@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { StyleSheet, TextInput, View, Text } from "react-native";
-import { Constants } from "expo";
 import { Entypo } from "@expo/vector-icons";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
@@ -115,7 +114,6 @@ export default connect(
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: IOS ? 0 : Constants.statusBarHeight,
     backgroundColor: "#fff",
     borderBottomWidth: 1,
     borderColor: "#e0e0e0"
