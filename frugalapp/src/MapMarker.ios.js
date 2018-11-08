@@ -74,7 +74,7 @@ export default class MapMarker extends Component {
     return (
       <MapView.Callout>
         <View style={calloutStyle}>
-          <ImageGallery doc={this.props.data} height={MapMarker.imageHeight} />
+          <ImageGallery doc={this.props.data} height={150} />
           <View style={styles.info} onLayout={this._updateHeight}>
             <Text style={styles.titleText}>{item.title}</Text>
             <Text style={styles.locationText}>{item.location}</Text>

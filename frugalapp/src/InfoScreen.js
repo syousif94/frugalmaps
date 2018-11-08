@@ -2,9 +2,9 @@ import React, { Component } from "react";
 import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
 import { MapView } from "expo";
 import { connect } from "react-redux";
-import ImageGallery from "./ImageGallery";
+import ImageGallery from "./ImageGallery.ios";
 import { INITIAL_REGION } from "./Constants";
-import MapMarker from "./MapMarker.ios";
+import MapMarker from "./MapMarker";
 
 class InfoScreen extends Component {
   state = {
@@ -69,11 +69,13 @@ class InfoScreen extends Component {
             style={styles.map}
             initialRegion={INITIAL_REGION}
             mapType={this.state.mapType}
-            // onMapReady={this._focusAnnotation}
+            onMapReady={this._focusAnnotation}
           >
             <MapMarker data={data} key={data._id} disabled />;
           </MapView>
         </View>
+        <ImageGallery doc={data} disabled height={160} />
+        {this._renderInfo()}
       </View>
     );
   }
@@ -91,7 +93,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff"
   },
   map: {
-    height: 200
+    flex: 1
   },
   info: {
     height: 300

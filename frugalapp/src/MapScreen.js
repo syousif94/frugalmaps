@@ -77,19 +77,15 @@ class MapScreen extends Component {
     if (this._search && this._frame) {
       const { x, y, height, width } = this._frame;
 
-      const ne = await this._map.coordinateForPoint({ y, x: x + width });
+      const northeast = ({
+        latitude: lat,
+        longitude: lng
+      } = await this._map.coordinateForPoint({ y, x: x + width }));
 
-      const sw = this._map.coordinateForPoint({ y: y + height, x });
-
-      const northeast = {
-        lat: ne.latitude,
-        lng: ne.longitude
-      };
-
-      const southwest = {
-        lat: sw.latitude,
-        lng: sw.longitude
-      };
+      const southwest = ({
+        latitude: lat,
+        longitude: lng
+      } = await this._map.coordinateForPoint({ y: y + height, x }));
 
       const bounds = {
         northeast,
