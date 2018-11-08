@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import emitter from "tiny-emitter/instance";
 import _ from "lodash";
 
-import { INITIAL_REGION } from "./Constants";
+import { INITIAL_REGION, ANDROID } from "./Constants";
 
 import * as Location from "./store/location";
 import * as Events from "./store/events";
@@ -71,18 +71,25 @@ class MapScreen extends Component {
   };
 
   _onRegionChangeComplete = async () => {
+    if (ANDROID) {
+      return;
+    }
     if (this._search && this._frame) {
       const { x, y, height, width } = this._frame;
 
-      const northeast = ({
-        latitude: lat,
-        longitude: lng
-      } = await this._map.coordinateForPoint({ y, x: x + width }));
+      const ne = await this._map.coordinateForPoint({ y, x: x + width });
 
-      const southwest = ({
-        latitude: lat,
-        longitude: lng
-      } = await this._map.coordinateForPoint({ y: y + height, x }));
+      const sw = this._map.coordinateForPoint({ y: y + height, x });
+
+      const northeast = {
+        lat: ne.latitude,
+        lng: ne.longitude
+      };
+
+      const southwest = {
+        lat: sw.latitude,
+        lng: sw.longitude
+      };
 
       const bounds = {
         northeast,

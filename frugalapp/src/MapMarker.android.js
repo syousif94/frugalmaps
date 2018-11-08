@@ -46,6 +46,8 @@ export default class MapMarker extends Component {
         coordinate={coordinate}
         image={require("../assets/pin.png")}
         ref={ref => (this._marker = ref)}
+        tracksViewChanges
+        tracksInfoWindowChanges
       >
         <View style={styles.marker}>
           <View style={styles.spot}>
@@ -62,7 +64,7 @@ export default class MapMarker extends Component {
       return null;
     }
 
-    const { _source: item } = this.props.data;
+    const { _source: item, _id: id } = this.props.data;
 
     const calloutStyle = {
       width: 250,
@@ -81,6 +83,7 @@ export default class MapMarker extends Component {
             doc={this.props.data}
             height={MapMarker.imageHeight}
             width={250}
+            // key={`${this.state.height}${id}`}
           />
           <View style={styles.info} onLayout={this._updateHeight}>
             <Text style={styles.titleText}>{item.title}</Text>
