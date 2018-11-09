@@ -19,7 +19,7 @@ class CalendarItem extends Component {
   _renderAd = () => {
     const { index, section } = this.props;
 
-    if (index === 0 && section.index === 0) {
+    if (IOS && index === 0 && section.index === 0) {
       return (
         <View style={styles.adContainer}>
           <FacebookAds.BannerView

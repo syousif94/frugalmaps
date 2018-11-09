@@ -72,6 +72,13 @@ class CalendarScreen extends Component {
       paddingBottom: data.length ? 110 : 0
     };
 
+    const androidProps = ANDROID
+      ? {
+          initialNumToRender: 2,
+          maxToRenderPerBatch: 1
+        }
+      : {};
+
     return (
       <View style={styles.container}>
         <LocationBox />
@@ -89,6 +96,8 @@ class CalendarScreen extends Component {
           sections={data}
           keyExtractor={(item, index) => item + index}
           ListEmptyComponent={this._renderEmpty}
+          {...androidProps}
+          removeClippedSubviews
         />
         {this._renderInitial()}
         <LocationList />
