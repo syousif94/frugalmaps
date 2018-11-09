@@ -17,3 +17,7 @@ const os = Platform.OS;
 
 export const ANDROID = os === "android";
 export const IOS = os === "ios";
+
+export const PLACEMENT_ID = IOS
+  ? "1931177036970533_1956753154412921"
+  : "1931177036970533_1991298450958391";

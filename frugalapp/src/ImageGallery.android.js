@@ -46,7 +46,7 @@ const ImageGallery = ({
           navigation.navigate("Info");
         }}
       >
-        <Swiper height={height} width={width}>
+        <Swiper loadMinimal loop height={height} width={width}>
           {_(item.photos)
             .shuffle()
             .map(photo => {

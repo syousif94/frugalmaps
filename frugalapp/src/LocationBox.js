@@ -69,8 +69,10 @@ class LocationBox extends Component {
     const today = moment();
     const day = today.format("dddd");
 
+    const Container = IOS ? SafeAreaView : View;
+
     return (
-      <SafeAreaView style={styles.container}>
+      <Container style={styles.container}>
         <View style={styles.title}>
           <Text style={styles.titleText}>{day}</Text>
         </View>
@@ -91,7 +93,7 @@ class LocationBox extends Component {
             underlineColorAndroid="transparent"
           />
         </View>
-      </SafeAreaView>
+      </Container>
     );
   }
 }

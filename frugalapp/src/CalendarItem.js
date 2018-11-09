@@ -13,7 +13,7 @@ import { Entypo, MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import { RED } from "./Colors";
 import ImageGallery from "./ImageGallery";
 import { makeHours } from "./Time";
-import { IOS } from "./Constants";
+import { IOS, PLACEMENT_ID } from "./Constants";
 
 class CalendarItem extends Component {
   _renderAd = () => {
@@ -24,7 +24,7 @@ class CalendarItem extends Component {
         <View style={styles.adContainer}>
           <FacebookAds.BannerView
             style={styles.ad}
-            placementId="1931177036970533_1956753154412921"
+            placementId={PLACEMENT_ID}
             type="standard"
             onPress={() => console.log("click")}
             onError={err => console.log("error", err)}

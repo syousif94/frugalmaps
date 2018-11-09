@@ -81,9 +81,10 @@ class RestaurantPicker extends Component {
 
   render() {
     const { onChangeText, ...props } = this.props;
+    const SafeView = IOS ? SafeAreaView : View;
     return (
       <View style={styles.container}>
-        <SafeAreaView>
+        <SafeView>
           <View style={styles.title}>
             <Text style={styles.titleText}>Submit a Special</Text>
           </View>
@@ -99,9 +100,10 @@ class RestaurantPicker extends Component {
               returnKeyType="search"
               clearButtonMode="always"
               autoCorrect={false}
+              underlineColorAndroid="transparent"
             />
           </View>
-        </SafeAreaView>
+        </SafeView>
         <View style={styles.divider} />
         <KeyboardAvoidingView
           style={styles.list}
@@ -145,7 +147,8 @@ const styles = StyleSheet.create({
   title: {
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 5
+    paddingTop: IOS ? 5 : 10,
+    paddingBottom: IOS ? 5 : 0
   },
   titleText: {
     fontWeight: "600",
