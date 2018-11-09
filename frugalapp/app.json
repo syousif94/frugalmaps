@@ -25,6 +25,9 @@
       "supportsTablet": true,
       "bundleIdentifier": "me.syousif.LitCal"
     },
+    "android": {
+      "package": "me.syousif.LitCal"
+    },
     "androidStatusBar": {
       "barStyle": "light-content",
       "backgroundColor": "#000"
