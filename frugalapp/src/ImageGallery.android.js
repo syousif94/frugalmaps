@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import {
   View,
   StyleSheet,
@@ -16,81 +16,84 @@ import Swiper from "react-native-swiper";
 import * as Events from "./store/events";
 import { WIDTH } from "./Constants";
 
-const ImageGallery = ({
-  doc,
-  height,
-  set,
-  navigation,
-  disabled,
-  width: galleryWidth
-}) => {
-  const { _source: item } = doc;
+class ImageGallery extends Component {
+  shouldComponentUpdate(next) {
+    return next.doc._id !== this.props.doc._id;
+  }
 
-  const width = galleryWidth || WIDTH;
+  render() {
+    const {
+      doc,
+      height,
+      set,
+      navigation,
+      disabled,
+      width: galleryWidth,
+      narrow
+    } = this.props;
 
-  const containerStyle = {
-    height,
-    width
-  };
+    const { _source: item } = doc;
 
-  return (
-    <View style={containerStyle}>
-      <TouchableWithoutFeedback
-        disabled={disabled}
-        onPress={() => {
-          set({
-            selectedEvent: {
-              data: doc
-            }
-          });
-          navigation.navigate("Info");
-        }}
-      >
-        <Swiper
-          loadMinimal
-          loop
-          loadMinimalLoader={<View />}
-          height={height}
-          width={width}
+    const width = galleryWidth || WIDTH;
+
+    const containerStyle = {
+      height,
+      width
+    };
+
+    return (
+      <View style={containerStyle}>
+        <TouchableWithoutFeedback
+          disabled={disabled}
+          onPress={() => {
+            set({
+              selectedEvent: {
+                data: doc
+              }
+            });
+            navigation.navigate("Info");
+          }}
         >
-          {_(item.photos)
-            .shuffle()
-            .map(photo => {
-              const { url: uri } = photo;
+          <Swiper loop height={height} width={width}>
+            {_(item.photos)
+              .shuffle()
+              .map(photo => {
+                const { url: uri } = photo;
 
-              const source = {
-                uri
-              };
+                const source = {
+                  uri
+                };
 
-              // const imageWidth = (height / imageHeight) * width;
+                // const imageWidth = (height / imageHeight) * width;
 
-              // const imageWidth = width;
+                // const imageWidth = width;
 
-              return (
-                <View key={uri} style={styles.imageContainer}>
-                  <Image
-                    source={source}
-                    style={[styles.image, { width, height }]}
-                  />
-                </View>
-              );
-            })
-            .value()}
-        </Swiper>
-      </TouchableWithoutFeedback>
-      <Icon disabled={disabled} height={height} />
-    </View>
-  );
-};
+                return (
+                  <View key={uri} style={styles.imageContainer}>
+                    <Image
+                      source={source}
+                      style={[styles.image, { width, height }]}
+                    />
+                  </View>
+                );
+              })
+              .value()}
+          </Swiper>
+        </TouchableWithoutFeedback>
+        <Icon disabled={disabled} narrow={narrow} />
+      </View>
+    );
+  }
+}
 
-const Icon = ({ disabled, height }) => {
+const Icon = ({ disabled, narrow }) => {
   if (disabled) {
     return null;
   }
   return (
     <View pointerEvents="none" style={styles.action}>
       <Entypo name="info-with-circle" size={16} color="#fff" />
-      {height < 200 ? null : <Text style={styles.actionText}>More Info</Text>}
+      {narrow ? null : <Text style={styles.actionText}>More Info</Text>}
     </View>
   );
 };

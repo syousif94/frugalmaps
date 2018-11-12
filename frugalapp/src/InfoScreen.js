@@ -17,7 +17,7 @@ class InfoScreen extends Component {
     }
 
     if (ANDROID) {
-      this._loadingTimeout = setTimeout(this.setState, 400, { loading: false });
+      // this._loadingTimeout = setTimeout(this.setState, 400, { loading: false });
     }
   }
 

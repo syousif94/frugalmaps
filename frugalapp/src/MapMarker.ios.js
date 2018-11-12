@@ -115,8 +115,6 @@ class Callout extends Component {
       return null;
     }
 
-    const { _source: item } = data;
-
     const calloutStyle = {
       width: 250,
       height: this.state.height
