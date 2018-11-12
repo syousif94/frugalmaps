@@ -91,6 +91,7 @@ class LocationBox extends Component {
             autoCapitalize="words"
             clearButtonMode={focused ? "always" : "never"}
             underlineColorAndroid="transparent"
+            selectTextOnFocus
           />
         </View>
       </Container>

@@ -6,7 +6,8 @@ import {
   TextInput,
   FlatList,
   Text,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  Keyboard
 } from "react-native";
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
@@ -101,11 +102,12 @@ class RestaurantPicker extends Component {
               clearButtonMode="always"
               autoCorrect={false}
               underlineColorAndroid="transparent"
+              selectTextOnFocus
             />
           </View>
         </SafeView>
         <View style={styles.divider} />
-        <KeyboardAvoidingView style={styles.list} behavior="padding">
+        <KeyboardSpacer>
           <FlatList
             ListFooterComponent={this._renderFooter}
             style={styles.list}
@@ -118,7 +120,7 @@ class RestaurantPicker extends Component {
             ItemSeparatorComponent={() => <View style={styles.divider} />}
           />
           <LocationPrompt />
-        </KeyboardAvoidingView>
+        </KeyboardSpacer>
       </View>
     );
   }
@@ -127,6 +129,65 @@ class RestaurantPicker extends Component {
 const mapStateToProps = state => ({
   location: state.location.coordinates
 });
+
+class KeyboardSpacer extends Component {
+  state = {
+    keyboardHeight: 0
+  };
+
+  componentDidMount() {
+    if (ANDROID) {
+      const show = IOS ? "keyboardWillShow" : "keyboardDidShow";
+      const hide = IOS ? "keyboardWillHide" : "keyboardDidHide";
+      this.keyboardWillShowListener = Keyboard.addListener(
+        show,
+        this._keyboardWillShow
+      );
+      this.keyboardWillHideListener = Keyboard.addListener(
+        hide,
+        this._keyboardWillHide
+      );
+    }
+  }
+
+  componentWillUnmount() {
+    if (ANDROID) {
+      this.keyboardWillShowListener.remove();
+      this.keyboardWillHideListener.remove();
+    }
+  }
+
+  _keyboardWillShow = e => {
+    this.setState({
+      keyboardHeight: e.endCoordinates.height
+    });
+  };
+
+  _keyboardWillHide = () => {
+    this.setState({
+      keyboardHeight: 0
+    });
+  };
+
+  render() {
+    const { children } = this.props;
+
+    if (ANDROID) {
+      const { keyboardHeight } = this.state;
+      return (
+        <View style={[styles.list, { paddingBottom: keyboardHeight }]}>
+          {children}
+        </View>
+      );
+    } else {
+      return (
+        <KeyboardAvoidingView style={styles.list} behavior="padding">
+          {children}
+        </KeyboardAvoidingView>
+      );
+    }
+  }
+}
 
 export default connect(
   mapStateToProps,
