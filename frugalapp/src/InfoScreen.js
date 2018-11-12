@@ -3,10 +3,15 @@ import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
 import { MapView } from "expo";
 import { connect } from "react-redux";
 import ImageGallery from "./ImageGallery";
-import { INITIAL_REGION, ANDROID, HEIGHT } from "./Constants";
+import { INITIAL_REGION, ANDROID, HEIGHT, IOS } from "./Constants";
 import MapMarker from "./MapMarker";
+import LocateButton from "./MapLocateButton";
+import emitter from "tiny-emitter/instance";
+import { Location as ExpoLocation, Constants } from "expo";
 
 class InfoScreen extends Component {
+  static mapId = "infoScreen";
+
   state = {
     loading: true
   };
@@ -22,13 +27,47 @@ class InfoScreen extends Component {
         });
       }, 150);
     }
+
+    emitter.on(InfoScreen.mapId, this._showLocation);
   }
 
   componentWillUnmount() {
     if (this._loadingTimeout) {
       clearTimeout(this._loadingTimeout);
     }
+
+    emitter.off(InfoScreen.mapId, this._showLocation);
   }
+
+  _showLocation = async () => {
+    const marker = this.props.event.data;
+    const coords = [
+      {
+        latitude: marker._source.coordinates[1],
+        longitude: marker._source.coordinates[0]
+      }
+    ];
+
+    const {
+      coords: { latitude, longitude }
+    } = await ExpoLocation.getCurrentPositionAsync({
+      enableHighAccuracy: false
+    });
+
+    coords.push({
+      latitude,
+      longitude
+    });
+
+    this._map.fitToCoordinates(coords, {
+      edgePadding: {
+        top: IOS ? Constants.statusBarHeight + 10 : 0,
+        left: 25,
+        right: 25,
+        bottom: 40
+      }
+    });
+  };
 
   _focusAnnotation = () => {
     if (this._focusedAnnotation) {
@@ -109,7 +148,8 @@ class InfoScreen extends Component {
 
   render() {
     const {
-      event: { data }
+      event: { data },
+      authorized
     } = this.props;
     return (
       <View style={styles.container}>
@@ -120,9 +160,13 @@ class InfoScreen extends Component {
               style={styles.map}
               initialRegion={INITIAL_REGION}
               onLayout={this._focusAnnotation}
+              showsUserLocation={authorized}
             >
               <MapMarker data={data} key={data._id} disabled />
             </MapView>
+          )}
+          {ANDROID && this.state.loading ? null : (
+            <LocateButton mapId={InfoScreen.mapId} size="small" />
           )}
         </View>
         {this._renderInfo()}
@@ -132,7 +176,8 @@ class InfoScreen extends Component {
 }
 
 const mapStateToProps = state => ({
-  event: state.events.selectedEvent
+  event: state.events.selectedEvent,
+  authorized: state.location.authorized
 });
 
 export default connect(mapStateToProps)(InfoScreen);

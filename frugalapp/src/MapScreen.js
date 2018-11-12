@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { StyleSheet, View, PanResponder } from "react-native";
 import { MapView } from "expo";
 import { connect } from "react-redux";
+import { Location as ExpoLocation } from "expo";
 
 import emitter from "tiny-emitter/instance";
 import _ from "lodash";
@@ -26,6 +27,8 @@ if (ANDROID) {
 }
 
 class MapScreen extends Component {
+  static mapId = "mapScreen";
+
   _search = false;
 
   _frame;
@@ -57,11 +60,42 @@ class MapScreen extends Component {
 
   componentDidMount() {
     emitter.on("fit-bounds", this._fitBounds);
+    emitter.on(MapScreen.mapId, this._showLocation);
   }
 
   componentWillUnmount() {
     emitter.off("fit-bounds", this._fitBounds);
+    emitter.off(MapScreen.mapId, this._showLocation);
   }
+
+  _showLocation = async () => {
+    const coords = this.props.markers.map(marker => {
+      return {
+        latitude: marker._source.coordinates[1],
+        longitude: marker._source.coordinates[0]
+      };
+    });
+
+    const {
+      coords: { latitude, longitude }
+    } = await ExpoLocation.getCurrentPositionAsync({
+      enableHighAccuracy: false
+    });
+
+    coords.push({
+      latitude,
+      longitude
+    });
+
+    this._map.fitToCoordinates(coords, {
+      edgePadding: {
+        top: 25,
+        left: 25,
+        right: 25,
+        bottom: 60
+      }
+    });
+  };
 
   _fitBounds = (bounds, animated = true) => {
     this._search = false;
@@ -138,7 +172,7 @@ class MapScreen extends Component {
   };
 
   render() {
-    const { markers } = this.props;
+    const { markers, authorized } = this.props;
 
     return (
       <View style={styles.container}>
@@ -154,6 +188,7 @@ class MapScreen extends Component {
             rotateEnabled={false}
             toolbarEnabled={false}
             moveOnMarkerPress={false}
+            showsUserLocation={authorized}
           >
             {markers.map(data => {
               const { _id } = data;
@@ -164,7 +199,7 @@ class MapScreen extends Component {
           <MapLoading />
         </View>
         <DayPicker ref={ref => (this._dayPicker = ref)} />
-        <LocateMe />
+        <LocateMe mapId={MapScreen.mapId} />
         <LocationList />
       </View>
     );
@@ -172,7 +207,8 @@ class MapScreen extends Component {
 }
 
 const mapStateToProps = state => ({
-  markers: Events.markers(state)
+  markers: Events.markers(state),
+  authorized: state.location.authorized
 });
 
 const mapDispatchToProps = {

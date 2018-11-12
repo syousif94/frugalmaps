@@ -5,8 +5,6 @@ import {
   TouchableOpacity,
   Animated,
   StyleSheet,
-  Linking,
-  Alert,
   AppState
 } from "react-native";
 import { BLUE } from "./Colors";
@@ -14,6 +12,7 @@ import { Permissions } from "expo";
 import { connect } from "react-redux";
 
 import * as Location from "./store/location";
+import { grantLocation } from "./Permissions";
 import { IOS } from "./Constants";
 
 class LocationPrompt extends Component {
@@ -45,36 +44,13 @@ class LocationPrompt extends Component {
   }
 
   _promptLocation = async () => {
-    const { status: askStatus } = await Permissions.getAsync(
-      Permissions.LOCATION
-    );
-
-    if (askStatus === "denied") {
-      Alert.alert(
-        "Permission Denied",
-        "To enable location, tap Open Settings, then tap on Location, and finally tap on While Using the App.",
-        [
-          { text: "Cancel", style: "cancel" },
-          {
-            text: "Open Settings",
-            onPress: () => {
-              Linking.openURL("app-settings:");
-            }
-          }
-        ]
-      );
-    }
-
-    const { status: locationStatus } = await Permissions.askAsync(
-      Permissions.LOCATION
-    );
-
-    if (locationStatus !== "granted") {
+    try {
+      await grantLocation();
+      this.props.coordinates();
+      this._setButtonOpacity(0);
+    } catch (error) {
       return;
     }
-
-    this.props.coordinates();
-    this._setButtonOpacity(0);
   };
 
   _handleAppStateChange = async nextAppState => {
@@ -90,6 +66,7 @@ class LocationPrompt extends Component {
       if (locationStatus === "granted") {
         this.props.coordinates();
         this._setButtonOpacity(0);
+        this.props.set({ authorized: true });
       }
     }
 
@@ -155,7 +132,8 @@ class LocationPrompt extends Component {
 }
 
 const mapDispatchToProps = {
-  coordinates: Location.actions.coordinates
+  coordinates: Location.actions.coordinates,
+  set: Location.actions.set
 };
 
 export default connect(

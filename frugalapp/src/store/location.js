@@ -101,6 +101,18 @@ function completions(state = [], { type, payload }) {
   }
 }
 
+function authorized(state = false, { type, payload }) {
+  switch (type) {
+    case types.set:
+      if (payload.authorized !== undefined) {
+        return payload.authorized;
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
 export default combineReducers({
   coordinates,
   listTop,
@@ -109,5 +121,6 @@ export default combineReducers({
   bounds,
   suggestions,
   completions,
-  listBottom
+  listBottom,
+  authorized
 });
