@@ -1,5 +1,5 @@
 import moment from "moment";
-import { ISO_DAYS } from "./Constants";
+import { ISO_DAYS, DAYS } from "./Constants";
 
 export function validateTime(str) {
   const date = moment(str, ["h:ma", "H:m"]);
@@ -75,4 +75,25 @@ export function makeHours(item, iso) {
   }
 
   return hours;
+}
+
+export function groupHours(source) {
+  return source.days.reduce((acc, day) => {
+    const text = DAYS[day];
+    const iso = ISO_DAYS[day];
+    const hours = makeHours(source, iso);
+
+    const matchingHours = acc.find(val => val.hours === hours);
+
+    if (matchingHours) {
+      matchingHours.days.push(text);
+    } else {
+      acc.push({
+        days: [text],
+        hours
+      });
+    }
+
+    return acc;
+  }, []);
 }

@@ -10,22 +10,6 @@ export default class MapMarker extends Component {
   static imageHeight = 150;
   static offset = { x: 0, y: -14 };
 
-  state = {
-    height: MapMarker.imageHeight
-  };
-
-  _updateHeight = e => {
-    const {
-      nativeEvent: {
-        layout: { height }
-      }
-    } = e;
-
-    this.setState({
-      height: height + MapMarker.imageHeight
-    });
-  };
-
   render() {
     const { _source: item } = this.props.data;
 
@@ -49,17 +33,36 @@ export default class MapMarker extends Component {
             <Text style={styles.spotText}>{spot}</Text>
           </View>
         </View>
-        {this._renderCallout()}
+        <Callout {...this.props} />
       </MapView.Marker>
     );
   }
+}
 
-  _renderCallout = () => {
-    if (this.props.disabled) {
+class Callout extends Component {
+  state = {
+    height: MapMarker.imageHeight
+  };
+
+  _updateHeight = e => {
+    const {
+      nativeEvent: {
+        layout: { height }
+      }
+    } = e;
+
+    this.setState({
+      height: height + MapMarker.imageHeight
+    });
+  };
+  render() {
+    const { disabled, data } = this.props;
+
+    if (disabled) {
       return null;
     }
 
-    const { _source: item } = this.props.data;
+    const { _source: item } = data;
 
     const calloutStyle = {
       width: 250,
@@ -71,7 +74,7 @@ export default class MapMarker extends Component {
     return (
       <MapView.Callout>
         <View style={calloutStyle}>
-          <ImageGallery doc={this.props.data} height={150} narrow />
+          <ImageGallery doc={data} height={150} narrow />
           <View style={styles.info} onLayout={this._updateHeight}>
             <Text style={styles.titleText}>{item.title}</Text>
             <Text style={styles.locationText}>{item.location}</Text>
@@ -81,7 +84,7 @@ export default class MapMarker extends Component {
         </View>
       </MapView.Callout>
     );
-  };
+  }
 }
 
 const styles = StyleSheet.create({

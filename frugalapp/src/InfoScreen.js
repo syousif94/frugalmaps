@@ -3,10 +3,8 @@ import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
 import { MapView } from "expo";
 import { connect } from "react-redux";
 import ImageGallery from "./ImageGallery";
-import { INITIAL_REGION, ANDROID, HEIGHT, DAYS, ISO_DAYS } from "./Constants";
+import { INITIAL_REGION, ANDROID, HEIGHT } from "./Constants";
 import MapMarker from "./MapMarker";
-import { makeHours } from "./Time";
-import { RED } from "./Colors";
 
 class InfoScreen extends Component {
   state = {
@@ -61,25 +59,6 @@ class InfoScreen extends Component {
 
     const { _source: item } = data;
 
-    const hours = item.days.reduce((acc, day) => {
-      const text = DAYS[day];
-      const iso = ISO_DAYS[day];
-      const hours = makeHours(item, iso);
-
-      const matchingHours = acc.find(val => val.hours === hours);
-
-      if (matchingHours) {
-        matchingHours.days.push(text);
-      } else {
-        acc.push({
-          days: [text],
-          hours
-        });
-      }
-
-      return acc;
-    }, []);
-
     return (
       <View style={styles.info}>
         <View style={styles.padded}>
@@ -88,7 +67,7 @@ class InfoScreen extends Component {
           <Text style={styles.boldText}>{item.title}</Text>
           <Text style={styles.infoText}>{item.description}</Text>
           <View style={styles.hours}>
-            {hours.map((hours, index) => {
+            {item.groupedHours.map((hours, index) => {
               return (
                 <View style={styles.hour} key={index}>
                   <View style={styles.days}>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import {
   View,
   StyleSheet,
@@ -15,56 +15,64 @@ import { Entypo } from "@expo/vector-icons";
 
 import * as Events from "./store/events";
 
-const ImageGallery = ({ doc, height, set, navigation, disabled, narrow }) => {
-  const { _source: item } = doc;
+class ImageGallery extends Component {
+  shouldComponentUpdate(next) {
+    return next.doc._id !== this.props.doc._id;
+  }
 
-  const touchableStyle = {
-    height,
-    flexDirection: "row"
-  };
+  render() {
+    const { doc, height, set, navigation, disabled, narrow } = this.props;
 
-  return (
-    <View>
-      <ScrollView style={[styles.images, { height }]} horizontal>
-        <TouchableWithoutFeedback
-          disabled={disabled}
-          onPress={() => {
-            set({
-              selectedEvent: {
-                data: doc
-              }
-            });
-            navigation.navigate("Info");
-          }}
-        >
-          <View style={touchableStyle}>
-            {_(item.photos)
-              .shuffle()
-              .map(photo => {
-                const { url: uri, height: imageHeight, width } = photo;
+    const { _source: item } = doc;
 
-                const source = {
-                  uri
-                };
+    const touchableStyle = {
+      height,
+      flexDirection: "row"
+    };
 
-                const imageWidth = (height / imageHeight) * width;
+    return (
+      <View>
+        <ScrollView style={[styles.images, { height }]} horizontal>
+          <TouchableWithoutFeedback
+            disabled={disabled}
+            onPress={() => {
+              set({
+                selectedEvent: {
+                  data: doc
+                }
+              });
+              navigation.navigate("Info");
+            }}
+          >
+            <View style={touchableStyle}>
+              {_(item.photos)
+                .shuffle()
+                .map(photo => {
+                  const { url: uri, height: imageHeight, width } = photo;
 
-                return (
-                  <Image
-                    key={uri}
-                    source={source}
-                    style={[styles.image, { width: imageWidth, height }]}
-                  />
-                );
-              })
-              .value()}
-          </View>
-        </TouchableWithoutFeedback>
-      </ScrollView>
-      <Icon disabled={disabled} narrow={narrow} />
-    </View>
-  );
-};
+                  const source = {
+                    uri
+                  };
+
+                  const imageWidth = (height / imageHeight) * width;
+
+                  return (
+                    <Image
+                      key={uri}
+                      source={source}
+                      style={[styles.image, { width: imageWidth, height }]}
+                    />
+                  );
+                })
+                .value()}
+            </View>
+          </TouchableWithoutFeedback>
+        </ScrollView>
+        <Icon disabled={disabled} narrow={narrow} />
+      </View>
+    );
+  }
+}
 
 const Icon = ({ disabled, narrow }) => {
   if (disabled) {

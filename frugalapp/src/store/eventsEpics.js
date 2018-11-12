@@ -7,6 +7,7 @@ import moment from "moment";
 import api from "../API";
 import * as Events from "./events";
 import * as Location from "./location";
+import { groupHours } from "../Time";
 
 const makeEvents = hits => {
   const initial = [
@@ -25,6 +26,7 @@ const makeEvents = hits => {
 
   hits.forEach(hit => {
     hit._source.days.forEach(day => {
+      hit._source.groupedHours = groupHours(hit._source);
       initial[day].data.push(hit);
     });
   });

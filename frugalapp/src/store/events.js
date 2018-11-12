@@ -1,10 +1,29 @@
 import { combineReducers } from "redux";
 import { createSelector } from "reselect";
 import { createActions } from "./lib";
+import _ from "lodash";
 
 const mutations = ["set"];
 
 export const { actions, types } = createActions(mutations, "events");
+
+const groupData = hits => {
+  if (!hits) {
+    return [];
+  }
+
+  return _(hits)
+    .groupBy(hit => hit._source.placeid)
+    .map((events, _id) => {
+      return {
+        _id,
+        type: "group",
+        _source: events[0]._source,
+        events
+      };
+    })
+    .value();
+};
 
 export const markers = createSelector(
   state => state.events.day,
@@ -16,7 +35,7 @@ export const markers = createSelector(
     }
 
     if (day === "All Events") {
-      return data;
+      return groupData(data);
     }
 
     const dayEvents = calendar.find(datum => {
