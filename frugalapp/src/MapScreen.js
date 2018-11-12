@@ -17,6 +17,14 @@ import DayPicker from "./MapDayPicker";
 import MapMarker from "./MapMarker";
 import MapLoading from "./MapLoading";
 
+var initialAndroidBounds = null;
+
+if (ANDROID) {
+  emitter.on("fit-bounds", bounds => {
+    initialAndroidBounds = bounds;
+  });
+}
+
 class MapScreen extends Component {
   _search = false;
 
@@ -55,7 +63,7 @@ class MapScreen extends Component {
     emitter.off("fit-bounds", this._fitBounds);
   }
 
-  _fitBounds = bounds => {
+  _fitBounds = (bounds, animated = true) => {
     this._search = false;
     const coords = [
       {
@@ -67,7 +75,7 @@ class MapScreen extends Component {
         longitude: bounds.southwest.lng
       }
     ];
-    this._map.fitToCoordinates(coords);
+    this._map.fitToCoordinates(coords, { animated });
   };
 
   _onRegionChangeComplete = async () => {
@@ -104,6 +112,8 @@ class MapScreen extends Component {
     }
   };
 
+  _setInitialViewport = true;
+
   _setFrame = e => {
     const {
       nativeEvent: {
@@ -117,6 +127,14 @@ class MapScreen extends Component {
       height,
       width
     };
+
+    if (ANDROID && this._setInitialViewport && initialAndroidBounds) {
+      this._setInitialViewport = false;
+
+      requestAnimationFrame(() => {
+        this._fitBounds(initialAndroidBounds, false);
+      });
+    }
   };
 
   render() {

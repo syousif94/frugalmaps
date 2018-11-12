@@ -8,7 +8,6 @@ import MapMarker from "./MapMarker";
 
 class InfoScreen extends Component {
   state = {
-    mapType: "standard",
     loading: true
   };
 
@@ -21,7 +20,7 @@ class InfoScreen extends Component {
         this.setState({
           loading: false
         });
-      }, 400);
+      }, 150);
     }
   }
 
@@ -32,6 +31,12 @@ class InfoScreen extends Component {
   }
 
   _focusAnnotation = () => {
+    if (this._focusedAnnotation) {
+      return;
+    }
+
+    this._focusedAnnotation = true;
+
     const viewport = this.props.event.data._source.viewport;
 
     const coords = [
@@ -45,7 +50,9 @@ class InfoScreen extends Component {
       }
     ];
 
-    this._map.fitToCoordinates(coords, { animated: false });
+    requestAnimationFrame(() => {
+      this._map.fitToCoordinates(coords, { animated: false });
+    });
   };
 
   _renderInfo = () => {
@@ -98,6 +105,8 @@ class InfoScreen extends Component {
     );
   };
 
+  _focusedAnnotation = false;
+
   render() {
     const {
       event: { data }
@@ -110,8 +119,7 @@ class InfoScreen extends Component {
               ref={ref => (this._map = ref)}
               style={styles.map}
               initialRegion={INITIAL_REGION}
-              // mapType={this.state.mapType}
-              // onMapReady={this._focusAnnotation}
+              onLayout={this._focusAnnotation}
             >
               <MapMarker data={data} key={data._id} disabled />
             </MapView>
