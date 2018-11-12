@@ -1,10 +1,17 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, Keyboard, SectionList } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Keyboard,
+  SectionList,
+  TextInput
+} from "react-native";
 import { connect } from "react-redux";
 
 import LocationPrompt from "./LocationPrompt";
 import LocationSuggestion from "./LocationSuggestion";
-import { IOS } from "./Constants";
+import { IOS, ANDROID } from "./Constants";
 
 class LocationList extends Component {
   state = {
@@ -17,16 +24,36 @@ class LocationList extends Component {
       show,
       this._keyboardWillShow
     );
+
+    if (ANDROID) {
+      const hide = IOS ? "keyboardWillHide" : "keyboardDidHide";
+      this.keyboardWillHideListener = Keyboard.addListener(
+        hide,
+        this._keyboardWillHide
+      );
+    }
   }
 
   componentWillUnmount() {
     this.keyboardWillShowListener.remove();
+    if (ANDROID) {
+      this.keyboardWillHideListener.remove();
+    }
   }
 
   _keyboardWillShow = e => {
     this.setState({
       keyboardHeight: e.endCoordinates.height
     });
+  };
+
+  _keyboardWillHide = () => {
+    this.setState({
+      keyboardHeight: 0
+    });
+    if (this.props.focused) {
+      TextInput.State.blurTextInput(TextInput.State.currentlyFocusedField());
+    }
   };
 
   _renderSectionItem = data => (
