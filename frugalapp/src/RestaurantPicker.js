@@ -15,7 +15,7 @@ import { Entypo } from "@expo/vector-icons";
 import RestaurantSuggestion from "./RestaurantSuggestion";
 import LocationPrompt from "./LocationPrompt";
 import Footer from "./RestaurantPickerFooter";
-import { IOS } from "./Constants";
+import { IOS, ANDROID } from "./Constants";
 
 class RestaurantPicker extends Component {
   state = {
@@ -80,7 +80,7 @@ class RestaurantPicker extends Component {
   _renderFooter = () => <Footer data={this.state.data} />;
 
   render() {
-    const { onChangeText, ...props } = this.props;
+    const { onChangeText, listBottom, ...props } = this.props;
     const SafeView = IOS ? SafeAreaView : View;
     return (
       <View style={styles.container}>
@@ -105,11 +105,7 @@ class RestaurantPicker extends Component {
           </View>
         </SafeView>
         <View style={styles.divider} />
-        <KeyboardAvoidingView
-          style={styles.list}
-          behavior="padding"
-          enabled={IOS}
-        >
+        <KeyboardAvoidingView style={styles.list} behavior="padding">
           <FlatList
             ListFooterComponent={this._renderFooter}
             style={styles.list}

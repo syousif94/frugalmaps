@@ -12,8 +12,9 @@ class LocationList extends Component {
   };
 
   componentDidMount() {
+    const show = IOS ? "keyboardWillShow" : "keyboardDidShow";
     this.keyboardWillShowListener = Keyboard.addListener(
-      "keyboardWillShow",
+      show,
       this._keyboardWillShow
     );
   }
