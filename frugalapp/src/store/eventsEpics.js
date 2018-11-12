@@ -3,6 +3,7 @@ import { combineEpics } from "redux-observable";
 import { Observable } from "rxjs/Observable";
 import emitter from "tiny-emitter/instance";
 import moment from "moment";
+import _ from "lodash";
 
 import api from "../API";
 import * as Events from "./events";
@@ -26,7 +27,6 @@ const makeEvents = hits => {
 
   hits.forEach(hit => {
     hit._source.days.forEach(day => {
-      hit._source.groupedHours = groupHours(hit._source);
       initial[day].data.push(hit);
     });
   });
@@ -93,7 +93,13 @@ const events = (action$, store) =>
       })
         .retry(2)
         .switchMap(({ res, coordinates }) => {
-          const { text, hits, bounds } = res;
+          const { text, hits: docs, bounds } = res;
+
+          const hits = docs.map(doc => {
+            const hit = _.cloneDeep(doc);
+            hit._source.groupedHours = groupHours(hit._source);
+            return hit;
+          });
 
           if (bounds !== undefined) {
             emitter.emit("fit-bounds", bounds);

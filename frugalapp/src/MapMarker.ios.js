@@ -55,6 +55,59 @@ class Callout extends Component {
       height: height + MapMarker.imageHeight
     });
   };
+
+  _renderInfo = () => {
+    const { data } = this.props;
+
+    const { _source: item } = data;
+
+    if (data.type && data.type === "group") {
+      return (
+        <View style={styles.info} onLayout={this._updateHeight}>
+          <Text style={styles.locationText}>{item.location}</Text>
+          {data.events.map(event => {
+            const { _source: item } = event;
+            return (
+              <View style={styles.event} key={event._id}>
+                <Text style={styles.titleText}>{item.title}</Text>
+                <View style={styles.hours}>
+                  {item.groupedHours.map((hours, index) => {
+                    return (
+                      <View style={styles.hour} key={index}>
+                        <View style={styles.days}>
+                          {hours.days.map(day => {
+                            return (
+                              <View style={styles.day} key={day}>
+                                <Text style={styles.dayText}>{day}</Text>
+                              </View>
+                            );
+                          })}
+                        </View>
+                        <Text style={styles.hourText}>{hours.hours}</Text>
+                      </View>
+                    );
+                  })}
+                </View>
+                <Text style={styles.infoText}>{item.description}</Text>
+              </View>
+            );
+          })}
+        </View>
+      );
+    } else {
+      const hours = makeHours(item);
+
+      return (
+        <View style={styles.info} onLayout={this._updateHeight}>
+          <Text style={styles.titleText}>{item.title}</Text>
+          <Text style={styles.locationText}>{item.location}</Text>
+          <Text style={styles.infoText}>{hours}</Text>
+          <Text style={styles.infoText}>{item.description}</Text>
+        </View>
+      );
+    }
+  };
+
   render() {
     const { disabled, data } = this.props;
 
@@ -69,18 +122,11 @@ class Callout extends Component {
       height: this.state.height
     };
 
-    const hours = makeHours(item);
-
     return (
       <MapView.Callout>
         <View style={calloutStyle}>
           <ImageGallery doc={data} height={150} narrow />
-          <View style={styles.info} onLayout={this._updateHeight}>
-            <Text style={styles.titleText}>{item.title}</Text>
-            <Text style={styles.locationText}>{item.location}</Text>
-            <Text style={styles.infoText}>{hours}</Text>
-            <Text style={styles.infoText}>{item.description}</Text>
-          </View>
+          {this._renderInfo()}
         </View>
       </MapView.Callout>
     );
@@ -112,15 +158,48 @@ const styles = StyleSheet.create({
   info: {
     paddingTop: 4
   },
+  event: {
+    marginTop: 5
+  },
   titleText: {
+    fontSize: 12,
     fontWeight: "600",
     color: "#000"
   },
   locationText: {
-    fontSize: 12
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#000"
   },
   infoText: {
     fontSize: 12,
     color: "#444"
+  },
+  hours: {
+    marginTop: 2
+  },
+  hour: {
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  hourText: {
+    color: "#444",
+    fontSize: 12
+  },
+  days: {
+    flexDirection: "row",
+    marginRight: 3
+  },
+  day: {
+    paddingHorizontal: 2,
+    paddingVertical: 1,
+    borderRadius: 2,
+    backgroundColor: "#18AB2E",
+    marginRight: 2
+  },
+  dayText: {
+    fontSize: 10,
+    color: "#fff",
+    fontWeight: "700"
   }
 });
