@@ -152,6 +152,8 @@ class MapScreen extends Component {
             onRegionChangeComplete={this._onRegionChangeComplete}
             showsCompass={false}
             rotateEnabled={false}
+            toolbarEnabled={false}
+            moveOnMarkerPress={false}
           >
             {markers.map(data => {
               const { _id } = data;
