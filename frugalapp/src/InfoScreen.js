@@ -17,7 +17,11 @@ class InfoScreen extends Component {
     }
 
     if (ANDROID) {
-      // this._loadingTimeout = setTimeout(this.setState, 400, { loading: false });
+      this._loadingTimeout = setTimeout(() => {
+        this.setState({
+          loading: false
+        });
+      }, 400);
     }
   }
 
@@ -59,6 +63,8 @@ class InfoScreen extends Component {
 
     const { _source: item } = data;
 
+    const galleryHeight = HEIGHT * 0.28;
+
     return (
       <View style={styles.info}>
         <View style={styles.padded}>
@@ -85,7 +91,9 @@ class InfoScreen extends Component {
             })}
           </View>
         </View>
-        <ImageGallery doc={data} disabled height={220} />
+        {ANDROID && this.state.loading ? null : (
+          <ImageGallery doc={data} disabled height={galleryHeight} />
+        )}
       </View>
     );
   };
@@ -102,10 +110,10 @@ class InfoScreen extends Component {
               ref={ref => (this._map = ref)}
               style={styles.map}
               initialRegion={INITIAL_REGION}
-              mapType={this.state.mapType}
-              onMapReady={this._focusAnnotation}
+              // mapType={this.state.mapType}
+              // onMapReady={this._focusAnnotation}
             >
-              <MapMarker data={data} key={data._id} disabled />;
+              <MapMarker data={data} key={data._id} disabled />
             </MapView>
           )}
         </View>
@@ -130,7 +138,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   info: {
-    height: HEIGHT * 0.6
+    height: HEIGHT * 0.65
   },
   loading: {
     justifyContent: "center",
