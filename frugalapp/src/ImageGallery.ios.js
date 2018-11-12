@@ -15,7 +15,7 @@ import { Entypo } from "@expo/vector-icons";
 
 import * as Events from "./store/events";
 
-const ImageGallery = ({ doc, height, set, navigation, disabled }) => {
+const ImageGallery = ({ doc, height, set, navigation, disabled, narrow }) => {
   const { _source: item } = doc;
 
   const touchableStyle = {
@@ -61,19 +61,19 @@ const ImageGallery = ({ doc, height, set, navigation, disabled }) => {
           </View>
         </TouchableWithoutFeedback>
       </ScrollView>
-      <Icon disabled={disabled} height={height} />
+      <Icon disabled={disabled} narrow={narrow} />
     </View>
   );
 };
 
-const Icon = ({ disabled, height }) => {
+const Icon = ({ disabled, narrow }) => {
   if (disabled) {
     return null;
   }
   return (
     <View pointerEvents="none" style={styles.action}>
       <Entypo name="info-with-circle" size={16} color="#fff" />
-      {height < 200 ? null : <Text style={styles.actionText}>More Info</Text>}
+      {narrow ? null : <Text style={styles.actionText}>More Info</Text>}
     </View>
   );
 };

@@ -1,4 +1,5 @@
 import moment from "moment";
+import { ISO_DAYS } from "./Constants";
 
 export function validateTime(str) {
   const date = moment(str, ["h:ma", "H:m"]);
@@ -59,13 +60,15 @@ export function closingPeriod(item, iso) {
 export function makeHours(item, iso) {
   let hours;
 
+  let day = iso !== undefined ? iso : ISO_DAYS[item.days[0]];
+
   if (item.start && item.end) {
     hours = `${item.start} - ${item.end}`;
   } else if (item.start) {
-    const period = closingPeriod(item, iso);
+    const period = closingPeriod(item, day);
     hours = formatHours([item.start, period.close.time]);
   } else if (item.end) {
-    const period = openingPeriod(item, iso);
+    const period = openingPeriod(item, day);
     hours = formatHours([period.open.time, item.end]);
   } else {
     hours = `All Day`;

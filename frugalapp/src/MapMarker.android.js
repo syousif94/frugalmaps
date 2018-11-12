@@ -70,10 +70,7 @@ export default class MapMarker extends Component {
       height: this.state.height
     };
 
-    const ISO_DAYS = [1, 2, 3, 4, 5, 6, 0];
-    const iso = ISO_DAYS[item.days[0]];
-
-    const hours = makeHours(item, iso);
+    const hours = makeHours(item);
 
     const source =
       this.state.height === MapMarker.imageHeight

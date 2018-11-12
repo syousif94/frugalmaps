@@ -48,24 +48,21 @@ class CalendarItem extends Component {
       <View style={styles.container}>
         {this._renderAd()}
         <View style={styles.info}>
-          <View style={styles.locationInfo}>
-            <Text style={styles.timeText}>{hours}</Text>
-            <Text style={styles.titleText}>{item.location}</Text>
-          </View>
-          <View style={styles.locationInfo}>
-            <Text style={styles.descriptionText}>{hours}</Text>
-            <Text style={styles.descriptionText}>{item.city}</Text>
-          </View>
+          <Text style={styles.locationText}>{item.location}</Text>
+          <Text style={styles.descriptionText}>{item.city}</Text>
         </View>
-        <ImageGallery doc={this.props.item} height={220} />
+        <ImageGallery doc={this.props.item} height={150} />
         <View style={styles.info}>
-          <Text style={styles.titleText}>{item.title}</Text>
-          <Text style={styles.descriptionText}>{item.description}</Text>
-          <View style={styles.actions}>
-            <Button action="notify" {...this.props} />
-            <Button action="save" {...this.props} />
-            <Button action="go" {...this.props} />
+          <View style={styles.title}>
+            <Text style={styles.titleText}>{item.title}</Text>
+            <View style={styles.dot} />
+            <Text style={styles.timeText}>{hours}</Text>
           </View>
+          <Text style={styles.descriptionText}>{item.description}</Text>
+          {/* <View style={styles.actions}>
+            <Button action="notify" {...this.props} />
+            <Button action="go" {...this.props} />
+          </View> */}
         </View>
       </View>
     );
@@ -199,7 +196,7 @@ class Button extends Component {
 
   _renderNotificationsEnabled = () => {
     if (this.props.action === "notify" && this.state.notify) {
-      return <View style={styles.notificaitonsEnabled} />;
+      return <View style={styles.notificationsEnabled} />;
     }
 
     return null;
@@ -259,20 +256,34 @@ const styles = StyleSheet.create({
   info: {
     padding: 10
   },
-  locationInfo: {
-    flexDirection: "row-reverse",
-    justifyContent: "space-between"
+  title: {
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  dot: {
+    height: 2,
+    width: 2,
+    borderRadius: 1,
+    backgroundColor: "#999",
+    marginHorizontal: 5
   },
   titleText: {
+    fontSize: 12,
     fontWeight: "600",
     color: "#000"
   },
-  timeText: {
-    marginLeft: 3
+  locationText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#000"
   },
   descriptionText: {
     marginTop: 3,
     color: "#444",
+    fontSize: 12
+  },
+  timeText: {
+    color: "#000",
     fontSize: 12
   },
   actions: {
@@ -291,7 +302,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     fontWeight: "600"
   },
-  notificaitonsEnabled: {
+  notificationsEnabled: {
     position: "absolute",
     top: -1,
     right: -2,

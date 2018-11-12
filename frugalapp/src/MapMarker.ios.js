@@ -66,15 +66,12 @@ export default class MapMarker extends Component {
       height: this.state.height
     };
 
-    const ISO_DAYS = [1, 2, 3, 4, 5, 6, 0];
-    const iso = ISO_DAYS[item.days[0]];
-
-    const hours = makeHours(item, iso);
+    const hours = makeHours(item);
 
     return (
       <MapView.Callout>
         <View style={calloutStyle}>
-          <ImageGallery doc={this.props.data} height={150} />
+          <ImageGallery doc={this.props.data} height={150} narrow />
           <View style={styles.info} onLayout={this._updateHeight}>
             <Text style={styles.titleText}>{item.title}</Text>
             <Text style={styles.locationText}>{item.location}</Text>

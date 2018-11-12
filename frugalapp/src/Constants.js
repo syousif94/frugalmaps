@@ -2,6 +2,8 @@ import { Dimensions, Platform } from "react-native";
 
 export const DAYS = ["M", "T", "W", "Th", "F", "Sa", "S"];
 
+export const ISO_DAYS = [1, 2, 3, 4, 5, 6, 0];
+
 export const DEV = process.env.NODE_ENV === "development";
 
 export const INITIAL_REGION = {
