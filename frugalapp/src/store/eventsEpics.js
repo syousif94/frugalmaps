@@ -39,13 +39,15 @@ const makeEvents = hits => {
 
   const beforeToday = initial.slice(0, todayIndex);
 
-  return [...todayAndAfter, ...beforeToday]
-    .map((day, index) => {
-      day.away = index;
-      return day;
-    })
-    .filter(day => day.data.length)
-    .map((day, index) => ({ ...day, index }));
+  return (
+    [...todayAndAfter, ...beforeToday]
+      .map((day, index) => {
+        day.away = index;
+        return day;
+      })
+      // .filter(day => day.data.length)
+      .map((day, index) => ({ ...day, index }))
+  );
 };
 
 const events = (action$, store) =>

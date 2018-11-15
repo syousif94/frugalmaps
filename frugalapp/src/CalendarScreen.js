@@ -92,7 +92,6 @@ class CalendarScreen extends Component {
           style={styles.list}
           renderItem={data => <Item {...data} key={data.index} />}
           renderSectionHeader={data => <Header {...data} key={data.index} />}
-          ItemSeparatorComponent={() => <View style={styles.divider} />}
           sections={data}
           keyExtractor={(item, index) => item + index}
           ListEmptyComponent={this._renderEmpty}
@@ -130,10 +129,6 @@ const styles = StyleSheet.create({
   list: {
     flex: 1,
     backgroundColor: "#efefef"
-  },
-  divider: {
-    height: 2,
-    backgroundColor: "#f2f2f2"
   },
   initialLoad: {
     position: "absolute",

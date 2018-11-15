@@ -39,31 +39,54 @@ class CalendarItem extends Component {
   render() {
     const {
       item: { _source: item },
-      section: { iso }
+      section: { iso, data },
+      index
     } = this.props;
 
     const hours = makeHours(item, iso);
 
+    const containerStyle = [
+      styles.container,
+      { marginBottom: index + 1 === data.length ? 10 : 5 }
+    ];
+
     return (
-      <View style={styles.container}>
-        {this._renderAd()}
+      <View style={containerStyle}>
         <View style={styles.info}>
           <Text style={styles.locationText}>{item.location}</Text>
           <Text style={styles.descriptionText}>{item.city}</Text>
-        </View>
-        <ImageGallery doc={this.props.item} height={150} />
-        <View style={styles.info}>
-          <View style={styles.title}>
+
+          <View style={styles.event}>
             <Text style={styles.titleText}>{item.title}</Text>
-            <View style={styles.dot} />
-            <Text style={styles.timeText}>{hours}</Text>
+            <View style={styles.hours}>
+              {item.groupedHours.map((hours, index) => {
+                return (
+                  <View style={styles.hour} key={index}>
+                    <View style={styles.days}>
+                      {hours.days.map(day => {
+                        return (
+                          <View style={styles.day} key={day}>
+                            <Text style={styles.dayText}>{day}</Text>
+                          </View>
+                        );
+                      })}
+                    </View>
+                    <Text style={styles.hourText}>{hours.hours}</Text>
+                  </View>
+                );
+              })}
+            </View>
+            <Text style={[styles.descriptionText, { color: "#000" }]}>
+              {item.description}
+            </Text>
           </View>
-          <Text style={styles.descriptionText}>{item.description}</Text>
-          {/* <View style={styles.actions}>
+        </View>
+
+        <ImageGallery doc={this.props.item} height={150} />
+        {/* <View style={styles.actions}>
             <Button action="notify" {...this.props} />
             <Button action="go" {...this.props} />
           </View> */}
-        </View>
       </View>
     );
   }
@@ -251,21 +274,17 @@ class Button extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
+    marginVertical: 5,
+    marginHorizontal: 10,
+    borderRadius: 4,
+    padding: 5
   },
   info: {
     padding: 10
   },
-  title: {
-    flexDirection: "row",
-    alignItems: "center"
-  },
-  dot: {
-    height: 2,
-    width: 2,
-    borderRadius: 1,
-    backgroundColor: "#999",
-    marginHorizontal: 5
+  event: {
+    marginTop: 6
   },
   titleText: {
     fontSize: 12,
@@ -278,7 +297,7 @@ const styles = StyleSheet.create({
     color: "#000"
   },
   descriptionText: {
-    marginTop: 3,
+    marginTop: 2,
     color: "#444",
     fontSize: 12
   },
@@ -317,5 +336,33 @@ const styles = StyleSheet.create({
   },
   ad: {
     marginTop: IOS ? -20 : 0
+  },
+  hours: {
+    marginTop: 2,
+    marginBottom: 3
+  },
+  hour: {
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  hourText: {
+    color: "#444",
+    fontSize: 12
+  },
+  days: {
+    flexDirection: "row",
+    marginRight: 3
+  },
+  day: {
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 3,
+    backgroundColor: "#18AB2E",
+    marginRight: 2
+  },
+  dayText: {
+    fontSize: 10,
+    color: "#fff",
+    fontWeight: "700"
   }
 });

@@ -24,9 +24,9 @@ export default class CalendarListHeader extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.info}>
-          <Text style={styles.titleText}>{section.title}</Text>
+          <Text style={styles.titleText}>{relativeText}</Text>
           <View style={styles.relative}>
-            <Text style={styles.relativeText}>{relativeText}</Text>
+            <Text style={styles.relativeText}>{section.title}</Text>
           </View>
         </View>
       </View>
@@ -36,6 +36,7 @@ export default class CalendarListHeader extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    marginBottom: 5,
     backgroundColor: RED,
     height: CalendarListHeader.height
   },
