@@ -50,7 +50,19 @@ class LocationSuggestion extends Component {
           <Text style={styles.countText}>{item._source.count}</Text>
         </View>
       );
-    } else if (item.sort[0]) {
+    }
+
+    return null;
+  };
+
+  _renderDistance = () => {
+    const { item, section } = this.props;
+
+    if (!section || section.title === "Suggestions") {
+      return null;
+    }
+
+    if (item.sort && item.sort[0]) {
       const miles = `${item.sort[0].toFixed(2)} mi`;
       return (
         <View style={styles.count}>
@@ -58,6 +70,8 @@ class LocationSuggestion extends Component {
         </View>
       );
     }
+
+    return null;
   };
 
   render() {
@@ -96,7 +110,10 @@ class LocationSuggestion extends Component {
           <Text style={styles.name}>{name}</Text>
           <Text style={styles.address}>{addressText}</Text>
         </View>
-        {this._renderCount()}
+        <View style={styles.counts}>
+          {this._renderDistance()}
+          {this._renderCount()}
+        </View>
       </TouchableOpacity>
     );
   }
@@ -129,6 +146,10 @@ const styles = StyleSheet.create({
     marginTop: 2,
     color: "#a9a9a9"
   },
+  counts: {
+    flexDirection: "row",
+    marginRight: 10
+  },
   count: {
     height: 18,
     borderRadius: 9,
@@ -136,7 +157,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 8,
-    marginRight: 20
+    marginRight: 10
   },
   countText: {
     fontSize: 12,
