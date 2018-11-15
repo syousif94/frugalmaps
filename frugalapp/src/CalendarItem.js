@@ -8,42 +8,18 @@ import {
   AsyncStorage,
   Alert
 } from "react-native";
-import { FacebookAds, Notifications, Permissions } from "expo";
+import { Notifications, Permissions } from "expo";
 import { Entypo, MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import { RED } from "./Colors";
 import ImageGallery from "./ImageGallery";
-import { makeHours } from "./Time";
-import { IOS, PLACEMENT_ID } from "./Constants";
 
 class CalendarItem extends Component {
-  _renderAd = () => {
-    const { index, section } = this.props;
-
-    if (IOS && index === 0 && section.index === 0) {
-      return (
-        <View style={styles.adContainer}>
-          <FacebookAds.BannerView
-            style={styles.ad}
-            placementId={PLACEMENT_ID}
-            type="standard"
-            onPress={() => console.log("click")}
-            onError={err => console.log("error", err)}
-          />
-        </View>
-      );
-    }
-
-    return null;
-  };
-
   render() {
     const {
       item: { _source: item },
-      section: { iso, data },
+      section: { data },
       index
     } = this.props;
-
-    const hours = makeHours(item, iso);
 
     const containerStyle = [
       styles.container,
@@ -329,13 +305,6 @@ const styles = StyleSheet.create({
     width: 6,
     borderRadius: 3,
     backgroundColor: RED
-  },
-  adContainer: {
-    height: 50,
-    overflow: "hidden"
-  },
-  ad: {
-    marginTop: IOS ? -20 : 0
   },
   hours: {
     marginTop: 2,

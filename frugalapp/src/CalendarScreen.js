@@ -1,8 +1,15 @@
 import React, { Component } from "react";
-import { StyleSheet, View, SectionList, ActivityIndicator } from "react-native";
+import {
+  StyleSheet,
+  View,
+  SectionList,
+  ActivityIndicator,
+  Text
+} from "react-native";
 import _ from "lodash";
 import { connect } from "react-redux";
 import emitter from "tiny-emitter/instance";
+import { FacebookAds } from "expo";
 
 import Item from "./CalendarItem";
 import LocationBox from "./LocationBox";
@@ -10,7 +17,7 @@ import Header from "./CalendarListHeader";
 import LocationList from "./LocationList";
 import CalendarEmpty from "./CalendarEmpty";
 import * as Events from "./store/events";
-import { ANDROID } from "./Constants";
+import { ANDROID, IOS, PLACEMENT_ID } from "./Constants";
 
 class CalendarScreen extends Component {
   componentDidMount() {
@@ -58,18 +65,45 @@ class CalendarScreen extends Component {
   _renderEmpty = () => {
     const { initialized, data } = this.props;
 
-    if (!initialized || data.length) {
+    if (!initialized || data.filter(days => days.data.length).length) {
       return null;
     }
 
     return <CalendarEmpty />;
   };
 
+  _renderAd = () => {
+    const { initialized } = this.props;
+
+    if (initialized && IOS) {
+      return (
+        <View style={styles.adView} pointerEvents="box-none">
+          <View style={styles.adBanner} pointerEvents="none">
+            <Text style={styles.adText}>Advertisement</Text>
+          </View>
+          <View style={styles.adContainer} pointerEvents="box-none">
+            <FacebookAds.BannerView
+              style={styles.ad}
+              placementId={PLACEMENT_ID}
+              type="standard"
+              onPress={() => console.log("click")}
+              onError={err => console.log("error", err)}
+            />
+          </View>
+        </View>
+      );
+    }
+
+    return null;
+  };
+
   render() {
     const { refreshing, data } = this.props;
 
+    const dataCount = data.filter(days => days.data.length).length;
+
     const containerStyle = {
-      paddingBottom: data.length ? 110 : 0
+      paddingBottom: data.length ? 0 : 0
     };
 
     const androidProps = ANDROID
@@ -78,6 +112,8 @@ class CalendarScreen extends Component {
           maxToRenderPerBatch: 5
         }
       : {};
+
+    const listData = dataCount ? data : [];
 
     return (
       <View style={styles.container}>
@@ -92,11 +128,11 @@ class CalendarScreen extends Component {
           style={styles.list}
           renderItem={data => <Item {...data} key={data.index} />}
           renderSectionHeader={data => <Header {...data} key={data.index} />}
-          sections={data}
+          sections={listData}
           keyExtractor={(item, index) => item + index}
           ListEmptyComponent={this._renderEmpty}
           {...androidProps}
-          removeClippedSubviews
+          ListFooterComponent={this._renderAd}
         />
         {this._renderInitial()}
         <LocationList />
@@ -140,5 +176,27 @@ const styles = StyleSheet.create({
   loading: {
     marginTop: 15,
     transform: [{ scale: 0.8 }]
+  },
+  adView: {
+    marginTop: 35,
+    backgroundColor: "#fff"
+  },
+  adBanner: {
+    height: 20,
+    paddingHorizontal: 6,
+    justifyContent: "center",
+    backgroundColor: "#aaa"
+  },
+  adText: {
+    fontSize: 12,
+    color: "#fff",
+    fontWeight: "600"
+  },
+  adContainer: {
+    height: 50,
+    overflow: "hidden"
+  },
+  ad: {
+    marginTop: IOS ? -20 : 0
   }
 });
