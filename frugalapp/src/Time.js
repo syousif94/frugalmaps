@@ -65,6 +65,38 @@ export function createDate(time, iso) {
   return date;
 }
 
+export function timeRemaining(hours, iso, time) {
+  let ending = false;
+  let now = moment();
+  let diff;
+  let remaining = null;
+  const start = createDate(hours.start, iso);
+  const end = createDate(hours.end, iso);
+  if (now.isBefore(start)) {
+    diff = start.valueOf() - time;
+  } else {
+    ending = true;
+    diff = end.valueOf() - time;
+  }
+  if (diff) {
+    let hour = diff / 3600000;
+
+    const days = Math.floor(hour / 24);
+
+    hour = hour - days * 24;
+
+    const minutes = (hour - Math.floor(hour)) * 60;
+
+    const seconds = (minutes - Math.floor(minutes)) * 60;
+
+    remaining = `${days}d ${Math.floor(hour)}h ${Math.floor(
+      minutes
+    )}m ${Math.floor(seconds)}s`;
+  }
+
+  return { remaining, ending };
+}
+
 export function makeHours(item, iso) {
   let hours;
   let start;
