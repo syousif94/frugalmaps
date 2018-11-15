@@ -12,12 +12,30 @@ import { Notifications, Permissions } from "expo";
 import { Entypo, MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import { RED } from "./Colors";
 import ImageGallery from "./ImageGallery";
+import moment from "moment";
+import { createDate } from "./Time";
 
 class CalendarItem extends Component {
+  state = {
+    time: Date.now()
+  };
+
+  componentDidMount() {
+    this._interval = setInterval(() => {
+      this.setState({
+        time: Date.now()
+      });
+    }, 500);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this._interval);
+  }
+
   render() {
     const {
       item: { _source: item },
-      section: { data },
+      section: { data, iso },
       index
     } = this.props;
 
@@ -36,6 +54,25 @@ class CalendarItem extends Component {
             <Text style={styles.titleText}>{item.title}</Text>
             <View style={styles.hours}>
               {item.groupedHours.map((hours, index) => {
+                let now = moment();
+                let diff;
+                let timeRemaining = null;
+                const start = createDate(hours.start, iso);
+                const end = createDate(hours.end, iso);
+                if (now.isBefore(start)) {
+                  diff = start.valueOf() - this.state.time;
+                } else {
+                  diff = end.valueOf() - this.state.time;
+                }
+                if (diff) {
+                  const hours = diff / 3600000;
+                  const days = Math.floor(hours / 24);
+                  const minutes = (hours - Math.floor(hours)) * 60;
+                  const seconds = (minutes - Math.floor(minutes)) * 60;
+                  timeRemaining = `${days}d ${Math.floor(hours)}h ${Math.floor(
+                    minutes
+                  )}m ${Math.floor(seconds)}s`;
+                }
                 return (
                   <View style={styles.hour} key={index}>
                     <View style={styles.days}>
@@ -48,6 +85,7 @@ class CalendarItem extends Component {
                       })}
                     </View>
                     <Text style={styles.hourText}>{hours.hours}</Text>
+                    <Text style={styles.countdownText}>{timeRemaining}</Text>
                   </View>
                 );
               })}
@@ -316,6 +354,11 @@ const styles = StyleSheet.create({
   },
   hourText: {
     color: "#444",
+    fontSize: 12
+  },
+  countdownText: {
+    marginLeft: 4,
+    color: "#E3210B",
     fontSize: 12
   },
   days: {

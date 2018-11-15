@@ -24,9 +24,9 @@ export default class CalendarListHeader extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.info}>
-          <Text style={styles.titleText}>{relativeText}</Text>
+          <Text style={styles.titleText}>{section.title}</Text>
           <View style={styles.relative}>
-            <Text style={styles.relativeText}>{section.title}</Text>
+            <Text style={styles.relativeText}>{relativeText}</Text>
           </View>
         </View>
       </View>
