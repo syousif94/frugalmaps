@@ -105,7 +105,7 @@ export function makeHours(item, iso) {
   let day = iso !== undefined ? iso : ISO_DAYS[item.days[0]];
 
   if (item.start && item.end) {
-    hours = `${item.start} - ${item.end}`;
+    hours = formatHours([item.start, item.end]);
     start = item.start;
     end = item.end;
   } else if (item.start) {
