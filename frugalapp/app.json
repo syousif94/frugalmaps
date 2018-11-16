@@ -26,7 +26,11 @@
       "bundleIdentifier": "me.syousif.LitCal"
     },
     "android": {
-      "package": "me.syousif.LitCal"
+      "package": "me.syousif.LitCal",
+      "adaptiveIcon": {
+        "backgroundColor": "#ffffff",
+        "foregroundImage": "./assets/foreground.png"
+      }
     },
     "androidStatusBar": {
       "barStyle": "light-content",
