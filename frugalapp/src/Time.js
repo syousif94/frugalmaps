@@ -57,9 +57,17 @@ export function closingPeriod(item, iso) {
   return period;
 }
 
-export function createDate(time, iso) {
+export function createDate(time, iso, start) {
   let date = moment(time, ["h:ma", "H:m"]).isoWeekday(iso);
-  if (date.isBefore(moment())) {
+  const now = moment();
+
+  const startInt = start && parseInt(start, 10);
+  const endInt = start && parseInt(time, 10);
+
+  if (startInt && startInt > endInt) {
+    date.add(1, "d");
+  }
+  if (date.isBefore(now)) {
     date = date.add(7, "d");
   }
   return date;
@@ -71,27 +79,45 @@ export function timeRemaining(hours, iso, time) {
   let diff;
   let remaining = null;
   const start = createDate(hours.start, iso);
-  const end = createDate(hours.end, iso);
-  if (now.isBefore(start)) {
-    diff = start.valueOf() - time;
-  } else {
+  const end = createDate(hours.end, iso, hours.start);
+  if (now.isBefore(end) && end.isBefore(start)) {
     ending = true;
     diff = end.valueOf() - time;
+  } else if (now.isBefore(start)) {
+    diff = start.valueOf() - time;
   }
   if (diff) {
-    let hour = diff / 3600000;
+    let hourFloat = diff / 3600000;
 
-    const days = Math.floor(hour / 24);
+    const days = Math.floor(hourFloat / 24);
 
-    hour = hour - days * 24;
+    hourFloat = hourFloat - days * 24;
 
-    const minutes = (hour - Math.floor(hour)) * 60;
+    const hour = Math.floor(hourFloat);
 
-    const seconds = (minutes - Math.floor(minutes)) * 60;
+    const minFloat = (hourFloat - hour) * 60;
 
-    remaining = `${days}d ${Math.floor(hour)}h ${Math.floor(
-      minutes
-    )}m ${Math.floor(seconds)}s`;
+    const minutes = Math.floor(minFloat);
+
+    const seconds = Math.floor((minFloat - minutes) * 60);
+
+    remaining = "";
+
+    if (days > 0) {
+      remaining += `${days}d `;
+    }
+
+    if (hour > 0) {
+      remaining += `${hour}h `;
+    }
+
+    if (minutes > 0) {
+      remaining += `${minutes}m `;
+    }
+
+    remaining += `${seconds}s`;
+
+    remaining = remaining.trim();
   }
 
   return { remaining, ending };

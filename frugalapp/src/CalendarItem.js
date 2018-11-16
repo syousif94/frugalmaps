@@ -46,9 +46,6 @@ class CalendarItem extends Component {
     return (
       <View style={containerStyle}>
         <View style={styles.info}>
-          <Text style={styles.locationText}>{item.location}</Text>
-          <Text style={styles.descriptionText}>{item.city}</Text>
-
           <View style={styles.event}>
             <Text style={styles.titleText}>{item.title}</Text>
             <View style={styles.hours}>
@@ -58,6 +55,12 @@ class CalendarItem extends Component {
                   iso,
                   this.state.time
                 );
+
+                const countdownStyle = [styles.countdownText];
+
+                if (ending) {
+                  countdownStyle.push(styles.ending);
+                }
 
                 return (
                   <View style={styles.hour} key={index}>
@@ -70,16 +73,17 @@ class CalendarItem extends Component {
                         );
                       })}
                     </View>
-                    <Text style={styles.hourText}>{hours.hours}</Text>
-                    <Text style={styles.countdownText}>{remaining}</Text>
+                    <Text style={styles.subText}>{hours.hours}</Text>
+                    <Text style={countdownStyle}>{remaining}</Text>
                   </View>
                 );
               })}
             </View>
-            <Text style={[styles.descriptionText, { color: "#000" }]}>
-              {item.description}
-            </Text>
+            <Text style={styles.descriptionText}>{item.description}</Text>
           </View>
+
+          <Text style={styles.locationText}>{item.location}</Text>
+          <Text style={styles.subText}>{item.city}</Text>
         </View>
 
         <ImageGallery doc={this.props.item} height={150} />
@@ -284,7 +288,7 @@ const styles = StyleSheet.create({
     padding: 10
   },
   event: {
-    marginTop: 6
+    marginBottom: 6
   },
   titleText: {
     fontSize: 12,
@@ -298,16 +302,8 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     marginTop: 2,
-    color: "#444",
-    fontSize: 12
-  },
-  timeText: {
     color: "#000",
     fontSize: 12
-  },
-  actions: {
-    flexDirection: "row",
-    justifyContent: "space-between"
   },
   action: {
     paddingTop: 20,
@@ -338,7 +334,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center"
   },
-  hourText: {
+  subText: {
     color: "#444",
     fontSize: 12
   },
@@ -346,6 +342,9 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     color: "#E3210B",
     fontSize: 12
+  },
+  ending: {
+    color: "#18AB2E"
   },
   days: {
     flexDirection: "row",
