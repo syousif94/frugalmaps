@@ -108,7 +108,7 @@ class CalendarScreen extends Component {
 
     const androidProps = ANDROID
       ? {
-          initialNumToRender: 3,
+          initialNumToRender: 8,
           maxToRenderPerBatch: 5
         }
       : {};

@@ -7,7 +7,8 @@ import { INITIAL_REGION, ANDROID, HEIGHT, IOS } from "./Constants";
 import MapMarker from "./MapMarker";
 import LocateButton from "./MapLocateButton";
 import emitter from "tiny-emitter/instance";
-import { Location as ExpoLocation, Constants } from "expo";
+import { Constants } from "expo";
+import locate from "./Locate";
 
 class InfoScreen extends Component {
   static mapId = "infoScreen";
@@ -50,9 +51,7 @@ class InfoScreen extends Component {
 
     const {
       coords: { latitude, longitude }
-    } = await ExpoLocation.getCurrentPositionAsync({
-      enableHighAccuracy: false
-    });
+    } = await locate();
 
     coords.push({
       latitude,

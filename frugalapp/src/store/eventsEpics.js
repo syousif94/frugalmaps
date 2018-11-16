@@ -1,4 +1,4 @@
-import { Permissions, Location as ExpoLocation } from "expo";
+import { Permissions } from "expo";
 import { combineEpics } from "redux-observable";
 import { Observable } from "rxjs/Observable";
 import emitter from "tiny-emitter/instance";
@@ -9,6 +9,7 @@ import api from "../API";
 import * as Events from "./events";
 import * as Location from "./location";
 import { groupHours } from "../Time";
+import locate from "../Locate";
 
 const makeEvents = hits => {
   const initial = [
@@ -72,9 +73,7 @@ const events = (action$, store) =>
           if (locationStatus === "granted") {
             const {
               coords: { latitude, longitude }
-            } = await ExpoLocation.getCurrentPositionAsync({
-              enableHighAccuracy: false
-            });
+            } = await locate();
 
             coordinates = {
               latitude,

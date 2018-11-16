@@ -1,10 +1,11 @@
-import { Permissions, Location as ExpoLocation } from "expo";
+import { Permissions } from "expo";
 import { combineEpics } from "redux-observable";
 import { Observable } from "rxjs/Observable";
 
 import api from "../API";
 import * as Location from "./location";
 import { defer } from "./lib";
+import locate from "../Locate";
 
 const coordinates = action$ =>
   action$
@@ -22,9 +23,7 @@ const coordinates = action$ =>
 
           const {
             coords: { latitude, longitude }
-          } = await ExpoLocation.getCurrentPositionAsync({
-            enableHighAccuracy: false
-          });
+          } = await locate();
 
           return Location.actions.set({
             coordinates: {

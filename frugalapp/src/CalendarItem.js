@@ -13,6 +13,7 @@ import { Entypo, MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import { RED } from "./Colors";
 import ImageGallery from "./ImageGallery";
 import { timeRemaining } from "./Time";
+import { WIDTH } from "./Constants";
 
 class CalendarItem extends Component {
   state = {
@@ -86,7 +87,7 @@ class CalendarItem extends Component {
           <Text style={styles.subText}>{item.city}</Text>
         </View>
 
-        <ImageGallery doc={this.props.item} height={150} />
+        <ImageGallery width={WIDTH - 30} doc={this.props.item} height={150} />
         {/* <View style={styles.actions}>
             <Button action="notify" {...this.props} />
             <Button action="go" {...this.props} />

@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { StyleSheet, View, PanResponder } from "react-native";
 import { MapView } from "expo";
 import { connect } from "react-redux";
-import { Location as ExpoLocation } from "expo";
 
 import emitter from "tiny-emitter/instance";
 import _ from "lodash";
@@ -17,6 +16,7 @@ import LocateMe from "./MapLocateButton";
 import DayPicker from "./MapDayPicker";
 import MapMarker from "./MapMarker";
 import MapLoading from "./MapLoading";
+import locate from "./Locate";
 
 var initialAndroidBounds = null;
 
@@ -78,9 +78,7 @@ class MapScreen extends Component {
 
     const {
       coords: { latitude, longitude }
-    } = await ExpoLocation.getCurrentPositionAsync({
-      enableHighAccuracy: false
-    });
+    } = await locate();
 
     coords.push({
       latitude,
