@@ -40,7 +40,7 @@ class LocationSuggestion extends Component {
   _renderCount = () => {
     const { item, section } = this.props;
 
-    if (!section || section.title === "Suggestions") {
+    if (!section || section.title === "Autocomplete") {
       return null;
     }
 
@@ -58,7 +58,7 @@ class LocationSuggestion extends Component {
   _renderDistance = () => {
     const { item, section } = this.props;
 
-    if (!section || section.title === "Suggestions") {
+    if (!section || section.title === "Autocomplete") {
       return null;
     }
 
@@ -81,7 +81,7 @@ class LocationSuggestion extends Component {
 
     let addressText = "";
 
-    if (section && section.title !== "Suggestions") {
+    if (section && section.title !== "Autocomplete") {
       const [city, state] = item._source.name.split(", ");
       name = city;
       addressText = state;

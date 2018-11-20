@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff"
   },
   locateSmall: {
-    bottom: 8,
+    top: 8,
     right: 8,
     height: 32,
     width: 32,

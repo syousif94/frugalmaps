@@ -79,7 +79,7 @@ class CalendarScreen extends Component {
       return (
         <View style={styles.adView} pointerEvents="box-none">
           <View style={styles.adBanner} pointerEvents="none">
-            <Text style={styles.adText}>Advertisement</Text>
+            <Text style={styles.adText}>#Ad</Text>
           </View>
           <View style={styles.adContainer} pointerEvents="box-none">
             <FacebookAds.BannerView
@@ -132,7 +132,7 @@ class CalendarScreen extends Component {
           keyExtractor={(item, index) => item + index}
           ListEmptyComponent={this._renderEmpty}
           {...androidProps}
-          ListFooterComponent={this._renderAd}
+          ListHeaderComponent={this._renderAd}
         />
         {this._renderInitial()}
         <LocationList />
@@ -178,17 +178,16 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.8 }]
   },
   adView: {
-    marginTop: 35,
     backgroundColor: "#fff"
   },
   adBanner: {
-    height: 20,
-    paddingHorizontal: 6,
+    height: 24,
+    backgroundColor: "#B5B5B5",
     justifyContent: "center",
-    backgroundColor: "#aaa"
+    paddingLeft: 10
   },
   adText: {
-    fontSize: 12,
+    fontSize: 14,
     color: "#fff",
     fontWeight: "600"
   },

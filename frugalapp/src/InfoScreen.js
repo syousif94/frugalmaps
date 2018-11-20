@@ -108,10 +108,13 @@ class InfoScreen extends Component {
 
     const { _source: item } = data;
 
-    const galleryHeight = HEIGHT * 0.28;
+    const galleryHeight = HEIGHT * 0.65;
 
     return (
       <View style={styles.info}>
+        {ANDROID && this.state.loading ? null : (
+          <ImageGallery doc={data} disabled height={galleryHeight} />
+        )}
         <View style={styles.padded}>
           <Text style={styles.locationText}>{item.location}</Text>
           <Text style={styles.infoText}>{item.city}</Text>
@@ -136,9 +139,6 @@ class InfoScreen extends Component {
             })}
           </View>
         </View>
-        {ANDROID && this.state.loading ? null : (
-          <ImageGallery doc={data} disabled height={galleryHeight} />
-        )}
       </View>
     );
   };
@@ -152,6 +152,7 @@ class InfoScreen extends Component {
     } = this.props;
     return (
       <View style={styles.container}>
+        {this._renderInfo()}
         <View style={styles.map}>
           {ANDROID && this.state.loading ? null : (
             <MapView
@@ -168,7 +169,6 @@ class InfoScreen extends Component {
             <LocateButton mapId={InfoScreen.mapId} size="small" />
           )}
         </View>
-        {this._renderInfo()}
       </View>
     );
   }
@@ -197,23 +197,28 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   padded: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "rgba(0,0,0,0.5)",
     padding: 20,
     flex: 1
   },
   locationText: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#000"
+    color: "#fff"
   },
   boldText: {
     marginTop: 10,
     fontSize: 12,
-    color: "#000",
+    color: "#fff",
     fontWeight: "600"
   },
   infoText: {
     marginTop: 3,
-    color: "#444",
+    color: "#e0e0e0",
     fontSize: 12
   },
   hours: {
@@ -224,7 +229,7 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   hourText: {
-    color: "#444",
+    color: "#e0e0e0",
     fontSize: 12
   },
   days: {

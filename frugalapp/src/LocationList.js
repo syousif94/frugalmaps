@@ -66,7 +66,7 @@ class LocationList extends Component {
     let data = suggestions;
 
     if (text && text.length && completions.length) {
-      data = [{ title: "Suggestions", data: completions }, ...suggestions];
+      data = [{ title: "Autocomplete", data: completions }, ...suggestions];
     }
 
     return (
