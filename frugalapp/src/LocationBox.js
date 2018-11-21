@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { StyleSheet, TextInput, View, Text } from "react-native";
 import { Entypo } from "@expo/vector-icons";
-import { SafeAreaView } from "react-navigation";
+
 import { connect } from "react-redux";
 import * as Location from "./store/location";
 import emitter from "tiny-emitter/instance";
 import moment from "moment";
-import { IOS } from "./Constants";
+import { IOS, SafeArea as Container } from "./Constants";
 
 class LocationBox extends Component {
   componentDidMount() {
@@ -68,8 +68,6 @@ class LocationBox extends Component {
 
     const today = moment();
     const day = today.format("dddd");
-
-    const Container = IOS ? SafeAreaView : View;
 
     return (
       <Container style={styles.container}>

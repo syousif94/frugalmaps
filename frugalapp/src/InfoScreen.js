@@ -1,9 +1,15 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  ActivityIndicator,
+  StatusBar
+} from "react-native";
 import { MapView } from "expo";
 import { connect } from "react-redux";
 import ImageGallery from "./ImageGallery";
-import { INITIAL_REGION, ANDROID, HEIGHT, IOS } from "./Constants";
+import { INITIAL_REGION, ANDROID, HEIGHT, IOS, SafeArea } from "./Constants";
 import MapMarker from "./MapMarker";
 import LocateButton from "./MapLocateButton";
 import emitter from "tiny-emitter/instance";
@@ -29,6 +35,10 @@ class InfoScreen extends Component {
       }, 150);
     }
 
+    if (IOS) {
+      StatusBar.setBarStyle("light-content");
+    }
+
     emitter.on(InfoScreen.mapId, this._showLocation);
   }
 
@@ -38,6 +48,10 @@ class InfoScreen extends Component {
     }
 
     emitter.off(InfoScreen.mapId, this._showLocation);
+
+    if (IOS) {
+      StatusBar.setBarStyle("dark-content");
+    }
   }
 
   _showLocation = async () => {
@@ -95,7 +109,8 @@ class InfoScreen extends Component {
 
   _renderInfo = () => {
     const {
-      event: { data }
+      event: { data },
+      authorized
     } = this.props;
 
     if (!data) {
@@ -108,13 +123,26 @@ class InfoScreen extends Component {
 
     const { _source: item } = data;
 
-    const galleryHeight = HEIGHT * 0.65;
+    const galleryHeight = HEIGHT * 0.5;
 
     return (
-      <View style={styles.info}>
-        {ANDROID && this.state.loading ? null : (
-          <ImageGallery doc={data} disabled height={galleryHeight} />
-        )}
+      <View style={styles.map}>
+        <View style={styles.map}>
+          {ANDROID && this.state.loading ? null : (
+            <MapView
+              ref={ref => (this._map = ref)}
+              style={styles.map}
+              initialRegion={INITIAL_REGION}
+              onLayout={this._focusAnnotation}
+              showsUserLocation={authorized}
+            >
+              <MapMarker data={data} key={data._id} disabled />
+            </MapView>
+          )}
+          {ANDROID && this.state.loading ? null : (
+            <LocateButton mapId={InfoScreen.mapId} size="small" />
+          )}
+        </View>
         <View style={styles.padded}>
           <Text style={styles.locationText}>{item.location}</Text>
           <Text style={styles.infoText}>{item.city}</Text>
@@ -147,28 +175,19 @@ class InfoScreen extends Component {
 
   render() {
     const {
-      event: { data },
-      authorized
+      event: { data }
     } = this.props;
+    const galleryHeight = HEIGHT * 0.5;
     return (
       <View style={styles.container}>
+        <SafeArea>
+          <View style={styles.info}>
+            {ANDROID && this.state.loading ? null : (
+              <ImageGallery doc={data} disabled height={galleryHeight} />
+            )}
+          </View>
+        </SafeArea>
         {this._renderInfo()}
-        <View style={styles.map}>
-          {ANDROID && this.state.loading ? null : (
-            <MapView
-              ref={ref => (this._map = ref)}
-              style={styles.map}
-              initialRegion={INITIAL_REGION}
-              onLayout={this._focusAnnotation}
-              showsUserLocation={authorized}
-            >
-              <MapMarker data={data} key={data._id} disabled />
-            </MapView>
-          )}
-          {ANDROID && this.state.loading ? null : (
-            <LocateButton mapId={InfoScreen.mapId} size="small" />
-          )}
-        </View>
       </View>
     );
   }
@@ -184,13 +203,13 @@ export default connect(mapStateToProps)(InfoScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
+    backgroundColor: "#000"
   },
   map: {
     flex: 1
   },
   info: {
-    height: HEIGHT * 0.65
+    height: HEIGHT * 0.5
   },
   loading: {
     justifyContent: "center",
@@ -198,11 +217,12 @@ const styles = StyleSheet.create({
   },
   padded: {
     position: "absolute",
-    bottom: 0,
+    top: 0,
     left: 0,
     right: 0,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    padding: 20,
+    backgroundColor: "rgba(0,0,0,1)",
+    paddingHorizontal: 20,
+    paddingVertical: 12,
     flex: 1
   },
   locationText: {

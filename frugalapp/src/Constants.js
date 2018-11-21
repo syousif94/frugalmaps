@@ -1,4 +1,5 @@
-import { Dimensions, Platform } from "react-native";
+import { Dimensions, Platform, View } from "react-native";
+import { SafeAreaView } from "react-navigation";
 
 export const DAYS = ["M", "T", "W", "Th", "F", "Sa", "S"];
 
@@ -23,3 +24,5 @@ export const IOS = os === "ios";
 export const PLACEMENT_ID = IOS
   ? "1931177036970533_1956753154412921"
   : "1931177036970533_1991298450958391";
+
+export const SafeArea = IOS ? SafeAreaView : View;

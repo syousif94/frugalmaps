@@ -5,6 +5,7 @@ import {
   Image,
   TouchableWithoutFeedback,
   ScrollView,
+  FlatList,
   Text
 } from "react-native";
 import { connect } from "react-redux";
@@ -20,54 +21,72 @@ class ImageGallery extends Component {
     return next.doc._id !== this.props.doc._id;
   }
 
+  _renderItem = ({ item, section, index }) => {
+    const { height, set, navigation, disabled, doc } = this.props;
+    const { url: uri, height: imageHeight, width } = item;
+
+    const source = {
+      uri
+    };
+
+    const imageWidth = (height / imageHeight) * width;
+
+    return (
+      <TouchableWithoutFeedback
+        disabled={disabled}
+        onPress={() => {
+          set({
+            selectedEvent: {
+              data: doc
+            }
+          });
+          navigation.navigate("Info");
+        }}
+      >
+        <Image
+          key={uri}
+          source={source}
+          style={[styles.image, { width: imageWidth, height }]}
+        />
+      </TouchableWithoutFeedback>
+    );
+  };
+
   render() {
-    const { doc, height, set, navigation, disabled, narrow } = this.props;
+    const { doc, height, narrow, disabled } = this.props;
 
     const { _source: item } = doc;
 
     const touchableStyle = {
-      height,
-      flexDirection: "row"
+      height
     };
+
+    const photos = _(item.photos)
+      .shuffle()
+      .value();
+
+    let data = [];
+
+    let i = 0;
+
+    while (i < 50) {
+      data = [...data, ...photos];
+      i++;
+    }
 
     return (
       <View>
-        <ScrollView style={[styles.images, { height }]} horizontal>
-          <TouchableWithoutFeedback
-            disabled={disabled}
-            onPress={() => {
-              set({
-                selectedEvent: {
-                  data: doc
-                }
-              });
-              navigation.navigate("Info");
-            }}
-          >
-            <View style={touchableStyle}>
-              {_(item.photos)
-                .shuffle()
-                .map(photo => {
-                  const { url: uri, height: imageHeight, width } = photo;
-
-                  const source = {
-                    uri
-                  };
-
-                  const imageWidth = (height / imageHeight) * width;
-
-                  return (
-                    <Image
-                      key={uri}
-                      source={source}
-                      style={[styles.image, { width: imageWidth, height }]}
-                    />
-                  );
-                })
-                .value()}
-            </View>
-          </TouchableWithoutFeedback>
-        </ScrollView>
+        <View style={[styles.images, { height }]} horizontal>
+          <View style={touchableStyle}>
+            <FlatList
+              style={touchableStyle}
+              data={data}
+              renderItem={this._renderItem}
+              keyExtractor={(item, i) => item.url + i}
+              horizontal
+            />
+          </View>
+        </View>
         <Icon disabled={disabled} narrow={narrow} />
       </View>
     );
