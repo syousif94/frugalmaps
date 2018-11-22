@@ -144,8 +144,6 @@ class InfoScreen extends Component {
           )}
         </View>
         <View style={styles.padded}>
-          <Text style={styles.locationText}>{item.location}</Text>
-          <Text style={styles.infoText}>{item.city}</Text>
           <Text style={styles.boldText}>{item.title}</Text>
           <Text style={styles.infoText}>{item.description}</Text>
           <View style={styles.hours}>
@@ -177,10 +175,16 @@ class InfoScreen extends Component {
     const {
       event: { data }
     } = this.props;
+
+    const { _source: item } = data;
     const galleryHeight = HEIGHT * 0.5;
     return (
       <View style={styles.container}>
         <SafeArea>
+          <View style={styles.padded}>
+            <Text style={styles.locationText}>{item.location}</Text>
+            <Text style={styles.infoText}>{item.city}</Text>
+          </View>
           <View style={styles.info}>
             {ANDROID && this.state.loading ? null : (
               <ImageGallery doc={data} disabled height={galleryHeight} />
@@ -216,10 +220,6 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   padded: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
     backgroundColor: "rgba(0,0,0,1)",
     paddingHorizontal: 20,
     paddingVertical: 12,

@@ -54,13 +54,13 @@ class Calendar extends Component {
 
     const today = moment();
     const date = today.format("MMM D");
-    const day = today.format("dddd");
+    const day = today.format("ddd");
     return (
       <TouchableOpacity style={styles.tab} onPress={onPress}>
         <View style={styles.icon}>
-          <Text style={dateStyle}>{date}</Text>
+          <Text style={dateStyle}>{day}</Text>
         </View>
-        <Text style={textStyle}>Today</Text>
+        <Text style={textStyle}>{date}</Text>
       </TouchableOpacity>
     );
   }
@@ -187,9 +187,8 @@ class TabBar extends Component {
       <SafeAreaView style={styles.container} onLayout={this._onLayout}>
         <View style={styles.footer}>
           <Calendar selected={selected} onPress={this._onCalendar} index={0} />
-          <Search selected={selected} index={1} onPress={this._onSearch} />
+          <Upload selected={selected} index={1} onPress={this._onSubmit} />
           <Map selected={selected} index={2} onPress={this._onMap} />
-          <Upload selected={selected} index={3} onPress={this._onSubmit} />
         </View>
       </SafeAreaView>
     );
@@ -228,8 +227,8 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   dateText: {
-    fontSize: 16,
-    fontWeight: "500"
+    fontSize: 15,
+    fontWeight: "700"
   },
   text: {
     fontSize: 10,

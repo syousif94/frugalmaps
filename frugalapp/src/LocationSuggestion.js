@@ -29,6 +29,7 @@ class LocationSuggestion extends Component {
     });
 
     setLocation({
+      lastQuery: text,
       text,
       bounds: null
     });

@@ -9,7 +9,6 @@ import { ANDROID } from "./Constants";
 import MapScreen from "./MapScreen";
 import CalendarScreen from "./CalendarScreen";
 import SubmitScreen from "./SubmitScreen";
-import SearchScreen from "./SearchScreen";
 
 import PublishedScreen from "./PublishedScreen";
 import SubmissionsScreen from "./SubmissionsScreen";
@@ -21,9 +20,8 @@ import Updater from "./Updater";
 const TabScreen = createBottomTabNavigator(
   {
     Calendar: CalendarScreen,
-    Search: SearchScreen,
-    Map: MapScreen,
-    Submit: SubmitScreen
+    Submit: SubmitScreen,
+    Map: MapScreen
   },
   {
     initialRoute: "Calendar",

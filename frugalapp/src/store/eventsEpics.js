@@ -133,6 +133,7 @@ const events = (action$, store) =>
           return Observable.of(
             Location.actions.set({
               coordinates,
+              lastQuery: text,
               text,
               bounds: action.payload.bounds ? undefined : null
             }),

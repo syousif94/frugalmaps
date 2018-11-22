@@ -32,7 +32,7 @@ export default connect(mapStateToProps)(CalendarEmpty);
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 90,
+    paddingVertical: 50,
     alignItems: "center"
   },
   headerText: {

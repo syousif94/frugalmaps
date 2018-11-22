@@ -65,6 +65,18 @@ function text(state = "", { type, payload }) {
   }
 }
 
+function lastQuery(state = "", { type, payload }) {
+  switch (type) {
+    case types.set:
+      if (payload.lastQuery !== undefined) {
+        return payload.lastQuery;
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
 function bounds(state = null, { type, payload }) {
   switch (type) {
     case types.set:
@@ -122,5 +134,6 @@ export default combineReducers({
   suggestions,
   completions,
   listBottom,
-  authorized
+  authorized,
+  lastQuery
 });
