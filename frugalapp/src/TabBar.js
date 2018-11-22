@@ -20,7 +20,7 @@ import { ANDROID, IOS } from "./Constants";
 
 const notched = Platform.OS === "ios" && Constants.statusBarHeight > 40;
 
-class Settings extends Component {
+class Search extends Component {
   render() {
     const { selected, index, onPress } = this.props;
 
@@ -33,9 +33,9 @@ class Settings extends Component {
     return (
       <TouchableOpacity style={styles.tab} onPress={onPress}>
         <View style={styles.icon}>
-          <Entypo name="cog" size={20} color={iconColor} />
+          <Entypo name="magnifying-glass" size={20} color={iconColor} />
         </View>
-        <Text style={textStyle}>Prefs</Text>
+        <Text style={textStyle}>Search</Text>
       </TouchableOpacity>
     );
   }
@@ -60,7 +60,7 @@ class Calendar extends Component {
         <View style={styles.icon}>
           <Text style={dateStyle}>{date}</Text>
         </View>
-        <Text style={textStyle}>{day}</Text>
+        <Text style={textStyle}>Today</Text>
       </TouchableOpacity>
     );
   }
@@ -157,7 +157,11 @@ class TabBar extends Component {
 
   _onSubmit = () => {
     this.props.navigation.navigate("Submit");
-    emitter.emit("focus-picker");
+    // emitter.emit("focus-picker");
+  };
+
+  _onSearch = () => {
+    this.props.navigation.navigate("Search");
   };
 
   _onLayout = e => {
@@ -183,8 +187,9 @@ class TabBar extends Component {
       <SafeAreaView style={styles.container} onLayout={this._onLayout}>
         <View style={styles.footer}>
           <Calendar selected={selected} onPress={this._onCalendar} index={0} />
-          <Upload selected={selected} index={1} onPress={this._onSubmit} />
+          <Search selected={selected} index={1} onPress={this._onSearch} />
           <Map selected={selected} index={2} onPress={this._onMap} />
+          <Upload selected={selected} index={3} onPress={this._onSubmit} />
         </View>
       </SafeAreaView>
     );

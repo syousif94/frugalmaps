@@ -54,7 +54,7 @@ class LocationBox extends Component {
   };
 
   render() {
-    const { text, focused, refreshing, bounds } = this.props;
+    const { text, lastQuery, focused, refreshing, bounds } = this.props;
 
     let value = text;
 
@@ -72,7 +72,7 @@ class LocationBox extends Component {
     return (
       <Container style={styles.container}>
         <View style={styles.title}>
-          <Text style={styles.titleText}>{day}</Text>
+          <Text style={styles.titleText}>{lastQuery}</Text>
         </View>
         <View style={styles.search} onLayout={this._onLayout}>
           <Entypo name="magnifying-glass" size={18} color="#000" />
@@ -99,6 +99,7 @@ class LocationBox extends Component {
 
 const mapStateToProps = state => ({
   text: state.location.text,
+  lastQuery: state.location.lastQuery,
   bounds: state.location.bounds,
   focused: state.location.focused,
   refreshing: state.events.refreshing
