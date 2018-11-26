@@ -9,6 +9,7 @@ import {
 import { MapView } from "expo";
 import { connect } from "react-redux";
 import ImageGallery from "./ImageGallery";
+import EventList from "./InfoEventList";
 import { INITIAL_REGION, ANDROID, HEIGHT, IOS, SafeArea } from "./Constants";
 import MapMarker from "./MapMarker";
 import LocateButton from "./MapLocateButton";
@@ -127,6 +128,7 @@ class InfoScreen extends Component {
 
     return (
       <View style={styles.map}>
+        <EventList placeid={item.placeid} />
         <View style={styles.map}>
           {ANDROID && this.state.loading ? null : (
             <MapView
@@ -142,28 +144,6 @@ class InfoScreen extends Component {
           {ANDROID && this.state.loading ? null : (
             <LocateButton mapId={InfoScreen.mapId} size="small" />
           )}
-        </View>
-        <View style={styles.padded}>
-          <Text style={styles.boldText}>{item.title}</Text>
-          <Text style={styles.infoText}>{item.description}</Text>
-          <View style={styles.hours}>
-            {item.groupedHours.map((hours, index) => {
-              return (
-                <View style={styles.hour} key={index}>
-                  <View style={styles.days}>
-                    {hours.days.map(day => {
-                      return (
-                        <View style={styles.day} key={day}>
-                          <Text style={styles.dayText}>{day}</Text>
-                        </View>
-                      );
-                    })}
-                  </View>
-                  <Text style={styles.hourText}>{hours.hours}</Text>
-                </View>
-              );
-            })}
-          </View>
         </View>
       </View>
     );
@@ -187,7 +167,12 @@ class InfoScreen extends Component {
           </View>
           <View style={styles.info}>
             {ANDROID && this.state.loading ? null : (
-              <ImageGallery doc={data} disabled height={galleryHeight} />
+              <ImageGallery
+                backgroundColor="#000"
+                doc={data}
+                disabled
+                height={galleryHeight}
+              />
             )}
           </View>
         </SafeArea>
@@ -222,8 +207,7 @@ const styles = StyleSheet.create({
   padded: {
     backgroundColor: "rgba(0,0,0,1)",
     paddingHorizontal: 20,
-    paddingVertical: 12,
-    flex: 1
+    paddingBottom: 12
   },
   locationText: {
     fontSize: 12,

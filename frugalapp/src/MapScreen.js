@@ -174,7 +174,10 @@ class MapScreen extends Component {
 
     return (
       <View style={styles.container}>
-        <LocationBox />
+        <View>
+          <LocationBox />
+          <MapLoading />
+        </View>
         <View style={styles.map} {...this._panResponder.panHandlers}>
           <MapView
             onLayout={this._setFrame}
@@ -194,7 +197,6 @@ class MapScreen extends Component {
               return <MapMarker data={data} key={_id} />;
             })}
           </MapView>
-          <MapLoading />
         </View>
         <DayPicker ref={ref => (this._dayPicker = ref)} />
         <LocateMe mapId={MapScreen.mapId} />

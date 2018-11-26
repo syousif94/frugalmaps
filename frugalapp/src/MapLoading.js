@@ -59,8 +59,8 @@ class MapLoading extends Component {
         <View style={styles.bg} />
         <ActivityIndicator
           animating={this.state.loading}
-          color="#fff"
-          size="small"
+          color="#555"
+          style={styles.indicator}
         />
       </Animated.View>
     );
@@ -69,19 +69,26 @@ class MapLoading extends Component {
 
 export default connect(mapStateToProps)(MapLoading);
 
+const size = 24;
+const left = 10 + (44 - size) / 2;
+const bottom = left + 1;
+
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: 10,
-    right: 10,
-    height: 30,
-    width: 30,
+    bottom,
+    left,
+    height: size,
+    width: size,
     justifyContent: "center",
     alignItems: "center"
   },
   bg: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.6)",
-    borderRadius: 8
+    backgroundColor: "#ededed",
+    borderRadius: 7
+  },
+  indicator: {
+    transform: [{ scale: 0.8 }]
   }
 });

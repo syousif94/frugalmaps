@@ -77,7 +77,7 @@ const completions = (action$, store) =>
 const suggestions = (action$, store) =>
   action$
     .ofType(Location.types.set)
-    .filter(action => action.payload.focused)
+    .filter(action => action.payload.focused || action.payload.coordinates)
     .switchMap(
       defer(async () => {
         try {

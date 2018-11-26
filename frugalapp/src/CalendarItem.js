@@ -341,11 +341,11 @@ const styles = StyleSheet.create({
   },
   countdownText: {
     marginLeft: 4,
-    color: "#E3210B",
+    color: "#18AB2E",
     fontSize: 12
   },
   ending: {
-    color: "#18AB2E"
+    color: "#E3210B"
   },
   days: {
     flexDirection: "row",

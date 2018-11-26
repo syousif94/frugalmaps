@@ -53,7 +53,13 @@ class ImageGallery extends Component {
   };
 
   render() {
-    const { doc, height, narrow, disabled } = this.props;
+    const {
+      doc,
+      height,
+      narrow,
+      disabled,
+      backgroundColor = "#f2f2f2"
+    } = this.props;
 
     const { _source: item } = doc;
 
@@ -74,9 +80,14 @@ class ImageGallery extends Component {
       i++;
     }
 
+    const imagesStyle = {
+      height,
+      backgroundColor
+    };
+
     return (
       <View>
-        <View style={[styles.images, { height }]} horizontal>
+        <View style={imagesStyle} horizontal>
           <View style={touchableStyle}>
             <FlatList
               style={touchableStyle}
@@ -84,6 +95,7 @@ class ImageGallery extends Component {
               renderItem={this._renderItem}
               keyExtractor={(item, i) => item.url + i}
               horizontal
+              showsHorizontalScrollIndicator={false}
             />
           </View>
         </View>
@@ -113,9 +125,6 @@ export default connect(
 )(withNavigation(ImageGallery));
 
 const styles = StyleSheet.create({
-  images: {
-    backgroundColor: "#f2f2f2"
-  },
   image: {
     resizeMode: "contain",
     backgroundColor: "#e0e0e0",

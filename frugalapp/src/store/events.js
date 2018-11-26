@@ -25,6 +25,22 @@ const groupData = hits => {
     .value();
 };
 
+export const placeEvents = createSelector(
+  (state, props) => props.placeid,
+  state => state.events.data,
+  (placeid, data) => {
+    if (!data || !placeid) {
+      return [];
+    }
+
+    const groups = _(data)
+      .groupBy(hit => hit._source.placeid)
+      .value();
+
+    return groups[placeid];
+  }
+);
+
 export const markers = createSelector(
   state => state.events.day,
   state => state.events.data,
