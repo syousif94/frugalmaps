@@ -73,8 +73,8 @@ export function createDate(time, iso, start) {
   return date;
 }
 
-export function timeRemaining(hours, iso, currentTime) {
-  const time = currentTime || Date.now();
+export function timeRemaining(hours, iso) {
+  const time = Date.now();
   let ending = false;
   let now = moment();
   let diff;

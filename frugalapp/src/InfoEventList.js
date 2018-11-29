@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { View, ScrollView, StyleSheet, Text } from "react-native";
+import { WIDTH } from "./Constants";
 
 import * as Events from "./store/events";
 
@@ -55,7 +56,8 @@ const styles = StyleSheet.create({
   event: {
     marginHorizontal: 10,
     paddingTop: 10,
-    paddingBottom: 12
+    paddingBottom: 12,
+    maxWidth: WIDTH / 1.5
   },
   boldText: {
     fontSize: 12,
