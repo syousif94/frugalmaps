@@ -51,7 +51,8 @@ export default connect(mapStateToProps)(InfoEventList);
 
 const styles = StyleSheet.create({
   content: {
-    paddingHorizontal: 10
+    paddingRight: 10,
+    paddingLeft: 50
   },
   event: {
     marginHorizontal: 10,

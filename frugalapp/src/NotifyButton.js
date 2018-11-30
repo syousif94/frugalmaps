@@ -14,8 +14,7 @@ import { RED } from "./Colors";
 
 export default class NotifyButton extends Component {
   state = {
-    notify: false,
-    starred: false
+    notify: false
   };
 
   _onPress = async () => {
@@ -26,8 +25,6 @@ export default class NotifyButton extends Component {
 
     try {
       const itemId = `${id}${iso}`;
-
-      alert(itemId);
 
       const existingNotificationId = await AsyncStorage.getItem(itemId);
 
@@ -116,7 +113,7 @@ export default class NotifyButton extends Component {
   };
 
   _renderNotificationsEnabled = () => {
-    if (this.props.action === "notify" && this.state.notify) {
+    if (this.state.notify) {
       return <View style={styles.notificationsEnabled} />;
     }
 
@@ -144,13 +141,13 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     alignItems: "flex-end",
     justifyContent: "center",
-    paddingBottom: 5,
+    paddingBottom: 2,
     paddingRight: 8
   },
   notificationsEnabled: {
     position: "absolute",
-    top: 0,
-    right: 0,
+    top: -3,
+    right: -2,
     height: 6,
     width: 6,
     borderRadius: 3,

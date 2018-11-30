@@ -16,6 +16,7 @@ import LocateButton from "./MapLocateButton";
 import emitter from "tiny-emitter/instance";
 import { Constants } from "expo";
 import locate from "./Locate";
+import InfoBackButton from "./InfoBackButton";
 
 class InfoScreen extends Component {
   static mapId = "infoScreen";
@@ -124,11 +125,12 @@ class InfoScreen extends Component {
 
     const { _source: item } = data;
 
-    const galleryHeight = HEIGHT * 0.5;
-
     return (
       <View style={styles.map}>
-        <EventList placeid={item.placeid} />
+        <View>
+          <EventList placeid={item.placeid} />
+          <InfoBackButton />
+        </View>
         <View style={styles.map}>
           {ANDROID && this.state.loading ? null : (
             <MapView
@@ -214,42 +216,9 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#fff"
   },
-  boldText: {
-    marginTop: 10,
-    fontSize: 12,
-    color: "#fff",
-    fontWeight: "600"
-  },
   infoText: {
     marginTop: 3,
     color: "#e0e0e0",
     fontSize: 12
-  },
-  hours: {
-    marginTop: 10
-  },
-  hour: {
-    flexDirection: "row",
-    alignItems: "center"
-  },
-  hourText: {
-    color: "#e0e0e0",
-    fontSize: 12
-  },
-  days: {
-    flexDirection: "row",
-    marginRight: 3
-  },
-  day: {
-    paddingHorizontal: 4,
-    paddingVertical: 2,
-    borderRadius: 3,
-    backgroundColor: "#18AB2E",
-    marginRight: 2
-  },
-  dayText: {
-    fontSize: 10,
-    color: "#fff",
-    fontWeight: "700"
   }
 });

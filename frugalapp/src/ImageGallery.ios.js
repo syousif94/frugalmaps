@@ -4,7 +4,6 @@ import {
   StyleSheet,
   Image,
   TouchableWithoutFeedback,
-  ScrollView,
   FlatList,
   Text
 } from "react-native";
