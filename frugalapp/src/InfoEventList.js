@@ -4,24 +4,49 @@ import { View, ScrollView, StyleSheet, Text } from "react-native";
 import { WIDTH } from "./Constants";
 
 import * as Events from "./store/events";
+import { makeISO, timeRemaining } from "./Time";
 
 const mapStateToProps = (state, props) => ({
   events: Events.placeEvents(state, props)
 });
 
 class InfoEventList extends Component {
+  state = {
+    time: Date.now()
+  };
+
+  componentDidMount() {
+    this._interval = setInterval(() => {
+      this.setState({
+        time: Date.now()
+      });
+    }, 500);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this._interval);
+  }
+
   render() {
     return (
       <View>
         <ScrollView horizontal contentContainerStyle={styles.content}>
           {this.props.events.map(event => {
             const { _source: item, _id: id } = event;
+            const iso = makeISO(item.days);
             return (
               <View style={styles.event} key={id}>
                 <Text style={styles.boldText}>{item.title}</Text>
                 <Text style={styles.infoText}>{item.description}</Text>
                 <View style={styles.hours}>
                   {item.groupedHours.map((hours, index) => {
+                    const { remaining, ending } = timeRemaining(hours, iso);
+
+                    const countdownStyle = [styles.countdownText];
+
+                    if (ending) {
+                      countdownStyle.push(styles.ending);
+                    }
                     return (
                       <View style={styles.hour} key={index}>
                         <View style={styles.days}>
@@ -34,6 +59,7 @@ class InfoEventList extends Component {
                           })}
                         </View>
                         <Text style={styles.hourText}>{hours.hours}</Text>
+                        <Text style={countdownStyle}>{remaining}</Text>
                       </View>
                     );
                   })}
@@ -96,5 +122,13 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: "#fff",
     fontWeight: "700"
+  },
+  countdownText: {
+    marginLeft: 4,
+    color: "#E3210B",
+    fontSize: 12
+  },
+  ending: {
+    color: "#18AB2E"
   }
 });

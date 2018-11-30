@@ -20,7 +20,7 @@ class ImageGallery extends Component {
     return next.doc._id !== this.props.doc._id;
   }
 
-  _renderItem = ({ item, section, index }) => {
+  _renderItem = ({ item }) => {
     const { height, set, navigation, disabled, doc } = this.props;
     const { url: uri, height: imageHeight, width } = item;
 

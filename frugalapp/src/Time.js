@@ -73,6 +73,28 @@ export function createDate(time, iso, start) {
   return date;
 }
 
+function dayToISO(day) {
+  return ISO_DAYS[day];
+}
+
+export function makeISO(days) {
+  const today = moment().weekday();
+
+  const closestDay = days.sort((_a, _b) => {
+    let a = dayToISO(_a) - today;
+    if (a < 0) {
+      a += 7;
+    }
+    let b = dayToISO(_b) - today;
+    if (b < 0) {
+      b += 7;
+    }
+    return a - b;
+  })[0];
+
+  return dayToISO(closestDay);
+}
+
 export function timeRemaining(hours, iso) {
   const time = Date.now();
   let ending = false;
