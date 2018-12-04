@@ -71,9 +71,6 @@ class LocationBox extends Component {
 
     return (
       <Container style={styles.container}>
-        <View style={styles.title}>
-          <Text style={styles.titleText}>{lastQuery}</Text>
-        </View>
         <View style={styles.search} onLayout={this._onLayout}>
           <Entypo name="magnifying-glass" size={18} color="#000" />
           <TextInput
@@ -119,17 +116,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderBottomWidth: 1,
     borderColor: "#e0e0e0"
-  },
-  title: {
-    justifyContent: "center",
-    alignItems: "center",
-    paddingTop: IOS ? 5 : 10,
-    paddingBottom: IOS ? 5 : 0
-  },
-  titleText: {
-    fontWeight: "600",
-    fontSize: 18,
-    color: "#000"
   },
   search: {
     margin: 10,

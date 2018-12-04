@@ -28,27 +28,33 @@ class InfoEventList extends Component {
   }
 
   render() {
+    const item = this.props.events[0]._source;
     return (
       <View>
+        <Text style={styles.locationText}>{item.location}</Text>
+        <Text style={styles.infoText}>{item.city}</Text>
         <ScrollView horizontal contentContainerStyle={styles.content}>
           {this.props.events.map(event => {
             const { _source: item, _id: id } = event;
             const iso = makeISO(item.days);
+            const { remaining, ending } = timeRemaining(
+              item.groupedHours[0],
+              iso
+            );
+
+            const countdownStyle = [styles.countdownText];
+
+            if (ending) {
+              countdownStyle.push(styles.ending);
+            }
             return (
               <View style={styles.event} key={id}>
                 <Text style={styles.boldText}>{item.title}</Text>
-                <Text style={styles.infoText}>{item.description}</Text>
                 <View style={styles.hours}>
                   {item.groupedHours.map((hours, index) => {
-                    const { remaining, ending } = timeRemaining(hours, iso);
-
-                    const countdownStyle = [styles.countdownText];
-
-                    if (ending) {
-                      countdownStyle.push(styles.ending);
-                    }
                     return (
                       <View style={styles.hour} key={index}>
+                        <Text style={styles.hourText}>{hours.hours}</Text>
                         <View style={styles.days}>
                           {hours.days.map(day => {
                             return (
@@ -58,12 +64,12 @@ class InfoEventList extends Component {
                             );
                           })}
                         </View>
-                        <Text style={styles.hourText}>{hours.hours}</Text>
-                        <Text style={countdownStyle}>{remaining}</Text>
                       </View>
                     );
                   })}
                 </View>
+                <Text style={countdownStyle}>{remaining}</Text>
+                <Text style={styles.infoText}>{item.description}</Text>
               </View>
             );
           })}
@@ -77,39 +83,44 @@ export default connect(mapStateToProps)(InfoEventList);
 
 const styles = StyleSheet.create({
   content: {
-    paddingRight: 10,
+    paddingRight: 15,
     paddingLeft: 50
   },
   event: {
-    marginHorizontal: 10,
+    marginHorizontal: 15,
     paddingTop: 10,
     paddingBottom: 12,
     maxWidth: WIDTH / 1.5
   },
   boldText: {
     fontSize: 12,
-    color: "#fff",
+    color: "#000",
     fontWeight: "600"
+  },
+  locationText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#000"
   },
   infoText: {
     marginTop: 3,
-    color: "#e0e0e0",
+    color: "#444",
     fontSize: 12
   },
   hours: {
-    marginTop: 10
+    marginTop: 2
   },
   hour: {
     flexDirection: "row",
     alignItems: "center"
   },
   hourText: {
-    color: "#e0e0e0",
+    color: "#444",
     fontSize: 12
   },
   days: {
     flexDirection: "row",
-    marginRight: 3
+    marginLeft: 3
   },
   day: {
     paddingHorizontal: 4,
@@ -124,7 +135,6 @@ const styles = StyleSheet.create({
     fontWeight: "700"
   },
   countdownText: {
-    marginLeft: 4,
     color: "#E3210B",
     fontSize: 12
   },

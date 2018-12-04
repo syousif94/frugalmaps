@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "Lit Cal",
-    "description": "LitCal lists nearby brunches, happy hours, and daily specials.",
+    "name": "Buncha",
+    "description": "Buncha is a calendar of fun and affordable stuff to do, both every where and nearby.",
     "slug": "litcal",
     "privacy": "public",
     "sdkVersion": "30.0.0",
     "platforms": ["ios", "android"],
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {

@@ -37,9 +37,9 @@ class InfoScreen extends Component {
       }, 150);
     }
 
-    if (IOS) {
-      StatusBar.setBarStyle("light-content");
-    }
+    // if (IOS) {
+    //   StatusBar.setBarStyle("light-content");
+    // }
 
     emitter.on(InfoScreen.mapId, this._showLocation);
   }
@@ -51,9 +51,9 @@ class InfoScreen extends Component {
 
     emitter.off(InfoScreen.mapId, this._showLocation);
 
-    if (IOS) {
-      StatusBar.setBarStyle("dark-content");
-    }
+    // if (IOS) {
+    //   StatusBar.setBarStyle("dark-content");
+    // }
   }
 
   _showLocation = async () => {
@@ -163,18 +163,9 @@ class InfoScreen extends Component {
     return (
       <View style={styles.container}>
         <SafeArea>
-          <View style={styles.padded}>
-            <Text style={styles.locationText}>{item.location}</Text>
-            <Text style={styles.infoText}>{item.city}</Text>
-          </View>
           <View style={styles.info}>
             {ANDROID && this.state.loading ? null : (
-              <ImageGallery
-                backgroundColor="#000"
-                doc={data}
-                disabled
-                height={galleryHeight}
-              />
+              <ImageGallery doc={data} disabled height={galleryHeight} />
             )}
           </View>
         </SafeArea>
@@ -194,7 +185,7 @@ export default connect(mapStateToProps)(InfoScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000"
+    backgroundColor: "#fff"
   },
   map: {
     flex: 1
@@ -206,11 +197,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center"
   },
-  padded: {
-    backgroundColor: "rgba(0,0,0,1)",
-    paddingHorizontal: 20,
-    paddingBottom: 12
-  },
   locationText: {
     fontSize: 12,
     fontWeight: "600",
@@ -218,7 +204,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     marginTop: 3,
-    color: "#e0e0e0",
+    color: "#444",
     fontSize: 12
   }
 });

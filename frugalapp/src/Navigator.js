@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
 import {
   createBottomTabNavigator,
-  createStackNavigator
+  createStackNavigator,
+  createSwitchNavigator
 } from "react-navigation";
 
 import { ANDROID } from "./Constants";
@@ -13,6 +14,8 @@ import SubmitScreen from "./SubmitScreen";
 import PublishedScreen from "./PublishedScreen";
 import SubmissionsScreen from "./SubmissionsScreen";
 import InfoScreen from "./InfoScreen";
+
+import IntroScreen from "./IntroScreen";
 
 import TabBar from "./TabBar";
 import Updater from "./Updater";
@@ -43,11 +46,22 @@ const MainScreen = createStackNavigator(
   }
 );
 
+const SwitchScreen = createSwitchNavigator(
+  {
+    Intro: IntroScreen,
+    Main: MainScreen
+  },
+  {
+    initialRoute: "Intro",
+    headerMode: "none"
+  }
+);
+
 export default class Navigator extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <MainScreen />
+        <SwitchScreen />
         <Updater />
       </View>
     );
