@@ -20,12 +20,23 @@ class IntroScreen extends Component {
             source={require("../assets/intro.png")}
           />
         </View>
-        <View style={{ flex: 1 }} />
+        <View style={styles.instructions}>
+          <Text style={styles.instructionText}>
+            Buncha is a calendar of fun and affordable stuff to do nearby
+          </Text>
+        </View>
+        <View style={styles.prompts}>
+          <Text style={styles.subText}>
+            Be sure to allow location access and notifications for the best
+            experience
+          </Text>
+        </View>
+
         <View style={styles.btnBg}>
           <TouchableOpacity onPress={this._onPress}>
             <SafeArea>
               <View style={styles.btn}>
-                <Text style={styles.btnText}>Got It</Text>
+                <Text style={styles.btnText}>Get Started</Text>
               </View>
             </SafeArea>
           </TouchableOpacity>
@@ -41,6 +52,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#353535"
+  },
+  instructions: {
+    flex: 1,
+    paddingHorizontal: 30,
+    justifyContent: "center"
+  },
+  instructionText: {
+    marginTop: 95,
+    lineHeight: 28,
+    fontSize: 18,
+    color: "#fff",
+    textAlign: "center"
+  },
+  prompts: {
+    paddingHorizontal: 30,
+    paddingBottom: 15
+  },
+  subText: {
+    lineHeight: 24,
+    fontSize: 14,
+    color: "#ddd",
+    textAlign: "center"
   },
   bg: {
     ...StyleSheet.absoluteFillObject

@@ -79,7 +79,7 @@ class CalendarScreen extends Component {
       return (
         <View style={styles.adView} pointerEvents="box-none">
           <View style={styles.adBanner} pointerEvents="none">
-            <Text style={styles.adText}>#Ad</Text>
+            <Text style={styles.adText}>Advertisement</Text>
           </View>
           <View style={styles.adContainer} pointerEvents="box-none">
             <FacebookAds.BannerView
