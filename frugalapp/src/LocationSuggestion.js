@@ -15,7 +15,7 @@ class LocationSuggestion extends Component {
 
     emitter.emit("calendar-top");
 
-    if (section && section.title !== "Suggestions") {
+    if (section && section.title !== "Autocomplete") {
       bounds = item._source.bounds;
       text = item._source.name;
     } else {

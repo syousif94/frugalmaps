@@ -24,7 +24,7 @@ class CalendarItem extends Component {
 
   render() {
     const {
-      item: { _source: item },
+      item: { _source: item, sort },
       section: { data, iso },
       index
     } = this.props;
@@ -34,9 +34,20 @@ class CalendarItem extends Component {
       { marginBottom: index + 1 === data.length ? 10 : 5 }
     ];
 
+    let distanceText = "";
+
+    if (sort && sort[0]) {
+      distanceText = ` · ${sort[0].toFixed(1)}mi`;
+    }
+
     return (
       <View style={containerStyle}>
         <View style={styles.info}>
+          <Text style={styles.locationText}>{item.location}</Text>
+          <Text style={styles.subText}>
+            {item.city}
+            {distanceText}
+          </Text>
           <View style={styles.event}>
             <View>
               <Text style={styles.titleText}>{item.title}</Text>
@@ -71,9 +82,6 @@ class CalendarItem extends Component {
             </View>
             <Text style={styles.descriptionText}>{item.description}</Text>
           </View>
-
-          <Text style={styles.locationText}>{item.location}</Text>
-          <Text style={styles.subText}>{item.city}</Text>
         </View>
 
         <ImageGallery width={WIDTH - 30} doc={this.props.item} height={150} />
@@ -93,10 +101,11 @@ const styles = StyleSheet.create({
     padding: 5
   },
   info: {
-    padding: 10
+    padding: 10,
+    paddingTop: 4
   },
   event: {
-    marginBottom: 6
+    marginTop: 10
   },
   titleText: {
     fontSize: 12,
@@ -104,6 +113,7 @@ const styles = StyleSheet.create({
     color: "#000"
   },
   locationText: {
+    marginBottom: 2,
     fontSize: 12,
     fontWeight: "600",
     color: "#000"

@@ -100,15 +100,26 @@ function queryEvents(req, res) {
 
       body.query = {
         bool: {
-          must: [{ match_all: {} }],
-          filter: {
-            geo_distance: {
-              distance: "20mi",
-              coordinates: [lng, lat]
-            }
-          }
+          must: [{ match_all: {} }]
+          // filter: {
+          //   geo_distance: {
+          //     distance: "20mi",
+          //     coordinates: [lng, lat]
+          //   }
+          // }
         }
       };
+
+      body.sort = [
+        {
+          _geo_distance: {
+            coordinates: [lng, lat],
+            order: "asc",
+            unit: "mi",
+            distance_type: "plane"
+          }
+        }
+      ];
 
       return elastic
         .search({
@@ -117,33 +128,32 @@ function queryEvents(req, res) {
           body
         })
         .then(results => {
-          if (!bounds) {
-            const envelope = turf.bbox(
-              turf.buffer(
-                turf.envelope(
-                  turf.featureCollection([
-                    ...results.hits.hits.map(doc =>
-                      turf.point(doc._source.coordinates)
-                    ),
-                    turf.point([lng, lat])
-                  ])
-                ),
-                0.5,
-                { units: "miles" }
-              )
-            );
+          // create a bounding box for the results
+          const envelope = turf.bbox(
+            turf.buffer(
+              turf.envelope(
+                turf.featureCollection([
+                  ...results.hits.hits.map(doc =>
+                    turf.point(doc._source.coordinates)
+                  ),
+                  turf.point([lng, lat])
+                ])
+              ),
+              0.5,
+              { units: "miles" }
+            )
+          );
 
-            bounds = {
-              southwest: {
-                lat: envelope[1],
-                lng: envelope[0]
-              },
-              northeast: {
-                lat: envelope[3],
-                lng: envelope[2]
-              }
-            };
-          }
+          bounds = {
+            southwest: {
+              lat: envelope[1],
+              lng: envelope[0]
+            },
+            northeast: {
+              lat: envelope[3],
+              lng: envelope[2]
+            }
+          };
           return results;
         });
     });
