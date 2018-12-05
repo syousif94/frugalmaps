@@ -5,6 +5,34 @@ import store from "./store";
 import * as Location from "./store/location";
 import { IOS } from "./Constants";
 
+export async function grantNotifications() {
+  const { status: askStatus } = await Permissions.getAsync(
+    Permissions.NOTIFICATIONS
+  );
+
+  if (IOS && askStatus === "denied") {
+    Alert.alert(
+      "Permission Denied",
+      "To enable notifications, tap Open Settings and then toggle the Notifications switch.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Open Settings",
+          onPress: () => {
+            Linking.openURL("app-settings:");
+          }
+        }
+      ]
+    );
+  }
+
+  const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+
+  if (status !== "granted") {
+    throw new Error("Permission Denied");
+  }
+}
+
 export async function grantLocation() {
   const { status: askStatus } = await Permissions.getAsync(
     Permissions.LOCATION

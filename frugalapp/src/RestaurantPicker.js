@@ -14,7 +14,6 @@ import { SafeAreaView } from "react-navigation";
 import api from "./API";
 import { Entypo } from "@expo/vector-icons";
 import RestaurantSuggestion from "./RestaurantSuggestion";
-import LocationPrompt from "./LocationPrompt";
 import Footer from "./RestaurantPickerFooter";
 import { IOS, ANDROID } from "./Constants";
 
@@ -119,7 +118,6 @@ class RestaurantPicker extends Component {
             alwaysBounceVertical
             ItemSeparatorComponent={() => <View style={styles.divider} />}
           />
-          <LocationPrompt />
         </KeyboardSpacer>
       </View>
     );

@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 
-import LocationPrompt from "./LocationPrompt";
 import LocationSuggestion from "./LocationSuggestion";
 import { IOS, ANDROID } from "./Constants";
 
@@ -102,7 +101,6 @@ class LocationList extends Component {
     return (
       <View style={[styles.container, { top: listTop, paddingBottom }]}>
         {this._renderList()}
-        <LocationPrompt />
       </View>
     );
   }

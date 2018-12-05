@@ -2,9 +2,14 @@ import React, { Component } from "react";
 import { View, StyleSheet, Image, TouchableOpacity, Text } from "react-native";
 import { SafeArea, HEIGHT, WIDTH } from "./Constants";
 import { withNavigation } from "react-navigation";
+import { grantLocation, grantNotifications } from "./Permissions";
 
 class IntroScreen extends Component {
-  _onPress = () => {
+  _onPress = async () => {
+    try {
+      await grantLocation();
+      await grantNotifications();
+    } catch (error) {}
     this.props.navigation.navigate({
       routeName: "Home"
     });
@@ -72,7 +77,7 @@ const styles = StyleSheet.create({
   subText: {
     lineHeight: 24,
     fontSize: 14,
-    color: "#ddd",
+    color: "#ccc",
     textAlign: "center"
   },
   bg: {
