@@ -3,6 +3,16 @@ import { SafeAreaView } from "react-navigation";
 
 export const DAYS = ["M", "T", "W", "Th", "F", "Sa", "S"];
 
+export const ABBREVIATED_DAYS = [
+  "Mon",
+  "Tue",
+  "Wed",
+  "Thu",
+  "Fri",
+  "Sat",
+  "Sun"
+];
+
 export const ISO_DAYS = [1, 2, 3, 4, 5, 6, 0];
 
 export const DEV = process.env.NODE_ENV === "development";

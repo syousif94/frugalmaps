@@ -127,8 +127,7 @@ class InfoScreen extends Component {
 
     return (
       <View style={styles.map}>
-        <View>
-          <EventList placeid={item.placeid} />
+        <View style={{ height: 44 }}>
           <InfoBackButton />
         </View>
         <View style={styles.map}>
@@ -159,7 +158,7 @@ class InfoScreen extends Component {
     } = this.props;
 
     const { _source: item } = data;
-    const galleryHeight = HEIGHT * 0.5;
+    const galleryHeight = HEIGHT * 0.65;
     return (
       <View style={styles.container}>
         <SafeArea>
@@ -191,7 +190,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   info: {
-    height: HEIGHT * 0.5
+    height: HEIGHT * 0.65
   },
   loading: {
     justifyContent: "center",

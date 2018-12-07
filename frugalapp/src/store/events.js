@@ -1,4 +1,5 @@
 import { combineReducers } from "redux";
+import moment from "moment";
 import { createSelector } from "reselect";
 import { createActions } from "./lib";
 import _ from "lodash";
@@ -32,12 +33,25 @@ export const placeEvents = createSelector(
     if (!data || !placeid) {
       return [];
     }
-
     const groups = _(data)
       .groupBy(hit => hit._source.placeid)
       .value();
 
-    return groups[placeid];
+    const group = groups[placeid];
+
+    const today = moment().weekday();
+
+    return group.sort((_a, _b) => {
+      let a = _a._source.groupedHours[0].iso - today;
+      if (a < 0) {
+        a += 7;
+      }
+      let b = _b._source.groupedHours[0].iso - today;
+      if (b < 0) {
+        b += 7;
+      }
+      return a - b;
+    });
   }
 );
 

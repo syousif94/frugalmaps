@@ -4,6 +4,7 @@ import ImageGallery from "./ImageGallery";
 import { timeRemaining } from "./Time";
 import { WIDTH } from "./Constants";
 import NotifyButton from "./NotifyButton";
+import EventList from "./InfoEventList";
 
 class CalendarItem extends Component {
   state = {
@@ -43,11 +44,6 @@ class CalendarItem extends Component {
     return (
       <View style={containerStyle}>
         <View style={styles.info}>
-          <Text style={styles.locationText}>{item.location}</Text>
-          <Text style={styles.subText}>
-            {item.city}
-            {distanceText}
-          </Text>
           <View style={styles.event}>
             <View>
               <Text style={styles.titleText}>{item.title}</Text>
@@ -82,9 +78,17 @@ class CalendarItem extends Component {
             </View>
             <Text style={styles.descriptionText}>{item.description}</Text>
           </View>
-        </View>
 
+          <Text style={styles.locationText}>{item.location}</Text>
+          <Text style={styles.subText}>
+            {item.city}
+            {distanceText}
+          </Text>
+        </View>
         <ImageGallery width={WIDTH - 30} doc={this.props.item} height={150} />
+        <View style={styles.info}>
+          <EventList placeid={item.placeid} />
+        </View>
       </View>
     );
   }
@@ -105,7 +109,7 @@ const styles = StyleSheet.create({
     paddingTop: 4
   },
   event: {
-    marginTop: 10
+    marginBottom: 10
   },
   titleText: {
     fontSize: 12,
@@ -137,11 +141,11 @@ const styles = StyleSheet.create({
   },
   countdownText: {
     marginLeft: 4,
-    color: "#18AB2E",
+    color: "#E3210B",
     fontSize: 12
   },
   ending: {
-    color: "#E3210B"
+    color: "#18AB2E"
   },
   days: {
     flexDirection: "row",

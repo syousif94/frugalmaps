@@ -1,5 +1,5 @@
 import moment from "moment";
-import { ISO_DAYS, DAYS } from "./Constants";
+import { ISO_DAYS, ABBREVIATED_DAYS as DAYS } from "./Constants";
 
 export function validateTime(str) {
   const date = moment(str, ["h:ma", "H:m"]);
@@ -180,24 +180,40 @@ export function makeHours(item, iso) {
 }
 
 export function groupHours(source) {
-  return source.days.reduce((acc, day) => {
-    const text = DAYS[day];
-    const iso = ISO_DAYS[day];
-    const { hours, start, end } = makeHours(source, iso);
+  const today = moment().weekday();
+  const groups = source.days
+    .sort((_a, _b) => {
+      let a = dayToISO(_a) - today;
+      if (a < 0) {
+        a += 7;
+      }
+      let b = dayToISO(_b) - today;
+      if (b < 0) {
+        b += 7;
+      }
+      return a - b;
+    })
+    .reduce((acc, day) => {
+      const text = DAYS[day];
+      const iso = ISO_DAYS[day];
+      const { hours, start, end } = makeHours(source, iso);
 
-    const matchingHours = acc.find(val => val.hours === hours);
+      const matchingHours = acc.find(val => val.hours === hours);
 
-    if (matchingHours) {
-      matchingHours.days.push(text);
-    } else {
-      acc.push({
-        days: [text],
-        hours,
-        start,
-        end
-      });
-    }
+      if (matchingHours) {
+        matchingHours.days.push(text);
+      } else {
+        acc.push({
+          iso,
+          days: [text],
+          hours,
+          start,
+          end
+        });
+      }
 
-    return acc;
-  }, []);
+      return acc;
+    }, []);
+
+  return groups;
 }

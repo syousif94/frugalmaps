@@ -7,18 +7,12 @@ class CalendarEmpty extends Component {
     return (
       <View style={styles.container}>
         <Image source={require("../assets/sadCalendarLarge.png")} />
-        <Text style={styles.headerText}>No Specials Found</Text>
+        <Text style={styles.headerText}>Nothing Found</Text>
         <Text style={styles.subText}>
-          We don't have any data for {this.props.text} yet.
+          Either something went wrong or there's no data for {this.props.text}{" "}
+          yet.
         </Text>
-        <Text style={styles.subText}>
-          You can submit some yourself or browse trending cities and recently
-          added specials by tapping on the search bar.
-        </Text>
-        <Text style={styles.subText}>
-          If notifications are enabled, we'll let you know when nearby specials
-          are added.
-        </Text>
+        <Text style={styles.subText}>We'll notify you of nearby data.</Text>
       </View>
     );
   }
@@ -43,9 +37,10 @@ const styles = StyleSheet.create({
   },
   subText: {
     marginTop: 15,
-    width: 220,
+    width: 280,
     color: "#555",
     fontSize: 14,
-    lineHeight: 18
+    lineHeight: 22,
+    textAlign: "center"
   }
 });
