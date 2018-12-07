@@ -198,7 +198,7 @@ class MapScreen extends Component {
             })}
           </MapView>
         </View>
-        <DayPicker ref={ref => (this._dayPicker = ref)} />
+        {/* <DayPicker ref={ref => (this._dayPicker = ref)} /> */}
         <LocateMe mapId={MapScreen.mapId} />
         <LocationList />
       </View>

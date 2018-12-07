@@ -1,7 +1,7 @@
 const elastic = require("./elastic");
 const event = require("./schema/event");
 const servicesApi = require("./google");
-const turf = require("@turf/turf");
+// const turf = require("@turf/turf");
 
 function queryEvents(req, res) {
   const { bounds: queryBounds, lat, lng } = req.body;
@@ -121,41 +121,40 @@ function queryEvents(req, res) {
         }
       ];
 
-      return elastic
-        .search({
-          index: event.index,
-          type: event.type,
-          body
-        })
-        .then(results => {
-          // create a bounding box for the results
-          const envelope = turf.bbox(
-            turf.buffer(
-              turf.envelope(
-                turf.featureCollection([
-                  ...results.hits.hits.map(doc =>
-                    turf.point(doc._source.coordinates)
-                  ),
-                  turf.point([lng, lat])
-                ])
-              ),
-              0.5,
-              { units: "miles" }
-            )
-          );
+      return elastic.search({
+        index: event.index,
+        type: event.type,
+        body
+      });
+      // .then(results => {
+      //   // create a bounding box for the results
+      //   const envelope = turf.bbox(
+      //     turf.buffer(
+      //       turf.envelope(
+      //         turf.featureCollection([
+      //           ...results.hits.hits.map(doc =>
+      //             turf.point(doc._source.coordinates)
+      //           ),
+      //           turf.point([lng, lat])
+      //         ])
+      //       ),
+      //       0.5,
+      //       { units: "miles" }
+      //     )
+      //   );
 
-          bounds = {
-            southwest: {
-              lat: envelope[1],
-              lng: envelope[0]
-            },
-            northeast: {
-              lat: envelope[3],
-              lng: envelope[2]
-            }
-          };
-          return results;
-        });
+      //   bounds = {
+      //     southwest: {
+      //       lat: envelope[1],
+      //       lng: envelope[0]
+      //     },
+      //     northeast: {
+      //       lat: envelope[3],
+      //       lng: envelope[2]
+      //     }
+      //   };
+      //   return results;
+      // });
     });
   } else {
     text = "Recently Added";
