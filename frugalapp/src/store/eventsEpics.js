@@ -22,6 +22,13 @@ const makeEvents = hits => {
     { title: "Sunday", data: [], iso: 0, away: 0 }
   ];
 
+  const closest = {
+    title: "Closest",
+    data: _.uniqBy(hits, "_source.placeid"),
+    iso: 0,
+    away: 0
+  };
+
   if (!hits) {
     return initial;
   }
@@ -36,19 +43,21 @@ const makeEvents = hits => {
 
   const todayIndex = initial.findIndex(day => day.iso === today);
 
-  const todayAndAfter = initial.slice(todayIndex, 7);
+  // const todayAndAfter = initial.slice(todayIndex, 7);
 
-  const beforeToday = initial.slice(0, todayIndex);
+  // const beforeToday = initial.slice(0, todayIndex);
 
-  return (
-    [...todayAndAfter, ...beforeToday]
-      .map((day, index) => {
-        day.away = index;
-        return day;
-      })
-      // .filter(day => day.data.length)
-      .map((day, index) => ({ ...day, index }))
-  );
+  return [initial[todayIndex], closest];
+
+  // return (
+  //   [...todayAndAfter, ...beforeToday]
+  //     .map((day, index) => {
+  //       day.away = index;
+  //       return day;
+  //     })
+  //     // .filter(day => day.data.length)
+  //     .map((day, index) => ({ ...day, index }))
+  // );
 };
 
 const events = (action$, store) =>

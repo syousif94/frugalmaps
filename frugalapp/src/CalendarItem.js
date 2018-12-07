@@ -26,9 +26,11 @@ class CalendarItem extends Component {
   render() {
     const {
       item: { _source: item, sort },
-      section: { data, iso },
+      section: { data, iso, title },
       index
     } = this.props;
+
+    const isClosest = title === "Closest";
 
     const containerStyle = [
       styles.container,
@@ -44,40 +46,42 @@ class CalendarItem extends Component {
     return (
       <View style={containerStyle}>
         <View style={styles.info}>
-          <View style={styles.event}>
-            <View>
-              <Text style={styles.titleText}>{item.title}</Text>
-              <View style={styles.hours}>
-                {item.groupedHours.map((hours, index) => {
-                  const { remaining, ending } = timeRemaining(hours, iso);
+          {!isClosest ? (
+            <View style={styles.event}>
+              <View>
+                <Text style={styles.titleText}>{item.title}</Text>
+                <View style={styles.hours}>
+                  {item.groupedHours.map((hours, index) => {
+                    const { remaining, ending } = timeRemaining(hours, iso);
 
-                  const countdownStyle = [styles.countdownText];
+                    const countdownStyle = [styles.countdownText];
 
-                  if (ending) {
-                    countdownStyle.push(styles.ending);
-                  }
+                    if (ending) {
+                      countdownStyle.push(styles.ending);
+                    }
 
-                  return (
-                    <View style={styles.hour} key={index}>
-                      <View style={styles.days}>
-                        {hours.days.map(day => {
-                          return (
-                            <View style={styles.day} key={day}>
-                              <Text style={styles.dayText}>{day}</Text>
-                            </View>
-                          );
-                        })}
+                    return (
+                      <View style={styles.hour} key={index}>
+                        <View style={styles.days}>
+                          {hours.days.map(day => {
+                            return (
+                              <View style={styles.day} key={day}>
+                                <Text style={styles.dayText}>{day}</Text>
+                              </View>
+                            );
+                          })}
+                        </View>
+                        <Text style={styles.subText}>{hours.hours}</Text>
+                        <Text style={countdownStyle}>{remaining}</Text>
                       </View>
-                      <Text style={styles.subText}>{hours.hours}</Text>
-                      <Text style={countdownStyle}>{remaining}</Text>
-                    </View>
-                  );
-                })}
+                    );
+                  })}
+                </View>
+                <NotifyButton {...this.props} />
               </View>
-              <NotifyButton {...this.props} />
+              <Text style={styles.descriptionText}>{item.description}</Text>
             </View>
-            <Text style={styles.descriptionText}>{item.description}</Text>
-          </View>
+          ) : null}
 
           <Text style={styles.locationText}>{item.location}</Text>
           <Text style={styles.subText}>
@@ -86,9 +90,11 @@ class CalendarItem extends Component {
           </Text>
         </View>
         <ImageGallery width={WIDTH - 30} doc={this.props.item} height={150} />
-        <View style={styles.info}>
-          <EventList placeid={item.placeid} />
-        </View>
+        {isClosest ? (
+          <View style={styles.info}>
+            <EventList placeid={item.placeid} />
+          </View>
+        ) : null}
       </View>
     );
   }
