@@ -16,6 +16,7 @@ import LocationBox from "./LocationBox";
 import Header from "./CalendarListHeader";
 import LocationList from "./LocationList";
 import CalendarEmpty from "./CalendarEmpty";
+import SearchButton from "./SearchButton";
 import * as Events from "./store/events";
 import { ANDROID, IOS, PLACEMENT_ID } from "./Constants";
 
@@ -136,6 +137,7 @@ class CalendarScreen extends Component {
         />
         {this._renderInitial()}
         <LocationList />
+        <SearchButton />
       </View>
     );
   }

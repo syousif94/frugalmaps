@@ -13,7 +13,6 @@ import * as Events from "./store/events";
 import LocationBox from "./LocationBox";
 import LocationList from "./LocationList";
 import LocateMe from "./MapLocateButton";
-import DayPicker from "./MapDayPicker";
 import MapMarker from "./MapMarker";
 import MapLoading from "./MapLoading";
 import locate from "./Locate";

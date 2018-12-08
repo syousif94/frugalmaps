@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import moment from "moment";
 
 import { RED } from "./Colors";
 
@@ -19,6 +20,11 @@ export default class CalendarListHeader extends Component {
         break;
       default:
         relativeText = `${section.away} days away`;
+    }
+
+    if (section.title === "Closest") {
+      const today = moment().format("dddd, MMMM Do Y");
+      relativeText = `${today}`;
     }
 
     return (

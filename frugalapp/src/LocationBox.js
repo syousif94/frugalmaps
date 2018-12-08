@@ -10,12 +10,18 @@ import { IOS, SafeArea as Container } from "./Constants";
 
 class LocationBox extends Component {
   componentDidMount() {
+    emitter.on("focus-location-box", this._focus);
     emitter.on("blur-location-box", this._blur);
   }
 
   componentWillUnmount() {
     emitter.off("blur-location-box", this._blur);
+    emitter.off("focus-location-box", this._focus);
   }
+
+  _focus = () => {
+    this._input.focus();
+  };
 
   _blur = () => {
     this._input.blur();

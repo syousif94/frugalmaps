@@ -8,6 +8,7 @@ import {
   TextInput
 } from "react-native";
 import { connect } from "react-redux";
+import { MapView } from "expo";
 
 import LocationSuggestion from "./LocationSuggestion";
 import { IOS, ANDROID } from "./Constants";
@@ -55,6 +56,23 @@ class LocationList extends Component {
     }
   };
 
+  _renderSectionHeader = data => {
+    console.log({ data });
+    return (
+      <View>
+        <View style={styles.sectionHeader} key={data.index}>
+          <Text style={styles.sectionText}>{data.section.title}</Text>
+        </View>
+      </View>
+    );
+  };
+
+  _renderFooter = () => {
+    return (
+      <MapView pointerEvents="none" style={{ height: 100 }} showsUserLocation />
+    );
+  };
+
   _renderSectionItem = data => (
     <LocationSuggestion {...data} key={data.section.title + data.index} />
   );
@@ -72,12 +90,9 @@ class LocationList extends Component {
       <SectionList
         style={styles.list}
         renderItem={this._renderSectionItem}
-        renderSectionHeader={data => (
-          <View style={styles.sectionHeader} key={data.index}>
-            <Text style={styles.sectionText}>{data.section.title}</Text>
-          </View>
-        )}
+        renderSectionHeader={this._renderSectionHeader}
         ItemSeparatorComponent={() => <View style={styles.divider} />}
+        ListHeaderComponent={this._renderFooter}
         sections={data}
         keyExtractor={(item, index) => item + index}
         keyboardDismissMode="none"
