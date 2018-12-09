@@ -34,7 +34,7 @@ class LocationSuggestion extends Component {
       bounds: null
     });
 
-    emitter.emit("blur-location-box");
+    emitter.emit("blur-location-box", this.props.id);
     emitter.emit("fit-bounds", bounds);
   };
 

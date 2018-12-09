@@ -57,7 +57,6 @@ class LocationList extends Component {
   };
 
   _renderSectionHeader = data => {
-    console.log({ data });
     return (
       <View>
         <View style={styles.sectionHeader} key={data.index}>
@@ -74,7 +73,11 @@ class LocationList extends Component {
   };
 
   _renderSectionItem = data => (
-    <LocationSuggestion {...data} key={data.section.title + data.index} />
+    <LocationSuggestion
+      id={this.props.id}
+      {...data}
+      key={data.section.title + data.index}
+    />
   );
 
   _renderList = () => {
@@ -92,7 +95,6 @@ class LocationList extends Component {
         renderItem={this._renderSectionItem}
         renderSectionHeader={this._renderSectionHeader}
         ItemSeparatorComponent={() => <View style={styles.divider} />}
-        ListHeaderComponent={this._renderFooter}
         sections={data}
         keyExtractor={(item, index) => item + index}
         keyboardDismissMode="none"
@@ -105,16 +107,22 @@ class LocationList extends Component {
   render() {
     const { focused, listTop, listBottom } = this.props;
 
-    if (!focused || !listTop || (IOS && !listBottom)) {
-      return null;
-    }
+    const hide = !focused || !listTop || (IOS && !listBottom);
+
+    const opacity = hide ? 0 : 1;
 
     const { keyboardHeight } = this.state;
 
     const paddingBottom = keyboardHeight - listBottom;
 
+    const pointerEvents = hide ? "none" : "auto";
+
     return (
-      <View style={[styles.container, { top: listTop, paddingBottom }]}>
+      <View
+        {...{ pointerEvents }}
+        style={[styles.container, { top: listTop, paddingBottom, opacity }]}
+      >
+        {this._renderFooter()}
         {this._renderList()}
       </View>
     );

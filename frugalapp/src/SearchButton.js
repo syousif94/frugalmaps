@@ -6,7 +6,7 @@ import emitter from "tiny-emitter/instance";
 
 class SearchButton extends Component {
   _onPress = () => {
-    emitter.emit("focus-location-box");
+    emitter.emit("focus-location-box", this.props.id);
   };
   render() {
     return (

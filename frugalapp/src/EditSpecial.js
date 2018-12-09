@@ -16,7 +16,7 @@ export default class EditSpecial extends Component {
         style={styles.scroll}
         keyboardShouldPersistTaps="handled"
         enableOnAndroid
-        extraScrollHeight={ANDROID ? 120 : 0}
+        extraScrollHeight={ANDROID ? 120 : -80}
       >
         <SafeAreaView style={styles.container}>
           {this.props.children}

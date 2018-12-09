@@ -21,6 +21,8 @@ import * as Events from "./store/events";
 import { ANDROID, IOS, PLACEMENT_ID } from "./Constants";
 
 class CalendarScreen extends Component {
+  static id = "cal";
+
   componentDidMount() {
     this.props.fetch();
     emitter.on("calendar-top", this._scrollToTop);
@@ -118,7 +120,7 @@ class CalendarScreen extends Component {
 
     return (
       <View style={styles.container}>
-        <LocationBox />
+        <LocationBox id={CalendarScreen.id} />
         <SectionList
           ref={ref => {
             this._list = ref;
@@ -136,8 +138,8 @@ class CalendarScreen extends Component {
           ListHeaderComponent={this._renderAd}
         />
         {this._renderInitial()}
-        <LocationList />
-        <SearchButton />
+        <LocationList id={CalendarScreen.id} />
+        <SearchButton id={CalendarScreen.id} />
       </View>
     );
   }

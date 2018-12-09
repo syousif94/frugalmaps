@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import * as Location from "./store/location";
 import emitter from "tiny-emitter/instance";
 import moment from "moment";
-import { IOS, SafeArea as Container } from "./Constants";
+import { SafeArea as Container } from "./Constants";
 
 class LocationBox extends Component {
   componentDidMount() {
@@ -15,16 +15,20 @@ class LocationBox extends Component {
   }
 
   componentWillUnmount() {
-    emitter.off("blur-location-box", this._blur);
     emitter.off("focus-location-box", this._focus);
+    emitter.off("blur-location-box", this._blur);
   }
 
-  _focus = () => {
-    this._input.focus();
+  _focus = id => {
+    if (id === this.props.id) {
+      this._input.focus();
+    }
   };
 
-  _blur = () => {
-    this._input.blur();
+  _blur = id => {
+    if (id === this.props.id) {
+      this._input.blur();
+    }
   };
 
   _onLayout = e => {
@@ -60,7 +64,7 @@ class LocationBox extends Component {
   };
 
   render() {
-    const { text, lastQuery, focused, refreshing, bounds } = this.props;
+    const { text, focused, refreshing, bounds } = this.props;
 
     let value = text;
 
