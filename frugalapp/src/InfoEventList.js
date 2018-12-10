@@ -22,7 +22,6 @@ const makeEvents = event => {
   }
   return (
     <View style={styles.event} key={id}>
-      <Text style={styles.boldText}>{item.title}</Text>
       <View style={styles.hours}>
         {item.groupedHours.map((hours, index) => {
           return (
@@ -36,13 +35,19 @@ const makeEvents = event => {
                   );
                 })}
               </View>
-              <Text style={styles.hourText}>{hours.hours}</Text>
-              <Text style={countdownStyle}>{remaining}</Text>
+              <View style={styles.time}>
+                <Text style={styles.hourText}>{hours.hours}</Text>
+                <Text style={countdownStyle}>{remaining}</Text>
+              </View>
             </View>
           );
         })}
       </View>
-      <Text style={styles.infoText}>{item.description}</Text>
+      <Text style={styles.boldText}>{item.title}</Text>
+
+      <Text style={[styles.infoText, styles.descriptionText]}>
+        {item.description}
+      </Text>
     </View>
   );
 };
@@ -67,9 +72,7 @@ class InfoEventList extends Component {
   render() {
     const item = this.props.events[0]._source;
     return (
-      <View>
-        <View style={styles.content}>{this.props.events.map(makeEvents)}</View>
-      </View>
+      <View style={styles.content}>{this.props.events.map(makeEvents)}</View>
     );
   }
 }
@@ -77,20 +80,33 @@ class InfoEventList extends Component {
 export default connect(mapStateToProps)(InfoEventList);
 
 const styles = StyleSheet.create({
-  content: {},
+  content: {
+    paddingHorizontal: 10,
+    paddingVertical: 5
+  },
   event: {
-    paddingTop: 10,
-    maxWidth: WIDTH / 1.5
+    margin: 5
   },
   boldText: {
-    fontSize: 12,
+    marginTop: 2,
+    fontSize: 14,
     color: "#000",
     fontWeight: "600"
   },
   infoText: {
-    marginTop: 3,
+    marginTop: 2,
     color: "#444",
-    fontSize: 12
+    fontSize: 14,
+    lineHeight: 19
+  },
+  descriptionText: {
+    maxWidth: WIDTH - 80
+  },
+  time: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between"
   },
   hours: {
     marginTop: 2
@@ -101,7 +117,7 @@ const styles = StyleSheet.create({
   },
   hourText: {
     color: "#444",
-    fontSize: 12
+    fontSize: 14
   },
   days: {
     flexDirection: "row",
@@ -121,8 +137,7 @@ const styles = StyleSheet.create({
   },
   countdownText: {
     color: "#E3210B",
-    fontSize: 12,
-    marginLeft: 3
+    fontSize: 14
   },
   ending: {
     color: "#18AB2E"

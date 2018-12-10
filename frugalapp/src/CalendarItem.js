@@ -40,7 +40,24 @@ class CalendarItem extends Component {
     let distanceText = "";
 
     if (sort && sort[0]) {
-      distanceText = ` · ${sort[0].toFixed(1)}mi`;
+      distanceText = `${sort[0].toFixed(1)} miles`;
+    }
+
+    const { remaining, ending } = timeRemaining(item.groupedHours[0], iso);
+
+    const countdownStyle = [styles.countdownText];
+
+    if (ending) {
+      countdownStyle.push(styles.ending);
+    }
+
+    let locationText = item.location;
+    let titleText = item.title;
+
+    if (isClosest) {
+      locationText = `${index + 1}. ${item.location}`;
+    } else {
+      titleText = `${index + 1}. ${item.title}`;
     }
 
     return (
@@ -49,17 +66,8 @@ class CalendarItem extends Component {
           {!isClosest ? (
             <View style={styles.event}>
               <View>
-                <Text style={styles.titleText}>{item.title}</Text>
                 <View style={styles.hours}>
                   {item.groupedHours.map((hours, index) => {
-                    const { remaining, ending } = timeRemaining(hours, iso);
-
-                    const countdownStyle = [styles.countdownText];
-
-                    if (ending) {
-                      countdownStyle.push(styles.ending);
-                    }
-
                     return (
                       <View style={styles.hour} key={index}>
                         <View style={styles.days}>
@@ -71,30 +79,30 @@ class CalendarItem extends Component {
                             );
                           })}
                         </View>
-                        <Text style={styles.subText}>{hours.hours}</Text>
-                        <Text style={countdownStyle}>{remaining}</Text>
+                        <View style={styles.time}>
+                          <Text style={styles.hourText}>{hours.hours}</Text>
+                          <Text style={countdownStyle}>{remaining}</Text>
+                        </View>
                       </View>
                     );
                   })}
                 </View>
-                <NotifyButton {...this.props} />
+                <Text style={styles.titleText}>{titleText}</Text>
+                {/* <NotifyButton {...this.props} /> */}
               </View>
               <Text style={styles.descriptionText}>{item.description}</Text>
             </View>
           ) : null}
-
-          <Text style={styles.locationText}>{item.location}</Text>
-          <Text style={styles.subText}>
-            {item.city}
-            {distanceText}
-          </Text>
-        </View>
-        <ImageGallery width={WIDTH - 30} doc={this.props.item} height={150} />
-        {isClosest ? (
-          <View style={styles.info}>
-            <EventList placeid={item.placeid} />
+          <View style={styles.location}>
+            <View>
+              <Text style={styles.locationText}>{locationText}</Text>
+              <Text style={styles.subText}>{item.city}</Text>
+            </View>
+            <Text>{distanceText}</Text>
           </View>
-        ) : null}
+        </View>
+        <ImageGallery width={WIDTH - 20} doc={this.props.item} height={150} />
+        {isClosest ? <EventList placeid={item.placeid} /> : null}
       </View>
     );
   }
@@ -108,34 +116,47 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     marginHorizontal: 10,
     borderRadius: 4,
-    padding: 5
+    overflow: "hidden"
   },
   info: {
-    padding: 10,
-    paddingTop: 4
+    paddingVertical: 10,
+    paddingHorizontal: 15
   },
   event: {
     marginBottom: 10
   },
   titleText: {
-    fontSize: 12,
+    marginTop: 2,
+    fontSize: 14,
     fontWeight: "600",
     color: "#000"
   },
   locationText: {
     marginBottom: 2,
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: "600",
     color: "#000"
   },
   descriptionText: {
     marginTop: 2,
-    color: "#000",
-    fontSize: 12
+    color: "#444",
+    fontSize: 14,
+    lineHeight: 19,
+    maxWidth: WIDTH - 80
+  },
+  location: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center"
+  },
+  time: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between"
   },
   hours: {
-    marginTop: 2,
-    marginBottom: 3
+    marginTop: 2
   },
   hour: {
     flexDirection: "row",
@@ -146,9 +167,8 @@ const styles = StyleSheet.create({
     fontSize: 12
   },
   countdownText: {
-    marginLeft: 4,
     color: "#E3210B",
-    fontSize: 12
+    fontSize: 14
   },
   ending: {
     color: "#18AB2E"

@@ -126,19 +126,27 @@ export function timeRemaining(hours, iso) {
 
     remaining = "";
 
-    if (days > 0) {
-      remaining += `${days}d `;
+    // if (days > 0) {
+    //   remaining += `${days}d `;
+    // }
+
+    remaining += `${days * 24 + hour}:`;
+
+    // if (hour > 0) {
+    //   remaining += `${days * 24 + hour}hr `;
+    // }
+
+    if (minutes < 10) {
+      remaining += `0${minutes}:`;
+    } else {
+      remaining += `${minutes}:`;
     }
 
-    if (hour > 0) {
-      remaining += `${hour}h `;
+    if (seconds < 10) {
+      remaining += `0${seconds}`;
+    } else {
+      remaining += `${seconds}`;
     }
-
-    if (minutes > 0) {
-      remaining += `${minutes}m `;
-    }
-
-    remaining += `${seconds}s`;
 
     remaining = remaining.trim();
   }
