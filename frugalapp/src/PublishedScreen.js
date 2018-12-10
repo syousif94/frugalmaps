@@ -1,8 +1,25 @@
 import React, { Component } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, FlatList } from "react-native";
 import SearchHeader from "./SearchHeader";
+import api from "./API";
 
 export default class PublishedScreen extends Component {
+  state = {
+    query: "",
+    data: []
+  };
+  async componentDidMount() {
+    const res = await api("events/published");
+    console.log({ res });
+    this.setState({
+      data: res.published
+    });
+  }
+  _onChangeQuery = query => {
+    this.setState({
+      query
+    });
+  };
   render() {
     return (
       <View style={styles.container}>
@@ -10,7 +27,15 @@ export default class PublishedScreen extends Component {
           title="Published"
           placeholder="Search"
           onChangeText={() => {}}
-          value={""}
+          value={this.state.query}
+        />
+        <FlatList
+          data={this.state.data}
+          renderItem={({ item, index }) => {
+            return <Text>{item._source.title}</Text>;
+          }}
+          style={{ flex: 1 }}
+          keyExtractor={item => item._id}
         />
       </View>
     );
