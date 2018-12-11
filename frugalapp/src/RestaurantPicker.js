@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-navigation";
 import api from "./API";
 import { Entypo } from "@expo/vector-icons";
 import RestaurantSuggestion from "./RestaurantSuggestion";
-import Footer from "./RestaurantPickerFooter";
+import Footer from "./PickerHeader";
 import { IOS, ANDROID } from "./Constants";
 
 class RestaurantPicker extends Component {
@@ -108,7 +108,7 @@ class RestaurantPicker extends Component {
         <View style={styles.divider} />
         <KeyboardSpacer>
           <FlatList
-            ListFooterComponent={this._renderFooter}
+            ListHeaderComponent={this._renderFooter}
             style={styles.list}
             data={this.state.data}
             renderItem={this._renderItem}

@@ -41,10 +41,6 @@ class CalendarScreen extends Component {
   };
 
   _renderInitial = () => {
-    if (ANDROID) {
-      return null;
-    }
-
     const { initialized, listTop } = this.props;
 
     if (initialized || !listTop) {
@@ -58,9 +54,22 @@ class CalendarScreen extends Component {
       }
     ];
 
+    if (ANDROID) {
+      return (
+        <View style={style}>
+          <Text style={styles.initialText}>
+            Initial location may take several seconds
+          </Text>
+        </View>
+      );
+    }
+
     return (
       <View style={style}>
         <ActivityIndicator style={styles.loading} size="large" color="#444" />
+        <Text style={styles.initialText}>
+          Initial location may take several seconds
+        </Text>
       </View>
     );
   };
@@ -176,6 +185,14 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     alignItems: "center"
+  },
+  initialText: {
+    width: 220,
+    marginTop: 25,
+    textAlign: "center",
+    fontSize: 12,
+    lineHeight: 16,
+    color: "#444"
   },
   loading: {
     marginTop: 15,

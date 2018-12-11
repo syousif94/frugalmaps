@@ -189,6 +189,9 @@ class MapScreen extends Component {
             toolbarEnabled={false}
             moveOnMarkerPress={false}
             showsUserLocation={authorized}
+            userLocationAnnotationTitle=""
+            showsMyLocationButton={false}
+            pitchEnabled={false}
           >
             {markers.map(data => {
               const { _id } = data;
@@ -197,7 +200,6 @@ class MapScreen extends Component {
             })}
           </MapView>
         </View>
-        {/* <DayPicker ref={ref => (this._dayPicker = ref)} /> */}
         <LocateMe mapId={MapScreen.mapId} />
         <LocationList />
       </View>

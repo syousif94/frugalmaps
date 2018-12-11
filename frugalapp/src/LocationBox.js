@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import * as Location from "./store/location";
 import emitter from "tiny-emitter/instance";
 import moment from "moment";
-import { SafeArea as Container } from "./Constants";
+import { SafeArea as Container, ANDROID } from "./Constants";
 
 class LocationBox extends Component {
   componentDidMount() {
@@ -97,6 +97,7 @@ class LocationBox extends Component {
             clearButtonMode={focused ? "always" : "never"}
             underlineColorAndroid="transparent"
             selectTextOnFocus
+            autoCorrect={false}
           />
         </View>
       </Container>
@@ -140,6 +141,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     paddingLeft: 10,
     flex: 1,
-    marginRight: 12
+    marginRight: 12,
+    paddingBottom: ANDROID ? 1 : 0
   }
 });

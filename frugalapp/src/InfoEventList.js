@@ -5,6 +5,7 @@ import { WIDTH } from "./Constants";
 
 import * as Events from "./store/events";
 import { makeISO, timeRemaining } from "./Time";
+import { BLUE } from "./Constants";
 
 const mapStateToProps = (state, props) => ({
   events: Events.placeEvents(state, props)
@@ -13,13 +14,22 @@ const mapStateToProps = (state, props) => ({
 const makeEvents = event => {
   const { _source: item, _id: id } = event;
   const iso = makeISO(item.days);
-  const { remaining, ending } = timeRemaining(item.groupedHours[0], iso);
+  const { remaining, ending, duration } = timeRemaining(
+    item.groupedHours[0],
+    iso
+  );
+
+  let countdownText;
 
   const countdownStyle = [styles.countdownText];
 
   if (ending) {
     countdownStyle.push(styles.ending);
+    countdownText = `${remaining} left`;
+  } else {
+    countdownText = remaining;
   }
+
   return (
     <View style={styles.event} key={id}>
       <View style={styles.hours}>
@@ -28,16 +38,24 @@ const makeEvents = event => {
             <View style={styles.hour} key={index}>
               <View style={styles.days}>
                 {hours.days.map(day => {
+                  const dayStyle = [styles.day];
+
+                  if (day.today) {
+                    styles.push(styles.today);
+                  }
                   return (
-                    <View style={styles.day} key={day}>
+                    <View style={dayStyle} key={day}>
                       <Text style={styles.dayText}>{day}</Text>
                     </View>
                   );
                 })}
               </View>
               <View style={styles.time}>
-                <Text style={styles.hourText}>{hours.hours}</Text>
-                <Text style={countdownStyle}>{remaining}</Text>
+                <Text style={styles.hourText}>
+                  {hours.hours}{" "}
+                  <Text style={styles.durationText}>{duration}hr</Text>
+                </Text>
+                <Text style={countdownStyle}>{countdownText}</Text>
               </View>
             </View>
           );
@@ -81,11 +99,11 @@ export default connect(mapStateToProps)(InfoEventList);
 
 const styles = StyleSheet.create({
   content: {
-    paddingHorizontal: 10,
-    paddingVertical: 5
+    // paddingHorizontal: 10,
+    // paddingVertical: 5
   },
   event: {
-    margin: 5
+    marginVertical: 3
   },
   boldText: {
     marginTop: 2,
@@ -119,6 +137,9 @@ const styles = StyleSheet.create({
     color: "#444",
     fontSize: 14
   },
+  durationText: {
+    fontSize: 9
+  },
   days: {
     flexDirection: "row",
     marginRight: 3
@@ -129,6 +150,9 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     backgroundColor: "#18AB2E",
     marginRight: 2
+  },
+  today: {
+    backgroundColor: BLUE
   },
   dayText: {
     fontSize: 10,

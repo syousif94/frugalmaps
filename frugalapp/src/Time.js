@@ -95,6 +95,20 @@ export function makeISO(days) {
   return dayToISO(closestDay);
 }
 
+export function makeDuration(hours) {
+  const start = moment(hours.start, ["h:ma", "H:m"]);
+  let end = moment(hours.end, ["h:ma", "H:m"]);
+
+  const startInt = parseInt(hours.start, 10);
+  const endInt = parseInt(hours.end, 10);
+
+  if (startInt > endInt) {
+    end = end.add(1, "d");
+  }
+
+  return end.diff(start, "hours");
+}
+
 export function timeRemaining(hours, iso) {
   const time = Date.now();
   let ending = false;
@@ -103,6 +117,7 @@ export function timeRemaining(hours, iso) {
   let remaining = null;
   const start = createDate(hours.start, iso);
   const end = createDate(hours.end, iso, hours.start);
+  const duration = makeDuration(hours);
   if (now.isBefore(end) && end.isBefore(start)) {
     ending = true;
     diff = end.valueOf() - time;
@@ -126,15 +141,13 @@ export function timeRemaining(hours, iso) {
 
     remaining = "";
 
-    // if (days > 0) {
-    //   remaining += `${days}d `;
-    // }
+    if (days > 0) {
+      remaining += `${days}:`;
+    }
 
-    remaining += `${days * 24 + hour}:`;
-
-    // if (hour > 0) {
-    //   remaining += `${days * 24 + hour}hr `;
-    // }
+    if (hour > 0 && hour > 0) {
+      remaining += `${hour}:`;
+    }
 
     if (minutes < 10) {
       remaining += `0${minutes}:`;
@@ -151,7 +164,7 @@ export function timeRemaining(hours, iso) {
     remaining = remaining.trim();
   }
 
-  return { remaining, ending };
+  return { remaining, ending, duration };
 }
 
 export function makeHours(item, iso) {

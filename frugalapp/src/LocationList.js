@@ -158,13 +158,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#e0e0e0"
   },
   sectionHeader: {
-    height: 24,
+    height: 16,
     backgroundColor: "#B5B5B5",
     justifyContent: "center",
     paddingLeft: 10
   },
   sectionText: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#fff",
     fontWeight: "600"
   }

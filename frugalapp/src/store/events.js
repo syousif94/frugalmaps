@@ -23,6 +23,7 @@ const groupData = hits => {
         events
       };
     })
+    .sortBy("_id")
     .value();
 };
 

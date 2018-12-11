@@ -102,7 +102,11 @@ class CalendarItem extends Component {
           </View>
         </View>
         <ImageGallery width={WIDTH - 20} doc={this.props.item} height={150} />
-        {isClosest ? <EventList placeid={item.placeid} /> : null}
+        {isClosest ? (
+          <View style={styles.info}>
+            <EventList placeid={item.placeid} />
+          </View>
+        ) : null}
       </View>
     );
   }
