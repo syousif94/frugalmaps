@@ -5,13 +5,15 @@ import {
   StyleSheet,
   Keyboard,
   SectionList,
-  TextInput
+  TextInput,
+  TouchableOpacity
 } from "react-native";
 import { connect } from "react-redux";
 import { MapView } from "expo";
 
 import LocationSuggestion from "./LocationSuggestion";
 import { IOS, ANDROID } from "./Constants";
+import { BLUE } from "./Colors";
 
 class LocationList extends Component {
   state = {
@@ -66,9 +68,17 @@ class LocationList extends Component {
     );
   };
 
-  _renderFooter = () => {
+  _renderListHeader = () => {
     return (
-      <MapView pointerEvents="none" style={{ height: 100 }} showsUserLocation />
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.headerBtn}>
+          <Text style={styles.headerBtnText}>Closest</Text>
+        </TouchableOpacity>
+        <View style={styles.vDivider} />
+        <TouchableOpacity style={styles.headerBtn}>
+          <Text style={styles.headerBtnText}>Newest</Text>
+        </TouchableOpacity>
+      </View>
     );
   };
 
@@ -95,6 +105,7 @@ class LocationList extends Component {
         renderItem={this._renderSectionItem}
         renderSectionHeader={this._renderSectionHeader}
         ItemSeparatorComponent={() => <View style={styles.divider} />}
+        ListHeaderComponent={this._renderListHeader}
         sections={data}
         keyExtractor={(item, index) => item + index}
         keyboardDismissMode="none"
@@ -122,7 +133,7 @@ class LocationList extends Component {
         {...{ pointerEvents }}
         style={[styles.container, { top: listTop, paddingBottom, opacity }]}
       >
-        {this._renderFooter()}
+        <MapView pointerEvents="none" style={styles.map} showsUserLocation />
         {this._renderList()}
       </View>
     );
@@ -151,11 +162,34 @@ const styles = StyleSheet.create({
     borderColor: "#e0e0e0",
     elevation: 6
   },
+  map: {
+    height: 100
+  },
+  header: {
+    borderColor: "#e0e0e0",
+    borderTopWidth: 1,
+    height: 36,
+    flexDirection: "row"
+  },
+  headerBtn: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  headerBtnText: {
+    color: BLUE,
+    fontWeight: "600",
+    fontSize: 14
+  },
   list: {
     flex: 1
   },
   divider: {
     height: 1,
+    backgroundColor: "#e0e0e0"
+  },
+  vDivider: {
+    width: 1,
     backgroundColor: "#e0e0e0"
   },
   sectionHeader: {
