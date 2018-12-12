@@ -28,7 +28,6 @@ function cacheImages(images) {
 }
 
 function cacheFonts(fonts) {
-  console.log(fonts);
   return fonts.map(font => Font.loadAsync(font));
 }
 

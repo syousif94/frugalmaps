@@ -168,94 +168,96 @@ class SubmitScreen extends Component {
       select: this._selectRestaurant
     };
     return (
-      <Swiper
-        bounces
-        showsPagination={false}
-        alwaysBounceHorizontal
-        ref={ref => {
-          this._swiper = ref;
-        }}
-        keyboardShouldPersistTaps="always"
-        keyboardDismissMode="none"
-        loop={false}
-        onMomentumScrollEnd={this._blurKeyboard}
-      >
-        <RestaurantPicker
+      <View style={styles.container}>
+        <Swiper
+          bounces
+          showsPagination={false}
+          alwaysBounceHorizontal
           ref={ref => {
-            this._picker = ref;
+            this._swiper = ref;
           }}
-          {...pickerProps}
-        />
-        <EditSpecial ref={ref => (this._form = ref)}>
-          <PlacePreview place={this.props.place} />
-          <Text style={styles.instruction}>Select the days.</Text>
-          <DayPicker />
-          <Text style={styles.instruction}>
-            Like 6:30pm. Leave blank for opening or closing.
-          </Text>
-          <View style={styles.row}>
+          keyboardShouldPersistTaps="always"
+          keyboardDismissMode="none"
+          loop={false}
+          onMomentumScrollEnd={this._blurKeyboard}
+        >
+          <RestaurantPicker
+            ref={ref => {
+              this._picker = ref;
+            }}
+            {...pickerProps}
+          />
+          <EditSpecial ref={ref => (this._form = ref)}>
+            <PlacePreview place={this.props.place} />
+            <Text style={styles.instruction}>Select the days.</Text>
+            <DayPicker />
+            <Text style={styles.instruction}>
+              Like 6:30pm. Leave blank for opening or closing.
+            </Text>
+            <View style={styles.row}>
+              <TextInput
+                placeholder="Start Time"
+                style={[styles.input, styles.time]}
+                placeholderTextColor="#999"
+                onChangeText={this._onChangeText("startTime")}
+                value={this.props.startTime}
+                clearButtonMode="always"
+                keyboardType="numbers-and-punctuation"
+                underlineColorAndroid="transparent"
+              />
+              <TextInput
+                placeholder="End Time"
+                style={[styles.input, styles.time]}
+                placeholderTextColor="#999"
+                onChangeText={this._onChangeText("endTime")}
+                value={this.props.endTime}
+                clearButtonMode="always"
+                keyboardType="numbers-and-punctuation"
+                underlineColorAndroid="transparent"
+              />
+            </View>
+            <Text style={styles.instruction}>What's the special?</Text>
             <TextInput
-              placeholder="Start Time"
-              style={[styles.input, styles.time]}
+              placeholder="Title"
+              style={[styles.input, styles.title]}
               placeholderTextColor="#999"
-              onChangeText={this._onChangeText("startTime")}
-              value={this.props.startTime}
+              value={this.props.title}
+              onChangeText={this._onChangeText("title")}
               clearButtonMode="always"
-              keyboardType="numbers-and-punctuation"
+              autoCapitalize="words"
               underlineColorAndroid="transparent"
             />
+            <Text style={styles.instruction}>Briefly describe it.</Text>
             <TextInput
-              placeholder="End Time"
-              style={[styles.input, styles.time]}
+              placeholder="Description"
+              multiline
+              style={[styles.input, styles.description]}
               placeholderTextColor="#999"
-              onChangeText={this._onChangeText("endTime")}
-              value={this.props.endTime}
-              clearButtonMode="always"
-              keyboardType="numbers-and-punctuation"
+              blurOnSubmit
+              value={this.props.description}
+              onChangeText={this._onChangeText("description")}
               underlineColorAndroid="transparent"
             />
-          </View>
-          <Text style={styles.instruction}>What's the special?</Text>
-          <TextInput
-            placeholder="Title"
-            style={[styles.input, styles.title]}
-            placeholderTextColor="#999"
-            value={this.props.title}
-            onChangeText={this._onChangeText("title")}
-            clearButtonMode="always"
-            autoCapitalize="words"
-            underlineColorAndroid="transparent"
-          />
-          <Text style={styles.instruction}>Briefly describe it.</Text>
-          <TextInput
-            placeholder="Description"
-            multiline
-            style={[styles.input, styles.description]}
-            placeholderTextColor="#999"
-            blurOnSubmit
-            value={this.props.description}
-            onChangeText={this._onChangeText("description")}
-            underlineColorAndroid="transparent"
-          />
-          <Text style={styles.instruction}>What kind of special?</Text>
-          <EventTypePicker />
-          <Text style={styles.instruction}>
-            Leave blank unless you have one.
-          </Text>
-          <TextInput
-            placeholder="Admin Code"
-            style={[styles.input, styles.title]}
-            placeholderTextColor="#999"
-            onChangeText={this._onChangeText("postCode")}
-            value={this.props.postCode}
-            autoCorrect={false}
-            autoCapitalize="none"
-            underlineColorAndroid="transparent"
-          />
-          {this._renderSubmit()}
-          {this._renderDelete()}
-        </EditSpecial>
-      </Swiper>
+            <Text style={styles.instruction}>What kind of special?</Text>
+            <EventTypePicker />
+            <Text style={styles.instruction}>
+              Leave blank unless you have one.
+            </Text>
+            <TextInput
+              placeholder="Admin Code"
+              style={[styles.input, styles.title]}
+              placeholderTextColor="#999"
+              onChangeText={this._onChangeText("postCode")}
+              value={this.props.postCode}
+              autoCorrect={false}
+              autoCapitalize="none"
+              underlineColorAndroid="transparent"
+            />
+            {this._renderSubmit()}
+            {this._renderDelete()}
+          </EditSpecial>
+        </Swiper>
+      </View>
     );
   }
 }
@@ -266,6 +268,10 @@ export default connect(
 )(SubmitScreen);
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "#fff",
+    flex: 1
+  },
   input: {
     backgroundColor: "#ededed",
     borderRadius: 8,

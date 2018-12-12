@@ -66,39 +66,38 @@ const events = (action$, store) =>
     .filter(action => action.payload.refreshing)
     .switchMap(action =>
       Observable.defer(async () => {
+        const body = {};
+
         let coordinates;
 
-        let request;
+        const { status: locationStatus } = await Permissions.getAsync(
+          Permissions.LOCATION
+        );
 
-        if (action.payload.bounds) {
-          request = api("query-events", {
-            bounds: action.payload.bounds
-          });
-        } else {
-          const { status: locationStatus } = await Permissions.getAsync(
-            Permissions.LOCATION
-          );
+        if (locationStatus === "granted") {
+          const {
+            coords: { latitude, longitude }
+          } = await locate();
 
-          if (locationStatus === "granted") {
-            const {
-              coords: { latitude, longitude }
-            } = await locate();
+          body.lat = latitude;
+          body.lng = longitude;
 
-            coordinates = {
-              latitude,
-              longitude
-            };
-
-            request = api("query-events", {
-              lat: latitude,
-              lng: longitude
-            });
-          } else {
-            request = api("query-events");
-          }
+          coordinates = {
+            latitude,
+            longitude
+          };
         }
 
-        const res = await request;
+        if (action.payload.bounds) {
+          body.bounds = action.payload.bounds;
+        } else if (action.payload.recent) {
+          body.recent = true;
+        }
+
+        const res = await api("query-events", body);
+
+        console.log({ res });
+
         return { res, coordinates };
       })
         .retry(2)

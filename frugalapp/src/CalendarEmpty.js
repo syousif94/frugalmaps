@@ -19,7 +19,7 @@ class CalendarEmpty extends Component {
 }
 
 const mapStateToProps = state => ({
-  text: state.location.text
+  text: state.location.lastQuery
 });
 
 export default connect(mapStateToProps)(CalendarEmpty);

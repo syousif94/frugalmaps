@@ -145,8 +145,12 @@ export function timeRemaining(hours, iso) {
       remaining += `${days}:`;
     }
 
-    if (hour > 0 && hour > 0) {
-      remaining += `${hour}:`;
+    if (hour > 0) {
+      if (hour < 10 && days > 0) {
+        remaining += `0${hour}:`;
+      } else {
+        remaining += `${hour}:`;
+      }
     }
 
     if (minutes < 10) {

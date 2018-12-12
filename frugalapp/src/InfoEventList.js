@@ -32,9 +32,9 @@ const makeEvents = event => {
     ? remaining.split("").map((char, index) => {
         const style = [{ justifyContent: "center" }];
         if (char !== ":") {
-          style.push({ width: 8 });
+          style.push({ width: 8.5, alignItems: "center" });
         } else {
-          style.push({ paddingBottom: 2, paddingLeft: 1 });
+          style.push({ paddingBottom: 2 });
         }
         return (
           <View key={`${char}${index}`} style={style}>

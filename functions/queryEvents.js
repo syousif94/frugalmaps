@@ -4,7 +4,7 @@ const servicesApi = require("./google");
 // const turf = require("@turf/turf");
 
 function queryEvents(req, res) {
-  const { bounds: queryBounds, lat, lng } = req.body;
+  const { bounds: queryBounds, lat, lng, recent = false } = req.body;
 
   const body = {
     query: {
@@ -12,6 +12,19 @@ function queryEvents(req, res) {
     },
     size: 99
   };
+
+  if (lat && lng) {
+    body.sort = [
+      {
+        _geo_distance: {
+          coordinates: [lng, lat],
+          order: "asc",
+          unit: "mi",
+          distance_type: "plane"
+        }
+      }
+    ];
+  }
 
   let text;
 
@@ -43,7 +56,7 @@ function queryEvents(req, res) {
       type: event.type,
       body
     });
-  } else if (lat && lng) {
+  } else if (!recent && lat && lng) {
     const reverseGeocode = new Promise((resolve, reject) => {
       servicesApi.reverseGeocode(
         {
@@ -110,17 +123,6 @@ function queryEvents(req, res) {
         }
       };
 
-      body.sort = [
-        {
-          _geo_distance: {
-            coordinates: [lng, lat],
-            order: "asc",
-            unit: "mi",
-            distance_type: "plane"
-          }
-        }
-      ];
-
       return elastic.search({
         index: event.index,
         type: event.type,
@@ -172,7 +174,8 @@ function queryEvents(req, res) {
       res.send({
         text,
         hits,
-        bounds
+        bounds,
+        global: !queryBounds
       });
     })
     .catch(error => {
