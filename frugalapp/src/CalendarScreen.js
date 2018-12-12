@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
   },
   initialText: {
     width: 220,
-    marginTop: 25,
+    marginTop: ANDROID ? 100 : 25,
     textAlign: "center",
     fontSize: 12,
     lineHeight: 16,

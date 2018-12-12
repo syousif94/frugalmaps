@@ -97,7 +97,7 @@ class LocationBox extends Component {
             clearButtonMode={focused ? "always" : "never"}
             underlineColorAndroid="transparent"
             selectTextOnFocus
-            autoCorrect={false}
+            autoCorrect={ANDROID}
           />
         </View>
       </Container>
