@@ -16,6 +16,7 @@ import LocateMe from "./MapLocateButton";
 import MapMarker from "./MapMarker";
 import MapLoading from "./MapLoading";
 import locate from "./Locate";
+import SearchButton from "./SearchButton";
 
 var initialAndroidBounds = null;
 
@@ -27,6 +28,7 @@ if (ANDROID) {
 
 class MapScreen extends Component {
   static mapId = "mapScreen";
+  static searchId = "mapScreen";
 
   _search = false;
 
@@ -174,7 +176,7 @@ class MapScreen extends Component {
     return (
       <View style={styles.container}>
         <View>
-          <LocationBox />
+          <LocationBox id={MapScreen.searchId} />
           <MapLoading />
         </View>
         <View style={styles.map} {...this._panResponder.panHandlers}>
@@ -200,8 +202,9 @@ class MapScreen extends Component {
             })}
           </MapView>
         </View>
-        <LocateMe mapId={MapScreen.mapId} />
-        <LocationList />
+        {/* <LocateMe mapId={MapScreen.mapId} /> */}
+        <SearchButton id={MapScreen.searchId} />
+        <LocationList id={MapScreen.searchId} />
       </View>
     );
   }

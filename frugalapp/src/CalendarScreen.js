@@ -115,7 +115,7 @@ class CalendarScreen extends Component {
     const dataCount = data.filter(days => days.data.length).length;
 
     const containerStyle = {
-      paddingBottom: data.length ? 0 : 0
+      paddingBottom: data.length ? 110 : 0
     };
 
     const androidProps = ANDROID
