@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { View, StyleSheet, Text } from "react-native";
-import { WIDTH } from "./Constants";
+import { WIDTH, IOS } from "./Constants";
 
 import * as Events from "./store/events";
 import { makeISO, timeRemaining } from "./Time";
@@ -19,16 +19,30 @@ const makeEvents = event => {
     iso
   );
 
-  let countdownText;
-
   const countdownStyle = [styles.countdownText];
+
+  let endingText = "";
 
   if (ending) {
     countdownStyle.push(styles.ending);
-    countdownText = `${remaining} left`;
-  } else {
-    countdownText = remaining;
+    endingText = ` left`;
   }
+
+  const remainingText = IOS
+    ? remaining.split("").map((char, index) => {
+        const style = [{ justifyContent: "center" }];
+        if (char !== ":") {
+          style.push({ width: 8 });
+        } else {
+          style.push({ paddingBottom: 2, paddingLeft: 1 });
+        }
+        return (
+          <View key={`${char}${index}`} style={style}>
+            <Text style={countdownStyle}>{char}</Text>
+          </View>
+        );
+      })
+    : remaining;
 
   return (
     <View style={styles.event} key={id}>
@@ -55,7 +69,17 @@ const makeEvents = event => {
                   {hours.hours}{" "}
                   <Text style={styles.durationText}>{duration}hr</Text>
                 </Text>
-                <Text style={countdownStyle}>{countdownText}</Text>
+                {IOS ? (
+                  <View style={styles.countdown}>
+                    {remainingText}
+                    <Text style={countdownStyle}>{endingText}</Text>
+                  </View>
+                ) : (
+                  <Text style={countdownStyle}>
+                    {remainingText}
+                    {endingText}
+                  </Text>
+                )}
               </View>
             </View>
           );
@@ -158,6 +182,10 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: "#fff",
     fontWeight: "700"
+  },
+  countdown: {
+    flexDirection: "row",
+    alignItems: "center"
   },
   countdownText: {
     color: "#E3210B",

@@ -56,11 +56,6 @@ class Callout extends Component {
       height: 230
     };
 
-    console.log({
-      id: data._id,
-      location: data._source.location
-    });
-
     return (
       <MapView.Callout>
         <View style={calloutStyle}>

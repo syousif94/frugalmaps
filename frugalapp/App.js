@@ -33,15 +33,11 @@ export default class extends Component {
     isReady: false
   };
 
-  _loadAssets = async () => {
-    await cache();
-  };
-
   render() {
-    if (!DEV && !this.state.isReady) {
+    if (!this.state.isReady) {
       return (
         <AppLoading
-          startAsync={this._loadAssets}
+          startAsync={cache}
           onFinish={() => this.setState({ isReady: true })}
           onError={console.warn}
         />

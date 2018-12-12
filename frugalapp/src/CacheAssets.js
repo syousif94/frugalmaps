@@ -28,10 +28,11 @@ function cacheImages(images) {
 }
 
 function cacheFonts(fonts) {
+  console.log(fonts);
   return fonts.map(font => Font.loadAsync(font));
 }
 
-export async function loadAssetsAsync() {
+export default async function cache() {
   const imageAssets = cacheImages(images);
 
   const fontAssets = cacheFonts(fonts);
