@@ -147,8 +147,8 @@ class CalendarScreen extends Component {
           ListHeaderComponent={this._renderAd}
         />
         {this._renderInitial()}
-        <LocationList id={CalendarScreen.id} />
         <SearchButton id={CalendarScreen.id} />
+        <LocationList id={CalendarScreen.id} />
       </View>
     );
   }

@@ -148,7 +148,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: "#fff",
     borderTopWidth: 1,
-    borderColor: "#e0e0e0"
+    borderColor: "#e0e0e0",
+    elevation: 6
   },
   list: {
     flex: 1
