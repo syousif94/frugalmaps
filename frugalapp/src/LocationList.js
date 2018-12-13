@@ -10,10 +10,14 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import { MapView } from "expo";
+import { FontAwesome, Entypo } from "@expo/vector-icons";
+import emitter from "tiny-emitter/instance";
 
 import LocationSuggestion from "./LocationSuggestion";
 import { IOS, ANDROID } from "./Constants";
 import { BLUE } from "./Colors";
+import * as Location from "./store/location";
+import * as Events from "./store/events";
 
 class LocationList extends Component {
   state = {
@@ -68,16 +72,47 @@ class LocationList extends Component {
     );
   };
 
+  _onClosest = () => {
+    emitter.emit("calendar-top");
+    this.props.setEvents({
+      refreshing: true
+    });
+    emitter.emit("blur-location-box", this.props.id);
+  };
+
+  _onNewest = () => {
+    emitter.emit("calendar-top");
+    this.props.setEvents({
+      refreshing: true,
+      recent: true
+    });
+    emitter.emit("blur-location-box", this.props.id);
+  };
+
   _renderListHeader = () => {
+    const closeStyle = { left: 12 };
+    const newStyle = { left: 10, paddingTop: 2 };
     return (
       <View style={styles.header}>
-        <TouchableOpacity style={styles.headerBtn}>
-          <Text style={styles.headerBtnText}>Closest</Text>
-        </TouchableOpacity>
-        <View style={styles.vDivider} />
-        <TouchableOpacity style={styles.headerBtn}>
-          <Text style={styles.headerBtnText}>Newest</Text>
-        </TouchableOpacity>
+        <View style={styles.headerBtnBg}>
+          <TouchableOpacity onPress={this._onNewest} style={styles.headerBtn}>
+            <View style={[styles.headerBtnIcon, newStyle]} pointerEvents="none">
+              <Entypo name="new" size={17} color="#fff" />
+            </View>
+            <Text style={styles.headerBtnText}>Newest</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.headerBtnBg}>
+          <TouchableOpacity onPress={this._onClosest} style={styles.headerBtn}>
+            <View
+              style={[styles.headerBtnIcon, closeStyle]}
+              pointerEvents="none"
+            >
+              <FontAwesome name="location-arrow" size={14} color="#fff" />
+            </View>
+            <Text style={styles.headerBtnText}>Closest</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
@@ -149,7 +184,15 @@ const mapStateToProps = state => ({
   text: state.location.text
 });
 
-export default connect(mapStateToProps)(LocationList);
+const mapDispatchToProps = {
+  setEvents: Events.actions.set,
+  setLocation: Location.actions.set
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LocationList);
 
 const styles = StyleSheet.create({
   container: {
@@ -166,18 +209,31 @@ const styles = StyleSheet.create({
     height: 100
   },
   header: {
-    borderColor: "#e0e0e0",
-    borderTopWidth: 1,
-    height: 36,
-    flexDirection: "row"
+    height: 38,
+    flexDirection: "row",
+    padding: 2
+  },
+  headerBtnBg: {
+    margin: 2,
+    borderRadius: 4,
+    flex: 1,
+    backgroundColor: BLUE
   },
   headerBtn: {
     flex: 1,
     justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row"
+  },
+  headerBtnIcon: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    justifyContent: "center",
     alignItems: "center"
   },
   headerBtnText: {
-    color: BLUE,
+    color: "#fff",
     fontWeight: "600",
     fontSize: 14
   },
@@ -186,10 +242,6 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: "#e0e0e0"
-  },
-  vDivider: {
-    width: 1,
     backgroundColor: "#e0e0e0"
   },
   sectionHeader: {
