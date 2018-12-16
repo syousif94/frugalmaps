@@ -5176,14 +5176,6 @@ react-lifecycles-compat@^3, react-lifecycles-compat@^3.0.4:
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
-react-mixin@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/react-mixin/-/react-mixin-5.0.0.tgz#6c24db9b7e33d7d319544a61bd83707cf228d596"
-  integrity sha512-bGSF0/jTLDb5yW2BHYfN6PQg7FYRaNLXcUWisedAipL9+avrmrGKXfbOTMjE/heXcbS/po7ESTiahdF7iOKnGw==
-  dependencies:
-    object-assign "^4.0.1"
-    smart-mixin "^2.0.0"
-
 react-native-branch@2.2.5:
   version "2.2.5"
   resolved "https://registry.yarnpkg.com/react-native-branch/-/react-native-branch-2.2.5.tgz#4074dd63b4973e6397d9ce50e97b57c77a518e9d"
@@ -5207,15 +5199,6 @@ react-native-drawer-layout@1.3.2:
   integrity sha512-fjO0scqbJUfNu2wuEpvywL7DYLXuCXJ2W/zYhWz986rdLytidbys1QGVvkaszHrb4Y7OqO96mTkgpOcP8KWevw==
   dependencies:
     react-native-dismiss-keyboard "1.0.0"
-
-react-native-gallery-swiper@^1.3.1:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/react-native-gallery-swiper/-/react-native-gallery-swiper-1.3.1.tgz#bb667a04be18a49f6cf53f51c70b08ef053d5e03"
-  integrity sha512-65XEng9aaJq87oErPMNAScjxBUaVNzKG/Ye0OsZXgw77dWuaUxuwgq+ZZ54vLiJLDFVk1maxFAtpzShu266EKg==
-  dependencies:
-    prop-types "^15.6.2"
-    react-mixin "^5.0.0"
-    react-timer-mixin "^0.13.4"
 
 react-native-gesture-handler@1.0.6:
   version "1.0.6"
@@ -5462,7 +5445,7 @@ react-redux@^5.0.7:
     loose-envify "^1.1.0"
     prop-types "^15.6.0"
 
-react-timer-mixin@^0.13.2, react-timer-mixin@^0.13.3, react-timer-mixin@^0.13.4:
+react-timer-mixin@^0.13.2, react-timer-mixin@^0.13.3:
   version "0.13.4"
   resolved "https://registry.yarnpkg.com/react-timer-mixin/-/react-timer-mixin-0.13.4.tgz#75a00c3c94c13abe29b43d63b4c65a88fc8264d3"
   integrity sha512-4+ow23tp/Tv7hBM5Az5/Be/eKKF7DIvJ09voz5LyHGQaqqz9WV8YMs31eFvcYQs7d451LSg7kDJV70XYN/Ug/Q==
@@ -5920,11 +5903,6 @@ slide@^1.1.5:
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/slide/-/slide-1.1.6.tgz#56eb027d65b4d2dce6cb2e2d32c4d4afc9e1d707"
   integrity sha1-VusCfWW00tzmyy4tMsTUr8nh1wc=
-
-smart-mixin@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/smart-mixin/-/smart-mixin-2.0.0.tgz#a34a1055e32a75b30d2b4e3ca323dc99cb53f437"
-  integrity sha1-o0oQVeMqdbMNK048oyPcmctT9Dc=
 
 snapdragon-node@^2.0.1:
   version "2.1.1"

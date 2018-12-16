@@ -12,43 +12,74 @@ import _ from "lodash";
 
 import { withNavigation } from "react-navigation";
 import { Entypo } from "@expo/vector-icons";
+import { WIDTH } from "./Constants";
+import EventList from "./InfoEventList";
 
 import * as Events from "./store/events";
 
 class ImageGallery extends Component {
   shouldComponentUpdate(next) {
-    return next.doc._id !== this.props.doc._id;
+    return (
+      next.doc._id !== this.props.doc._id ||
+      next.paddingTop !== this.props.paddingTop
+    );
   }
 
   _renderItem = ({ item }) => {
-    const { height, set, navigation, disabled, doc } = this.props;
+    const {
+      height,
+      set,
+      navigation,
+      disabled,
+      doc,
+      horizontal = true
+    } = this.props;
+
     const { url: uri, height: imageHeight, width } = item;
 
     const source = {
       uri
     };
 
-    const imageWidth = (height / imageHeight) * width;
+    if (horizontal) {
+      const imageWidth = (height / imageHeight) * width;
 
-    return (
-      <TouchableWithoutFeedback
-        disabled={disabled}
-        onPress={() => {
-          set({
-            selectedEvent: {
-              data: doc
-            }
-          });
-          navigation.navigate("Info");
-        }}
-      >
+      return (
+        <TouchableWithoutFeedback
+          disabled={disabled}
+          onPress={() => {
+            set({
+              selectedEvent: {
+                data: doc
+              }
+            });
+            navigation.navigate("Info");
+          }}
+        >
+          <Image
+            key={uri}
+            source={source}
+            style={[styles.image, { width: imageWidth, height }]}
+          />
+        </TouchableWithoutFeedback>
+      );
+    } else if (uri === "spacer") {
+      return (
+        <View style={styles.info}>
+          <EventList placeid={doc._source.placeid} />
+        </View>
+      );
+    } else {
+      const height = (WIDTH / width) * imageHeight;
+
+      return (
         <Image
           key={uri}
           source={source}
-          style={[styles.image, { width: imageWidth, height }]}
+          style={[styles.vImage, { width: WIDTH, height }]}
         />
-      </TouchableWithoutFeedback>
-    );
+      );
+    }
   };
 
   render() {
@@ -57,7 +88,9 @@ class ImageGallery extends Component {
       height,
       narrow,
       disabled,
-      backgroundColor = "#f2f2f2"
+      backgroundColor = "#f2f2f2",
+      horizontal = true,
+      paddingTop
     } = this.props;
 
     const { _source: item } = doc;
@@ -70,37 +103,63 @@ class ImageGallery extends Component {
       .shuffle()
       .value();
 
+    const spacer = { url: "spacer" };
+
     let data = [];
 
     let i = 0;
 
     while (i < 50) {
-      data = [...data, ...photos];
+      if (horizontal) {
+        data = [...data, ...photos];
+      } else {
+        data = [...data, spacer, ...photos];
+      }
       i++;
     }
 
-    const imagesStyle = {
-      height,
-      backgroundColor
-    };
+    if (horizontal) {
+      const imagesStyle = {
+        height,
+        backgroundColor
+      };
 
-    return (
-      <View>
-        <View style={imagesStyle} horizontal>
-          <View style={touchableStyle}>
-            <FlatList
-              style={touchableStyle}
-              data={data}
-              renderItem={this._renderItem}
-              keyExtractor={(item, i) => item.url + i}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-            />
+      return (
+        <View>
+          <View style={imagesStyle}>
+            <View style={touchableStyle}>
+              <FlatList
+                horizontal
+                style={touchableStyle}
+                data={data}
+                renderItem={this._renderItem}
+                keyExtractor={(item, i) => item.url + i}
+                showsHorizontalScrollIndicator={false}
+              />
+            </View>
           </View>
+          <Icon disabled={disabled} narrow={narrow} />
         </View>
-        <Icon disabled={disabled} narrow={narrow} />
-      </View>
-    );
+      );
+    } else {
+      if (paddingTop === null) {
+        return null;
+      }
+
+      const containerStyle = {
+        paddingTop
+      };
+      return (
+        <FlatList
+          style={styles.vList}
+          contentContainerStyle={containerStyle}
+          data={data}
+          renderItem={this._renderItem}
+          keyExtractor={(item, i) => item.url + i}
+          showsVerticalScrollIndicator={false}
+        />
+      );
+    }
   }
 }
 
@@ -129,6 +188,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#e0e0e0",
     marginRight: 2
   },
+  vImage: {
+    resizeMode: "contain",
+    backgroundColor: "#e0e0e0",
+    marginBottom: 2
+  },
   action: {
     position: "absolute",
     bottom: 6,
@@ -144,5 +208,14 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     fontWeight: "600",
     color: "#fff"
+  },
+  vList: {
+    flex: 1
+  },
+  info: {
+    backgroundColor: "#fff",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    marginBottom: 2
   }
 });

@@ -8,21 +8,20 @@ import {
 } from "react-native";
 import { MapView } from "expo";
 import { connect } from "react-redux";
-import GallerySwiper from "react-native-gallery-swiper";
-import EventList from "./InfoEventList";
+import ImageGallery from "./ImageGallery.ios";
 import { INITIAL_REGION, ANDROID, HEIGHT, IOS, SafeArea } from "./Constants";
 import MapMarker from "./MapMarker";
 import LocateButton from "./MapLocateButton";
 import emitter from "tiny-emitter/instance";
 import { Constants } from "expo";
 import locate from "./Locate";
-import InfoBackButton from "./InfoBackButton";
 
 class InfoScreen extends Component {
   static mapId = "infoScreen";
 
   state = {
-    loading: true
+    loading: true,
+    listTop: null
   };
 
   componentDidMount() {
@@ -109,7 +108,7 @@ class InfoScreen extends Component {
     });
   };
 
-  _renderInfo = () => {
+  _renderMap = () => {
     const {
       event: { data },
       authorized
@@ -149,38 +148,62 @@ class InfoScreen extends Component {
 
   _focusedAnnotation = false;
 
+  _onHeaderLayout = e => {
+    const {
+      nativeEvent: {
+        layout: { y, height }
+      }
+    } = e;
+
+    const listTop = y + height;
+
+    console.log({
+      listTop
+    });
+
+    this.setState({
+      listTop
+    });
+  };
+
   render() {
     const {
       event: { data }
     } = this.props;
 
-    const { _source: item } = data;
-    const galleryHeight = HEIGHT * 0.65;
+    const item = data._source;
+
+    const sort = data.sort;
+
+    let distanceText = "";
+
+    if (sort && sort[0]) {
+      distanceText = `${sort[0].toFixed(1)} miles`;
+    }
+
     return (
       <View style={styles.container}>
-        <SafeArea>
-          <View style={styles.info}>
-            {ANDROID && this.state.loading ? null : (
-              <GallerySwiper
-                style={{ flex: 1, backgroundColor: "black" }}
-                images={item.photos.map(photo => {
-                  const { url: uri, height, width } = photo;
-
-                  const source = {
-                    uri,
-                    dimensions: {
-                      height,
-                      width
-                    }
-                  };
-
-                  return source;
-                })}
-              />
-            )}
+        <View style={styles.info}>
+          {ANDROID && this.state.loading ? null : (
+            <ImageGallery
+              paddingTop={this.state.listTop}
+              horizontal={false}
+              disabled
+              doc={data}
+            />
+          )}
+        </View>
+        {this._renderMap()}
+        <SafeArea style={styles.headerContainer}>
+          <View style={styles.header} onLayout={this._onHeaderLayout}>
+            <View>
+              <Text style={styles.locationText}>{item.location}</Text>
+              <Text style={styles.subText}>{item.street}</Text>
+              <Text style={styles.subText}>{item.city}</Text>
+            </View>
+            <Text style={styles.distanceText}>{distanceText}</Text>
           </View>
         </SafeArea>
-        {this._renderInfo()}
       </View>
     );
   }
@@ -198,11 +221,32 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#000"
   },
+  headerContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "rgba(0,0,0,0.6)"
+  },
+  header: {
+    paddingHorizontal: 15,
+    paddingBottom: 10
+  },
+  locationText: {
+    color: "#fff"
+  },
+  subText: {
+    color: "#fff"
+  },
+  distanceText: {
+    color: "#fff"
+  },
   map: {
     flex: 1
   },
   info: {
-    height: HEIGHT * 0.65
+    height: HEIGHT * 0.7,
+    marginBottom: 1
   },
   loading: {
     justifyContent: "center",
