@@ -56,7 +56,7 @@ export default withNavigation(IntroScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#353535"
+    backgroundColor: "#fff"
   },
   instructions: {
     flex: 1,
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     marginTop: 95,
     lineHeight: 28,
     fontSize: 18,
-    color: "#fff",
+    color: "#000",
     textAlign: "center"
   },
   prompts: {
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   subText: {
     lineHeight: 24,
     fontSize: 14,
-    color: "#ccc",
+    color: "#636363",
     textAlign: "center"
   },
   bg: {
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#2FE56E"
   },
   btn: {
-    height: 44,
+    height: 60,
     justifyContent: "center",
     alignItems: "center"
   },

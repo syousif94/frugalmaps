@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { MapView } from "expo";
 import { connect } from "react-redux";
-import ImageGallery from "./ImageGallery";
+import GallerySwiper from "react-native-gallery-swiper";
 import EventList from "./InfoEventList";
 import { INITIAL_REGION, ANDROID, HEIGHT, IOS, SafeArea } from "./Constants";
 import MapMarker from "./MapMarker";
@@ -37,9 +37,9 @@ class InfoScreen extends Component {
       }, 150);
     }
 
-    // if (IOS) {
-    //   StatusBar.setBarStyle("light-content");
-    // }
+    if (IOS) {
+      StatusBar.setBarStyle("light-content");
+    }
 
     emitter.on(InfoScreen.mapId, this._showLocation);
   }
@@ -51,9 +51,9 @@ class InfoScreen extends Component {
 
     emitter.off(InfoScreen.mapId, this._showLocation);
 
-    // if (IOS) {
-    //   StatusBar.setBarStyle("dark-content");
-    // }
+    if (IOS) {
+      StatusBar.setBarStyle("dark-content");
+    }
   }
 
   _showLocation = async () => {
@@ -127,9 +127,6 @@ class InfoScreen extends Component {
 
     return (
       <View style={styles.map}>
-        <View style={{ height: 44 }}>
-          <InfoBackButton />
-        </View>
         <View style={styles.map}>
           {ANDROID && this.state.loading ? null : (
             <MapView
@@ -164,7 +161,22 @@ class InfoScreen extends Component {
         <SafeArea>
           <View style={styles.info}>
             {ANDROID && this.state.loading ? null : (
-              <ImageGallery doc={data} disabled height={galleryHeight} />
+              <GallerySwiper
+                style={{ flex: 1, backgroundColor: "black" }}
+                images={item.photos.map(photo => {
+                  const { url: uri, height, width } = photo;
+
+                  const source = {
+                    uri,
+                    dimensions: {
+                      height,
+                      width
+                    }
+                  };
+
+                  return source;
+                })}
+              />
             )}
           </View>
         </SafeArea>
@@ -184,7 +196,7 @@ export default connect(mapStateToProps)(InfoScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
+    backgroundColor: "#000"
   },
   map: {
     flex: 1
@@ -195,15 +207,5 @@ const styles = StyleSheet.create({
   loading: {
     justifyContent: "center",
     alignItems: "center"
-  },
-  locationText: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#fff"
-  },
-  infoText: {
-    marginTop: 3,
-    color: "#444",
-    fontSize: 12
   }
 });

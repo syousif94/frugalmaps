@@ -6,6 +6,43 @@ import { RED } from "./Colors";
 
 export default class CalendarListHeader extends Component {
   static height = 36;
+
+  state = {
+    now: null
+  };
+
+  _shouldTick = () => {
+    const { away, title } = this.props.section;
+    return away === 0 && title !== "Closest";
+  };
+
+  componentDidMount() {
+    if (this._shouldTick()) {
+      this._interval = setInterval(() => {
+        this.setState({
+          now: moment().format("h:mm:ss a")
+        });
+      }, 500);
+    }
+  }
+
+  componentDidUpdate() {
+    if (this._shouldTick() && !this._interval) {
+      this._interval = setInterval(() => {
+        this.setState({
+          now: moment().format("h:mm:ss a")
+        });
+      }, 500);
+    } else if (this._interval && !this._shouldTick()) {
+      clearInterval(this._interval);
+      this._interval = null;
+    }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this._interval);
+  }
+
   render() {
     const { section } = this.props;
 
@@ -25,6 +62,8 @@ export default class CalendarListHeader extends Component {
     if (section.title === "Closest") {
       const today = moment().format("dddd, MMMM Do Y");
       relativeText = `${today}`;
+    } else if (this.state.now) {
+      relativeText = this.state.now;
     }
 
     return (
