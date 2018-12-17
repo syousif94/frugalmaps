@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { MapView } from "expo";
 import { connect } from "react-redux";
-import ImageGallery from "./ImageGallery.ios";
+import ImageGallery from "./ImageGallery";
 import { INITIAL_REGION, ANDROID, HEIGHT, IOS, SafeArea } from "./Constants";
 import MapMarker from "./MapMarker";
 import LocateButton from "./MapLocateButton";

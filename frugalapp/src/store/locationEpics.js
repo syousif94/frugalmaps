@@ -42,8 +42,8 @@ const completions = (action$, store) =>
   action$
     .ofType(Location.types.set)
     .filter(action => action.payload.text && action.payload.text.length)
-    .debounceTime(15)
-    .switchMap(action =>
+    .debounceTime(50)
+    .mergeMap(action =>
       Observable.defer(async () => {
         try {
           const text = action.payload.text;
@@ -64,8 +64,10 @@ const completions = (action$, store) =>
             query
           });
 
+          const completions = res.values.filter(val => val && val.name);
+
           return Location.actions.set({
-            completions: res.values
+            completions
           });
         } catch (error) {
           console.log({ completions: error });
@@ -101,14 +103,14 @@ const suggestions = (action$, store) =>
           if (res.nearby && res.nearby.length) {
             suggestions.push({
               title: "Closest",
-              data: res.nearby
+              data: res.nearby.filter(val => val && val._source.name)
             });
           }
 
           if (res.popular && res.popular.length) {
             suggestions.push({
               title: "Popular",
-              data: res.popular
+              data: res.popular.filter(val => val && val._source.name)
             });
           }
 

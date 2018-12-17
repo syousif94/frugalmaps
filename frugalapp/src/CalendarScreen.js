@@ -14,7 +14,7 @@ import { FacebookAds } from "expo";
 import Item from "./CalendarItem";
 import LocationBox from "./LocationBox";
 import Header from "./CalendarListHeader";
-import LocationList from "./LocationList";
+import LocationLists from "./LocationLists";
 import CalendarEmpty from "./CalendarEmpty";
 import SearchButton from "./SearchButton";
 import * as Events from "./store/events";
@@ -148,7 +148,7 @@ class CalendarScreen extends Component {
         />
         {this._renderInitial()}
         <SearchButton id={CalendarScreen.id} />
-        <LocationList id={CalendarScreen.id} />
+        <LocationLists id={CalendarScreen.id} />
       </View>
     );
   }

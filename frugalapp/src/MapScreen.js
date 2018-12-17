@@ -11,7 +11,7 @@ import { INITIAL_REGION, ANDROID } from "./Constants";
 import * as Location from "./store/location";
 import * as Events from "./store/events";
 import LocationBox from "./LocationBox";
-import LocationList from "./LocationList";
+import LocationLists from "./LocationLists";
 import LocateMe from "./MapLocateButton";
 import MapMarker from "./MapMarker";
 import MapLoading from "./MapLoading";
@@ -204,7 +204,7 @@ class MapScreen extends Component {
         </View>
         {/* <LocateMe mapId={MapScreen.mapId} /> */}
         <SearchButton id={MapScreen.searchId} />
-        <LocationList id={MapScreen.searchId} />
+        <LocationLists id={MapScreen.searchId} />
       </View>
     );
   }

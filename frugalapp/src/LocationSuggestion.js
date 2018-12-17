@@ -78,16 +78,16 @@ class LocationSuggestion extends Component {
   render() {
     const { item, index, section } = this.props;
 
-    let name = "";
+    let name = `${index + 1}. `;
 
     let addressText = "";
 
     if (section && section.title !== "Autocomplete") {
       const [city, state] = item._source.name.split(", ");
-      name = city;
+      name += city;
       addressText = state;
     } else {
-      name = item.name;
+      name += item.name;
 
       const area = item.address_components.find(
         component => component.types.indexOf("administrative_area_level_1") > -1

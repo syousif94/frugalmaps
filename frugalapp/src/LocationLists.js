@@ -15,7 +15,7 @@ import LocationListBar from "./LocationListBar";
 import { IOS, ANDROID } from "./Constants";
 import LocationListHeader from "./LocationListHeader";
 
-class LocationList extends Component {
+class LocationLists extends Component {
   state = {
     keyboardHeight: 0
   };
@@ -151,7 +151,7 @@ const mapStateToProps = state => ({
   text: state.location.text
 });
 
-export default connect(mapStateToProps)(LocationList);
+export default connect(mapStateToProps)(LocationLists);
 
 const styles = StyleSheet.create({
   container: {

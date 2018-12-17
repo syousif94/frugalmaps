@@ -5,7 +5,6 @@ import { Entypo } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import * as Location from "./store/location";
 import emitter from "tiny-emitter/instance";
-import moment from "moment";
 import { SafeArea as Container, ANDROID } from "./Constants";
 
 class LocationBox extends Component {
@@ -75,9 +74,6 @@ class LocationBox extends Component {
         4
       )} to ${southwest.lat.toFixed(4)}, ${northeast.lng.toFixed(4)}`;
     }
-
-    const today = moment();
-    const day = today.format("dddd");
 
     return (
       <Container style={styles.container}>
