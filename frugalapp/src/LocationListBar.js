@@ -1,7 +1,22 @@
 import React, { PureComponent } from "react";
 import { Animated, View, StyleSheet, TouchableOpacity } from "react-native";
+import emitter from "tiny-emitter/instance";
 
 export default class LocationListBar extends PureComponent {
+  componentDidMount() {
+    emitter.on("show-completions", this._scrollToCompletions);
+  }
+
+  componentWillUnmount() {
+    emitter.off("show-completions", this._scrollToCompletions);
+  }
+
+  _scrollToCompletions = () => {
+    if (this.props.activeTab !== 2) {
+      this.props.goToPage(2);
+    }
+  };
+
   render() {
     const active = "#fff";
     const dim = "rgba(255,255,255,0.4)";

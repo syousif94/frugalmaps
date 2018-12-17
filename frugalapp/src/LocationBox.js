@@ -57,9 +57,13 @@ class LocationBox extends Component {
   };
 
   _onChangeText = text => {
+    const showCompletions = text.length > this.props.text.length;
     this.props.set({
       text
     });
+    if (showCompletions) {
+      emitter.emit("show-completions");
+    }
   };
 
   render() {
