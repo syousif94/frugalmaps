@@ -12,8 +12,8 @@ export default class LocationListBar extends PureComponent {
   }
 
   _scrollToCompletions = () => {
-    if (this.props.activeTab !== 2) {
-      this.props.goToPage(2);
+    if (this.props.activeTab !== 0) {
+      this.props.goToPage(0);
     }
   };
 
