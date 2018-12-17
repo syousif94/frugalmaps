@@ -8,14 +8,14 @@ import emitter from "tiny-emitter/instance";
 
 class LocationSuggestion extends Component {
   _onPress = () => {
-    const { item, section, setLocation, setEvents } = this.props;
+    const { item, type, setLocation, setEvents } = this.props;
 
     let bounds;
     let text;
 
     emitter.emit("calendar-top");
 
-    if (section && section.title !== "Autocomplete") {
+    if (type !== "Autocomplete") {
       bounds = item._source.bounds;
       text = item._source.name;
     } else {
@@ -39,9 +39,9 @@ class LocationSuggestion extends Component {
   };
 
   _renderCount = () => {
-    const { item, section } = this.props;
+    const { item, type } = this.props;
 
-    if (!section || section.title === "Autocomplete") {
+    if (type === "Autocomplete") {
       return null;
     }
 
@@ -57,9 +57,9 @@ class LocationSuggestion extends Component {
   };
 
   _renderDistance = () => {
-    const { item, section } = this.props;
+    const { item, type } = this.props;
 
-    if (!section || section.title === "Autocomplete") {
+    if (type !== "Closest") {
       return null;
     }
 
@@ -76,13 +76,13 @@ class LocationSuggestion extends Component {
   };
 
   render() {
-    const { item, index, section } = this.props;
+    const { item, index, type } = this.props;
 
     let name = `${index + 1}. `;
 
     let addressText = "";
 
-    if (section && section.title !== "Autocomplete") {
+    if (type !== "Autocomplete") {
       const [city, state] = item._source.name.split(", ");
       name += city;
       addressText = state;

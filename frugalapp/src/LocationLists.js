@@ -1,19 +1,12 @@
 import React, { Component } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Keyboard,
-  SectionList,
-  TextInput
-} from "react-native";
+import { View, StyleSheet, Keyboard, TextInput } from "react-native";
 import { connect } from "react-redux";
 import { ScrollableTabView } from "@valdio/react-native-scrollable-tabview";
 
-import LocationSuggestion from "./LocationSuggestion";
 import LocationListBar from "./LocationListBar";
 import { IOS, ANDROID } from "./Constants";
 import LocationListHeader from "./LocationListHeader";
+import LocationList from "./LocationList";
 
 class LocationLists extends Component {
   state = {
@@ -58,49 +51,6 @@ class LocationLists extends Component {
     }
   };
 
-  _renderSectionHeader = data => {
-    return (
-      <View>
-        <View style={styles.sectionHeader} key={data.index}>
-          <Text style={styles.sectionText}>{data.section.title}</Text>
-        </View>
-      </View>
-    );
-  };
-
-  _renderSectionItem = data => (
-    <LocationSuggestion
-      id={this.props.id}
-      {...data}
-      key={data.section.title + data.index}
-    />
-  );
-
-  _renderList = label => {
-    const { completions, suggestions, text } = this.props;
-
-    let data = suggestions;
-
-    if (text && text.length && completions.length) {
-      data = [{ title: "Autocomplete", data: completions }, ...suggestions];
-    }
-
-    return (
-      <SectionList
-        tabLabel={label}
-        style={styles.list}
-        renderItem={this._renderSectionItem}
-        renderSectionHeader={this._renderSectionHeader}
-        ItemSeparatorComponent={() => <View style={styles.divider} />}
-        sections={data}
-        keyExtractor={(item, index) => item + index}
-        keyboardDismissMode="none"
-        keyboardShouldPersistTaps="handled"
-        alwaysBounceVertical
-      />
-    );
-  };
-
   _renderTabBar = () => <LocationListBar />;
 
   render() {
@@ -132,10 +82,11 @@ class LocationLists extends Component {
           contentProps={contentProps}
           showsHorizontalScrollIndicator={false}
           prerenderingSiblingsNumber={1}
+          initialPage={1}
         >
-          {this._renderList("Closest")}
-          {this._renderList("Popular")}
-          {this._renderList("Autocomplete")}
+          <LocationList tabLabel="Closest" id={this.props.id} />
+          <LocationList tabLabel="Popular" id={this.props.id} />
+          <LocationList tabLabel="Autocomplete" id={this.props.id} />
         </ScrollableTabView>
       </View>
     );
@@ -143,12 +94,9 @@ class LocationLists extends Component {
 }
 
 const mapStateToProps = state => ({
-  completions: state.location.completions,
-  suggestions: state.location.suggestions,
   focused: state.location.focused,
   listTop: state.location.listTop,
-  listBottom: state.location.listBottom,
-  text: state.location.text
+  listBottom: state.location.listBottom
 });
 
 export default connect(mapStateToProps)(LocationLists);
@@ -163,23 +111,5 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: "#e0e0e0",
     elevation: 6
-  },
-  list: {
-    flex: 1
-  },
-  divider: {
-    height: 1,
-    backgroundColor: "#e0e0e0"
-  },
-  sectionHeader: {
-    height: 16,
-    backgroundColor: "#B5B5B5",
-    justifyContent: "center",
-    paddingLeft: 10
-  },
-  sectionText: {
-    fontSize: 12,
-    color: "#fff",
-    fontWeight: "600"
   }
 });

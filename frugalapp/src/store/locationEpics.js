@@ -98,24 +98,20 @@ const suggestions = (action$, store) =>
 
           const res = await request;
 
-          const suggestions = [];
+          let popular = [];
+          let closest = [];
 
           if (res.nearby && res.nearby.length) {
-            suggestions.push({
-              title: "Closest",
-              data: res.nearby.filter(val => val && val._source.name)
-            });
+            closest = res.nearby.filter(val => val && val._source.name);
           }
 
           if (res.popular && res.popular.length) {
-            suggestions.push({
-              title: "Popular",
-              data: res.popular.filter(val => val && val._source.name)
-            });
+            popular = res.popular.filter(val => val && val._source.name);
           }
 
           return Location.actions.set({
-            suggestions
+            closest,
+            popular
           });
         } catch (error) {
           console.log({ completions: error });

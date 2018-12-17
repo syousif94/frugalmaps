@@ -1,9 +1,29 @@
 import { combineReducers } from "redux";
 import { createActions } from "./lib";
+import { createSelector } from "reselect";
 
 const mutations = ["set", "coordinates", "suggestions", "completions"];
 
 export const { actions, types } = createActions(mutations, "location");
+
+export const makeData = createSelector(
+  (state, props) => props.tabLabel,
+  state => state.location.popular,
+  state => state.location.closest,
+  state => state.location.completions,
+  (type, popular, closest, completions) => {
+    switch (type) {
+      case "Closest":
+        return closest;
+      case "Popular":
+        return popular;
+      case "Autocomplete":
+        return completions;
+      default:
+        break;
+    }
+  }
+);
 
 function coordinates(state = null, { type, payload }) {
   switch (type) {
@@ -89,11 +109,23 @@ function bounds(state = null, { type, payload }) {
   }
 }
 
-function suggestions(state = [], { type, payload }) {
+function closest(state = [], { type, payload }) {
   switch (type) {
     case types.set:
-      if (payload.suggestions !== undefined) {
-        return payload.suggestions;
+      if (payload.closest !== undefined) {
+        return payload.closest;
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
+function popular(state = [], { type, payload }) {
+  switch (type) {
+    case types.set:
+      if (payload.popular !== undefined) {
+        return payload.popular;
       }
       return state;
     default:
@@ -131,7 +163,8 @@ export default combineReducers({
   focused,
   text,
   bounds,
-  suggestions,
+  popular,
+  closest,
   completions,
   listBottom,
   authorized,
