@@ -5,8 +5,9 @@ import { ScrollableTabView } from "@valdio/react-native-scrollable-tabview";
 
 import LocationListBar from "./LocationListBar";
 import { IOS, ANDROID } from "./Constants";
-import LocationListHeader from "./LocationListHeader";
+import LocationListFooter from "./LocationListFooter";
 import LocationList from "./LocationList";
+import { MapView } from "expo";
 
 class LocationLists extends Component {
   state = {
@@ -76,18 +77,21 @@ class LocationLists extends Component {
         {...{ pointerEvents }}
         style={[styles.container, { top: listTop, paddingBottom, opacity }]}
       >
-        <LocationListHeader id={id} />
-        <ScrollableTabView
-          renderTabBar={this._renderTabBar}
-          contentProps={contentProps}
-          showsHorizontalScrollIndicator={false}
-          prerenderingSiblingsNumber={1}
-          initialPage={1}
-        >
-          <LocationList tabLabel="Autocomplete" id={this.props.id} />
-          <LocationList tabLabel="Popular" id={this.props.id} />
-          <LocationList tabLabel="Closest" id={this.props.id} />
-        </ScrollableTabView>
+        <MapView pointerEvents="none" style={styles.map} showsUserLocation />
+        <View style={styles.lists}>
+          <ScrollableTabView
+            renderTabBar={this._renderTabBar}
+            contentProps={contentProps}
+            showsHorizontalScrollIndicator={false}
+            prerenderingSiblingsNumber={1}
+            initialPage={1}
+          >
+            <LocationList tabLabel="Autocomplete" id={this.props.id} />
+            <LocationList tabLabel="Popular" id={this.props.id} />
+            <LocationList tabLabel="Closest" id={this.props.id} />
+          </ScrollableTabView>
+          <LocationListFooter id={id} />
+        </View>
       </View>
     );
   }
@@ -111,5 +115,11 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: "#e0e0e0",
     elevation: 6
+  },
+  map: {
+    height: 120
+  },
+  lists: {
+    flex: 1
   }
 });

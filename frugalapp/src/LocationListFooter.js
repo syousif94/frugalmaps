@@ -1,14 +1,14 @@
 import React, { PureComponent } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
-import { MapView } from "expo";
 import { FontAwesome, Entypo } from "@expo/vector-icons";
 import emitter from "tiny-emitter/instance";
 
 import * as Location from "./store/location";
 import * as Events from "./store/events";
 
-class LocationListHeader extends PureComponent {
+class LocationListFooter extends PureComponent {
+  static height = 38;
   _onClosest = () => {
     emitter.emit("calendar-top");
     this.props.setEvents({
@@ -30,34 +30,25 @@ class LocationListHeader extends PureComponent {
     const closeStyle = { paddingLeft: 12 };
     const newStyle = { paddingLeft: 10, paddingTop: 2 };
     return (
-      <View style={styles.map}>
-        <MapView pointerEvents="none" style={styles.map} showsUserLocation />
-        <View style={styles.header}>
-          <View style={styles.headerBtnBg}>
-            <TouchableOpacity onPress={this._onNewest} style={styles.headerBtn}>
-              <View
-                style={[styles.headerBtnIcon, newStyle]}
-                pointerEvents="none"
-              >
-                <Entypo name="new" size={17} color="#fff" />
-              </View>
-              <Text style={styles.headerBtnText}>Newest</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.headerBtnBg}>
-            <TouchableOpacity
-              onPress={this._onClosest}
-              style={styles.headerBtn}
+      <View style={styles.footer} pointerEvents="box-none">
+        <View style={styles.footerBtnBg}>
+          <TouchableOpacity onPress={this._onNewest} style={styles.footerBtn}>
+            <View style={[styles.footerBtnIcon, newStyle]} pointerEvents="none">
+              <Entypo name="new" size={17} color="#fff" />
+            </View>
+            <Text style={styles.footerBtnText}>Newest</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.footerBtnBg}>
+          <TouchableOpacity onPress={this._onClosest} style={styles.footerBtn}>
+            <View
+              style={[styles.footerBtnIcon, closeStyle]}
+              pointerEvents="none"
             >
-              <View
-                style={[styles.headerBtnIcon, closeStyle]}
-                pointerEvents="none"
-              >
-                <FontAwesome name="location-arrow" size={14} color="#fff" />
-              </View>
-              <Text style={styles.headerBtnText}>Closest</Text>
-            </TouchableOpacity>
-          </View>
+              <FontAwesome name="location-arrow" size={14} color="#fff" />
+            </View>
+            <Text style={styles.footerBtnText}>Closest</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -72,38 +63,35 @@ const mapDispatchToProps = {
 export default connect(
   null,
   mapDispatchToProps
-)(LocationListHeader);
+)(LocationListFooter);
 
 const styles = StyleSheet.create({
-  map: {
-    height: 120
-  },
-  header: {
+  footer: {
     position: "absolute",
     bottom: 0,
     right: 0,
     left: 0,
-    height: 38,
+    height: LocationListFooter.height,
     flexDirection: "row",
     justifyContent: "space-between",
     padding: 2
   },
-  headerBtnBg: {
+  footerBtnBg: {
     margin: 2,
     borderRadius: 4,
     backgroundColor: "rgba(0,0,0,0.6)"
   },
-  headerBtn: {
+  footerBtn: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "row"
   },
-  headerBtnIcon: {
+  footerBtnIcon: {
     justifyContent: "center",
     alignItems: "center"
   },
-  headerBtnText: {
+  footerBtnText: {
     color: "#fff",
     fontWeight: "600",
     fontSize: 14,

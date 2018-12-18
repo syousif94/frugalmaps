@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import LocationSuggestion from "./LocationSuggestion";
 
 import * as Location from "./store/location";
+import LocationListFooter from "./LocationListFooter";
 
 class LocationList extends Component {
   shouldComponentUpdate(next) {
@@ -23,6 +24,7 @@ class LocationList extends Component {
   render() {
     return (
       <FlatList
+        contentContainerStyle={styles.content}
         style={styles.list}
         renderItem={this._renderItem}
         ItemSeparatorComponent={() => <View style={styles.divider} />}
@@ -49,5 +51,8 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: "#e0e0e0"
+  },
+  content: {
+    paddingBottom: LocationListFooter.height
   }
 });
