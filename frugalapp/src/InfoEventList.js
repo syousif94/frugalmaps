@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { View, StyleSheet, Text } from "react-native";
-import { WIDTH, IOS } from "./Constants";
+import { WIDTH } from "./Constants";
 
 import * as Events from "./store/events";
 import { makeISO, timeRemaining } from "./Time";
 import { BLUE } from "./Constants";
+import MonoText from "./MonoText";
 
 const mapStateToProps = (state, props) => ({
   events: Events.placeEvents(state, props)
@@ -25,24 +26,8 @@ const makeEvents = event => {
 
   if (ending) {
     countdownStyle.push(styles.ending);
-    endingText = ` left`;
+    endingText = " left";
   }
-
-  const remainingText = IOS
-    ? remaining.split("").map((char, index) => {
-        const style = [{ justifyContent: "center" }];
-        if (char !== ":") {
-          style.push({ width: 8.5, alignItems: "center" });
-        } else {
-          style.push({ paddingBottom: 2 });
-        }
-        return (
-          <View key={`${char}${index}`} style={style}>
-            <Text style={countdownStyle}>{char}</Text>
-          </View>
-        );
-      })
-    : remaining;
 
   return (
     <View style={styles.event} key={id}>
@@ -69,17 +54,11 @@ const makeEvents = event => {
                   {hours.hours}{" "}
                   <Text style={styles.durationText}>{duration}hr</Text>
                 </Text>
-                {IOS ? (
-                  <View style={styles.countdown}>
-                    {remainingText}
-                    <Text style={countdownStyle}>{endingText}</Text>
-                  </View>
-                ) : (
-                  <Text style={countdownStyle}>
-                    {remainingText}
-                    {endingText}
-                  </Text>
-                )}
+                <MonoText
+                  text={remaining}
+                  suffix={endingText}
+                  textStyle={countdownStyle}
+                />
               </View>
             </View>
           );
@@ -182,10 +161,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: "#fff",
     fontWeight: "700"
-  },
-  countdown: {
-    flexDirection: "row",
-    alignItems: "center"
   },
   countdownText: {
     color: "#E3210B",

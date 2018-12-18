@@ -5,6 +5,7 @@ import { timeRemaining } from "./Time";
 import { WIDTH } from "./Constants";
 import NotifyButton from "./NotifyButton";
 import EventList from "./InfoEventList";
+import MonoText from "./MonoText";
 
 class CalendarItem extends Component {
   state = {
@@ -43,12 +44,18 @@ class CalendarItem extends Component {
       distanceText = `${sort[0].toFixed(1)} miles`;
     }
 
-    const { remaining, ending } = timeRemaining(item.groupedHours[0], iso);
+    const { remaining, ending, duration } = timeRemaining(
+      item.groupedHours[0],
+      iso
+    );
 
     const countdownStyle = [styles.countdownText];
 
+    let endingText = "";
+
     if (ending) {
       countdownStyle.push(styles.ending);
+      endingText = " left";
     }
 
     let locationText = item.location;
@@ -80,8 +87,17 @@ class CalendarItem extends Component {
                           })}
                         </View>
                         <View style={styles.time}>
-                          <Text style={styles.hourText}>{hours.hours}</Text>
-                          <Text style={countdownStyle}>{remaining}</Text>
+                          <Text style={styles.hourText}>
+                            {hours.hours}{" "}
+                            <Text style={styles.durationText}>
+                              {duration}hr
+                            </Text>
+                          </Text>
+                          <MonoText
+                            text={remaining}
+                            suffix={endingText}
+                            textStyle={countdownStyle}
+                          />
                         </View>
                       </View>
                     );
@@ -165,6 +181,13 @@ const styles = StyleSheet.create({
   hour: {
     flexDirection: "row",
     alignItems: "center"
+  },
+  hourText: {
+    color: "#444",
+    fontSize: 14
+  },
+  durationText: {
+    fontSize: 9
   },
   subText: {
     color: "#444",

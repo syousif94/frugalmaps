@@ -1,15 +1,23 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import moment from "moment";
+import MonoText from "./MonoText";
 
 import { RED } from "./Colors";
 
-export default class CalendarListHeader extends Component {
+export default class CalendarListHeader extends PureComponent {
   static height = 36;
 
-  state = {
-    now: null
-  };
+  constructor(props) {
+    super(props);
+    if (this._shouldTick()) {
+      const time = moment();
+      this.state = {
+        now: time.format("h:mm:ss"),
+        meridian: time.format(" a")
+      };
+    }
+  }
 
   _shouldTick = () => {
     const { away, title } = this.props.section;
@@ -19,8 +27,10 @@ export default class CalendarListHeader extends Component {
   componentDidMount() {
     if (this._shouldTick()) {
       this._interval = setInterval(() => {
+        const time = moment();
         this.setState({
-          now: moment().format("h:mm:ss a")
+          now: time.format("h:mm:ss"),
+          meridian: time.format(" a")
         });
       }, 500);
     }
@@ -48,6 +58,8 @@ export default class CalendarListHeader extends Component {
 
     let relativeText;
 
+    const isClosest = section.title === "Closest";
+
     switch (section.away) {
       case 0:
         relativeText = "Today";
@@ -59,11 +71,9 @@ export default class CalendarListHeader extends Component {
         relativeText = `${section.away} days away`;
     }
 
-    if (section.title === "Closest") {
+    if (isClosest) {
       const today = moment().format("dddd, MMMM Do Y");
       relativeText = `${today}`;
-    } else if (this.state.now) {
-      relativeText = this.state.now;
     }
 
     return (
@@ -71,7 +81,16 @@ export default class CalendarListHeader extends Component {
         <View style={styles.info}>
           <Text style={styles.titleText}>{section.title}</Text>
           <View style={styles.relative}>
-            <Text style={styles.relativeText}>{relativeText}</Text>
+            {isClosest ? (
+              <Text style={styles.relativeText}>{relativeText}</Text>
+            ) : (
+              <MonoText
+                text={this.state.now}
+                textStyle={styles.relativeText}
+                suffix={this.state.meridian}
+                characterWidth={7.5}
+              />
+            )}
           </View>
         </View>
       </View>
