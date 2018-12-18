@@ -27,8 +27,8 @@ class LocationListFooter extends PureComponent {
   };
 
   render() {
-    const closeStyle = { paddingLeft: 12 };
-    const newStyle = { paddingLeft: 10, paddingTop: 2 };
+    const closeStyle = { paddingLeft: 11 };
+    const newStyle = { paddingLeft: 9, paddingTop: 1 };
     return (
       <View style={styles.footer} pointerEvents="box-none">
         <View style={styles.footerBtnBg}>
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     left: 0,
     height: LocationListFooter.height,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     padding: 2
   },
   footerBtnBg: {
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "600",
     fontSize: 14,
-    marginLeft: 8,
+    marginLeft: 10,
     marginRight: 12
   }
 });

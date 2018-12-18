@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { ScrollableTabView } from "@valdio/react-native-scrollable-tabview";
 
 import LocationListBar from "./LocationListBar";
-import { IOS, ANDROID } from "./Constants";
+import { IOS, ANDROID, HEIGHT } from "./Constants";
 import LocationListFooter from "./LocationListFooter";
 import LocationList from "./LocationList";
 import { MapView } from "expo";
@@ -117,7 +117,8 @@ const styles = StyleSheet.create({
     elevation: 6
   },
   map: {
-    height: 120
+    height: HEIGHT * 0.15,
+    maxHeight: 120
   },
   lists: {
     flex: 1

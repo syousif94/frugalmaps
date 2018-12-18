@@ -28,7 +28,7 @@
     "android": {
       "package": "me.syousif.LitCal",
       "adaptiveIcon": {
-        "backgroundColor": "#ffffff",
+        "backgroundColor": "#FF94CD",
         "foregroundImage": "./assets/foreground.png"
       }
     },
