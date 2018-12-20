@@ -27,8 +27,8 @@ class LocationListFooter extends PureComponent {
   };
 
   render() {
-    const closeStyle = { paddingLeft: 11 };
-    const newStyle = { paddingLeft: 9, paddingTop: 1 };
+    const closeStyle = {}; //{ paddingLeft: 11 };
+    const newStyle = {}; //{ paddingLeft: 9, paddingTop: 1 };
     return (
       <View style={styles.footer} pointerEvents="box-none">
         <View style={styles.footerBtnBg}>
@@ -36,7 +36,7 @@ class LocationListFooter extends PureComponent {
             <View style={[styles.footerBtnIcon, newStyle]} pointerEvents="none">
               <Entypo name="new" size={17} color="#fff" />
             </View>
-            <Text style={styles.footerBtnText}>Newest</Text>
+            <Text style={styles.footerBtnText}>Most Recent</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.footerBtnBg}>
@@ -47,7 +47,7 @@ class LocationListFooter extends PureComponent {
             >
               <FontAwesome name="location-arrow" size={14} color="#fff" />
             </View>
-            <Text style={styles.footerBtnText}>Closest</Text>
+            <Text style={styles.footerBtnText}>Current Location</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -73,10 +73,10 @@ const styles = StyleSheet.create({
     left: 0,
     height: LocationListFooter.height,
     flexDirection: "row",
-    justifyContent: "center",
     padding: 2
   },
   footerBtnBg: {
+    flex: 1,
     margin: 2,
     borderRadius: 4,
     backgroundColor: "rgba(0,0,0,0.6)"
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "600",
     fontSize: 14,
-    marginLeft: 10,
-    marginRight: 12
+    marginLeft: 10
+    // marginRight: 12
   }
 });

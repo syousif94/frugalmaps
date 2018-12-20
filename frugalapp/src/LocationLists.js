@@ -86,9 +86,9 @@ class LocationLists extends Component {
             prerenderingSiblingsNumber={1}
             initialPage={1}
           >
-            <LocationList tabLabel="Autocomplete" id={this.props.id} />
             <LocationList tabLabel="Popular" id={this.props.id} />
             <LocationList tabLabel="Closest" id={this.props.id} />
+            <LocationList tabLabel="Autocomplete" id={this.props.id} />
           </ScrollableTabView>
           <LocationListFooter id={id} />
         </View>
