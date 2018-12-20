@@ -11,7 +11,7 @@ import * as Location from "./location";
 import { groupHours } from "../Time";
 import locate from "../Locate";
 
-const makeEvents = hits => {
+const makeEvents = (hits, week = false) => {
   const initial = [
     { title: "Monday", data: [], iso: 1, away: 0 },
     { title: "Tuesday", data: [], iso: 2, away: 0 },
@@ -43,21 +43,23 @@ const makeEvents = hits => {
 
   const todayIndex = initial.findIndex(day => day.iso === today);
 
-  // const todayAndAfter = initial.slice(todayIndex, 7);
+  if (week) {
+    const todayAndAfter = initial.slice(todayIndex, 7);
 
-  // const beforeToday = initial.slice(0, todayIndex);
+    const beforeToday = initial.slice(0, todayIndex);
 
-  return [initial[todayIndex], closest];
+    const days = [...todayAndAfter, ...beforeToday]
+      .map((day, index) => {
+        day.away = index;
+        return day;
+      })
+      // .filter(day => day.data.length)
+      .map((day, index) => ({ ...day, index }));
 
-  // return (
-  //   [...todayAndAfter, ...beforeToday]
-  //     .map((day, index) => {
-  //       day.away = index;
-  //       return day;
-  //     })
-  //     // .filter(day => day.data.length)
-  //     .map((day, index) => ({ ...day, index }))
-  // );
+    return [...days, closest];
+  } else {
+    return [initial[todayIndex], closest];
+  }
 };
 
 const events = (action$, store) =>

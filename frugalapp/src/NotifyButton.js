@@ -3,111 +3,62 @@ import {
   StyleSheet,
   View,
   TouchableOpacity,
-  Linking,
   AsyncStorage,
   Alert
 } from "react-native";
+import Emitter from "tiny-emitter";
 
-import { Notifications, Permissions } from "expo";
+import { toggleEvent } from "./Notifications";
+
 import { Entypo } from "@expo/vector-icons";
 import { RED } from "./Colors";
 
 export default class NotifyButton extends Component {
+  static emitter = new Emitter();
+
   state = {
     notify: false
   };
 
-  _onPress = async () => {
-    const {
-      item: { _id: id, _source: item },
-      section: { iso }
-    } = this.props;
-
-    try {
-      const itemId = `${id}${iso}`;
-
-      const existingNotificationId = await AsyncStorage.getItem(itemId);
-
-      if (existingNotificationId) {
-        await Notifications.cancelScheduledNotificationAsync(
-          existingNotificationId
-        );
-        await AsyncStorage.removeItem(itemId);
-        this.setState({
-          notify: false
-        });
-        return;
-      }
-
-      const { status: askStatus } = await Permissions.getAsync(
-        Permissions.NOTIFICATIONS
-      );
-
-      if (askStatus === "denied") {
-        Alert.alert(
-          "Permission Denied",
-          "To enable notifications, tap Open Settings and then toggle the Notifications switch.",
-          [
-            { text: "Cancel", style: "cancel" },
-            {
-              text: "Open Settings",
-              onPress: () => {
-                Linking.openURL("app-settings:");
-              }
-            }
-          ]
-        );
-      }
-
-      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-
-      if (status !== "granted") {
-        return;
-      }
-
-      const title = `${item.title}`;
-      const body = `${item.location}`;
-
-      const notificationId = await Notifications.scheduleLocalNotificationAsync(
-        {
-          title,
-          body,
-          data: { id, iso }
-        },
-        { time: Date.now() + 3000, repeat: "week" }
-      );
-
-      await AsyncStorage.setItem(itemId, notificationId);
-      this.setState({
-        notify: true
-      });
-    } catch (error) {
-      Alert.alert("Error", error.message);
-    }
-  };
-
   componentDidMount() {
+    NotifyButton.emitter.on("toggled", this._onToggled);
     this._areNotificationsEnabled();
   }
 
+  componentWillUnmount() {
+    NotifyButton.emitter.off("toggled", this._onToggled);
+  }
+
+  _onToggled = id => {
+    if (this.props.event._id !== id) {
+      return;
+    }
+    this._areNotificationsEnabled();
+  };
+
   _areNotificationsEnabled = async () => {
     const {
-      item: { _id: id, _source: item },
-      section: { iso }
+      event: { _id: id, _source: item }
     } = this.props;
 
     try {
-      const existingNotificationId = await AsyncStorage.getItem(`${id}${iso}`);
+      const existingNotificationId = await AsyncStorage.getItem(`${id}`);
 
-      if (existingNotificationId) {
+      if (existingNotificationId && !this.state.notify) {
         this.setState({
           notify: true
         });
+      } else if (!existingNotificationId && this.state.notify) {
+        this.setState({
+          notify: false
+        });
       }
     } catch (error) {
-      this.setState({
-        notify: false
-      });
+      if (this.state.notify) {
+        this.setState({
+          notify: false
+        });
+      }
       Alert.alert("Error", error.message);
     }
   };
@@ -118,6 +69,20 @@ export default class NotifyButton extends Component {
     }
 
     return null;
+  };
+
+  _onPress = async () => {
+    const { event } = this.props;
+
+    const notify = await toggleEvent(event);
+
+    if (notify !== undefined) {
+      this.setState({
+        notify
+      });
+
+      NotifyButton.emitter.emit("toggled", event._id);
+    }
   };
 
   render() {

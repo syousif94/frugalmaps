@@ -103,10 +103,12 @@ class CalendarItem extends Component {
                     );
                   })}
                 </View>
-                <Text style={styles.titleText}>{titleText}</Text>
-                {/* <NotifyButton {...this.props} /> */}
               </View>
-              <Text style={styles.descriptionText}>{item.description}</Text>
+              <View>
+                <Text style={styles.titleText}>{titleText}</Text>
+                <Text style={styles.descriptionText}>{item.description}</Text>
+                <NotifyButton {...{ event: this.props.item }} />
+              </View>
             </View>
           ) : null}
           <View style={styles.location}>

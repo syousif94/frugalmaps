@@ -7,12 +7,13 @@ import * as Events from "./store/events";
 import { makeISO, timeRemaining } from "./Time";
 import { BLUE } from "./Constants";
 import MonoText from "./MonoText";
+import NotifyButton from "./NotifyButton";
 
 const mapStateToProps = (state, props) => ({
   events: Events.placeEvents(state, props)
 });
 
-const makeEvents = event => {
+const renderEvent = event => {
   const { _source: item, _id: id } = event;
   const iso = makeISO(item.days);
   const { remaining, ending, duration } = timeRemaining(
@@ -64,11 +65,15 @@ const makeEvents = event => {
           );
         })}
       </View>
-      <Text style={styles.boldText}>{item.title}</Text>
+      <View>
+        <Text style={styles.boldText}>{item.title}</Text>
 
-      <Text style={[styles.infoText, styles.descriptionText]}>
-        {item.description}
-      </Text>
+        <Text style={[styles.infoText, styles.descriptionText]}>
+          {item.description}
+        </Text>
+
+        <NotifyButton {...{ event }} />
+      </View>
     </View>
   );
 };
@@ -93,7 +98,7 @@ class InfoEventList extends Component {
   render() {
     const item = this.props.events[0]._source;
     return (
-      <View style={styles.content}>{this.props.events.map(makeEvents)}</View>
+      <View style={styles.content}>{this.props.events.map(renderEvent)}</View>
     );
   }
 }
