@@ -211,9 +211,9 @@ const styles = StyleSheet.create({
     paddingLeft: 10
   },
   adText: {
-    fontSize: 10,
-    color: "#000",
-    fontWeight: "500"
+    fontSize: 12,
+    color: "#ccc",
+    fontWeight: "600"
   },
   adContainer: {
     height: 50,

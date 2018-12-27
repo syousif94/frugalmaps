@@ -141,6 +141,18 @@ function calendar(state = [], { type, payload }) {
   }
 }
 
+function queryType(state = null, { type, payload }) {
+  switch (type) {
+    case types.set:
+      if (payload.queryType !== undefined) {
+        return payload.queryType;
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
 function selectedEvent(state = { id: null, data: null }, { type, payload }) {
   switch (type) {
     case types.set:
@@ -167,6 +179,7 @@ function selectedEvent(state = { id: null, data: null }, { type, payload }) {
 }
 
 export default combineReducers({
+  queryType,
   refreshing,
   data,
   calendar,

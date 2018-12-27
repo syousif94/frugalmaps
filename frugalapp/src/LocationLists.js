@@ -2,9 +2,10 @@ import React, { Component } from "react";
 import { View, StyleSheet, Keyboard, TextInput } from "react-native";
 import { connect } from "react-redux";
 import { ScrollableTabView } from "@valdio/react-native-scrollable-tabview";
+import emitter from "tiny-emitter/instance";
 
 import LocationListBar from "./LocationListBar";
-import { IOS, ANDROID, HEIGHT } from "./Constants";
+import { IOS, ANDROID, HEIGHT, INITIAL_REGION } from "./Constants";
 import LocationListFooter from "./LocationListFooter";
 import LocationList from "./LocationList";
 import { MapView } from "expo";
@@ -15,6 +16,9 @@ class LocationLists extends Component {
   };
 
   componentDidMount() {
+    emitter.on("preview-bounds", this._previewBounds);
+    emitter.on("reset-bounds-preview", this._resetRegion);
+
     const show = IOS ? "keyboardWillShow" : "keyboardDidShow";
     this.keyboardWillShowListener = Keyboard.addListener(
       show,
@@ -31,6 +35,8 @@ class LocationLists extends Component {
   }
 
   componentWillUnmount() {
+    emitter.off("preview-bounds", this._previewBounds);
+    emitter.off("reset-bounds-preview", this._resetRegion);
     this.keyboardWillShowListener.remove();
     if (ANDROID) {
       this.keyboardWillHideListener.remove();
@@ -53,6 +59,27 @@ class LocationLists extends Component {
   };
 
   _renderTabBar = () => <LocationListBar />;
+
+  _previewBounds = bounds => {
+    const coords = [
+      {
+        latitude: bounds.northeast.lat,
+        longitude: bounds.northeast.lng
+      },
+      {
+        latitude: bounds.southwest.lat,
+        longitude: bounds.southwest.lng
+      }
+    ];
+
+    this._map.fitToCoordinates(coords);
+  };
+
+  _resetRegion = () => {
+    this._map.animateToRegion(INITIAL_REGION, 0);
+  };
+
+  _setMap = ref => (this._map = ref);
 
   render() {
     const { focused, listTop, listBottom, id } = this.props;
@@ -77,7 +104,13 @@ class LocationLists extends Component {
         {...{ pointerEvents }}
         style={[styles.container, { top: listTop, paddingBottom, opacity }]}
       >
-        <MapView pointerEvents="none" style={styles.map} showsUserLocation />
+        <MapView
+          pointerEvents="none"
+          style={styles.map}
+          showsUserLocation
+          ref={this._setMap}
+          initialRegion={INITIAL_REGION}
+        />
         <View style={styles.lists}>
           <ScrollableTabView
             renderTabBar={this._renderTabBar}

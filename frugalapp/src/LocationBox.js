@@ -86,6 +86,20 @@ class LocationBox extends Component {
     }
   };
 
+  _renderQueryType = () => {
+    const { queryType } = this.props;
+
+    if (!queryType) {
+      return null;
+    }
+
+    return (
+      <View style={styles.queryType}>
+        <Text style={styles.queryTypeText}>{queryType}</Text>
+      </View>
+    );
+  };
+
   render() {
     const { text, focused, refreshing, bounds } = this.props;
 
@@ -123,6 +137,7 @@ class LocationBox extends Component {
               autoCorrect={ANDROID}
             />
           </View>
+          {this._renderQueryType()}
         </View>
         <View style={styles.time} onLayout={this._onLayout}>
           <Text style={styles.relativeText}>{today}</Text>
@@ -142,7 +157,8 @@ const mapStateToProps = state => ({
   lastQuery: state.location.lastQuery,
   bounds: state.location.bounds,
   focused: state.location.focused,
-  refreshing: state.events.refreshing
+  refreshing: state.events.refreshing,
+  queryType: state.events.queryType
 });
 
 const mapDispatchToProps = {
@@ -157,8 +173,6 @@ export default connect(
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff"
-    // borderBottomWidth: 1,
-    // borderColor: "#e0e0e0"
   },
   search: {
     margin: 10,
@@ -169,6 +183,12 @@ const styles = StyleSheet.create({
   searchLine: {
     flexDirection: "row",
     alignItems: "center"
+  },
+  queryType: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0
   },
   input: {
     height: 44,

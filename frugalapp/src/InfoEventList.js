@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     fontWeight: "700"
   },
   countdown: {
-    marginLeft: 2,
+    marginLeft: 5,
     flexDirection: "row",
     alignItems: "center"
   },

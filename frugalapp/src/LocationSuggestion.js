@@ -38,6 +38,30 @@ class LocationSuggestion extends Component {
     emitter.emit("fit-bounds", bounds);
   };
 
+  _resetOnRelease = false;
+
+  _onPressIn = () => {
+    const { item, type } = this.props;
+
+    let bounds;
+
+    if (type !== "Autocomplete") {
+      bounds = item._source.bounds;
+    } else {
+      bounds = item.geometry.viewport;
+    }
+
+    this._resetOnRelease = true;
+    emitter.emit("preview-bounds", bounds);
+  };
+
+  _onPressOut = () => {
+    if (this._resetOnRelease) {
+      this._resetOnRelease = false;
+      emitter.emit("reset-bounds-preview");
+    }
+  };
+
   _renderCount = () => {
     const { item, type } = this.props;
 
@@ -106,7 +130,13 @@ class LocationSuggestion extends Component {
     }
 
     return (
-      <TouchableOpacity style={styles.item} onPress={this._onPress}>
+      <TouchableOpacity
+        style={styles.item}
+        delayLongPress={250}
+        onPress={this._onPress}
+        onLongPress={this._onPressIn}
+        onPressOut={this._onPressOut}
+      >
         <View style={styles.info}>
           <Text style={styles.name}>{name}</Text>
           <Text style={styles.address}>{addressText}</Text>
