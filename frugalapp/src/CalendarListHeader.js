@@ -103,11 +103,11 @@ export default class CalendarListHeader extends PureComponent {
 const styles = StyleSheet.create({
   container: {
     marginBottom: 5,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    height: CalendarListHeader.height
+    backgroundColor: "rgba(0,0,0,0.4)"
   },
   info: {
     paddingHorizontal: 10,
+    paddingVertical: 3,
     flex: 1,
     alignItems: "center",
     flexDirection: "row"
