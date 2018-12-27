@@ -71,7 +71,7 @@ export default connect(mapStateToProps)(MapLoading);
 
 const size = 24;
 const left = 10 + (44 - size) / 2;
-const bottom = left + 1;
+const bottom = left + 28;
 
 const styles = StyleSheet.create({
   container: {
