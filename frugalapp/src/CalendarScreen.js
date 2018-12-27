@@ -91,7 +91,7 @@ class CalendarScreen extends Component {
       return (
         <View style={styles.adView} pointerEvents="box-none">
           <View style={styles.adBanner} pointerEvents="none">
-            <Text style={styles.adText}>Advertisement</Text>
+            <Text style={styles.adText}>Loading Advertisement...</Text>
           </View>
           <View style={styles.adContainer} pointerEvents="box-none">
             <FacebookAds.BannerView
@@ -202,15 +202,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff"
   },
   adBanner: {
-    height: 24,
-    backgroundColor: "#B5B5B5",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 18,
     justifyContent: "center",
     paddingLeft: 10
   },
   adText: {
-    fontSize: 14,
-    color: "#fff",
-    fontWeight: "600"
+    fontSize: 10,
+    color: "#000",
+    fontWeight: "500"
   },
   adContainer: {
     height: 50,

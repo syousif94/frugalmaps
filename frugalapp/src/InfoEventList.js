@@ -56,6 +56,11 @@ const renderEvent = event => {
                   <Text style={styles.durationText}>{duration}hr</Text>
                 </Text>
                 <MonoText
+                  style={{
+                    marginLeft: 2,
+                    flexDirection: "row",
+                    alignItems: "center"
+                  }}
                   text={remaining}
                   suffix={endingText}
                   textStyle={countdownStyle}

@@ -99,7 +99,7 @@ class LocationBox extends Component {
       )} to ${southwest.lat.toFixed(4)}, ${northeast.lng.toFixed(4)}`;
     }
 
-    const today = moment().format("dddd, MMMM Do Y");
+    const today = moment().format("dddd, MMM Do Y");
 
     return (
       <Container style={styles.container}>
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: RED,
-    paddingVertical: 3,
+    height: 28,
     paddingHorizontal: 10
   },
   relativeText: {

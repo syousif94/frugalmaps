@@ -1,12 +1,12 @@
 import React, { PureComponent } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import moment from "moment";
+// import moment from "moment";
 // import MonoText from "./MonoText";
 
 // import { RED } from "./Colors";
 
 export default class CalendarListHeader extends PureComponent {
-  static height = 30;
+  static height = 28;
 
   // constructor(props) {
   //   super(props);
@@ -103,11 +103,11 @@ export default class CalendarListHeader extends PureComponent {
 const styles = StyleSheet.create({
   container: {
     marginBottom: 5,
-    backgroundColor: "rgba(0,0,0,0.4)"
+    backgroundColor: "rgba(90,90,90,0.45)",
+    height: CalendarListHeader.height
   },
   info: {
     paddingHorizontal: 10,
-    paddingVertical: 3,
     flex: 1,
     alignItems: "center",
     flexDirection: "row"
