@@ -56,11 +56,7 @@ const renderEvent = event => {
                   <Text style={styles.durationText}>{duration}hr</Text>
                 </Text>
                 <MonoText
-                  style={{
-                    marginLeft: 2,
-                    flexDirection: "row",
-                    alignItems: "center"
-                  }}
+                  style={styles.countdown}
                   text={remaining}
                   suffix={endingText}
                   textStyle={countdownStyle}
@@ -101,7 +97,6 @@ class InfoEventList extends Component {
   }
 
   render() {
-    const item = this.props.events[0]._source;
     return (
       <View style={styles.content}>{this.props.events.map(renderEvent)}</View>
     );
@@ -171,6 +166,11 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: "#fff",
     fontWeight: "700"
+  },
+  countdown: {
+    marginLeft: 2,
+    flexDirection: "row",
+    alignItems: "center"
   },
   countdownText: {
     color: "#E3210B",
