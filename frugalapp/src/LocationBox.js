@@ -1,21 +1,41 @@
 import React, { Component } from "react";
 import { StyleSheet, TextInput, View, Text } from "react-native";
 import { Entypo } from "@expo/vector-icons";
+import moment from "moment";
+import MonoText from "./MonoText";
 
 import { connect } from "react-redux";
 import * as Location from "./store/location";
 import emitter from "tiny-emitter/instance";
 import { SafeArea as Container, ANDROID } from "./Constants";
+import { RED } from "./Colors";
 
 class LocationBox extends Component {
+  constructor(props) {
+    super(props);
+    const time = moment();
+    this.state = {
+      now: time.format("h:mm:ss"),
+      meridian: time.format(" a")
+    };
+  }
+
   componentDidMount() {
     emitter.on("focus-location-box", this._focus);
     emitter.on("blur-location-box", this._blur);
+    this._interval = setInterval(() => {
+      const time = moment();
+      this.setState({
+        now: time.format("h:mm:ss"),
+        meridian: time.format(" a")
+      });
+    }, 500);
   }
 
   componentWillUnmount() {
     emitter.off("focus-location-box", this._focus);
     emitter.off("blur-location-box", this._blur);
+    clearInterval(this._interval);
   }
 
   _focus = id => {
@@ -37,7 +57,7 @@ class LocationBox extends Component {
       }
     } = e;
 
-    const listTop = y + height + 10;
+    const listTop = y + height;
 
     this.props.set({
       listTop
@@ -79,25 +99,37 @@ class LocationBox extends Component {
       )} to ${southwest.lat.toFixed(4)}, ${northeast.lng.toFixed(4)}`;
     }
 
+    const today = moment().format("dddd, MMMM Do Y");
+
     return (
       <Container style={styles.container}>
-        <View style={styles.search} onLayout={this._onLayout}>
-          <Entypo name="magnifying-glass" size={18} color="#000" />
-          <TextInput
-            ref={ref => (this._input = ref)}
-            placeholder={refreshing ? "Locating..." : "Search cities..."}
-            style={styles.input}
-            placeholderTextColor="#333"
-            returnKeyType="done"
-            onChangeText={this._onChangeText}
-            value={value}
-            onFocus={this._onFocus}
-            onBlur={this._onBlur}
-            autoCapitalize="words"
-            clearButtonMode={focused ? "always" : "never"}
-            underlineColorAndroid="transparent"
-            selectTextOnFocus
-            autoCorrect={ANDROID}
+        <View style={styles.search}>
+          <View style={styles.searchLine}>
+            <Entypo name="magnifying-glass" size={18} color="#000" />
+            <TextInput
+              ref={ref => (this._input = ref)}
+              placeholder={refreshing ? "Locating..." : "Search cities..."}
+              style={styles.input}
+              placeholderTextColor="#333"
+              returnKeyType="done"
+              onChangeText={this._onChangeText}
+              value={value}
+              onFocus={this._onFocus}
+              onBlur={this._onBlur}
+              autoCapitalize="words"
+              clearButtonMode={focused ? "always" : "never"}
+              underlineColorAndroid="transparent"
+              selectTextOnFocus
+              autoCorrect={ANDROID}
+            />
+          </View>
+        </View>
+        <View style={styles.time} onLayout={this._onLayout}>
+          <Text style={styles.relativeText}>{today}</Text>
+          <MonoText
+            text={this.state.now}
+            textStyle={styles.relativeText}
+            suffix={this.state.meridian}
           />
         </View>
       </Container>
@@ -124,17 +156,19 @@ export default connect(
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderColor: "#e0e0e0"
+    backgroundColor: "#fff"
+    // borderBottomWidth: 1,
+    // borderColor: "#e0e0e0"
   },
   search: {
     margin: 10,
     backgroundColor: "#ededed",
     borderRadius: 8,
-    flexDirection: "row",
-    alignItems: "center",
     paddingLeft: 12
+  },
+  searchLine: {
+    flexDirection: "row",
+    alignItems: "center"
   },
   input: {
     height: 44,
@@ -143,5 +177,18 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 12,
     paddingBottom: ANDROID ? 1 : 0
+  },
+  time: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: RED,
+    paddingVertical: 3,
+    paddingHorizontal: 10
+  },
+  relativeText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "600"
   }
 });
