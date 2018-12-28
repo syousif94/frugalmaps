@@ -25,7 +25,8 @@ class LocationSuggestion extends Component {
 
     setEvents({
       refreshing: true,
-      bounds
+      bounds,
+      queryType: "City"
     });
 
     setLocation({

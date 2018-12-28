@@ -12,7 +12,8 @@ class LocationListFooter extends PureComponent {
   _onClosest = () => {
     emitter.emit("calendar-top");
     this.props.setEvents({
-      refreshing: true
+      refreshing: true,
+      queryType: null
     });
     emitter.emit("blur-location-box", this.props.id);
   };
@@ -21,7 +22,8 @@ class LocationListFooter extends PureComponent {
     emitter.emit("calendar-top");
     this.props.setEvents({
       refreshing: true,
-      recent: true
+      recent: true,
+      queryType: null
     });
     emitter.emit("blur-location-box", this.props.id);
   };

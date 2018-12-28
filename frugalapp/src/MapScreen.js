@@ -140,7 +140,8 @@ class MapScreen extends Component {
       });
       this.props.setEvents({
         refreshing: true,
-        bounds
+        bounds,
+        queryType: null
       });
     }
   };

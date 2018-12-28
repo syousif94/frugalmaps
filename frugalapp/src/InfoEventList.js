@@ -8,6 +8,7 @@ import { makeISO, timeRemaining } from "./Time";
 import { BLUE } from "./Constants";
 import MonoText from "./MonoText";
 import NotifyButton from "./NotifyButton";
+import { GREEN } from "./Colors";
 
 const mapStateToProps = (state, props) => ({
   events: Events.placeEvents(state, props)
@@ -156,7 +157,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 3,
     paddingVertical: 2,
     borderRadius: 3,
-    backgroundColor: "#18AB2E",
+    backgroundColor: GREEN,
     marginRight: 2
   },
   today: {
@@ -177,6 +178,6 @@ const styles = StyleSheet.create({
     fontSize: 14
   },
   ending: {
-    color: "#18AB2E"
+    color: GREEN
   }
 });

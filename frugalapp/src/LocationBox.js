@@ -8,7 +8,7 @@ import { connect } from "react-redux";
 import * as Location from "./store/location";
 import emitter from "tiny-emitter/instance";
 import { SafeArea as Container, ANDROID } from "./Constants";
-import { RED } from "./Colors";
+import { RED, BLUE, GREEN } from "./Colors";
 
 class LocationBox extends Component {
   constructor(props) {
@@ -93,9 +93,14 @@ class LocationBox extends Component {
       return null;
     }
 
+    const bg = {
+      backgroundColor: "#6C7B80"
+    };
     return (
-      <View style={styles.queryType}>
-        <Text style={styles.queryTypeText}>{queryType}</Text>
+      <View style={styles.queryTypeBox}>
+        <View style={[styles.queryType, bg]}>
+          <Text style={styles.queryTypeText}>{queryType}</Text>
+        </View>
       </View>
     );
   };
@@ -184,11 +189,26 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center"
   },
-  queryType: {
+  queryTypeBox: {
     position: "absolute",
     top: 0,
     right: 0,
-    bottom: 0
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  queryType: {
+    marginRight: 10,
+    borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 6,
+    paddingVertical: 3
+  },
+  queryTypeText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#fff"
   },
   input: {
     height: 44,

@@ -73,7 +73,7 @@ export function createDate(time, iso, start) {
   return date;
 }
 
-function dayToISO(day) {
+export function dayToISO(day) {
   return ISO_DAYS[day];
 }
 
