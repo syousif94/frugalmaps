@@ -25,7 +25,7 @@ class RestaurantPicker extends Component {
   constructor(props) {
     super(props);
 
-    this._fetchSuggestions = _.throttle(async text => {
+    this._fetchSuggestions = _.debounce(async text => {
       try {
         let query = `input=${text}&types=establishment`;
 
