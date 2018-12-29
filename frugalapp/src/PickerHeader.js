@@ -1,8 +1,16 @@
 import React, { Component } from "react";
 import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import { withNavigation } from "react-navigation";
+import { connect } from "react-redux";
+import * as Submissions from "./store/submissions";
+import RestaurantSuggestion from "./RestaurantSuggestion";
 
-class Footer extends Component {
+const mapStateToProps = state => ({
+  suggestions: Submissions.restaurantSuggestions(state),
+  data: state.submissions.data
+});
+
+class PickerHeader extends Component {
   _onPressPublished = () => {
     this.props.navigation.navigate("Published");
   };
@@ -12,17 +20,19 @@ class Footer extends Component {
   };
 
   render() {
-    const { data } = this.props;
+    const { data, suggestions } = this.props;
     return (
       <View style={styles.container}>
-        {data.length ? <View style={styles.divider} /> : null}
-        <TouchableOpacity style={styles.btn} onPress={this._onPressSubmissions}>
-          <Text style={styles.btnText}>Submissions</Text>
-          <View style={styles.count}>
-            <Text style={styles.countText}>0</Text>
-          </View>
-        </TouchableOpacity>
-        <View style={styles.divider} />
+        {suggestions.map((item, index) => {
+          return (
+            <RestaurantSuggestion
+              item={item}
+              index={index}
+              onPress={this.props.select}
+              key={item.place_id}
+            />
+          );
+        })}
         <TouchableOpacity style={styles.btn} onPress={this._onPressPublished}>
           <Text style={styles.btnText}>Published</Text>
           <View style={styles.count}>
@@ -35,7 +45,7 @@ class Footer extends Component {
   }
 }
 
-export default withNavigation(Footer);
+export default withNavigation(connect(mapStateToProps)(PickerHeader));
 
 const styles = StyleSheet.create({
   container: {

@@ -8,28 +8,59 @@ import * as Submissions from "./submissions";
 const getRestaurants = (action$, store) =>
   action$
     .ofType(Submissions.types.set)
-    .filter(action => action.payload.refreshing);
-
-const getSubmissions = (action$, store) =>
-  action$
-    .ofType(Submissions.types.set)
-    .filter(action => action.payload.refreshing)
-    .flatMap(action =>
+    .filter(({ payload: { filter } }) => filter && filter.length)
+    .debounceTime(50)
+    .mergeMap(action =>
       Observable.defer(async () => {
-        const payload = {};
+        try {
+          const text = action.payload.filter;
 
-        const res = await api("save-event", payload);
+          let query = `input=${text}&types=establishment`;
 
-        return { res };
+          const {
+            location: { coordinates }
+          } = store.getState();
+
+          if (coordinates) {
+            const { latitude, longitude } = coordinates;
+            const locationQuery = `&location=${latitude},${longitude}&radius=10000`;
+            query = `${query}${locationQuery}`;
+          }
+
+          const res = await api("places/suggest", {
+            query
+          });
+
+          return Submissions.actions.set({
+            restaurants: res.values
+          });
+        } catch (error) {
+          console.log({ completions: error });
+        }
       })
-        .retry(2)
-        .switchMap(({ res }) => {
-          return Observable.of(Submissions.actions.set({}));
-        })
-        .catch(error => {
-          console.log({ events: error });
-          return Observable.of(Submissions.actions.set({}));
-        })
-    );
+    )
+    .filter(action => action);
 
-export default combineEpics(getSubmissions, getRestaurants);
+// const getSubmissions = (action$, store) =>
+//   action$
+//     .ofType(Submissions.types.set)
+//     .filter(action => action.payload.refreshing)
+//     .flatMap(action =>
+//       Observable.defer(async () => {
+//         const payload = {};
+
+//         const res = await api("save-event", payload);
+
+//         return { res };
+//       })
+//         .retry(2)
+//         .switchMap(({ res }) => {
+//           return Observable.of(Submissions.actions.set({}));
+//         })
+//         .catch(error => {
+//           console.log({ events: error });
+//           return Observable.of(Submissions.actions.set({}));
+//         })
+//     );
+
+export default combineEpics(getRestaurants);

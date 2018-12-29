@@ -162,11 +162,6 @@ class SubmitScreen extends Component {
   };
 
   render() {
-    const pickerProps = {
-      value: this.props.restaurant,
-      onChangeText: this._onChangeText("restaurant"),
-      select: this._selectRestaurant
-    };
     return (
       <View style={styles.container}>
         <Swiper
@@ -185,7 +180,7 @@ class SubmitScreen extends Component {
             ref={ref => {
               this._picker = ref;
             }}
-            {...pickerProps}
+            select={this._selectRestaurant}
           />
           <EditSpecial ref={ref => (this._form = ref)}>
             <PlacePreview place={this.props.place} />

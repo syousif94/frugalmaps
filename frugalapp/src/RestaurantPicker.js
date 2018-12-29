@@ -11,60 +11,34 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
-import api from "./API";
 import { Entypo } from "@expo/vector-icons";
 import RestaurantSuggestion from "./RestaurantSuggestion";
-import Footer from "./PickerHeader";
+import Header from "./PickerHeader";
 import { IOS, ANDROID } from "./Constants";
+import * as Submissions from "./store/submissions";
+
+const mapStateToProps = state => ({
+  value: state.submissions.filter,
+  data: state.submissions.data
+});
+
+const mapDispatchToProps = {
+  set: Submissions.actions.set
+};
 
 class RestaurantPicker extends Component {
   state = {
     data: []
   };
 
-  constructor(props) {
-    super(props);
-
-    this._fetchSuggestions = _.debounce(async text => {
-      try {
-        let query = `input=${text}&types=establishment`;
-
-        if (this.props.location) {
-          const { longitude, latitude } = this.props.location;
-          const locationQuery = `&location=${latitude},${longitude}&radius=10000`;
-          query = `${query}${locationQuery}`;
-        }
-
-        const res = await api("places/suggest", {
-          query
-        });
-
-        if (this.props.value === "") {
-          return;
-        }
-
-        this.setState({
-          data: res.values
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    }, 50);
-  }
-
   focusInput = () => {
     this._input.focus();
   };
 
   _onChangeText = text => {
-    this.props.onChangeText(text);
-    if (text === "") {
-      this.setState({
-        data: []
-      });
-    } else {
-      this._fetchSuggestions(text);
-    }
+    this.props.set({
+      filter: text
+    });
   };
 
   _renderItem = data => (
@@ -77,10 +51,10 @@ class RestaurantPicker extends Component {
 
   _keyExtractor = (item, index) => item.place_id;
 
-  _renderFooter = () => <Footer data={this.state.data} />;
+  _renderHeader = () => <Header select={this.props.select} />;
 
   render() {
-    const { onChangeText, listBottom, ...props } = this.props;
+    const { value, listBottom, ...props } = this.props;
     const SafeView = IOS ? SafeAreaView : View;
     return (
       <View style={styles.container}>
@@ -92,6 +66,7 @@ class RestaurantPicker extends Component {
             <Entypo name="magnifying-glass" size={18} color="#000" />
             <TextInput
               {...props}
+              value={value}
               ref={ref => (this._input = ref)}
               style={styles.input}
               placeholder="Restaurant"
@@ -108,7 +83,7 @@ class RestaurantPicker extends Component {
         <View style={styles.divider} />
         <KeyboardSpacer>
           <FlatList
-            ListHeaderComponent={this._renderFooter}
+            ListHeaderComponent={this._renderHeader}
             style={styles.list}
             data={this.state.data}
             renderItem={this._renderItem}
@@ -123,10 +98,6 @@ class RestaurantPicker extends Component {
     );
   }
 }
-
-const mapStateToProps = state => ({
-  location: state.location.coordinates
-});
 
 class KeyboardSpacer extends Component {
   state = {
@@ -189,7 +160,7 @@ class KeyboardSpacer extends Component {
 
 export default connect(
   mapStateToProps,
-  null,
+  mapDispatchToProps,
   null,
   { withRef: true }
 )(RestaurantPicker);
