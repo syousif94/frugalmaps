@@ -41,6 +41,21 @@ const getRestaurants = (action$, store) =>
     )
     .filter(action => action);
 
+const suggesting = (action$, store) =>
+  action$
+    .ofType(Submissions.types.set)
+    .filter(({ payload: { filter } }) => filter && filter.length)
+    .switchMap(() =>
+      action$
+        .ofType(Submissions.types.set)
+        .filter(({ payload: { restaurants } }) => restaurants)
+    )
+    .map(() =>
+      Submissions.actions.set({
+        suggesting: false
+      })
+    );
+
 // const getSubmissions = (action$, store) =>
 //   action$
 //     .ofType(Submissions.types.set)
@@ -63,4 +78,4 @@ const getRestaurants = (action$, store) =>
 //         })
 //     );
 
-export default combineEpics(getRestaurants);
+export default combineEpics(getRestaurants, suggesting);

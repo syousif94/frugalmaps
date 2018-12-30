@@ -4,25 +4,42 @@ import {
   View,
   TouchableOpacity,
   AsyncStorage,
-  Alert
+  Alert,
+  Animated
 } from "react-native";
 import Emitter from "tiny-emitter";
 
 import { toggleEvent } from "./Notifications";
 
 import { Entypo } from "@expo/vector-icons";
-import { RED } from "./Colors";
+
+const switchHeight = 10;
+const ballHeight = switchHeight - 4;
+const switchWidth = 18;
+const ballTranslate = switchWidth - 4 - ballHeight;
 
 export default class NotifyButton extends Component {
   static emitter = new Emitter();
 
   state = {
-    notify: false
+    notify: false,
+    toggle: new Animated.Value(0)
   };
 
   componentDidMount() {
     NotifyButton.emitter.on("toggled", this._onToggled);
     this._areNotificationsEnabled();
+  }
+
+  componentDidUpdate(_, previous) {
+    if (previous.notify !== this.state.notify) {
+      const toValue = this.state.notify ? 1 : 0;
+      Animated.timing(
+        this.state.toggle,
+        { duration: 100, toValue },
+        { useNativeDriver: true }
+      ).start();
+    }
   }
 
   componentWillUnmount() {
@@ -63,14 +80,6 @@ export default class NotifyButton extends Component {
     }
   };
 
-  _renderNotificationsEnabled = () => {
-    if (this.state.notify) {
-      return <View style={styles.notificationsEnabled} />;
-    }
-
-    return null;
-  };
-
   _onPress = async () => {
     const { event } = this.props;
 
@@ -86,11 +95,23 @@ export default class NotifyButton extends Component {
   };
 
   render() {
+    const translateX = this.state.toggle.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, ballTranslate]
+    });
+    const transform = [{ translateX }];
+
+    const backgroundColor = this.state.toggle.interpolate({
+      inputRange: [0, 1],
+      outputRange: ["#e0e0e0", "#13BE24"]
+    });
     return (
       <TouchableOpacity style={styles.action} onPress={this._onPress}>
-        <View>
-          <Entypo name="bell" size={16} color="#000" />
-          {this._renderNotificationsEnabled()}
+        <Entypo style={styles.icon} name="bell" size={15} color="#000" />
+        <View style={styles.switch}>
+          <Animated.View
+            style={[styles.switchBall, { transform, backgroundColor }]}
+          />
         </View>
       </TouchableOpacity>
     );
@@ -106,16 +127,27 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     alignItems: "flex-end",
     justifyContent: "center",
-    paddingBottom: 2,
-    paddingRight: 8
+    paddingRight: 8,
+    paddingTop: 5
   },
-  notificationsEnabled: {
-    position: "absolute",
-    top: -3,
-    right: -2,
-    height: 6,
-    width: 6,
-    borderRadius: 3,
-    backgroundColor: RED
+  icon: {
+    marginRight: 2
+  },
+  switch: {
+    height: switchHeight,
+    borderRadius: switchHeight / 2,
+    width: switchWidth,
+    flexDirection: "row",
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    marginTop: 1,
+    padding: 1
+  },
+  switchBall: {
+    height: ballHeight,
+    width: ballHeight,
+    borderRadius: ballHeight / 2
   }
 });

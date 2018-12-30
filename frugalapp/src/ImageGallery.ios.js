@@ -72,11 +72,13 @@ class ImageGallery extends Component {
     } else {
       const height = (WIDTH / width) * imageHeight;
 
+      const backgroundColor = "#444";
+
       return (
         <Image
           key={uri}
           source={source}
-          style={[styles.vImage, { width: WIDTH, height }]}
+          style={[styles.vImage, { width: WIDTH, height, backgroundColor }]}
         />
       );
     }

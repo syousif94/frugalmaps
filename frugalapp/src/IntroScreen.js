@@ -3,6 +3,7 @@ import { View, StyleSheet, Image, TouchableOpacity, Text } from "react-native";
 import { SafeArea, HEIGHT, WIDTH } from "./Constants";
 import { withNavigation } from "react-navigation";
 import { grantLocation, grantNotifications } from "./Permissions";
+import { Entypo } from "@expo/vector-icons";
 
 class IntroScreen extends Component {
   _onPress = async () => {
@@ -16,6 +17,8 @@ class IntroScreen extends Component {
   };
 
   render() {
+    const topInstructionMargin = { marginTop: 165 };
+    const bottomInstructionMargin = { marginTop: 25 };
     return (
       <View style={styles.container}>
         <View style={styles.bg}>
@@ -26,8 +29,12 @@ class IntroScreen extends Component {
           />
         </View>
         <View style={styles.instructions}>
-          <Text style={styles.instructionText}>
+          <Text style={[styles.instructionText, topInstructionMargin]}>
             Buncha is a calendar of fun and affordable stuff to do nearby
+          </Text>
+          <Text style={[styles.instructionText, bottomInstructionMargin]}>
+            Tap on the <Entypo name="bell" size={18} color="#000" />
+            's for reminders
           </Text>
         </View>
         <View style={styles.prompts}>
@@ -64,7 +71,6 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   instructionText: {
-    marginTop: 95,
     lineHeight: 28,
     fontSize: 18,
     color: "#000",

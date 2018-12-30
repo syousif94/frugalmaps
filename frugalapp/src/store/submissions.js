@@ -25,11 +25,29 @@ function filter(state = "", { type, payload }) {
   }
 }
 
+function suggesting(state = false, { type, payload }) {
+  switch (type) {
+    case types.set:
+      if (payload.suggesting !== undefined) {
+        return payload.suggesting;
+      }
+      if (payload.filter && payload.filter.length) {
+        return true;
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
 function restaurants(state = [], { type, payload }) {
   switch (type) {
     case types.set:
       if (payload.restaurants !== undefined) {
         return payload.restaurants;
+      }
+      if (payload.filter && !payload.filter.length) {
+        return [];
       }
       return state;
     default:
@@ -62,6 +80,7 @@ function newData(state = [], { type, payload }) {
 }
 
 export default combineReducers({
+  suggesting,
   filter,
   restaurants,
   data,

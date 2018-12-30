@@ -3,10 +3,10 @@ import { View, Animated, StyleSheet, ActivityIndicator } from "react-native";
 import { connect } from "react-redux";
 
 const mapStateToProps = state => ({
-  refreshing: state.events.refreshing
+  refreshing: state.submissions.suggesting
 });
 
-class MapLoading extends Component {
+class RestaurantSuggesting extends Component {
   state = {
     opacity: new Animated.Value(0),
     loading: false
@@ -23,7 +23,7 @@ class MapLoading extends Component {
       const toValue = 1;
       Animated.timing(
         this.state.opacity,
-        { duration: 150, toValue },
+        { duration: 50, toValue },
         { useNativeDriver: true }
       ).start(this._onLoading);
     }
@@ -44,7 +44,7 @@ class MapLoading extends Component {
       } else {
         this._onLoading();
       }
-    }, 1000);
+    }, 50);
   };
 
   render() {
@@ -67,11 +67,11 @@ class MapLoading extends Component {
   }
 }
 
-export default connect(mapStateToProps)(MapLoading);
+export default connect(mapStateToProps)(RestaurantSuggesting);
 
 const size = 24;
 const left = 10 + (44 - size) / 2;
-const bottom = left + 28;
+const bottom = left + 1;
 
 const styles = StyleSheet.create({
   container: {

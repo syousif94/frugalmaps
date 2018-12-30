@@ -16,6 +16,7 @@ import RestaurantSuggestion from "./RestaurantSuggestion";
 import Header from "./PickerHeader";
 import { IOS, ANDROID } from "./Constants";
 import * as Submissions from "./store/submissions";
+import RestaurantsSuggesting from "./RestaurantsSuggesting";
 
 const mapStateToProps = state => ({
   value: state.submissions.filter,
@@ -79,6 +80,7 @@ class RestaurantPicker extends Component {
               selectTextOnFocus
             />
           </View>
+          <RestaurantsSuggesting />
         </SafeView>
         <View style={styles.divider} />
         <KeyboardSpacer>
