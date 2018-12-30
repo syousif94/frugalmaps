@@ -5,7 +5,7 @@ import { ScrollableTabView } from "@valdio/react-native-scrollable-tabview";
 import emitter from "tiny-emitter/instance";
 
 import LocationListBar from "./LocationListBar";
-import { IOS, ANDROID, HEIGHT, INITIAL_REGION } from "./Constants";
+import { IOS, ANDROID, INITIAL_REGION } from "./Constants";
 import LocationListFooter from "./LocationListFooter";
 import LocationList from "./LocationList";
 import { MapView } from "expo";

@@ -181,6 +181,8 @@ class InfoScreen extends Component {
       distanceText = `${sort[0].toFixed(1)} miles`;
     }
 
+    const streetAddress = item.address.split(",")[0];
+
     return (
       <View style={styles.container}>
         <View style={styles.info}>
@@ -197,11 +199,13 @@ class InfoScreen extends Component {
         <SafeArea style={styles.headerContainer}>
           <View style={styles.header} onLayout={this._onHeaderLayout}>
             <View>
-              <Text style={styles.locationText}>{item.location}</Text>
-              <Text style={styles.subText}>{item.street}</Text>
+              <Text style={styles.locationText}>
+                {item.location}{" "}
+                <Text style={styles.distanceText}>{distanceText}</Text>
+              </Text>
               <Text style={styles.subText}>{item.city}</Text>
+              <Text style={styles.subText}>{streetAddress}</Text>
             </View>
-            <Text style={styles.distanceText}>{distanceText}</Text>
           </View>
         </SafeArea>
       </View>
@@ -233,13 +237,17 @@ const styles = StyleSheet.create({
     paddingBottom: 10
   },
   locationText: {
-    color: "#fff"
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600"
   },
   subText: {
-    color: "#fff"
+    color: "#e0e0e0",
+    fontSize: 12
   },
   distanceText: {
-    color: "#fff"
+    color: "#e0e0e0",
+    fontSize: 12
   },
   map: {
     flex: 1

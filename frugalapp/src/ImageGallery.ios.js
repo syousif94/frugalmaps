@@ -154,6 +154,20 @@ class ImageGallery extends Component {
       return (
         <FlatList
           style={styles.vList}
+          ListHeaderComponent={() => (
+            <View
+              style={{
+                height: 18,
+                backgroundColor: "#999",
+                paddingLeft: 15,
+                justifyContent: "center"
+              }}
+            >
+              <Text style={{ color: "#fff", fontSize: 10, fontWeight: "600" }}>
+                Scroll up to view photos
+              </Text>
+            </View>
+          )}
           contentContainerStyle={containerStyle}
           data={data}
           renderItem={this._renderItem}
