@@ -155,17 +155,8 @@ class ImageGallery extends Component {
         <FlatList
           style={styles.vList}
           ListHeaderComponent={() => (
-            <View
-              style={{
-                height: 18,
-                backgroundColor: "#999",
-                paddingLeft: 15,
-                justifyContent: "center"
-              }}
-            >
-              <Text style={{ color: "#fff", fontSize: 10, fontWeight: "600" }}>
-                Scroll up to view photos
-              </Text>
+            <View style={styles.banner}>
+              <Text style={styles.bannerText}>Scroll up to view photos</Text>
             </View>
           )}
           contentContainerStyle={containerStyle}
@@ -224,6 +215,17 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     fontWeight: "600",
     color: "#fff"
+  },
+  banner: {
+    height: 18,
+    backgroundColor: "#999",
+    paddingLeft: 15,
+    justifyContent: "center"
+  },
+  bannerText: {
+    color: "#fff",
+    fontSize: 10,
+    fontWeight: "600"
   },
   vList: {
     flex: 1
