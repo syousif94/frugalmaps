@@ -110,6 +110,13 @@ class LocationLists extends Component {
           showsUserLocation
           ref={this._setMap}
           initialRegion={INITIAL_REGION}
+          zoomEnabled={false}
+          rotateEnabled={false}
+          scrollEnabled={false}
+          pitchEnabled={false}
+          showsCompass={false}
+          toolbarEnabled={false}
+          showsMyLocationButton={false}
         />
         <View style={styles.lists}>
           <ScrollableTabView
@@ -150,10 +157,9 @@ const styles = StyleSheet.create({
     elevation: 6
   },
   map: {
-    height: HEIGHT * 0.15,
-    maxHeight: 120
+    flex: 1
   },
   lists: {
-    flex: 1
+    flex: 2.5
   }
 });

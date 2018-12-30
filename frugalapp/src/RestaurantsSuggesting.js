@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { View, Animated, StyleSheet, ActivityIndicator } from "react-native";
 import { connect } from "react-redux";
+import { IOS } from "./Constants";
 
 const mapStateToProps = state => ({
   refreshing: state.submissions.suggesting
@@ -58,7 +59,7 @@ class RestaurantSuggesting extends Component {
       <Animated.View style={containerStyle} pointerEvents="none">
         <View style={styles.bg} />
         <ActivityIndicator
-          animating={this.state.loading}
+          animating={IOS ? this.state.loading : true}
           color="#555"
           style={styles.indicator}
         />

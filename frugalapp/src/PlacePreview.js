@@ -53,8 +53,15 @@ export default class PlacePreview extends Component {
         <View style={styles.empty}>
           <MapView
             style={styles.map}
+            zoomEnabled={false}
+            rotateEnabled={false}
+            scrollEnabled={false}
+            pitchEnabled={false}
             pointerEvents="none"
             initialRegion={INITIAL_REGION}
+            showsCompass={false}
+            toolbarEnabled={false}
+            showsMyLocationButton={false}
           />
           <Text style={styles.instruction}>
             Select a restaurant from the previous page first
@@ -73,7 +80,14 @@ export default class PlacePreview extends Component {
         <MapView
           ref={ref => (this._map = ref)}
           style={styles.map}
+          zoomEnabled={false}
+          rotateEnabled={false}
+          scrollEnabled={false}
+          pitchEnabled={false}
           pointerEvents="none"
+          showsCompass={false}
+          toolbarEnabled={false}
+          showsMyLocationButton={false}
         >
           <MapView.Circle
             strokeColor="#fff"
