@@ -4,7 +4,8 @@ import {
   View,
   Text,
   ActivityIndicator,
-  StatusBar
+  StatusBar,
+  ScrollView
 } from "react-native";
 import { MapView } from "expo";
 import { connect } from "react-redux";
@@ -15,6 +16,7 @@ import LocateButton from "./MapLocateButton";
 import emitter from "tiny-emitter/instance";
 import { Constants } from "expo";
 import locate from "./Locate";
+import InfoEventList from "./InfoEventList";
 
 class InfoScreen extends Component {
   static mapId = "infoScreen";
@@ -186,13 +188,24 @@ class InfoScreen extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.info}>
-          {ANDROID && this.state.loading ? null : (
+          {IOS ? (
             <ImageGallery
               paddingTop={this.state.listTop}
               horizontal={false}
               disabled
               doc={data}
             />
+          ) : null}
+          {(ANDROID && this.state.loading) || IOS ? null : (
+            <ScrollView
+              contentContainerStyle={{ paddingTop: this.state.listTop }}
+              style={styles.container}
+            >
+              <ImageGallery height={200} disabled doc={data} />
+              <View style={styles.events}>
+                <InfoEventList placeid={data._source.placeid} />
+              </View>
+            </ScrollView>
           )}
         </View>
         {this._renderMap()}
@@ -251,6 +264,12 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1
+  },
+  events: {
+    marginTop: 1,
+    backgroundColor: "#fff",
+    paddingHorizontal: 15,
+    paddingVertical: 10
   },
   info: {
     height: HEIGHT * 0.7,
