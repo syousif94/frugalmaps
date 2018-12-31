@@ -26,7 +26,7 @@ class CalendarItem extends Component {
 
   render() {
     const {
-      item: { _source: item, sort },
+      item: { _source: item, sort, _id: id },
       section: { data, iso, title },
       index
     } = this.props;
@@ -107,7 +107,7 @@ class CalendarItem extends Component {
               <View>
                 <Text style={styles.titleText}>{titleText}</Text>
                 <Text style={styles.descriptionText}>{item.description}</Text>
-                <NotifyButton {...{ event: this.props.item }} />
+                <NotifyButton {...{ event: this.props.item }} key={id} />
               </View>
             </View>
           ) : null}
