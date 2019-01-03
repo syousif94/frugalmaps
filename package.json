@@ -6,9 +6,10 @@
     "ios": "cd frugalapp && expo build:ios",
     "android": "cd frugalapp && expo build:android",
     "start": "cd frugalapp && expo start",
-    "deploy": "cd functions && node run deploy",
-    "logs": "cd functions && node run logs",
-    "elastic": "cd functions && node run elastic"
+    "deploy": "cd functions && npm run deploy",
+    "server": "cd functions && npm run serve",
+    "logs": "cd functions && npm run logs",
+    "elastic": "cd functions && npm run elastic"
   },
   "private": true
 }

@@ -40,6 +40,37 @@ function suggesting(state = false, { type, payload }) {
   }
 }
 
+function deleteMode(state = false, { type, payload }) {
+  switch (type) {
+    case types.set:
+      if (payload.deleteMode !== undefined) {
+        return payload.deleteMode;
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
+function markedForDeletion(state = [], { type, payload }) {
+  switch (type) {
+    case types.set:
+      if (payload.markedForDeletion !== undefined) {
+        if (state.indexOf(payload.markedForDeletion) !== -1) {
+          return state.filter(id => id !== payload.markedForDeletion);
+        } else {
+          return [payload.markedForDeletion, ...state];
+        }
+      }
+      if (payload.deleteMode === false) {
+        return [];
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
 function restaurants(state = [], { type, payload }) {
   switch (type) {
     case types.set:
@@ -97,5 +128,7 @@ export default combineReducers({
   restaurants,
   refreshing,
   data,
-  newData
+  newData,
+  deleteMode,
+  markedForDeletion
 });

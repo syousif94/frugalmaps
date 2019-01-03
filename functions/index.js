@@ -18,10 +18,13 @@ app.get("/", (req, res) => {
 app.post("/places/suggest", require("./places/suggest"));
 app.post("/places/popular", require("./places/popular"));
 app.post("/places/reverse", require("./places/reverse"));
+app.post("/places/id", require("./places/id"));
 
 app.post("/save-event", require("./saveEvent"));
 app.post("/query-events", require("./queryEvents"));
 app.post("/delete-event", require("./deleteEvent"));
+
+app.post("/delete-submissions", require("./deleteSubmissions"));
 
 app.post("/events/published", require("./events/published"));
 app.post("/events/submissions", require("./events/submissions"));

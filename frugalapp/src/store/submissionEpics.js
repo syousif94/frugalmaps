@@ -5,6 +5,30 @@ import api from "../API";
 
 import * as Submission from "./submission";
 
+const getPlace = action$ =>
+  action$
+    .ofType(Submission.types.set)
+    .filter(action => action.payload.placeid && !action.payload.place)
+    .switchMap(action =>
+      Observable.defer(async () => {
+        const {
+          payload: { placeid }
+        } = action;
+        const payload = {
+          placeid
+        };
+        try {
+          const res = await api("places/id", payload);
+          return Submission.actions.set({
+            place: res.restaurant
+          });
+        } catch (error) {
+          console.log(error);
+        }
+      })
+    )
+    .filter(action => action);
+
 const saveEvent = (action$, store) =>
   action$
     .ofType(Submission.types.set)
@@ -46,6 +70,7 @@ const saveEvent = (action$, store) =>
           return Observable.of(
             Submission.actions.set({
               saving: false,
+              fid: null,
               id: null,
               eventType: null,
               title: "",
@@ -67,4 +92,4 @@ const saveEvent = (action$, store) =>
         })
     );
 
-export default combineEpics(saveEvent);
+export default combineEpics(saveEvent, getPlace);

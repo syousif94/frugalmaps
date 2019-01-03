@@ -84,4 +84,9 @@ const getSubmissions = (action$, store) =>
         })
     );
 
+// const deleteSubmissions = (action$, store) =>
+//   action$
+//     .ofType(Submissions.types.set)
+//     .filter(action => action.payload.refreshing)
+
 export default combineEpics(getRestaurants, suggesting, getSubmissions);

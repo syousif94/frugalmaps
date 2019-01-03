@@ -93,7 +93,9 @@ class SubmitScreen extends Component {
 
   _selectRestaurant = place => {
     this.props.set({
-      place
+      place,
+      id: null,
+      fid: null
     });
     this._form.scrollToTop();
     this._swiper.scrollBy(1, true);
@@ -183,7 +185,7 @@ class SubmitScreen extends Component {
             select={this._selectRestaurant}
           />
           <EditSpecial ref={ref => (this._form = ref)}>
-            <PlacePreview place={this.props.place} />
+            <PlacePreview />
             <Text style={styles.instruction}>Select the days.</Text>
             <DayPicker />
             <Text style={styles.instruction}>

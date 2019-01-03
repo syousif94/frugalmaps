@@ -1,12 +1,19 @@
 import React, { Component } from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { connect } from "react-redux";
 import { RED, BLUE } from "./Colors";
 import { MapView, Linking } from "expo";
 import { INITIAL_REGION } from "./Constants";
 
-export default class PlacePreview extends Component {
+const mapStateToProps = state => ({
+  place: state.submission.place,
+  fid: state.submission.fid
+});
+
+class PlacePreview extends Component {
   componentDidUpdate(previous) {
     const { place } = this.props;
+
     if (place && previous.place !== place) {
       const viewport = place.geometry.viewport;
       const coords = [
@@ -46,7 +53,27 @@ export default class PlacePreview extends Component {
   };
 
   render() {
-    const { place } = this.props;
+    const { place, fid } = this.props;
+
+    if (fid && !place) {
+      return (
+        <View style={styles.loading}>
+          <MapView
+            style={styles.map}
+            zoomEnabled={false}
+            rotateEnabled={false}
+            scrollEnabled={false}
+            pitchEnabled={false}
+            pointerEvents="none"
+            initialRegion={INITIAL_REGION}
+            showsCompass={false}
+            toolbarEnabled={false}
+            showsMyLocationButton={false}
+          />
+          <Text style={styles.instruction}>Fetching restaurant info</Text>
+        </View>
+      );
+    }
 
     if (!place) {
       return (
@@ -110,6 +137,8 @@ export default class PlacePreview extends Component {
   }
 }
 
+export default connect(mapStateToProps)(PlacePreview);
+
 const styles = StyleSheet.create({
   container: {
     margin: 5
@@ -125,6 +154,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     borderRadius: 12,
     backgroundColor: RED,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  loading: {
+    margin: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+    backgroundColor: BLUE,
     justifyContent: "center",
     alignItems: "center"
   },

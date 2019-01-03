@@ -2,15 +2,29 @@ import React, { Component } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { ABBREVIATED_DAYS } from "./Constants";
-import { GREEN } from "./Colors";
+import { GREEN, RED } from "./Colors";
 import * as Submission from "./store/submission";
+import * as Submissions from "./store/submissions";
+
+const mapStateToProps = state => ({
+  deleteMode: state.submissions.deleteMode,
+  marked: state.submissions.markedForDeletion
+});
 
 const mapDispatchToProps = {
-  set: Submission.actions.set
+  setSubmission: Submission.actions.set,
+  setSubmissions: Submissions.actions.set
 };
 
 class SubmissionItem extends Component {
   _onPress = () => {
+    if (this.props.deleteMode) {
+      this.props.setSubmissions({
+        markedForDeletion: this.props.item.id
+      });
+      return;
+    }
+
     const {
       id: fid,
       days = [],
@@ -27,10 +41,34 @@ class SubmissionItem extends Component {
       days: days.map(day => parseInt(day, 10)),
       ...item
     };
-    console.log({ data });
-    this.props.set(data);
+    this.props.setSubmission(data);
   };
-  _onLongPress = () => {};
+
+  _onLongPress = () => {
+    this.props.setSubmissions({
+      deleteMode: !this.props.deleteMode,
+      markedForDeletion: this.props.item.id
+    });
+  };
+
+  _renderDeleteBox = () => {
+    const { item, deleteMode, marked } = this.props;
+
+    if (!deleteMode) {
+      return null;
+    }
+
+    const style = [styles.delete];
+
+    if (marked.indexOf(item.id) !== -1) {
+      style.push(styles.marked);
+    } else {
+      style.push(styles.unmarked);
+    }
+
+    return <View style={style} />;
+  };
+
   render() {
     const { item, index } = this.props;
     const { start, end, type, title, description, placeid, days } = item;
@@ -64,6 +102,7 @@ class SubmissionItem extends Component {
               );
             })}
           </View>
+          {this._renderDeleteBox()}
         </TouchableOpacity>
       </View>
     );
@@ -71,7 +110,7 @@ class SubmissionItem extends Component {
 }
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(SubmissionItem);
 
@@ -100,5 +139,21 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "500",
     color: "#fff"
+  },
+  delete: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    height: 16,
+    width: 16,
+    borderRadius: 8
+  },
+  unmarked: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#e0e0e0"
+  },
+  marked: {
+    backgroundColor: RED
   }
 });
