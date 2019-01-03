@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import _ from "lodash";
 import { connect } from "react-redux";
+import { Entypo } from "@expo/vector-icons";
 import emitter from "tiny-emitter/instance";
 import { FacebookAds } from "expo";
 
@@ -84,6 +85,27 @@ class CalendarScreen extends Component {
     return <CalendarEmpty />;
   };
 
+  _renderFooter = () => {
+    const { initialized, data } = this.props;
+
+    if (!initialized || !data.filter(datum => datum.data.length).length) {
+      return null;
+    }
+
+    return (
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>
+          Buncha gets all of its data from user submissions.
+        </Text>
+        <Text style={[styles.footerText, { marginTop: 6 }]}>
+          If you know of something fun you'd like to share, tap on the{" "}
+          <Entypo name="circle-with-plus" size={12} color="#444" /> Submit tab
+          below.
+        </Text>
+      </View>
+    );
+  };
+
   _renderAd = () => {
     const { initialized } = this.props;
 
@@ -146,6 +168,7 @@ class CalendarScreen extends Component {
           ListEmptyComponent={this._renderEmpty}
           {...androidProps}
           ListHeaderComponent={this._renderAd}
+          ListFooterComponent={this._renderFooter}
         />
         {this._renderInitial()}
         <SearchButton id={CalendarScreen.id} />
@@ -228,5 +251,14 @@ const styles = StyleSheet.create({
   },
   ad: {
     marginTop: IOS ? -20 : 0
+  },
+  footer: {
+    paddingHorizontal: 25
+  },
+  footerText: {
+    textAlign: "center",
+    fontSize: 12,
+    lineHeight: 18,
+    color: "#444"
   }
 });
