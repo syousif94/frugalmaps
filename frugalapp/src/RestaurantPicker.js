@@ -12,15 +12,16 @@ import {
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
 import { Entypo } from "@expo/vector-icons";
-import RestaurantSuggestion from "./RestaurantSuggestion";
 import Header from "./PickerHeader";
 import { IOS, ANDROID } from "./Constants";
 import * as Submissions from "./store/submissions";
 import RestaurantsSuggesting from "./RestaurantsSuggesting";
+import SubmissionItem from "./SubmissionItem";
 
 const mapStateToProps = state => ({
   value: state.submissions.filter,
-  data: state.submissions.data
+  data: state.submissions.data,
+  refreshing: state.submissions.refreshing
 });
 
 const mapDispatchToProps = {
@@ -28,10 +29,9 @@ const mapDispatchToProps = {
 };
 
 class RestaurantPicker extends Component {
-  state = {
-    data: []
-  };
-
+  componentDidMount() {
+    this._onRefresh();
+  }
   focusInput = () => {
     this._input.focus();
   };
@@ -42,20 +42,20 @@ class RestaurantPicker extends Component {
     });
   };
 
-  _renderItem = data => (
-    <RestaurantSuggestion
-      {...data}
-      onPress={this.props.select}
-      key={data.item.place_id}
-    />
-  );
+  _renderItem = data => <SubmissionItem {...data} key={data.item.id} />;
 
-  _keyExtractor = (item, index) => item.place_id;
+  _keyExtractor = (item, index) => item.id + index;
 
   _renderHeader = () => <Header select={this.props.select} />;
 
+  _onRefresh = () => {
+    this.props.set({
+      refreshing: true
+    });
+  };
+
   render() {
-    const { value, listBottom, ...props } = this.props;
+    const { value, listBottom, data, set, ...props } = this.props;
     const SafeView = IOS ? SafeAreaView : View;
     return (
       <View style={styles.container}>
@@ -85,9 +85,11 @@ class RestaurantPicker extends Component {
         <View style={styles.divider} />
         <KeyboardSpacer>
           <FlatList
+            refreshing={this.props.refreshing}
+            onRefresh={this._onRefresh}
             ListHeaderComponent={this._renderHeader}
             style={styles.list}
-            data={this.state.data}
+            data={data}
             renderItem={this._renderItem}
             keyExtractor={this._keyExtractor}
             keyboardDismissMode="none"

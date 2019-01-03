@@ -127,7 +127,7 @@ class SubmitScreen extends Component {
   };
 
   _renderDelete = () => {
-    if (!this.props.id) {
+    if (!this.props.id && !this.props.fid) {
       return null;
     }
 

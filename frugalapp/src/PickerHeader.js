@@ -39,7 +39,7 @@ class PickerHeader extends Component {
             <Text style={styles.countText}>0</Text>
           </View>
         </TouchableOpacity>
-        {!data.length ? <View style={styles.divider} /> : null}
+        <View style={styles.divider} />
       </View>
     );
   }

@@ -59,7 +59,19 @@ function data(state = [], { type, payload }) {
   switch (type) {
     case types.set:
       if (payload.data !== undefined) {
-        return [payload.data, ...state];
+        return payload.data;
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
+function refreshing(state = false, { type, payload }) {
+  switch (type) {
+    case types.set:
+      if (payload.refreshing !== undefined) {
+        return payload.refreshing;
       }
       return state;
     default:
@@ -71,7 +83,7 @@ function newData(state = [], { type, payload }) {
   switch (type) {
     case types.set:
       if (payload.newData !== undefined) {
-        return [payload.newData, ...state];
+        return [...payload.newData, ...state];
       }
       return state;
     default:
@@ -83,6 +95,7 @@ export default combineReducers({
   suggesting,
   filter,
   restaurants,
+  refreshing,
   data,
   newData
 });

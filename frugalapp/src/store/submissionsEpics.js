@@ -56,26 +56,32 @@ const suggesting = (action$, store) =>
       })
     );
 
-// const getSubmissions = (action$, store) =>
-//   action$
-//     .ofType(Submissions.types.set)
-//     .filter(action => action.payload.refreshing)
-//     .flatMap(action =>
-//       Observable.defer(async () => {
-//         const payload = {};
+const getSubmissions = (action$, store) =>
+  action$
+    .ofType(Submissions.types.set)
+    .filter(action => action.payload.refreshing)
+    .flatMap(() =>
+      Observable.defer(async () => {
+        const res = await api("events/submissions");
 
-//         const res = await api("save-event", payload);
+        return { res };
+      })
+        .switchMap(({ res }) => {
+          return Observable.of(
+            Submissions.actions.set({
+              refreshing: false,
+              data: res.submissions
+            })
+          );
+        })
+        .catch(error => {
+          console.log({ events: error });
+          return Observable.of(
+            Submissions.actions.set({
+              refreshing: false
+            })
+          );
+        })
+    );
 
-//         return { res };
-//       })
-//         .retry(2)
-//         .switchMap(({ res }) => {
-//           return Observable.of(Submissions.actions.set({}));
-//         })
-//         .catch(error => {
-//           console.log({ events: error });
-//           return Observable.of(Submissions.actions.set({}));
-//         })
-//     );
-
-export default combineEpics(getRestaurants, suggesting);
+export default combineEpics(getRestaurants, suggesting, getSubmissions);
