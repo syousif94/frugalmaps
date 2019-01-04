@@ -23,16 +23,18 @@ class PickerHeader extends Component {
     const { data, suggestions } = this.props;
     return (
       <View style={styles.container}>
-        {suggestions.map((item, index) => {
-          return (
-            <RestaurantSuggestion
-              item={item}
-              index={index}
-              onPress={this.props.select}
-              key={item.place_id}
-            />
-          );
-        })}
+        {suggestions
+          .filter(item => item && item.place_id && item.name)
+          .map((item, index) => {
+            return (
+              <RestaurantSuggestion
+                item={item}
+                index={index}
+                onPress={this.props.select}
+                key={item.place_id}
+              />
+            );
+          })}
         <TouchableOpacity style={styles.btn} onPress={this._onPressPublished}>
           <Text style={styles.btnText}>Published</Text>
           <View style={styles.count}>
