@@ -19,7 +19,6 @@ import EventTypePicker from "./EventTypePicker";
 import emitter from "tiny-emitter/instance";
 
 import { BLUE, RED } from "./Colors";
-import { IOS } from "./Constants";
 import DayPicker from "./SubmitDayPicker";
 import { validSubmission } from "./ValidateSubmission";
 
@@ -283,8 +282,8 @@ const styles = StyleSheet.create({
   header: {
     justifyContent: "center",
     alignItems: "center",
-    paddingTop: IOS ? 5 : 10,
-    paddingBottom: IOS ? 5 : 0
+    paddingTop: 5,
+    paddingBottom: 5
   },
   titleText: {
     fontWeight: "600",

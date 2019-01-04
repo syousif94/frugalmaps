@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { StyleSheet } from "react-native";
-import { SafeAreaView } from "react-navigation";
-import { ANDROID } from "./Constants";
+import { ANDROID, SafeArea } from "./Constants";
 
 export default class EditSpecial extends Component {
   scrollToTop = () => {
@@ -18,9 +17,7 @@ export default class EditSpecial extends Component {
         enableOnAndroid
         extraScrollHeight={ANDROID ? 120 : -80}
       >
-        <SafeAreaView style={styles.container}>
-          {this.props.children}
-        </SafeAreaView>
+        <SafeArea style={styles.container}>{this.props.children}</SafeArea>
       </KeyboardAwareScrollView>
     );
   }
