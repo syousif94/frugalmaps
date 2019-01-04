@@ -6,7 +6,8 @@ import { RED } from "./Colors";
 
 const mapStateToProps = state => ({
   deleteMode: state.submissions.deleteMode,
-  deleting: state.submissions.deleting
+  deleting: state.submissions.deleting,
+  marked: state.submissions.markedForDeletion
 });
 
 const mapDispatchToProps = {
@@ -30,6 +31,12 @@ class DeleteSubmissions extends Component {
   }
 
   _onPress = () => {
+    if (!this.props.marked.length) {
+      this.props.set({
+        deleteMode: false
+      });
+      return;
+    }
     this.props.set({
       deleting: true
     });
@@ -39,6 +46,7 @@ class DeleteSubmissions extends Component {
     const opacity = {
       opacity: this.state.opacity
     };
+    const text = this.props.marked.length ? "Delete" : "Cancel";
     return (
       <Animated.View style={[styles.container, opacity]}>
         <TouchableOpacity
@@ -46,7 +54,7 @@ class DeleteSubmissions extends Component {
           onPress={this._onPress}
           disabled={this.props.deleting}
         >
-          <Text style={styles.text}>Delete</Text>
+          <Text style={styles.text}>{text}</Text>
         </TouchableOpacity>
       </Animated.View>
     );

@@ -53,11 +53,11 @@ export function validSubmission() {
     );
   }
 
-  if (startTime.length && !validateTime(startTime)) {
+  if (startTime && startTime.length && !validateTime(startTime)) {
     return invalid("Invalid Start Time", "Make sure the formatting is correct");
   }
 
-  if (endTime.length && !validateTime(endTime)) {
+  if (endTime && endTime.length && !validateTime(endTime)) {
     return invalid("Invalid End Time", "Make sure the formatting is correct");
   }
 

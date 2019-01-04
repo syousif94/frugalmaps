@@ -58,14 +58,17 @@ const saveEvent = (action$, store) =>
           id,
           start: startTime.length ? startTime : null,
           end: endTime.length ? endTime : null,
-          postCode: postCode.trim().length ? postCode : null
+          postCode: postCode.trim().length ? postCode : ""
         };
+
+        console.log({
+          payload
+        });
 
         const res = await api("save-event", payload);
 
         return { res };
       })
-        .retry(2)
         .switchMap(({ res }) => {
           return Observable.of(
             Submission.actions.set({
