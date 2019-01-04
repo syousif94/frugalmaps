@@ -84,9 +84,64 @@ const getSubmissions = (action$, store) =>
         })
     );
 
-// const deleteSubmissions = (action$, store) =>
-//   action$
-//     .ofType(Submissions.types.set)
-//     .filter(action => action.payload.refreshing)
+const deleteSubmissions = (action$, store) =>
+  action$
+    .ofType(Submissions.types.set)
+    .filter(action => action.payload.deleting === true)
+    .flatMap(action =>
+      Observable.defer(async () => {
+        let fids;
 
-export default combineEpics(getRestaurants, suggesting, getSubmissions);
+        const {
+          submissions: { markedForDeletion },
+          submission: { postCode }
+        } = store.getState();
+
+        if (action.payload.fid) {
+          fids = [action.payload.fid];
+        } else {
+          fids = markedForDeletion;
+        }
+
+        const payload = {
+          fids,
+          postCode
+        };
+
+        await api("delete-submissions", payload);
+
+        return { fids };
+      })
+        .switchMap(({ fids }) => {
+          const {
+            submissions: { data: oldData }
+          } = store.getState();
+
+          const data = oldData.filter(data => {
+            return fids.indexOf(data.id) === -1;
+          });
+
+          return Observable.of(
+            Submissions.actions.set({
+              deleting: false,
+              deleteMode: false,
+              data
+            })
+          );
+        })
+        .catch(error => {
+          console.log({ events: error });
+          return Observable.of(
+            Submissions.actions.set({
+              deleting: false
+            })
+          );
+        })
+    );
+
+export default combineEpics(
+  getRestaurants,
+  suggesting,
+  getSubmissions,
+  deleteSubmissions
+);

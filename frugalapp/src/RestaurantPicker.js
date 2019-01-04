@@ -17,6 +17,7 @@ import { IOS, ANDROID } from "./Constants";
 import * as Submissions from "./store/submissions";
 import RestaurantsSuggesting from "./RestaurantsSuggesting";
 import SubmissionItem from "./SubmissionItem";
+import DeleteSubmissions from "./DeleteSubmissions";
 
 const mapStateToProps = state => ({
   value: state.submissions.filter,
@@ -98,6 +99,7 @@ class RestaurantPicker extends Component {
             ItemSeparatorComponent={() => <View style={styles.divider} />}
           />
         </KeyboardSpacer>
+        <DeleteSubmissions />
       </View>
     );
   }

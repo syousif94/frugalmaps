@@ -52,6 +52,18 @@ function deleteMode(state = false, { type, payload }) {
   }
 }
 
+function deleting(state = false, { type, payload }) {
+  switch (type) {
+    case types.set:
+      if (payload.deleting !== undefined) {
+        return payload.deleting;
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
 function markedForDeletion(state = [], { type, payload }) {
   switch (type) {
     case types.set:
@@ -123,6 +135,7 @@ function newData(state = [], { type, payload }) {
 }
 
 export default combineReducers({
+  deleting,
   suggesting,
   filter,
   restaurants,
