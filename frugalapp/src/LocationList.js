@@ -32,7 +32,7 @@ class LocationList extends Component {
         keyExtractor={(item, index) => item + index}
         keyboardDismissMode="none"
         keyboardShouldPersistTaps="handled"
-        alwaysBounceVertical
+        alwaysBounceVertical={true}
       />
     );
   }

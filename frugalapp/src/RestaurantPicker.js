@@ -62,7 +62,7 @@ class RestaurantPicker extends Component {
       <View style={styles.container}>
         <SafeView>
           <View style={styles.title}>
-            <Text style={styles.titleText}>Submit a Special</Text>
+            <Text style={styles.titleText}>Select a Restaurant</Text>
           </View>
           <View style={styles.search}>
             <Entypo name="magnifying-glass" size={18} color="#000" />

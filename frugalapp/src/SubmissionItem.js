@@ -5,6 +5,7 @@ import { ABBREVIATED_DAYS } from "./Constants";
 import { GREEN, RED } from "./Colors";
 import * as Submission from "./store/submission";
 import * as Submissions from "./store/submissions";
+import emitter from "tiny-emitter/instance";
 
 const mapStateToProps = state => ({
   deleteMode: state.submissions.deleteMode,
@@ -42,6 +43,7 @@ class SubmissionItem extends Component {
       ...item
     };
     this.props.setSubmission(data);
+    emitter.emit("scroll-submit", 1);
   };
 
   _onLongPress = () => {

@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { RED, BLUE } from "./Colors";
 import { MapView, Linking } from "expo";
 import { INITIAL_REGION } from "./Constants";
+import { Entypo } from "@expo/vector-icons";
 
 const mapStateToProps = state => ({
   place: state.submission.place,
@@ -91,7 +92,8 @@ class PlacePreview extends Component {
             showsMyLocationButton={false}
           />
           <Text style={styles.instruction}>
-            Select a restaurant from the previous page first
+            Swipe <Entypo name="chevron-right" size={16} color="#fff" /> to
+            select a restaurant
           </Text>
         </View>
       );
@@ -126,12 +128,14 @@ class PlacePreview extends Component {
         </MapView>
         <Text style={styles.name}>{place.name}</Text>
         <Text style={styles.address}>{place.formatted_address}</Text>
-        <TouchableOpacity onPress={this._call} style={styles.callBtn}>
-          <Text style={styles.phone}>{place.international_phone_number}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={this._website} style={styles.callBtn}>
-          <Text style={styles.phone}>{place.website}</Text>
-        </TouchableOpacity>
+        <View style={styles.links}>
+          <TouchableOpacity onPress={this._call} style={styles.callBtn}>
+            <Text style={styles.phone}>{place.international_phone_number}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this._website} style={styles.callBtn}>
+            <Text style={styles.phone}>{place.website}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -180,9 +184,14 @@ const styles = StyleSheet.create({
     marginTop: 2,
     color: "#555"
   },
-  callBtn: {},
-  phone: {
+  links: {
     marginTop: 2,
+    flexDirection: "row"
+  },
+  callBtn: {
+    marginRight: 15
+  },
+  phone: {
     color: BLUE
   }
 });

@@ -19,6 +19,7 @@ import EventTypePicker from "./EventTypePicker";
 import emitter from "tiny-emitter/instance";
 
 import { BLUE, RED } from "./Colors";
+import { IOS } from "./Constants";
 import DayPicker from "./SubmitDayPicker";
 import { validSubmission } from "./ValidateSubmission";
 
@@ -41,12 +42,12 @@ const mapDispatchToProps = {
 
 class SubmitScreen extends Component {
   componentDidMount() {
-    emitter.on("focus-picker", this._scrollSwiper);
+    emitter.on("scroll-submit", this._scrollSwiper);
     this._restorePostCode();
   }
 
   componentWillUnmount() {
-    emitter.off("focus-picker", this._scrollSwiper);
+    emitter.off("scroll-submit", this._scrollSwiper);
   }
 
   _restorePostCode = async () => {
@@ -64,21 +65,10 @@ class SubmitScreen extends Component {
     }
   };
 
-  _scrollSwiper = () => {
-    if (this.props.place) {
-      if (this._swiper.state.index === 0) {
-        this._swiper.scrollBy(1, false);
-      }
-      return;
-    }
-    if (this._swiper && this._swiper.state.index > 0) {
-      const distance = -this._swiper.state.index;
+  _scrollSwiper = page => {
+    const distance = page - this._swiper.state.index;
+    if (distance !== 0) {
       this._swiper.scrollBy(distance, true);
-      setTimeout(() => {
-        this._picker.getWrappedInstance().focusInput();
-      }, 500);
-    } else {
-      this._picker.getWrappedInstance().focusInput();
     }
   };
 
@@ -128,12 +118,22 @@ class SubmitScreen extends Component {
     Keyboard.dismiss();
   };
 
+  _toggleKeyboard = index => {
+    if (index === 0) {
+      this._picker.getWrappedInstance().focusInput();
+    } else {
+      this._blurKeyboard();
+    }
+  };
+
   _renderDelete = () => {
     if (!this.props.id && !this.props.fid) {
       return null;
     }
 
-    const text = this.props.deleting ? "Deleting..." : "Delete Special";
+    const type = this.props.fid ? "Submission" : "Special";
+
+    const text = this.props.deleting ? "Deleting..." : `Delete ${type}`;
 
     return (
       <View style={[styles.btnContainer, styles.delete]}>
@@ -168,6 +168,7 @@ class SubmitScreen extends Component {
       <View style={styles.container}>
         <Swiper
           bounces
+          index={1}
           showsPagination={false}
           alwaysBounceHorizontal
           ref={ref => {
@@ -176,7 +177,7 @@ class SubmitScreen extends Component {
           keyboardShouldPersistTaps="always"
           keyboardDismissMode="none"
           loop={false}
-          onMomentumScrollEnd={this._blurKeyboard}
+          onIndexChanged={this._toggleKeyboard}
         >
           <RestaurantPicker
             ref={ref => {
@@ -185,6 +186,9 @@ class SubmitScreen extends Component {
             select={this._selectRestaurant}
           />
           <EditSpecial ref={ref => (this._form = ref)}>
+            <View style={styles.header}>
+              <Text style={styles.titleText}>Submit a Special</Text>
+            </View>
             <PlacePreview />
             <Text style={styles.instruction}>Select the days.</Text>
             <DayPicker />
@@ -230,7 +234,6 @@ class SubmitScreen extends Component {
               multiline
               style={[styles.input, styles.description]}
               placeholderTextColor="#999"
-              blurOnSubmit
               value={this.props.description}
               onChangeText={this._onChangeText("description")}
               underlineColorAndroid="transparent"
@@ -249,6 +252,7 @@ class SubmitScreen extends Component {
               autoCorrect={false}
               autoCapitalize="none"
               underlineColorAndroid="transparent"
+              clearButtonMode="always"
             />
             {this._renderSubmit()}
             {this._renderDelete()}
@@ -275,6 +279,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     paddingHorizontal: 10,
     margin: 5
+  },
+  header: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: IOS ? 5 : 10,
+    paddingBottom: IOS ? 5 : 0
+  },
+  titleText: {
+    fontWeight: "600",
+    fontSize: 18,
+    color: "#000"
   },
   title: {
     height: 44

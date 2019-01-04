@@ -66,6 +66,7 @@ const getSubmissions = (action$, store) =>
 
         return { res };
       })
+        .retry(2)
         .switchMap(({ res }) => {
           return Observable.of(
             Submissions.actions.set({
