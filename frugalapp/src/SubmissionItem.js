@@ -1,5 +1,11 @@
 import React, { Component } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Keyboard
+} from "react-native";
 import { connect } from "react-redux";
 import { ABBREVIATED_DAYS } from "./Constants";
 import { GREEN, RED } from "./Colors";
@@ -47,8 +53,12 @@ class SubmissionItem extends Component {
   };
 
   _onLongPress = () => {
+    const nextDeleteMode = !this.props.deleteMode;
+    if (nextDeleteMode) {
+      Keyboard.dismiss();
+    }
     this.props.setSubmissions({
-      deleteMode: !this.props.deleteMode,
+      deleteMode: nextDeleteMode,
       markedForDeletion: this.props.item.id
     });
   };
