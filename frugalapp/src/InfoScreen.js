@@ -17,6 +17,7 @@ import emitter from "tiny-emitter/instance";
 import { Constants } from "expo";
 import locate from "./Locate";
 import InfoEventList from "./InfoEventList";
+import { FontAwesome } from "@expo/vector-icons";
 
 class InfoScreen extends Component {
   static mapId = "infoScreen";
@@ -218,6 +219,10 @@ class InfoScreen extends Component {
               </Text>
               <Text style={styles.subText}>{item.city}</Text>
               <Text style={styles.subText}>{streetAddress}</Text>
+              <View style={styles.rating}>
+                <FontAwesome name="star" size={16} color="#FFA033" />
+                <Text style={styles.ratingText}>{item.rating}</Text>
+              </View>
             </View>
           </View>
         </SafeArea>
@@ -247,7 +252,8 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 15,
-    paddingBottom: 10
+    paddingBottom: 10,
+    paddingTop: ANDROID ? 5 : 0
   },
   locationText: {
     color: "#fff",
@@ -274,6 +280,18 @@ const styles = StyleSheet.create({
   info: {
     height: HEIGHT * 0.7,
     marginBottom: 1
+  },
+  rating: {
+    position: "absolute",
+    top: 2,
+    right: 0,
+    flexDirection: "row"
+  },
+  ratingText: {
+    color: "#FFA033",
+    fontSize: 14,
+    fontWeight: "600",
+    marginLeft: 5
   },
   loading: {
     justifyContent: "center",
