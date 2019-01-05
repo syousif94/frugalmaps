@@ -5,7 +5,8 @@ import {
   TouchableOpacity,
   AsyncStorage,
   Alert,
-  Animated
+  Animated,
+  Text
 } from "react-native";
 import Emitter from "tiny-emitter";
 
@@ -23,7 +24,8 @@ export default class NotifyButton extends Component {
 
   state = {
     notify: false,
-    toggle: new Animated.Value(0)
+    toggle: new Animated.Value(0),
+    count: 2
   };
 
   componentDidMount() {
@@ -103,11 +105,14 @@ export default class NotifyButton extends Component {
 
     const backgroundColor = this.state.toggle.interpolate({
       inputRange: [0, 1],
-      outputRange: ["#e0e0e0", "#13BE24"]
+      outputRange: ["#ccc", "#13BE24"]
     });
+
+    const count = `00${this.state.count}`;
     return (
       <TouchableOpacity style={styles.action} onPress={this._onPress}>
         <Entypo style={styles.icon} name="bell" size={15} color="#000" />
+        <Text style={styles.countText}>{count}</Text>
         <View style={styles.switch}>
           <Animated.View
             style={[styles.switchBall, { transform, backgroundColor }]}
@@ -121,33 +126,41 @@ export default class NotifyButton extends Component {
 const styles = StyleSheet.create({
   action: {
     position: "absolute",
-    top: 0,
+    top: 2,
     right: 0,
-    bottom: 0,
-    aspectRatio: 1,
-    alignItems: "flex-end",
+    height: 50,
+    backgroundColor: "#fafafa",
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    width: 32,
+    alignItems: "center",
     justifyContent: "center",
-    paddingRight: 8,
-    paddingTop: 5
+    paddingTop: 2
   },
-  icon: {
-    marginRight: 2
-  },
+  icon: {},
   switch: {
     height: switchHeight,
     borderRadius: switchHeight / 2,
     width: switchWidth,
     flexDirection: "row",
     borderWidth: 1,
-    borderColor: "#e0e0e0",
+    borderColor: "#ccc",
     alignItems: "center",
     justifyContent: "flex-start",
     marginTop: 1,
-    padding: 1
+    padding: 1,
+    backgroundColor: "#fff"
   },
   switchBall: {
     height: ballHeight,
     width: ballHeight,
     borderRadius: ballHeight / 2
+  },
+  countText: {
+    fontSize: 7,
+    fontWeight: "500",
+    color: "#444",
+    textAlign: "center"
   }
 });

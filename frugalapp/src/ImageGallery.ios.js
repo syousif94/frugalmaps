@@ -5,7 +5,8 @@ import {
   Image,
   TouchableWithoutFeedback,
   FlatList,
-  Text
+  Text,
+  ActivityIndicator
 } from "react-native";
 import { connect } from "react-redux";
 import _ from "lodash";
@@ -56,11 +57,24 @@ class ImageGallery extends Component {
             navigation.navigate("Info");
           }}
         >
-          <Image
-            key={uri}
-            source={source}
-            style={[styles.image, { width: imageWidth, height }]}
-          />
+          <View key={uri} style={[styles.photo, { height }]}>
+            <ActivityIndicator
+              style={styles.loader}
+              size="large"
+              color="#000"
+            />
+            <Image
+              key={uri}
+              source={source}
+              style={[
+                styles.image,
+                {
+                  width: imageWidth,
+                  height
+                }
+              ]}
+            />
+          </View>
         </TouchableWithoutFeedback>
       );
     } else if (uri === "spacer") {
@@ -75,11 +89,14 @@ class ImageGallery extends Component {
       const backgroundColor = "#444";
 
       return (
-        <Image
-          key={uri}
-          source={source}
-          style={[styles.vImage, { width: WIDTH, height, backgroundColor }]}
-        />
+        <View key={uri} style={[styles.vPhoto, { backgroundColor }]}>
+          <ActivityIndicator style={styles.loader} size="large" color="#000" />
+          <Image
+            key={uri}
+            source={source}
+            style={[styles.vImage, { width: WIDTH, height }]}
+          />
+        </View>
       );
     }
   };
@@ -190,15 +207,23 @@ export default connect(
 )(withNavigation(ImageGallery));
 
 const styles = StyleSheet.create({
-  image: {
-    resizeMode: "contain",
-    backgroundColor: "#e0e0e0",
+  photo: {
+    backgroundColor: "#fff",
     marginRight: 2
   },
-  vImage: {
-    resizeMode: "contain",
+  loader: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "#e0e0e0"
+  },
+  image: {
+    resizeMode: "contain"
+  },
+  vPhoto: {
     backgroundColor: "#e0e0e0",
     marginBottom: 2
+  },
+  vImage: {
+    resizeMode: "contain"
   },
   action: {
     position: "absolute",

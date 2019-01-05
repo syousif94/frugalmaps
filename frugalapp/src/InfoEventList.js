@@ -34,7 +34,20 @@ const renderEvent = event => {
   return (
     <View style={styles.event} key={id}>
       <View style={styles.hours}>
+        <MonoText
+          characterWidth={7.5}
+          style={styles.countdown}
+          text={remaining}
+          suffix={endingText}
+          textStyle={countdownStyle}
+        />
         {item.groupedHours.map((hours, index) => {
+          let r, d;
+          if (index !== 0) {
+            const { remaining, duration } = timeRemaining(hours, iso);
+            r = remaining;
+            d = duration;
+          }
           return (
             <View style={styles.hour} key={index}>
               <View style={styles.days}>
@@ -54,14 +67,8 @@ const renderEvent = event => {
               <View style={styles.time}>
                 <Text style={styles.hourText}>
                   {hours.hours}{" "}
-                  <Text style={styles.durationText}>{duration}hr</Text>
+                  <Text style={styles.durationText}>{d ? d : duration}hr</Text>
                 </Text>
-                <MonoText
-                  style={styles.countdown}
-                  text={remaining}
-                  suffix={endingText}
-                  textStyle={countdownStyle}
-                />
               </View>
             </View>
           );
@@ -73,9 +80,8 @@ const renderEvent = event => {
         <Text style={[styles.infoText, styles.descriptionText]}>
           {item.description}
         </Text>
-
-        <NotifyButton {...{ event }} />
       </View>
+      <NotifyButton {...{ event }} />
     </View>
   );
 };
@@ -132,8 +138,8 @@ const styles = StyleSheet.create({
   time: {
     flex: 1,
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
+    alignItems: "center"
+    // justifyContent: "space-between"
   },
   hours: {
     marginTop: 2
@@ -169,13 +175,14 @@ const styles = StyleSheet.create({
     fontWeight: "700"
   },
   countdown: {
-    marginLeft: 5,
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "center",
+    marginBottom: 2
   },
   countdownText: {
     color: "#E3210B",
-    fontSize: 14
+    fontSize: 12,
+    fontWeight: "700"
   },
   ending: {
     color: GREEN

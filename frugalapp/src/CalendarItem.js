@@ -75,6 +75,12 @@ class CalendarItem extends Component {
               <View>
                 <View style={styles.hours}>
                   {item.groupedHours.map((hours, index) => {
+                    let r, d;
+                    if (index !== 0) {
+                      const { remaining, duration } = timeRemaining(hours, iso);
+                      r = remaining;
+                      d = duration;
+                    }
                     return (
                       <View style={styles.hour} key={index}>
                         <View style={styles.days}>
@@ -90,14 +96,16 @@ class CalendarItem extends Component {
                           <Text style={styles.hourText}>
                             {hours.hours}{" "}
                             <Text style={styles.durationText}>
-                              {duration}hr
+                              {d ? d : duration}hr
                             </Text>
                           </Text>
-                          <MonoText
-                            text={remaining}
-                            suffix={endingText}
-                            textStyle={countdownStyle}
-                          />
+                          {index !== 0 ? null : (
+                            <MonoText
+                              text={r ? r : remaining}
+                              suffix={endingText}
+                              textStyle={countdownStyle}
+                            />
+                          )}
                         </View>
                       </View>
                     );
@@ -112,9 +120,13 @@ class CalendarItem extends Component {
             </View>
           ) : null}
           <View style={styles.location}>
-            <View>
-              <Text style={styles.locationText}>{locationText}</Text>
-              <Text style={styles.subText}>{item.city}</Text>
+            <View style={styles.locationInfo}>
+              <Text numberOfLines={1} style={styles.locationText}>
+                {locationText}
+              </Text>
+              <Text numberOfLines={1} style={styles.subText}>
+                {item.city}
+              </Text>
             </View>
             <Text>{distanceText}</Text>
           </View>
@@ -168,9 +180,9 @@ const styles = StyleSheet.create({
   },
   location: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center"
   },
+  locationInfo: { paddingRight: 5, flex: 1 },
   time: {
     flex: 1,
     flexDirection: "row",

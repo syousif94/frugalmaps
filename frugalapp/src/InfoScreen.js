@@ -212,7 +212,7 @@ class InfoScreen extends Component {
         {this._renderMap()}
         <SafeArea style={styles.headerContainer}>
           <View style={styles.header} onLayout={this._onHeaderLayout}>
-            <View>
+            <View style={styles.headerInfo}>
               <Text style={styles.locationText}>
                 {item.location}{" "}
                 <Text style={styles.distanceText}>{distanceText}</Text>
@@ -255,6 +255,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingTop: ANDROID ? 5 : 0
   },
+  headerInfo: { paddingRight: 60 },
   locationText: {
     color: "#fff",
     fontSize: 16,
