@@ -1,25 +1,38 @@
 import React, { Component } from "react";
-import { View, StyleSheet, Text, FlatList } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
+import { connect } from "react-redux";
 import SearchHeader from "./SearchHeader";
 import api from "./API";
 
 import PublishedItem from "./PublishedItem";
+import * as Published from "./store/published";
 
-export default class PublishedScreen extends Component {
-  state = {
-    query: "",
-    data: []
-  };
-  async componentDidMount() {
-    const res = await api("events/published");
-    console.log({ res });
-    this.setState({
-      data: res.published
-    });
+const mapStateToProps = state => ({
+  data: state.published.data,
+  filter: state.published.filter,
+  refreshing: state.published.refreshing
+});
+
+const mapDispatchToProps = {
+  set: Published.actions.set
+};
+
+class PublishedScreen extends Component {
+  componentDidMount() {
+    if (!this.props.data.length) {
+      this._onRefresh();
+    }
   }
-  _onChangeQuery = query => {
-    this.setState({
-      query
+
+  _onChangeText = text => {
+    this.props.set({
+      filter: text
+    });
+  };
+
+  _onRefresh = () => {
+    this.props.set({
+      refreshing: true
     });
   };
 
@@ -27,27 +40,37 @@ export default class PublishedScreen extends Component {
     return <PublishedItem {...data} />;
   };
 
+  _renderSeparator = () => <View style={styles.divider} />;
+
   render() {
+    const { data, filter, refreshing } = this.props;
     return (
       <View style={styles.container}>
         <SearchHeader
           title="Published"
           placeholder="Search"
-          onChangeText={() => {}}
-          value={this.state.query}
+          onChangeText={this._onChangeText}
+          value={filter}
         />
         <View style={styles.divider} />
         <FlatList
-          data={this.state.data}
+          refreshing={refreshing}
+          onRefresh={this._onRefresh}
+          data={data}
           renderItem={this._renderItem}
           style={styles.list}
           keyExtractor={item => item._id}
-          ItemSeparatorComponent={() => <View style={styles.divider} />}
+          ItemSeparatorComponent={this._renderSeparator}
         />
       </View>
     );
   }
 }
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PublishedScreen);
 
 const styles = StyleSheet.create({
   container: {

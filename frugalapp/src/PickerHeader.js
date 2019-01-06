@@ -3,14 +3,23 @@ import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import { withNavigation } from "react-navigation";
 import { connect } from "react-redux";
 import * as Submissions from "./store/submissions";
+import * as Published from "./store/published";
 import RestaurantSuggestion from "./RestaurantSuggestion";
 
 const mapStateToProps = state => ({
   suggestions: Submissions.restaurantSuggestions(state),
-  data: state.submissions.data
+  count: state.published.count
 });
 
+const mapDispatchToProps = {
+  getCount: Published.actions.count
+};
+
 class PickerHeader extends Component {
+  componentDidMount() {
+    this.props.getCount();
+  }
+
   _onPressPublished = () => {
     this.props.navigation.navigate("Published");
   };
@@ -20,7 +29,7 @@ class PickerHeader extends Component {
   };
 
   render() {
-    const { data, suggestions } = this.props;
+    const { suggestions, count } = this.props;
     return (
       <View style={styles.container}>
         {suggestions
@@ -38,7 +47,7 @@ class PickerHeader extends Component {
         <TouchableOpacity style={styles.btn} onPress={this._onPressPublished}>
           <Text style={styles.btnText}>Published</Text>
           <View style={styles.count}>
-            <Text style={styles.countText}>0</Text>
+            <Text style={styles.countText}>{count}</Text>
           </View>
         </TouchableOpacity>
         <View style={styles.divider} />
@@ -47,7 +56,12 @@ class PickerHeader extends Component {
   }
 }
 
-export default withNavigation(connect(mapStateToProps)(PickerHeader));
+export default withNavigation(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(PickerHeader)
+);
 
 const styles = StyleSheet.create({
   container: {
