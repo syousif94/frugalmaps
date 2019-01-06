@@ -60,7 +60,7 @@ class ImageGallery extends Component {
           <View key={uri} style={[styles.photo, { height }]}>
             <ActivityIndicator
               style={styles.loader}
-              size="large"
+              size="small"
               color="#000"
             />
             <Image

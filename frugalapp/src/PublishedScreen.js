@@ -61,6 +61,7 @@ class PublishedScreen extends Component {
           style={styles.list}
           keyExtractor={item => item._id}
           ItemSeparatorComponent={this._renderSeparator}
+          contentInsetAdjustmentBehavior="always"
         />
       </View>
     );
