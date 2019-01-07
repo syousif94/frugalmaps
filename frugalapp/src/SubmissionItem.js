@@ -12,6 +12,7 @@ import { GREEN, RED } from "./Colors";
 import * as Submission from "./store/submission";
 import * as Submissions from "./store/submissions";
 import emitter from "tiny-emitter/instance";
+import { withNavigation } from "react-navigation";
 
 const mapStateToProps = state => ({
   deleteMode: state.submissions.deleteMode,
@@ -41,6 +42,7 @@ class SubmissionItem extends Component {
       ...item
     } = this.props.item;
     const data = {
+      id: null,
       startTime,
       endTime,
       fid,
@@ -49,7 +51,8 @@ class SubmissionItem extends Component {
       ...item
     };
     this.props.setSubmission(data);
-    emitter.emit("scroll-submit", 1);
+    emitter.emit("scroll-submit", 1, false);
+    this.props.navigation.pop();
   };
 
   _onLongPress = () => {
@@ -124,7 +127,7 @@ class SubmissionItem extends Component {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(SubmissionItem);
+)(withNavigation(SubmissionItem));
 
 const styles = StyleSheet.create({
   container: {},

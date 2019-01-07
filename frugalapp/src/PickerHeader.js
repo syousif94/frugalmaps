@@ -3,33 +3,20 @@ import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import { withNavigation } from "react-navigation";
 import { connect } from "react-redux";
 import * as Submissions from "./store/submissions";
-import * as Published from "./store/published";
 import RestaurantSuggestion from "./RestaurantSuggestion";
+import { Entypo } from "@expo/vector-icons";
 
 const mapStateToProps = state => ({
-  suggestions: Submissions.restaurantSuggestions(state),
-  count: state.published.count
+  suggestions: Submissions.restaurantSuggestions(state)
 });
 
-const mapDispatchToProps = {
-  getCount: Published.actions.count
-};
-
 class PickerHeader extends Component {
-  componentDidMount() {
-    this.props.getCount();
-  }
-
-  _onPressPublished = () => {
-    this.props.navigation.navigate("Published");
-  };
-
-  _onPressSubmissions = () => {
+  _onPress = () => {
     this.props.navigation.navigate("Submissions");
   };
 
   render() {
-    const { suggestions, count } = this.props;
+    const { suggestions } = this.props;
     return (
       <View style={styles.container}>
         {suggestions
@@ -44,32 +31,23 @@ class PickerHeader extends Component {
               />
             );
           })}
-        <TouchableOpacity style={styles.btn} onPress={this._onPressPublished}>
-          <Text style={styles.btnText}>Published</Text>
-          <View style={styles.count}>
-            <Text style={styles.countText}>{count}</Text>
-          </View>
+        <TouchableOpacity style={styles.btn} onPress={this._onPress}>
+          <Text style={styles.btnText}>Submissions</Text>
+          <Entypo name="chevron-right" size={16} color="#666" />
         </TouchableOpacity>
-        <View style={styles.divider} />
+        <View style={styles.published}>
+          <Text style={styles.publishedText}>Published</Text>
+        </View>
       </View>
     );
   }
 }
 
-export default withNavigation(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(PickerHeader)
-);
+export default withNavigation(connect(mapStateToProps)(PickerHeader));
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff"
-  },
-  divider: {
-    height: 1,
-    backgroundColor: "#e0e0e0"
   },
   btn: {
     flexDirection: "row",
@@ -81,18 +59,15 @@ const styles = StyleSheet.create({
   btnText: {
     fontWeight: "500"
   },
-  count: {
-    height: 18,
-    borderRadius: 9,
-    backgroundColor: "#6C7B80",
-    justifyContent: "center",
+  published: {
+    backgroundColor: "rgba(90,90,90,0.45)",
+    height: 28,
+    paddingHorizontal: 10,
     alignItems: "center",
-    paddingHorizontal: 8
+    flexDirection: "row"
   },
-  countText: {
-    fontSize: 12,
+  publishedText: {
     fontWeight: "600",
-    color: "#fff",
-    backgroundColor: "transparent"
+    color: "#fff"
   }
 });

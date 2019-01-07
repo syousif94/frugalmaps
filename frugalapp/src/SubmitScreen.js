@@ -17,6 +17,7 @@ import EditSpecial from "./EditSpecial";
 import PlacePreview from "./PlacePreview";
 import EventTypePicker from "./EventTypePicker";
 import emitter from "tiny-emitter/instance";
+import SubmissionInput from "./SubmissionInput";
 
 import { BLUE, RED } from "./Colors";
 import DayPicker from "./SubmitDayPicker";
@@ -64,10 +65,10 @@ class SubmitScreen extends Component {
     }
   };
 
-  _scrollSwiper = page => {
+  _scrollSwiper = (page, animated = true) => {
     const distance = page - this._swiper.state.index;
     if (distance !== 0) {
-      this._swiper.scrollBy(distance, true);
+      this._swiper.scrollBy(distance, animated);
     }
   };
 
@@ -195,7 +196,8 @@ class SubmitScreen extends Component {
               Like 6:30pm. Leave blank for opening or closing.
             </Text>
             <View style={styles.row}>
-              <TextInput
+              <SubmissionInput
+                containerStyle={styles.timeWrap}
                 placeholder="Start Time"
                 style={[styles.input, styles.time]}
                 placeholderTextColor="#999"
@@ -205,7 +207,8 @@ class SubmitScreen extends Component {
                 keyboardType="numbers-and-punctuation"
                 underlineColorAndroid="transparent"
               />
-              <TextInput
+              <SubmissionInput
+                containerStyle={styles.timeWrap}
                 placeholder="End Time"
                 style={[styles.input, styles.time]}
                 placeholderTextColor="#999"
@@ -217,7 +220,7 @@ class SubmitScreen extends Component {
               />
             </View>
             <Text style={styles.instruction}>What's the special?</Text>
-            <TextInput
+            <SubmissionInput
               placeholder="Title"
               style={[styles.input, styles.title]}
               placeholderTextColor="#999"
@@ -228,13 +231,14 @@ class SubmitScreen extends Component {
               underlineColorAndroid="transparent"
             />
             <Text style={styles.instruction}>Briefly describe it.</Text>
-            <TextInput
+            <SubmissionInput
               placeholder="Description"
               multiline
               style={[styles.input, styles.description]}
               placeholderTextColor="#999"
               value={this.props.description}
               onChangeText={this._onChangeText("description")}
+              blurOnSubmit
               underlineColorAndroid="transparent"
             />
             <Text style={styles.instruction}>What kind of special?</Text>
@@ -242,7 +246,7 @@ class SubmitScreen extends Component {
             <Text style={styles.instruction}>
               Leave blank unless you have one.
             </Text>
-            <TextInput
+            <SubmissionInput
               placeholder="Admin Code"
               style={[styles.input, styles.title]}
               placeholderTextColor="#999"
@@ -295,6 +299,9 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "row"
+  },
+  timeWrap: {
+    flex: 1
   },
   time: {
     height: 44,

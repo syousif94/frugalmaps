@@ -1,17 +1,68 @@
 import React, { Component } from "react";
 import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import { ABBREVIATED_DAYS } from "./Constants";
-import { GREEN, RED } from "./Colors";
+import { GREEN } from "./Colors";
+import { connect } from "react-redux";
+import * as Submission from "./store/submission";
+import emitter from "tiny-emitter/instance";
+import { formatTime } from "./Time";
+
+const mapDispatchToProps = {
+  setSubmission: Submission.actions.set
+};
 
 class PublishedItem extends Component {
+  _onPress = () => {
+    const {
+      item: { _id: id, _source: item }
+    } = this.props;
+
+    console.log({ item });
+
+    const {
+      days = [],
+      start,
+      end,
+      type: eventType = "",
+      placeid,
+      description,
+      title
+    } = item;
+
+    const startTime = start && start.length ? formatTime(start) : "";
+
+    const endTime = end && end.length ? formatTime(end) : "";
+
+    const data = {
+      title,
+      startTime,
+      endTime,
+      id,
+      fid: null,
+      eventType,
+      days,
+      placeid,
+      description
+    };
+
+    this.props.setSubmission(data);
+    emitter.emit("scroll-submit", 1);
+  };
+
   render() {
     const {
-      item: { _id: id, _source: item },
+      item: { _source: item },
       index
     } = this.props;
+
+    const { start, end } = item;
+
+    const startText = start && start.length ? formatTime(start) : "Open";
+
+    const endText = end && end.length ? formatTime(end) : "Close";
     return (
       <View style={styles.container}>
-        <TouchableOpacity style={styles.btn}>
+        <TouchableOpacity style={styles.btn} onPress={this._onPress}>
           <Text style={styles.titleText}>
             {index + 1}. {item.location}
           </Text>
@@ -26,6 +77,9 @@ class PublishedItem extends Component {
             })}
           </View>
           <Text style={styles.titleText}>{item.title}</Text>
+          <Text style={styles.subtext}>
+            {startText} - {endText}
+          </Text>
           <Text style={styles.subtext}>{item.description}</Text>
         </TouchableOpacity>
       </View>
@@ -33,7 +87,10 @@ class PublishedItem extends Component {
   }
 }
 
-export default PublishedItem;
+export default connect(
+  null,
+  mapDispatchToProps
+)(PublishedItem);
 
 const styles = StyleSheet.create({
   container: {

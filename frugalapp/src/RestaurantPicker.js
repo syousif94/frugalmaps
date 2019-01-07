@@ -14,19 +14,20 @@ import { SafeAreaView } from "react-navigation";
 import { Entypo } from "@expo/vector-icons";
 import Header from "./PickerHeader";
 import { IOS, ANDROID } from "./Constants";
-import * as Submissions from "./store/submissions";
+
+import PublishedItem from "./PublishedItem";
+import * as Published from "./store/published";
+
 import RestaurantsSuggesting from "./RestaurantsSuggesting";
-import SubmissionItem from "./SubmissionItem";
-import DeleteSubmissions from "./DeleteSubmissions";
 
 const mapStateToProps = state => ({
-  value: state.submissions.filter,
-  data: state.submissions.data,
-  refreshing: state.submissions.refreshing
+  data: state.published.data,
+  filter: state.published.filter,
+  refreshing: state.published.refreshing
 });
 
 const mapDispatchToProps = {
-  set: Submissions.actions.set
+  set: Published.actions.set
 };
 
 class RestaurantPicker extends Component {
@@ -43,9 +44,9 @@ class RestaurantPicker extends Component {
     });
   };
 
-  _renderItem = data => <SubmissionItem {...data} key={data.item.id} />;
+  _renderItem = data => <PublishedItem {...data} />;
 
-  _keyExtractor = (item, index) => item.id + index;
+  _keyExtractor = item => item._id;
 
   _renderHeader = () => <Header select={this.props.select} />;
 
@@ -99,7 +100,6 @@ class RestaurantPicker extends Component {
             ItemSeparatorComponent={() => <View style={styles.divider} />}
           />
         </KeyboardSpacer>
-        <DeleteSubmissions />
       </View>
     );
   }
