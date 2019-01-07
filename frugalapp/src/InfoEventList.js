@@ -42,14 +42,14 @@ const renderEvent = event => {
           textStyle={countdownStyle}
         />
         {item.groupedHours.map((hours, index) => {
-          let r, d;
+          let d;
           if (index !== 0) {
-            const { remaining, duration } = timeRemaining(hours, iso);
-            r = remaining;
+            const { duration } = timeRemaining(hours, iso);
             d = duration;
           }
+          const marginTop = index !== 0 ? 1 : 0;
           return (
-            <View style={styles.hour} key={index}>
+            <View style={[styles.hour, { marginTop }]} key={index}>
               <View style={styles.days}>
                 {hours.days.map(day => {
                   const dayStyle = [styles.day];

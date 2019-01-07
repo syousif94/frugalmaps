@@ -6,6 +6,7 @@ import { WIDTH } from "./Constants";
 import NotifyButton from "./NotifyButton";
 import EventList from "./InfoEventList";
 import MonoText from "./MonoText";
+import { FontAwesome } from "@expo/vector-icons";
 
 class CalendarItem extends Component {
   state = {
@@ -41,7 +42,7 @@ class CalendarItem extends Component {
     let distanceText = "";
 
     if (sort && sort[0]) {
-      distanceText = `${sort[0].toFixed(1)} miles`;
+      distanceText = ` · ${sort[0].toFixed(1)} miles`;
     }
 
     const { remaining, ending, duration } = timeRemaining(
@@ -74,15 +75,22 @@ class CalendarItem extends Component {
             <View style={styles.event}>
               <View>
                 <View style={styles.hours}>
+                  <MonoText
+                    text={remaining}
+                    suffix={endingText}
+                    textStyle={countdownStyle}
+                    characterWidth={7.5}
+                    style={styles.countdown}
+                  />
                   {item.groupedHours.map((hours, index) => {
-                    let r, d;
+                    let d;
                     if (index !== 0) {
-                      const { remaining, duration } = timeRemaining(hours, iso);
-                      r = remaining;
+                      const { duration } = timeRemaining(hours, iso);
                       d = duration;
                     }
+                    const marginTop = index !== 0 ? 1 : 0;
                     return (
-                      <View style={styles.hour} key={index}>
+                      <View style={[styles.hour, { marginTop }]} key={index}>
                         <View style={styles.days}>
                           {hours.days.map(day => {
                             return (
@@ -99,13 +107,6 @@ class CalendarItem extends Component {
                               {d ? d : duration}hr
                             </Text>
                           </Text>
-                          {index !== 0 ? null : (
-                            <MonoText
-                              text={r ? r : remaining}
-                              suffix={endingText}
-                              textStyle={countdownStyle}
-                            />
-                          )}
                         </View>
                       </View>
                     );
@@ -115,8 +116,8 @@ class CalendarItem extends Component {
               <View>
                 <Text style={styles.titleText}>{titleText}</Text>
                 <Text style={styles.descriptionText}>{item.description}</Text>
-                <NotifyButton {...{ event: this.props.item }} key={id} />
               </View>
+              <NotifyButton {...{ event: this.props.item }} key={id} />
             </View>
           ) : null}
           <View style={styles.location}>
@@ -126,9 +127,15 @@ class CalendarItem extends Component {
               </Text>
               <Text numberOfLines={1} style={styles.subText}>
                 {item.city}
+                {distanceText}
               </Text>
             </View>
-            <Text>{distanceText}</Text>
+            <View style={styles.rating}>
+              <FontAwesome name="star" size={16} color="#FFA033" />
+              <Text style={styles.ratingText}>
+                {parseFloat(item.rating, 10).toFixed(1)}
+              </Text>
+            </View>
           </View>
         </View>
         <ImageGallery width={WIDTH - 20} doc={this.props.item} height={150} />
@@ -182,7 +189,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center"
   },
-  locationInfo: { paddingRight: 5, flex: 1 },
+  locationInfo: { flex: 1 },
   time: {
     flex: 1,
     flexDirection: "row",
@@ -207,9 +214,15 @@ const styles = StyleSheet.create({
     color: "#444",
     fontSize: 12
   },
+  countdown: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 2
+  },
   countdownText: {
     color: "#E3210B",
-    fontSize: 14
+    fontSize: 12,
+    fontWeight: "700"
   },
   ending: {
     color: "#18AB2E"
@@ -229,5 +242,14 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: "#fff",
     fontWeight: "700"
+  },
+  rating: {
+    flexDirection: "row"
+  },
+  ratingText: {
+    color: "#FFA033",
+    fontSize: 14,
+    fontWeight: "600",
+    marginLeft: 5
   }
 });

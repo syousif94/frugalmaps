@@ -6,7 +6,8 @@ import {
   TouchableWithoutFeedback,
   FlatList,
   Text,
-  ActivityIndicator
+  ActivityIndicator,
+  TouchableOpacity
 } from "react-native";
 import { connect } from "react-redux";
 import _ from "lodash";
@@ -26,15 +27,19 @@ class ImageGallery extends Component {
     );
   }
 
+  _onPress = () => {
+    const { set, navigation, doc } = this.props;
+
+    set({
+      selectedEvent: {
+        data: doc
+      }
+    });
+    navigation.navigate("Info");
+  };
+
   _renderItem = ({ item }) => {
-    const {
-      height,
-      set,
-      navigation,
-      disabled,
-      doc,
-      horizontal = true
-    } = this.props;
+    const { height, disabled, doc, horizontal = true } = this.props;
 
     const { url: uri, height: imageHeight, width } = item;
 
@@ -46,17 +51,7 @@ class ImageGallery extends Component {
       const imageWidth = (height / imageHeight) * width;
 
       return (
-        <TouchableWithoutFeedback
-          disabled={disabled}
-          onPress={() => {
-            set({
-              selectedEvent: {
-                data: doc
-              }
-            });
-            navigation.navigate("Info");
-          }}
-        >
+        <TouchableWithoutFeedback disabled={disabled} onPress={this._onPress}>
           <View key={uri} style={[styles.photo, { height }]}>
             <ActivityIndicator
               style={styles.loader}
@@ -157,7 +152,7 @@ class ImageGallery extends Component {
               />
             </View>
           </View>
-          <Icon disabled={disabled} narrow={narrow} />
+          <Icon onPress={this._onPress} disabled={disabled} narrow={narrow} />
         </View>
       );
     } else {
@@ -187,14 +182,16 @@ class ImageGallery extends Component {
   }
 }
 
-const Icon = ({ disabled, narrow }) => {
+const Icon = ({ disabled, narrow, onPress = null }) => {
   if (disabled) {
     return null;
   }
   return (
-    <View pointerEvents="none" style={styles.action}>
-      <Entypo name="info-with-circle" size={16} color="#fff" />
-      {narrow ? null : <Text style={styles.actionText}>More Info</Text>}
+    <View style={styles.action}>
+      <TouchableOpacity style={styles.actionBtn} onPress={onPress}>
+        <Entypo name="info-with-circle" size={16} color="#fff" />
+        {narrow ? null : <Text style={styles.actionText}>More Info</Text>}
+      </TouchableOpacity>
     </View>
   );
 };
@@ -220,7 +217,7 @@ const styles = StyleSheet.create({
   },
   vPhoto: {
     backgroundColor: "#e0e0e0",
-    marginBottom: 2
+    marginBottom: 1
   },
   vImage: {
     resizeMode: "contain"
@@ -229,9 +226,12 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 6,
     right: 6,
-    flexDirection: "row",
+
     backgroundColor: "rgba(0,0,0,0.5)",
-    borderRadius: 6,
+    borderRadius: 6
+  },
+  actionBtn: {
+    flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 7,
     paddingVertical: 4
@@ -259,6 +259,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     paddingVertical: 10,
     paddingHorizontal: 15,
-    marginBottom: 2
+    marginBottom: 1
   }
 });

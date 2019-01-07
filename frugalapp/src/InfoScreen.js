@@ -18,6 +18,7 @@ import { Constants } from "expo";
 import locate from "./Locate";
 import InfoEventList from "./InfoEventList";
 import { FontAwesome } from "@expo/vector-icons";
+import InfoActions from "./InfoActions";
 
 class InfoScreen extends Component {
   static mapId = "infoScreen";
@@ -208,6 +209,7 @@ class InfoScreen extends Component {
               </View>
             </ScrollView>
           )}
+          <InfoActions />
         </View>
         {this._renderMap()}
         <SafeArea style={styles.headerContainer}>
