@@ -118,11 +118,11 @@ class SubmitScreen extends Component {
   };
 
   _toggleKeyboard = index => {
-    if (index === 0) {
-      this._picker.getWrappedInstance().focusInput();
-    } else {
-      this._blurKeyboard();
-    }
+    // if (index === 0) {
+    //   this._picker.getWrappedInstance().focusInput();
+    // } else {
+    //   this._blurKeyboard();
+    // }
   };
 
   _renderDelete = () => {

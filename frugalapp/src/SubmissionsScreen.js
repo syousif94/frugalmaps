@@ -9,19 +9,21 @@ import DeleteSubmissions from "./DeleteSubmissions";
 
 const mapStateToProps = state => ({
   data: state.submissions.data,
+  newData: state.submissions.newData,
   filter: state.submissions.filter,
   refreshing: state.submissions.refreshing
 });
 
 const mapDispatchToProps = {
-  set: Submissions.actions.set
+  set: Submissions.actions.set,
+  reload: Submissions.actions.reload
 };
 
 class PublishedScreen extends Component {
   componentDidMount() {
-    if (!this.props.data.length) {
-      this._onRefresh();
-    }
+    this.props.reload({
+      data: this.props.newData
+    });
   }
 
   _onChangeText = text => {

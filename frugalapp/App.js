@@ -8,6 +8,7 @@ import store from "./src/store";
 import { DEV, IOS } from "./src/Constants";
 import { AppLoading } from "expo";
 import cache from "./src/CacheAssets";
+import "./src/Firebase";
 
 if (DEV) {
   FacebookAds.AdSettings.addTestDevice(

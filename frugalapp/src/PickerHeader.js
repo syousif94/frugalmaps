@@ -4,41 +4,19 @@ import { withNavigation } from "react-navigation";
 import { connect } from "react-redux";
 import * as Submissions from "./store/submissions";
 import RestaurantSuggestion from "./RestaurantSuggestion";
-import { db } from "./Firebase";
 
 const mapStateToProps = state => ({
-  data: state.submissions.data,
+  count: Submissions.submissionsCount(state),
   suggestions: Submissions.restaurantSuggestions(state)
 });
 
-const mapDispatchToProps = {
-  set: Submissions.actions.set
-};
-
 class PickerHeader extends Component {
-  componentDidMount() {
-    if (!this.props.data.length) {
-      this.props.set({
-        refreshing: true
-      });
-    }
-
-    this._unsub = db.collection("submissions").onSnapshot(querySnapshot => {
-      console.log(querySnapshot.size);
-    });
-  }
-
-  componentWillUnmount() {
-    this._unsub();
-  }
-
   _onPress = () => {
     this.props.navigation.navigate("Submissions");
   };
 
   render() {
-    const { suggestions, data } = this.props;
-    const count = data.length;
+    const { suggestions, count } = this.props;
     return (
       <View style={styles.container}>
         {suggestions
@@ -67,12 +45,7 @@ class PickerHeader extends Component {
   }
 }
 
-export default withNavigation(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(PickerHeader)
-);
+export default withNavigation(connect(mapStateToProps)(PickerHeader));
 
 const styles = StyleSheet.create({
   container: {

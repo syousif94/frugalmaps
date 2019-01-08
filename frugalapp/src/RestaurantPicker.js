@@ -14,12 +14,14 @@ import { SafeAreaView } from "react-navigation";
 import { Entypo } from "@expo/vector-icons";
 import Header from "./PickerHeader";
 import { IOS, ANDROID } from "./Constants";
+import emitter from "tiny-emitter/instance";
 
 import PublishedItem from "./PublishedItem";
 import * as Published from "./store/published";
 import * as Submissions from "./store/submissions";
 
 import RestaurantsSuggesting from "./RestaurantsSuggesting";
+import SearchButton from "./SearchButton";
 
 const mapStateToProps = state => ({
   data: state.published.data,
@@ -33,10 +35,21 @@ const mapDispatchToProps = {
 };
 
 class RestaurantPicker extends Component {
+  static id = "restaurantSearch";
+
   componentDidMount() {
     this._onRefresh();
+    emitter.on("focus-location-box", this.focusInput);
   }
-  focusInput = () => {
+
+  componentWillUnmount() {
+    emitter.off("focus-location-box", this.focusInput);
+  }
+
+  focusInput = (id = RestaurantPicker.id) => {
+    if (id !== RestaurantPicker.id) {
+      return;
+    }
     this._input.focus();
   };
 
@@ -102,6 +115,7 @@ class RestaurantPicker extends Component {
             ItemSeparatorComponent={() => <View style={styles.divider} />}
           />
         </KeyboardSpacer>
+        <SearchButton id={RestaurantPicker.id} />
       </View>
     );
   }

@@ -1,4 +1,5 @@
 import store from "./store";
+import * as Submissions from "./store/submissions";
 const firebase = require("firebase");
 require("firebase/firestore");
 
@@ -15,4 +16,16 @@ firebase.initializeApp(config);
 export const db = firebase.firestore();
 db.settings({
   timestampsInSnapshots: true
+});
+
+db.collection("submissions").onSnapshot(snapshot => {
+  snapshot.docChanges().forEach(change => {
+    if (change.type === "added") {
+      store.dispatch(
+        Submissions.actions.set({
+          newData: [{ ...change.doc.data(), id: change.doc.id }]
+        })
+      );
+    }
+  });
 });

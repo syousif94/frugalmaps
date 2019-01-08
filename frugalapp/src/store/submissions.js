@@ -13,6 +13,12 @@ export const restaurantSuggestions = createSelector(
   (restaurants, filter) => (filter.length ? restaurants : [])
 );
 
+export const submissionsCount = createSelector(
+  state => state.submissions.data,
+  state => state.submissions.newData,
+  (data, newData) => data.length + newData.length
+);
+
 function filter(state = "", { type, payload }) {
   switch (type) {
     case types.set:
@@ -98,11 +104,11 @@ function restaurants(state = [], { type, payload }) {
   }
 }
 
-function data(state = [], { type, payload }) {
+function refreshing(state = false, { type, payload }) {
   switch (type) {
     case types.set:
-      if (payload.data !== undefined) {
-        return payload.data;
+      if (payload.refreshing !== undefined) {
+        return payload.refreshing;
       }
       return state;
     default:
@@ -110,11 +116,16 @@ function data(state = [], { type, payload }) {
   }
 }
 
-function refreshing(state = false, { type, payload }) {
+function data(state = [], { type, payload }) {
   switch (type) {
     case types.set:
-      if (payload.refreshing !== undefined) {
-        return payload.refreshing;
+      if (payload.data !== undefined) {
+        return payload.data;
+      }
+      return state;
+    case types.reload:
+      if (payload.data !== undefined) {
+        return [...payload.data, ...state];
       }
       return state;
     default:
@@ -129,6 +140,8 @@ function newData(state = [], { type, payload }) {
         return [...payload.newData, ...state];
       }
       return state;
+    case types.reload:
+      return [];
     default:
       return state;
   }
