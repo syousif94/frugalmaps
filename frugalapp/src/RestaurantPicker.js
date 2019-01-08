@@ -17,17 +17,19 @@ import { IOS, ANDROID } from "./Constants";
 
 import PublishedItem from "./PublishedItem";
 import * as Published from "./store/published";
+import * as Submissions from "./store/submissions";
 
 import RestaurantsSuggesting from "./RestaurantsSuggesting";
 
 const mapStateToProps = state => ({
   data: state.published.data,
-  filter: state.published.filter,
+  filter: state.submissions.filter,
   refreshing: state.published.refreshing
 });
 
 const mapDispatchToProps = {
-  set: Published.actions.set
+  set: Published.actions.set,
+  setSubmissions: Submissions.actions.set
 };
 
 class RestaurantPicker extends Component {
@@ -39,7 +41,7 @@ class RestaurantPicker extends Component {
   };
 
   _onChangeText = text => {
-    this.props.set({
+    this.props.setSubmissions({
       filter: text
     });
   };

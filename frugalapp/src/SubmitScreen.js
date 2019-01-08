@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import {
   StyleSheet,
-  TextInput,
   View,
   Keyboard,
   TouchableOpacity,
@@ -149,7 +148,8 @@ class SubmitScreen extends Component {
   };
 
   _renderSubmit = () => {
-    const text = this.props.saving ? "Saving..." : "Submit Special";
+    const type = this.props.id ? "Update" : "Submit";
+    const text = this.props.saving ? "Saving..." : `${type} Special`;
     return (
       <View style={[styles.btnContainer, styles.submit]}>
         <TouchableOpacity
