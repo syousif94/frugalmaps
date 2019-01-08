@@ -59,18 +59,33 @@ class CalendarItem extends Component {
       endingText = " left";
     }
 
-    let locationText = item.location;
-    let titleText = item.title;
+    const locationText = `${index + 1}. ${item.location}`;
+    const titleText = item.title;
 
-    if (isClosest) {
-      locationText = `${index + 1}. ${item.location}`;
-    } else {
-      titleText = `${index + 1}. ${item.title}`;
-    }
+    const paddingVertical = isClosest ? 10 : 0;
+    const marginTop = isClosest ? 0 : 10;
+    const marginBottom = isClosest ? 0 : 6;
 
     return (
       <View style={containerStyle}>
-        <View style={styles.info}>
+        <View style={[styles.info, { paddingVertical }]}>
+          <View style={[styles.location, { marginTop, marginBottom }]}>
+            <View style={styles.locationInfo}>
+              <Text numberOfLines={1} style={styles.locationText}>
+                {locationText}
+              </Text>
+              <Text numberOfLines={1} style={styles.subText}>
+                {item.city}
+                {distanceText}
+              </Text>
+            </View>
+            <View style={styles.rating}>
+              <FontAwesome name="star" size={16} color="#FFA033" />
+              <Text style={styles.ratingText}>
+                {parseFloat(item.rating, 10).toFixed(1)}
+              </Text>
+            </View>
+          </View>
           {!isClosest ? (
             <View style={styles.event}>
               <View>
@@ -120,23 +135,6 @@ class CalendarItem extends Component {
               <NotifyButton {...{ event: this.props.item }} key={id} />
             </View>
           ) : null}
-          <View style={styles.location}>
-            <View style={styles.locationInfo}>
-              <Text numberOfLines={1} style={styles.locationText}>
-                {locationText}
-              </Text>
-              <Text numberOfLines={1} style={styles.subText}>
-                {item.city}
-                {distanceText}
-              </Text>
-            </View>
-            <View style={styles.rating}>
-              <FontAwesome name="star" size={16} color="#FFA033" />
-              <Text style={styles.ratingText}>
-                {parseFloat(item.rating, 10).toFixed(1)}
-              </Text>
-            </View>
-          </View>
         </View>
         <ImageGallery width={WIDTH - 20} doc={this.props.item} height={150} />
         {isClosest ? (

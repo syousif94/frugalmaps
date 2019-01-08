@@ -1,3 +1,4 @@
+import store from "./store";
 const firebase = require("firebase");
 require("firebase/firestore");
 
