@@ -4,7 +4,7 @@ function api(endpoint, payload) {
   return new Promise(async (resolve, reject) => {
     const timeout = setTimeout(() => {
       reject("Request failed..");
-    }, 3000);
+    }, 12000);
 
     const res = await fetch(`${url}${endpoint}`, {
       method: "POST",

@@ -139,6 +139,10 @@ function newData(state = [], { type, payload }) {
       if (payload.newData !== undefined) {
         return [...payload.newData, ...state];
       }
+      if (payload.data !== undefined) {
+        const ids = payload.data.map(doc => doc.id);
+        return state.filter(doc => ids.indexOf(doc.id) === -1);
+      }
       return state;
     case types.reload:
       return [];

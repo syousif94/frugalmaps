@@ -118,6 +118,7 @@ class SubmitScreen extends Component {
   };
 
   _toggleKeyboard = index => {
+    this._blurKeyboard();
     // if (index === 0) {
     //   this._picker.getWrappedInstance().focusInput();
     // } else {
@@ -216,7 +217,6 @@ class SubmitScreen extends Component {
                 placeholderTextColor="#999"
                 onChangeText={this._onChangeText("startTime")}
                 value={this.props.startTime}
-                clearButtonMode="always"
                 keyboardType="numbers-and-punctuation"
                 underlineColorAndroid="transparent"
               />
@@ -227,7 +227,6 @@ class SubmitScreen extends Component {
                 placeholderTextColor="#999"
                 onChangeText={this._onChangeText("endTime")}
                 value={this.props.endTime}
-                clearButtonMode="always"
                 keyboardType="numbers-and-punctuation"
                 underlineColorAndroid="transparent"
               />
@@ -239,7 +238,6 @@ class SubmitScreen extends Component {
               placeholderTextColor="#999"
               value={this.props.title}
               onChangeText={this._onChangeText("title")}
-              clearButtonMode="always"
               autoCapitalize="words"
               underlineColorAndroid="transparent"
             />
@@ -268,7 +266,6 @@ class SubmitScreen extends Component {
               autoCorrect={false}
               autoCapitalize="none"
               underlineColorAndroid="transparent"
-              clearButtonMode="always"
             />
             {this._renderSubmit()}
             {this._renderDelete()}

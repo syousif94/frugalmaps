@@ -5,6 +5,7 @@ import { Observable } from "rxjs/Observable";
 import api from "../API";
 
 import * as Submission from "./submission";
+import * as Submissions from "./submissions";
 import * as Published from "./published";
 
 const getPlace = action$ =>
@@ -114,21 +115,51 @@ const saveEvent = (action$, store) =>
 
         const res = await api("save-event", payload);
 
-        return { res };
+        return { res, fid };
       })
-        .switchMap(({ res }) => {
+        .switchMap(({ res, fid }) => {
+          if (res.submission) {
+            const {
+              submissions: { data: oldData }
+            } = store.getState();
+
+            const data = [res.submission, ...oldData];
+
+            return Observable.of(
+              Submission.actions.reset(),
+              Submissions.actions.set({
+                data
+              })
+            );
+          }
+
           const {
+            submissions: { data: oldSubmissions },
             published: { data: oldData }
           } = store.getState();
 
-          const data = [res, ...oldData.filter(item => item._id !== res._id)];
+          const data = [
+            res.event,
+            ...oldData.filter(item => item._id !== res.event._id)
+          ];
 
-          return Observable.of(
+          const actions = [
             Submission.actions.reset(),
             Published.actions.set({
               data
             })
-          );
+          ];
+
+          if (fid) {
+            const data = oldSubmissions.filter(doc => doc.id !== fid);
+            actions.push(
+              Submissions.actions.set({
+                data
+              })
+            );
+          }
+
+          return Observable.of(...actions);
         })
         .catch(error => {
           console.log({ events: error });

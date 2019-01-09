@@ -169,7 +169,7 @@ class CalendarScreen extends Component {
           {...androidProps}
           ListHeaderComponent={this._renderAd}
           ListFooterComponent={this._renderFooter}
-          removeClippedSubviews
+          removeClippedSubviews={ANDROID}
         />
         {this._renderInitial()}
         <SearchButton id={CalendarScreen.id} />

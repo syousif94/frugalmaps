@@ -57,9 +57,11 @@ async function createEvent(req, res) {
       doc.end = end;
     }
 
-    await db.collection("submissions").add(doc);
+    const docRef = await db.collection("submissions").add(doc);
 
-    res.send(doc);
+    doc.id = docRef.id;
+
+    res.send({ submission: doc });
     return;
   }
 
@@ -211,8 +213,10 @@ async function createEvent(req, res) {
     }
 
     res.send({
-      _id,
-      _source: body
+      event: {
+        _id,
+        _source: body
+      }
     });
   } catch (error) {
     res.send({

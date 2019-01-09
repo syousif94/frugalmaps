@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { TouchableOpacity, TextInput } from "react-native";
+import { TouchableOpacity, TextInput, View, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 export default class SubmissionInput extends Component {
   state = {
@@ -19,23 +20,64 @@ export default class SubmissionInput extends Component {
     });
   };
 
+  _clear = () => {
+    this.props.onChangeText("");
+    this._focus();
+  };
+
+  _renderClear = () => {
+    if (!this.props.value.length) return null;
+
+    return (
+      <TouchableOpacity
+        style={styles.clear}
+        activeOpacity={1}
+        onPress={this._clear}
+      >
+        <Ionicons name="md-close" size={14} color="#fff" />
+      </TouchableOpacity>
+    );
+  };
+
   render() {
     const { containerStyle = {}, ...props } = this.props;
     const pointerEvents = this.state.focused ? "auto" : "none";
     return (
-      <TouchableOpacity
-        style={containerStyle}
-        activeOpacity={1}
-        onPress={this._focus}
-        disabled={this.state.focused}
-      >
-        <TextInput
-          pointerEvents={pointerEvents}
-          ref={ref => (this._input = ref)}
-          {...props}
-          onBlur={this._onBlur}
-        />
-      </TouchableOpacity>
+      <View style={containerStyle}>
+        <TouchableOpacity
+          style={styles.btn}
+          activeOpacity={1}
+          onPress={this._focus}
+          disabled={this.state.focused}
+        >
+          <TextInput
+            pointerEvents={pointerEvents}
+            ref={ref => (this._input = ref)}
+            {...props}
+            onBlur={this._onBlur}
+          />
+        </TouchableOpacity>
+        {this._renderClear()}
+      </View>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  btn: {
+    flex: 1
+  },
+  clear: {
+    position: "absolute",
+    height: 16,
+    width: 16,
+    borderRadius: 8,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: 1,
+    paddingLeft: 1,
+    top: 19,
+    right: 20
+  }
+});
