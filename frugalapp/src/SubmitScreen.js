@@ -126,20 +126,25 @@ class SubmitScreen extends Component {
   };
 
   _renderDelete = () => {
-    if (!this.props.id && !this.props.fid) {
+    if (!this.props.id) {
       return null;
     }
 
-    const type = this.props.fid ? "Submission" : "Special";
+    const text = this.props.deleting ? "Deleting..." : `Delete Special`;
 
-    const text = this.props.deleting ? "Deleting..." : `Delete ${type}`;
+    const disabled = this.props.saving || this.props.deleting;
+
+    const style = [styles.btnContainer, styles.delete];
+    if (disabled) {
+      style.push(styles.disabled);
+    }
 
     return (
-      <View style={[styles.btnContainer, styles.delete]}>
+      <View style={style}>
         <TouchableOpacity
           style={styles.btn}
           onPress={this._deletePost}
-          disabled={this.props.saving || this.props.deleting}
+          disabled={disabled}
         >
           <Text style={styles.btnText}>{text}</Text>
         </TouchableOpacity>
@@ -150,12 +155,20 @@ class SubmitScreen extends Component {
   _renderSubmit = () => {
     const type = this.props.id ? "Update" : "Submit";
     const text = this.props.saving ? "Saving..." : `${type} Special`;
+
+    const disabled = this.props.saving || this.props.deleting;
+
+    const style = [styles.btnContainer, styles.submit];
+    if (disabled) {
+      style.push(styles.disabled);
+    }
+
     return (
-      <View style={[styles.btnContainer, styles.submit]}>
+      <View style={style}>
         <TouchableOpacity
           style={styles.btn}
           onPress={this._submitForm}
-          disabled={this.props.saving || this.props.deleting}
+          disabled={disabled}
         >
           <Text style={styles.btnText}>{text}</Text>
         </TouchableOpacity>
@@ -323,6 +336,9 @@ const styles = StyleSheet.create({
   },
   delete: {
     backgroundColor: RED
+  },
+  disabled: {
+    backgroundColor: "#e0e0e0"
   },
   btn: {
     flex: 1,

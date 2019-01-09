@@ -201,7 +201,7 @@ async function createEvent(req, res) {
 
     const saveLocations = indexLocations(city, state);
 
-    await Promise.all([save, ...saveLocations]);
+    const [{ _id }] = await Promise.all([save, ...saveLocations]);
 
     if (fid) {
       await db
@@ -210,7 +210,10 @@ async function createEvent(req, res) {
         .delete();
     }
 
-    res.send({});
+    res.send({
+      _id,
+      _source: body
+    });
   } catch (error) {
     res.send({
       error: error.message

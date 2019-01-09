@@ -18,7 +18,7 @@ function deleteEvent(req, res) {
       id
     })
     .then(() => {
-      res.send(200);
+      res.send({});
       return;
     })
     .catch(error => {

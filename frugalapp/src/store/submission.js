@@ -1,7 +1,7 @@
 import { combineReducers } from "redux";
 import { createActions } from "./lib";
 
-const mutations = ["set"];
+const mutations = ["set", "reset"];
 
 export const { actions, types } = createActions(mutations, "submission");
 
@@ -12,6 +12,8 @@ function id(state = null, { type, payload }) {
         return payload.id;
       }
       return state;
+    case types.reset:
+      return null;
     default:
       return state;
   }
@@ -24,6 +26,8 @@ function fid(state = null, { type, payload }) {
         return payload.fid;
       }
       return state;
+    case types.reset:
+      return null;
     default:
       return state;
   }
@@ -36,6 +40,8 @@ function eventType(state = null, { type, payload }) {
         return payload.eventType;
       }
       return state;
+    case types.reset:
+      return null;
     default:
       return state;
   }
@@ -48,6 +54,8 @@ function title(state = "", { type, payload }) {
         return payload.title;
       }
       return state;
+    case types.reset:
+      return "";
     default:
       return state;
   }
@@ -60,6 +68,8 @@ function description(state = "", { type, payload }) {
         return payload.description;
       }
       return state;
+    case types.reset:
+      return "";
     default:
       return state;
   }
@@ -72,6 +82,8 @@ function startTime(state = "", { type, payload }) {
         return payload.startTime;
       }
       return state;
+    case types.reset:
+      return "";
     default:
       return state;
   }
@@ -84,6 +96,8 @@ function endTime(state = "", { type, payload }) {
         return payload.endTime;
       }
       return state;
+    case types.reset:
+      return "";
     default:
       return state;
   }
@@ -108,6 +122,8 @@ function place(state = null, { type, payload }) {
         return payload.place;
       }
       return state;
+    case types.reset:
+      return null;
     default:
       return state;
   }
@@ -120,6 +136,8 @@ function days(state = [], { type, payload }) {
         return payload.days;
       }
       return state;
+    case types.reset:
+      return [];
     default:
       return state;
   }
@@ -132,6 +150,8 @@ function saving(state = false, { type, payload }) {
         return payload.saving;
       }
       return state;
+    case types.reset:
+      return false;
     default:
       return state;
   }
@@ -144,6 +164,8 @@ function deleting(state = false, { type, payload }) {
         return payload.deleting;
       }
       return state;
+    case types.reset:
+      return false;
     default:
       return state;
   }
