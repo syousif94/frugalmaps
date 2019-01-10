@@ -90,7 +90,7 @@ class RestaurantPicker extends Component {
               placeholder="Restaurant"
               onChangeText={this._onChangeText}
               placeholderTextColor="#333"
-              returnKeyType="search"
+              returnKeyType="done"
               clearButtonMode="always"
               autoCorrect={false}
               underlineColorAndroid="transparent"

@@ -1,6 +1,7 @@
 import { Alert } from "react-native";
 import { combineEpics } from "redux-observable";
 import { Observable } from "rxjs/Observable";
+import emitter from "tiny-emitter/instance";
 
 import api from "../API";
 
@@ -125,10 +126,13 @@ const saveEvent = (action$, store) =>
 
             const data = [res.submission, ...oldData];
 
+            emitter.emit("push-submissions");
+
             return Observable.of(
               Submission.actions.reset(),
               Submissions.actions.set({
-                data
+                data,
+                filter: ""
               })
             );
           }
