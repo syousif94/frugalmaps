@@ -23,11 +23,15 @@ const renderEvent = event => {
 
   const countdownStyle = [styles.countdownText];
 
-  let endingText = "";
+  let endingText = " minutes";
 
   if (ending) {
     countdownStyle.push(styles.ending);
     endingText = " left";
+  } else if (remaining.length > 9) {
+    endingText = " days";
+  } else if (remaining.length > 6) {
+    endingText = " hours";
   }
 
   return (
@@ -47,8 +51,13 @@ const renderEvent = event => {
             d = duration;
           }
           const marginTop = index !== 0 ? 1 : 0;
+          const flexDirection = hours.days.length > 4 ? "column" : "row";
+          const alignItems = hours.days.length > 4 ? "flex-start" : "center";
           return (
-            <View style={[styles.hour, { marginTop }]} key={index}>
+            <View
+              style={[styles.hour, { marginTop, flexDirection, alignItems }]}
+              key={index}
+            >
               <View style={styles.days}>
                 {hours.days.map(day => {
                   const dayStyle = [styles.day];
