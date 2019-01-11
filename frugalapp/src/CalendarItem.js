@@ -109,8 +109,15 @@ class CalendarItem extends Component {
                         <View style={styles.days}>
                           {hours.days.map(day => {
                             return (
-                              <View style={styles.day} key={day}>
-                                <Text style={styles.dayText}>{day}</Text>
+                              <View style={styles.day} key={day.text}>
+                                <Text style={styles.dayText}>{day.text}</Text>
+                                {day.daysAway === 0 ? null : (
+                                  <View style={styles.daysAway}>
+                                    <Text style={styles.dayText}>
+                                      {day.daysAway}
+                                    </Text>
+                                  </View>
+                                )}
                               </View>
                             );
                           })}
@@ -230,11 +237,20 @@ const styles = StyleSheet.create({
     marginRight: 3
   },
   day: {
+    flexDirection: "row",
     paddingHorizontal: 4,
     paddingVertical: 2,
     borderRadius: 3,
     backgroundColor: "#18AB2E",
+    alignItems: "center",
     marginRight: 2
+  },
+  daysAway: {
+    marginLeft: 2,
+    marginRight: -1,
+    paddingHorizontal: 2,
+    borderRadius: 2.5,
+    backgroundColor: "rgba(0,0,0,0.2)"
   },
   dayText: {
     fontSize: 10,

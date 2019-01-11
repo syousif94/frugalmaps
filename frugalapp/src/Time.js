@@ -123,6 +123,15 @@ export function timeRemaining(hours, iso) {
     diff = end.valueOf() - time;
   } else if (now.isBefore(start)) {
     diff = start.valueOf() - time;
+
+    if (hours.today && hours.days.length > 1) {
+      const nextDay = hours.days.find(day => day.daysAway > 0);
+      const nextStart = start.subtract(7 - nextDay.daysAway, "d");
+      const nextDiff = nextStart.valueOf() - time;
+      if (nextDiff >= 0) {
+        diff = Math.min(nextDiff, diff);
+      }
+    }
   }
   if (diff) {
     let hourFloat = diff / 3600000;
@@ -172,6 +181,7 @@ export function timeRemaining(hours, iso) {
 }
 
 export function makeHours(item, iso) {
+  // good place to include documentation
   let hours;
   let start;
   let end;
@@ -205,32 +215,43 @@ export function makeHours(item, iso) {
 }
 
 export function groupHours(source) {
-  const today = moment().weekday();
+  const todayIso = moment().weekday();
   const groups = source.days
     .sort((_a, _b) => {
-      let a = dayToISO(_a) - today;
+      let a = dayToISO(_a) - todayIso;
       if (a < 0) {
         a += 7;
       }
-      let b = dayToISO(_b) - today;
+      let b = dayToISO(_b) - todayIso;
       if (b < 0) {
         b += 7;
       }
       return a - b;
     })
     .reduce((acc, day) => {
-      const text = DAYS[day];
       const iso = ISO_DAYS[day];
+      const today = iso === todayIso;
+      let daysAway = iso - todayIso;
+      if (daysAway < 0) {
+        daysAway += 7;
+      }
+      const dayInfo = {
+        text: DAYS[day],
+        daysAway
+      };
       const { hours, start, end } = makeHours(source, iso);
+
+      // another good place for documentation
 
       const matchingHours = acc.find(val => val.hours === hours);
 
       if (matchingHours) {
-        matchingHours.days.push(text);
+        matchingHours.days.push(dayInfo);
       } else {
         acc.push({
           iso,
-          days: [text],
+          today,
+          days: [dayInfo],
           hours,
           start,
           end
@@ -239,6 +260,8 @@ export function groupHours(source) {
 
       return acc;
     }, []);
+
+  console.log({ groups });
 
   return groups;
 }

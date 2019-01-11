@@ -5,7 +5,6 @@ import { WIDTH } from "./Constants";
 
 import * as Events from "./store/events";
 import { makeISO, timeRemaining } from "./Time";
-import { BLUE } from "./Constants";
 import MonoText from "./MonoText";
 import NotifyButton from "./NotifyButton";
 import { GREEN } from "./Colors";
@@ -53,13 +52,14 @@ const renderEvent = event => {
               <View style={styles.days}>
                 {hours.days.map(day => {
                   const dayStyle = [styles.day];
-
-                  if (day.today) {
-                    styles.push(styles.today);
-                  }
                   return (
-                    <View style={dayStyle} key={day}>
-                      <Text style={styles.dayText}>{day}</Text>
+                    <View style={dayStyle} key={day.text}>
+                      <Text style={styles.dayText}>{day.text}</Text>
+                      {day.daysAway === 0 ? null : (
+                        <View style={styles.daysAway}>
+                          <Text style={styles.dayText}>{day.daysAway}</Text>
+                        </View>
+                      )}
                     </View>
                   );
                 })}
@@ -160,14 +160,20 @@ const styles = StyleSheet.create({
     marginRight: 3
   },
   day: {
-    paddingHorizontal: 3,
+    flexDirection: "row",
+    paddingHorizontal: 4,
     paddingVertical: 2,
     borderRadius: 3,
-    backgroundColor: GREEN,
+    backgroundColor: "#18AB2E",
+    alignItems: "center",
     marginRight: 2
   },
-  today: {
-    backgroundColor: BLUE
+  daysAway: {
+    marginLeft: 2,
+    marginRight: -1,
+    paddingHorizontal: 2,
+    borderRadius: 2.5,
+    backgroundColor: "rgba(0,0,0,0.2)"
   },
   dayText: {
     fontSize: 10,
