@@ -19,7 +19,7 @@ async function createNotification({ _source: item, _id: id }) {
     .map(group => {
       const isoDays = group.days.map(day => {
         const start = group.start;
-        const iso = dayToISO(ABBREVIATED_DAYS.indexOf(day));
+        const iso = dayToISO(ABBREVIATED_DAYS.indexOf(day.text));
         const date = createDate(start, iso);
         return date.subtract(30, "m");
       });

@@ -25,13 +25,15 @@ const renderEvent = event => {
 
   let endingText = " minutes";
 
-  if (ending) {
-    countdownStyle.push(styles.ending);
-    endingText = " left";
-  } else if (remaining.length > 9) {
+  if (remaining.length > 9) {
     endingText = " days";
   } else if (remaining.length > 6) {
     endingText = " hours";
+  }
+
+  if (ending) {
+    countdownStyle.push(styles.ending);
+    endingText += " left";
   }
 
   return (
