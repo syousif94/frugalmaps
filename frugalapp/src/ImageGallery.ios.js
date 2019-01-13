@@ -191,6 +191,12 @@ const Icon = ({ disabled, narrow, onPress = null }) => {
       <TouchableOpacity style={styles.actionBtn} onPress={onPress}>
         <Entypo name="info-with-circle" size={16} color="#fff" />
         {narrow ? null : <Text style={styles.actionText}>More Info</Text>}
+        <Entypo
+          style={styles.chevron}
+          name="chevron-right"
+          size={18}
+          color="#fff"
+        />
       </TouchableOpacity>
     </View>
   );
@@ -233,11 +239,16 @@ const styles = StyleSheet.create({
   actionBtn: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 7,
+    paddingLeft: 7,
+    paddingRight: 4,
     paddingVertical: 4
   },
+  chevron: {
+    marginLeft: -1
+  },
   actionText: {
-    marginLeft: 8,
+    marginRight: -1,
+    marginLeft: 5,
     fontWeight: "600",
     color: "#fff"
   },

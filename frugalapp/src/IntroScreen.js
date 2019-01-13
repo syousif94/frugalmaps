@@ -17,8 +17,8 @@ class IntroScreen extends Component {
   };
 
   render() {
-    const topInstructionMargin = { marginTop: 165 };
-    const bottomInstructionMargin = { marginTop: 25 };
+    const topInstructionMargin = { marginTop: 220 };
+    const bottomInstructionMargin = { marginTop: 27 };
     return (
       <View style={styles.container}>
         <View style={styles.bg}>
@@ -33,8 +33,12 @@ class IntroScreen extends Component {
             Buncha is a calendar of fun and affordable stuff to do nearby
           </Text>
           <Text style={[styles.instructionText, bottomInstructionMargin]}>
-            Tap on the <Entypo name="bell" size={18} color="#000" />
-            's for reminders
+            Tap the <Entypo name="bell" size={18} color="#000" />
+            's to support fun stuff
+          </Text>
+          <Text style={[styles.instructionText, bottomInstructionMargin]}>
+            Tap <Entypo name="circle-with-plus" size={18} color="#000" /> to
+            submit fun stuff
           </Text>
         </View>
         <View style={styles.prompts}>
@@ -44,15 +48,15 @@ class IntroScreen extends Component {
           </Text>
         </View>
 
-        <View style={styles.btnBg}>
-          <TouchableOpacity onPress={this._onPress}>
-            <SafeArea>
+        <SafeArea>
+          <View style={styles.btnBg}>
+            <TouchableOpacity onPress={this._onPress}>
               <View style={styles.btn}>
-                <Text style={styles.btnText}>Get Started</Text>
+                <Text style={styles.btnText}>Start</Text>
               </View>
-            </SafeArea>
-          </TouchableOpacity>
-        </View>
+            </TouchableOpacity>
+          </View>
+        </SafeArea>
       </View>
     );
   }
@@ -67,12 +71,13 @@ const styles = StyleSheet.create({
   },
   instructions: {
     flex: 1,
-    paddingHorizontal: 30,
-    justifyContent: "center"
+    justifyContent: "center",
+    alignItems: "center"
   },
   instructionText: {
     lineHeight: 28,
     fontSize: 18,
+    width: 280,
     color: "#000",
     textAlign: "center"
   },
@@ -96,7 +101,10 @@ const styles = StyleSheet.create({
     // width: 414
   },
   btnBg: {
-    backgroundColor: "#2FE56E"
+    backgroundColor: "#2FE56E",
+    marginBottom: 10,
+    marginHorizontal: 25,
+    borderRadius: 8
   },
   btn: {
     height: 60,
