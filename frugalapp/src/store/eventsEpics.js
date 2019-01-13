@@ -54,11 +54,27 @@ const makeEvents = (hits, week = false) => {
         return day;
       })
       // .filter(day => day.data.length)
-      .map((day, index) => ({ ...day, index }));
+      .map((day, index) => {
+        // day.data.groups = day.data.groups.map(group =>
+        //   group.sort((a, b) => parseInt(a.start) - parseInt(b.start))
+        // );
+        day.data = day.data.sort((a, b) => {
+          const aStart = parseInt(a._source.groupedHours[0].start, 10);
+          const bStart = parseInt(b._source.groupedHours[0].start, 10);
 
-    return [...days, closest];
+          return aStart - bStart;
+        });
+        console.log({ day });
+        return { ...day, index };
+      });
+
+    console.log({ days });
+
+    return days;
   } else {
-    return [initial[todayIndex], closest];
+    const today = initial[todayIndex];
+    today.title = "Today";
+    return [today, closest];
   }
 };
 
@@ -116,7 +132,10 @@ const events = (action$, store) =>
             emitter.emit("fit-bounds", bounds);
           }
 
-          const calendar = makeEvents(hits);
+          const weeklyCalendar =
+            action.payload.weekly || action.payload.queryType === "City";
+
+          const calendar = makeEvents(hits, weeklyCalendar);
 
           let day;
 

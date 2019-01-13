@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import * as Submission from "./store/submission";
 import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import { BLUE } from "./Colors";
+import { WIDTH } from "./Constants";
 
 const mapStateToProps = state => ({
   eventType: state.submission.eventType
@@ -13,7 +14,7 @@ const mapDispatchToProps = {
 };
 
 class EventTypePicker extends Component {
-  static types = ["Brunch", "Happy Hour", "Food"];
+  static types = ["Brunch", "Happy Hour", "Food", "Game"];
 
   _select = text => {
     if (this.props.eventType === text) {
@@ -40,10 +41,38 @@ class EventTypePicker extends Component {
             textStyle.push(styles.selectedText);
           }
 
-          if (index === 1) {
-            typeStyle.push({
-              flex: 1.4
-            });
+          let emoji = "";
+          let emoji2 = "";
+
+          switch (text) {
+            case "Brunch":
+              emoji = "🍑🥞";
+              emoji2 = "🥂";
+              break;
+            case "Happy Hour":
+              emoji = "🍷🍻";
+              emoji2 = "🍸🥃";
+              break;
+            case "Food":
+              emoji = "🍕🌮";
+              emoji2 = "🌮";
+              break;
+            case "Game":
+              emoji = "🎳🎯";
+              emoji2 = "🎳";
+              break;
+            default:
+              break;
+          }
+
+          if (index % 2 === 0) {
+            typeStyle.push({ marginRight: 5 });
+          } else {
+            typeStyle.push({ marginLeft: 5 });
+          }
+
+          if (index < 2) {
+            typeStyle.push({ marginBottom: 6 });
           }
 
           const onPress = this._select.bind(null, text);
@@ -51,6 +80,7 @@ class EventTypePicker extends Component {
           return (
             <View style={typeStyle} key={index}>
               <TouchableOpacity style={styles.btn} onPress={onPress}>
+                <Text style={styles.emojiText}>{emoji}</Text>
                 <Text style={textStyle}>{text}</Text>
               </TouchableOpacity>
             </View>
@@ -69,12 +99,13 @@ export default connect(
 const styles = StyleSheet.create({
   container: {
     padding: 1,
-    flexDirection: "row"
+    flexDirection: "row",
+    flexWrap: "wrap"
   },
   type: {
-    flex: 1,
+    width: (WIDTH - 10 * 3) / 2,
     margin: 4,
-    height: 44,
+    paddingVertical: 10,
     backgroundColor: "#ededed",
     borderRadius: 8
   },
@@ -85,6 +116,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center"
+  },
+  emojiText: {
+    fontSize: 24,
+    marginBottom: 4
   },
   btnText: {
     fontSize: 16

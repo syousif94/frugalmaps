@@ -34,6 +34,8 @@ const renderEvent = event => {
   if (ending) {
     countdownStyle.push(styles.ending);
     endingText += " left";
+  } else {
+    endingText += " away";
   }
 
   return (
@@ -45,6 +47,8 @@ const renderEvent = event => {
           text={remaining}
           suffix={endingText}
           textStyle={countdownStyle}
+          suffixStyle={{ fontSize: 9 }}
+          colonStyle={{ paddingBottom: 1 }}
         />
         {item.groupedHours.map((hours, index) => {
           let d;
@@ -193,7 +197,7 @@ const styles = StyleSheet.create({
   },
   countdown: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-end",
     marginBottom: 2
   },
   countdownText: {

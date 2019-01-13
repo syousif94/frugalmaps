@@ -261,7 +261,5 @@ export function groupHours(source) {
       return acc;
     }, []);
 
-  console.log({ groups });
-
   return groups;
 }

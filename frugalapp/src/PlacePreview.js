@@ -5,7 +5,7 @@ import { RED, BLUE } from "./Colors";
 import { MapView, Linking } from "expo";
 import { INITIAL_REGION } from "./Constants";
 import * as Submission from "./store/submission";
-import SubmissionsButton from "./SubmissionsButton";
+import RestaurantPicker from "./RestaurantPicker";
 
 const mapStateToProps = state => ({
   place: state.submission.place,
@@ -102,7 +102,6 @@ class PlacePreview extends Component {
               <Text style={styles.instructionText}>Clear Form</Text>
             </TouchableOpacity>
           </View>
-          <SubmissionsButton />
         </View>
       );
     }
@@ -110,30 +109,27 @@ class PlacePreview extends Component {
     if (!place) {
       return (
         <View style={styles.container}>
-          <MapView
-            style={styles.map}
-            zoomEnabled={false}
-            rotateEnabled={false}
-            scrollEnabled={false}
-            pitchEnabled={false}
-            pointerEvents="none"
-            initialRegion={INITIAL_REGION}
-            showsCompass={false}
-            toolbarEnabled={false}
-            showsUserLocation
-            showsMyLocationButton={false}
-          />
-          <View style={styles.instruction}>
-            <Text style={styles.instructionText}>
-              Swipe right to select a restaurant
-            </Text>
+          <View>
+            <MapView
+              style={styles.map}
+              zoomEnabled={false}
+              rotateEnabled={false}
+              scrollEnabled={false}
+              pitchEnabled={false}
+              pointerEvents="none"
+              initialRegion={INITIAL_REGION}
+              showsCompass={false}
+              toolbarEnabled={false}
+              showsUserLocation
+              showsMyLocationButton={false}
+            />
+            <View style={styles.reset}>
+              <TouchableOpacity style={styles.resetBtn} onPress={this._reset}>
+                <Text style={styles.instructionText}>Clear Form</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-          <View style={styles.reset}>
-            <TouchableOpacity style={styles.resetBtn} onPress={this._reset}>
-              <Text style={styles.instructionText}>Clear Form</Text>
-            </TouchableOpacity>
-          </View>
-          <SubmissionsButton />
+          <RestaurantPicker />
         </View>
       );
     }
@@ -172,7 +168,6 @@ class PlacePreview extends Component {
               <Text style={styles.instructionText}>Clear Form</Text>
             </TouchableOpacity>
           </View>
-          <SubmissionsButton />
         </View>
         <Text style={styles.name}>{place.name}</Text>
         <Text style={styles.address}>{place.formatted_address}</Text>
@@ -212,7 +207,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 5,
     left: 5,
-    right: 5,
     paddingHorizontal: 8,
     borderRadius: 6,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -223,7 +217,7 @@ const styles = StyleSheet.create({
     height: 26,
     position: "absolute",
     bottom: 5,
-    left: 5,
+    right: 5,
     borderRadius: 6,
     backgroundColor: "rgba(0, 0, 0, 0.5)"
   },

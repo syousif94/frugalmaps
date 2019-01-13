@@ -8,7 +8,8 @@ export default ({
   suffix = "",
   style = { flexDirection: "row", alignItems: "center" },
   characterWidth = 8.5,
-  colonStyle = { paddingBottom: 2.5 }
+  colonStyle = { paddingBottom: 2.5 },
+  suffixStyle = {}
 }) => {
   const countdownText = IOS
     ? text.split("").map((char, index) => {
@@ -29,14 +30,14 @@ export default ({
     return (
       <View style={style}>
         {countdownText}
-        <Text style={textStyle}>{suffix}</Text>
+        <Text style={[textStyle, suffixStyle]}>{suffix}</Text>
       </View>
     );
   } else {
     return (
       <Text style={textStyle}>
         {countdownText}
-        {suffix}
+        <Text style={suffixStyle}>{suffix}</Text>
       </Text>
     );
   }

@@ -18,7 +18,7 @@ class IntroScreen extends Component {
 
   render() {
     const topInstructionMargin = { marginTop: 220 };
-    const bottomInstructionMargin = { marginTop: 27 };
+    const bottomInstructionMargin = { marginTop: 18 };
     return (
       <View style={styles.container}>
         <View style={styles.bg}>
@@ -37,8 +37,8 @@ class IntroScreen extends Component {
             's to support fun stuff
           </Text>
           <Text style={[styles.instructionText, bottomInstructionMargin]}>
-            Tap <Entypo name="circle-with-plus" size={18} color="#000" /> to
-            submit fun stuff
+            Tap on <Entypo name="circle-with-plus" size={18} color="#000" /> to
+            share fun stuff
           </Text>
         </View>
         <View style={styles.prompts}>

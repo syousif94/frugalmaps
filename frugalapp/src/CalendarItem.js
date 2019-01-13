@@ -54,7 +54,8 @@ class CalendarItem extends Component {
 
     let endingText = " minutes";
 
-    if (remaining.length > 9) {
+    if (!remaining) {
+    } else if (remaining.length > 9) {
       endingText = " days";
     } else if (remaining.length > 6) {
       endingText = " hours";
@@ -63,6 +64,8 @@ class CalendarItem extends Component {
     if (ending) {
       countdownStyle.push(styles.ending);
       endingText += " left";
+    } else {
+      endingText += " away";
     }
 
     const locationText = `${index + 1}. ${item.location}`;
@@ -102,6 +105,8 @@ class CalendarItem extends Component {
                     textStyle={countdownStyle}
                     characterWidth={7.5}
                     style={styles.countdown}
+                    suffixStyle={{ fontSize: 9 }}
+                    colonStyle={{ paddingBottom: 1 }}
                   />
                   {item.groupedHours.map((hours, index) => {
                     let d;
@@ -238,7 +243,7 @@ const styles = StyleSheet.create({
   },
   countdown: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-end",
     marginBottom: 2
   },
   countdownText: {

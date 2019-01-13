@@ -28,43 +28,70 @@ class LocationListFooter extends PureComponent {
     emitter.emit("blur-location-box", this.props.id);
   };
 
-  render() {
-    const closeStyle = {}; //{ paddingLeft: 11 };
-    const newStyle = {}; //{ paddingLeft: 9, paddingTop: 1 };
-    return (
-      <View style={styles.footer} pointerEvents="box-none">
-        <View style={styles.footerBtnBg}>
-          <TouchableOpacity onPress={this._onNewest} style={styles.footerBtn}>
-            <View style={[styles.footerBtnIcon, newStyle]} pointerEvents="none">
-              <Entypo name="new" size={17} color="#fff" />
-            </View>
-            <Text style={styles.footerBtnText}>Most Recent</Text>
-          </TouchableOpacity>
-        </View>
+  _onWeekly = () => {
+    emitter.emit("calendar-top");
+    this.props.setEvents({
+      refreshing: true,
+      weekly: true
+    });
+    emitter.emit("blur-location-box", this.props.id);
+  };
+
+  _renderRightBtn = () => {
+    if (this.props.locationAuthorized) {
+      return (
         <View style={styles.footerBtnBg}>
           <TouchableOpacity onPress={this._onClosest} style={styles.footerBtn}>
-            <View
-              style={[styles.footerBtnIcon, closeStyle]}
-              pointerEvents="none"
-            >
+            <View style={[styles.footerBtnIcon]} pointerEvents="none">
               <FontAwesome name="location-arrow" size={14} color="#fff" />
             </View>
             <Text style={styles.footerBtnText}>Current Location</Text>
           </TouchableOpacity>
         </View>
+      );
+    } else {
+      return (
+        <View style={styles.footerBtnBg}>
+          <TouchableOpacity onPress={this._onNewest} style={styles.footerBtn}>
+            <View style={[styles.footerBtnIcon]} pointerEvents="none">
+              <Entypo name="new" size={17} color="#fff" />
+            </View>
+            <Text style={styles.footerBtnText}>Most Recent</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+  };
+
+  render() {
+    return (
+      <View style={styles.footer} pointerEvents="box-none">
+        <View style={styles.footerBtnBg}>
+          <TouchableOpacity onPress={this._onWeekly} style={styles.footerBtn}>
+            <View style={[styles.footerBtnIcon]} pointerEvents="none">
+              <Entypo name="calendar" size={17} color="#fff" />
+            </View>
+            <Text style={styles.footerBtnText}>Week View</Text>
+          </TouchableOpacity>
+        </View>
+        {this._renderRightBtn()}
       </View>
     );
   }
 }
 
-const mapDispatchToProps = {
+const mapState = state => ({
+  locationAuthorized: state.location.authorized
+});
+
+const mapActions = {
   setEvents: Events.actions.set,
   setLocation: Location.actions.set
 };
 
 export default connect(
-  null,
-  mapDispatchToProps
+  mapState,
+  mapActions
 )(LocationListFooter);
 
 const styles = StyleSheet.create({

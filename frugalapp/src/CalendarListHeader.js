@@ -7,14 +7,10 @@ export default class CalendarListHeader extends PureComponent {
   render() {
     const { section } = this.props;
 
-    const isClosest = section.title === "Closest";
-
-    const titleText = isClosest ? section.title : "Today";
-
     return (
       <View style={styles.container}>
         <View style={styles.info}>
-          <Text style={styles.titleText}>{titleText}</Text>
+          <Text style={styles.titleText}>{section.title}</Text>
         </View>
       </View>
     );

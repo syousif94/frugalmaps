@@ -11,14 +11,14 @@ import {
 } from "react-native";
 import Swiper from "react-native-swiper";
 import * as Submission from "./store/submission";
-import RestaurantPicker from "./RestaurantPicker";
+import PublishedList from "./PublishedList";
 import EditSpecial from "./EditSpecial";
 import PlacePreview from "./PlacePreview";
 import EventTypePicker from "./EventTypePicker";
 import emitter from "tiny-emitter/instance";
 import SubmissionInput from "./SubmissionInput";
 
-import { BLUE, RED } from "./Colors";
+import { BLUE, RED, GREEN } from "./Colors";
 import DayPicker from "./SubmitDayPicker";
 import { validSubmission } from "./ValidateSubmission";
 
@@ -193,7 +193,7 @@ class SubmitScreen extends Component {
           loop={false}
           onIndexChanged={this._toggleKeyboard}
         >
-          <RestaurantPicker
+          <PublishedList
             ref={ref => {
               this._picker = ref;
             }}
@@ -258,6 +258,7 @@ class SubmitScreen extends Component {
               Leave blank unless you have one.
             </Text>
             <SubmissionInput
+              secureTextEntry
               placeholder="Admin Code"
               style={[styles.input, styles.title]}
               placeholderTextColor="#999"
@@ -329,7 +330,7 @@ const styles = StyleSheet.create({
   },
   submit: {
     marginTop: 20,
-    backgroundColor: BLUE
+    backgroundColor: "#2FE56E"
   },
   delete: {
     backgroundColor: RED
