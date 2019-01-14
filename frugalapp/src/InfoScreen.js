@@ -190,26 +190,23 @@ class InfoScreen extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.info}>
-          {IOS ? (
-            <ImageGallery
-              paddingTop={this.state.listTop}
-              horizontal={false}
-              disabled
-              doc={data}
-            />
-          ) : null}
-          {(ANDROID && this.state.loading) || IOS ? null : (
+          {ANDROID && this.state.loading ? null : (
             <ScrollView
               contentContainerStyle={{ paddingTop: this.state.listTop }}
               style={styles.container}
             >
-              <ImageGallery height={200} disabled doc={data} />
+              <ImageGallery
+                backgroundColor="#000"
+                height={HEIGHT * 0.35}
+                disabled
+                doc={data}
+              />
               <View style={styles.events}>
+                <InfoActions />
                 <InfoEventList placeid={data._source.placeid} />
               </View>
             </ScrollView>
           )}
-          <InfoActions />
         </View>
         {this._renderMap()}
         <SafeArea style={styles.headerContainer}>
@@ -278,7 +275,8 @@ const styles = StyleSheet.create({
     marginTop: 1,
     backgroundColor: "#fff",
     paddingHorizontal: 15,
-    paddingVertical: 10
+    paddingTop: 10,
+    paddingBottom: 25
   },
   info: {
     height: HEIGHT * 0.7,

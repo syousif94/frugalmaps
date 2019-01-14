@@ -1,7 +1,7 @@
 import store from "./store";
 import * as Submissions from "./store/submissions";
-const firebase = require("firebase");
-require("firebase/firestore");
+import firebase from "@firebase/app";
+import "firebase/firestore";
 
 var config = {
   apiKey: "AIzaSyCMw-fDD28DLB0eWIR6PJQrDQfArisLvjw",

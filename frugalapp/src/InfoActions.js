@@ -1,27 +1,42 @@
 import React from "react";
 import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
+import { WIDTH } from "./Constants";
+
+const iconColor = "#000";
 
 export default () => {
   return (
     <View style={styles.actions}>
       {["Call", "Web", "Hours", "Go", "Share"].map(text => {
         let icon = null;
+        let emoji = "";
         switch (text) {
           case "Call":
-            icon = <Ionicons name="ios-call" size={18} color="#fff" />;
+            icon = <Ionicons name="ios-call" size={24} color={iconColor} />;
+            emoji = "📞";
             break;
           case "Web":
-            icon = <MaterialIcons name="web-asset" size={18} color="#fff" />;
+            icon = (
+              <MaterialIcons name="web-asset" size={24} color={iconColor} />
+            );
+            emoji = "🔗";
             break;
           case "Hours":
-            icon = <Ionicons name="ios-time" size={15} color="#fff" />;
+            icon = <Ionicons name="ios-time" size={21} color={iconColor} />;
+            emoji = "🕘";
             break;
           case "Go":
-            icon = <MaterialIcons name="directions" size={17} color="#fff" />;
+            icon = (
+              <MaterialIcons name="directions" size={23} color={iconColor} />
+            );
+            emoji = "🚕";
             break;
           case "Share":
-            icon = <Ionicons name="ios-share-alt" size={18} color="#fff" />;
+            icon = (
+              <Ionicons name="ios-share-alt" size={24} color={iconColor} />
+            );
+            emoji = "📫";
             break;
           default:
             break;
@@ -29,7 +44,7 @@ export default () => {
         return (
           <View key={text} style={styles.action}>
             <TouchableOpacity style={styles.btn}>
-              <View style={styles.icon}>{icon}</View>
+              <Text style={styles.icon}>{emoji}</Text>
               <Text style={styles.actionText}>{text}</Text>
             </TouchableOpacity>
           </View>
@@ -41,33 +56,29 @@ export default () => {
 
 const styles = StyleSheet.create({
   actions: {
-    position: "absolute",
-    bottom: 6,
-    right: 0,
-    left: 0,
-    paddingHorizontal: 3,
-    flexDirection: "row"
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 5,
+    marginBottom: 10
   },
   action: {
-    marginHorizontal: 3,
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    borderRadius: 4
+    width: (WIDTH - 30) / 5 - 8,
+    backgroundColor: "#ededed",
+    borderRadius: 5
   },
   btn: {
     flex: 1,
-    paddingVertical: 6,
+    paddingTop: 12,
+    paddingBottom: 10,
     alignItems: "center"
   },
   icon: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center"
+    fontSize: 18
   },
   actionText: {
-    marginTop: 1,
-    fontSize: 7,
+    marginTop: 8,
+    fontSize: 10,
     fontWeight: "500",
-    color: "#e0e0e0"
+    color: "#000"
   }
 });
