@@ -81,8 +81,8 @@ class Callout extends Component {
                         <View style={styles.days}>
                           {hours.days.map(day => {
                             return (
-                              <View style={styles.day} key={day}>
-                                <Text style={styles.dayText}>{day}</Text>
+                              <View style={styles.day} key={day.text}>
+                                <Text style={styles.dayText}>{day.text}</Text>
                               </View>
                             );
                           })}
