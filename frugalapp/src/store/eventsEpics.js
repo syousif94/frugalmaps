@@ -11,6 +11,34 @@ import * as Location from "./location";
 import { groupHours } from "../Time";
 import locate from "../Locate";
 
+const sortDays = (a, b) => {
+  const aStart = parseInt(a._source.groupedHours[0].start, 10);
+  const bStart = parseInt(b._source.groupedHours[0].start, 10);
+
+  let diff = aStart - bStart;
+
+  if (diff === 0) {
+    let aEnd = parseInt(a._source.groupedHours[0].end, 10);
+    let bEnd = parseInt(b._source.groupedHours[0].end, 10);
+
+    console.log("start", { aStart, aEnd, bStart, bEnd });
+
+    if (aEnd < aStart) {
+      aEnd += 2400;
+    }
+
+    if (bEnd < bStart) {
+      bEnd += 2400;
+    }
+
+    console.log({ aEnd, bStart });
+
+    diff = aEnd - bEnd;
+  }
+
+  return diff;
+};
+
 const makeEvents = (hits, week = false) => {
   const initial = [
     { title: "Monday", data: [], iso: 1, away: 0 },
@@ -58,22 +86,17 @@ const makeEvents = (hits, week = false) => {
         // day.data.groups = day.data.groups.map(group =>
         //   group.sort((a, b) => parseInt(a.start) - parseInt(b.start))
         // );
-        day.data = day.data.sort((a, b) => {
-          const aStart = parseInt(a._source.groupedHours[0].start, 10);
-          const bStart = parseInt(b._source.groupedHours[0].start, 10);
-
-          return aStart - bStart;
-        });
-        console.log({ day });
+        day.data = day.data.sort(sortDays);
         return { ...day, index };
       });
-
-    console.log({ days });
 
     return days;
   } else {
     const today = initial[todayIndex];
     today.title = "Today";
+    today.data = today.data
+      .filter(day => !day.sort || day.sort < 45)
+      .sort(sortDays);
     return [today, closest];
   }
 };
