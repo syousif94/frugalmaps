@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList, Text } from "react-native";
 import { connect } from "react-redux";
-import SearchHeader from "./SearchHeader";
-
+import { SafeAreaView } from "react-navigation";
+import { IOS } from "./Constants";
 import SubmissionItem from "./SubmissionItem";
 import * as Submissions from "./store/submissions";
 import DeleteSubmissions from "./DeleteSubmissions";
@@ -10,7 +10,6 @@ import DeleteSubmissions from "./DeleteSubmissions";
 const mapStateToProps = state => ({
   data: state.submissions.data,
   newData: state.submissions.newData,
-  filter: state.submissions.filter,
   refreshing: state.submissions.refreshing
 });
 
@@ -19,18 +18,12 @@ const mapDispatchToProps = {
   reload: Submissions.actions.reload
 };
 
-class PublishedScreen extends Component {
+class SubmissionsScreen extends Component {
   componentDidMount() {
     this.props.reload({
       data: this.props.newData
     });
   }
-
-  _onChangeText = text => {
-    this.props.set({
-      filter: text
-    });
-  };
 
   _onRefresh = () => {
     this.props.set({
@@ -48,14 +41,14 @@ class PublishedScreen extends Component {
 
   render() {
     const { data, filter, refreshing } = this.props;
+    const SafeView = IOS ? SafeAreaView : View;
     return (
       <View style={styles.container}>
-        <SearchHeader
-          title="Submissions"
-          placeholder="Search"
-          onChangeText={this._onChangeText}
-          value={filter}
-        />
+        <SafeView>
+          <View style={styles.title}>
+            <Text style={styles.titleText}>Submissions</Text>
+          </View>
+        </SafeView>
         <View style={styles.divider} />
         <FlatList
           refreshing={refreshing}
@@ -76,12 +69,23 @@ class PublishedScreen extends Component {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(PublishedScreen);
+)(SubmissionsScreen);
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
     flex: 1
+  },
+  title: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: IOS ? 5 : 10,
+    paddingBottom: 10
+  },
+  titleText: {
+    fontWeight: "600",
+    fontSize: 18,
+    color: "#000"
   },
   list: {
     flex: 1,

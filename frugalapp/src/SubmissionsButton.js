@@ -12,16 +12,8 @@ const mapStateToProps = state => ({
 });
 
 class SubmissionsButton extends Component {
-  componentDidMount() {
-    emitter.on("push-submissions", this._onPress);
-  }
-
-  componentWillUnmount() {
-    emitter.off("push-submissions", this._onPress);
-  }
-
   _onPress = () => {
-    this.props.navigation.navigate("Submissions");
+    emitter.emit("scroll-submit", 2);
   };
 
   render() {
@@ -45,7 +37,7 @@ const styles = StyleSheet.create({
   container: {
     height: 26,
     position: "absolute",
-    bottom: 5,
+    top: 5,
     right: 5,
     borderRadius: 6,
     backgroundColor: "rgba(0, 0, 0, 0.5)"

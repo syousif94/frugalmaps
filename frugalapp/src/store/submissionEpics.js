@@ -126,7 +126,7 @@ const saveEvent = (action$, store) =>
 
             const data = [res.submission, ...oldData];
 
-            emitter.emit("push-submissions");
+            emitter.emit("scroll-submit", 2);
 
             return Observable.of(
               Submission.actions.reset(),

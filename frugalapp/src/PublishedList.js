@@ -3,7 +3,6 @@ import _ from "lodash";
 import {
   StyleSheet,
   View,
-  TextInput,
   FlatList,
   Text,
   KeyboardAvoidingView,
@@ -169,27 +168,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingTop: IOS ? 5 : 10,
-    paddingBottom: IOS ? 5 : 0
+    paddingBottom: 10
   },
   titleText: {
     fontWeight: "600",
     fontSize: 18,
     color: "#000"
-  },
-  search: {
-    margin: 10,
-    backgroundColor: "#ededed",
-    borderRadius: 8,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingLeft: 12
-  },
-  input: {
-    height: 44,
-    fontSize: 16,
-    paddingLeft: 10,
-    marginRight: 10,
-    flex: 1
   },
   list: {
     flex: 1

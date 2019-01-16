@@ -71,8 +71,8 @@ class RestaurantSuggesting extends Component {
 export default connect(mapStateToProps)(RestaurantSuggesting);
 
 const size = 24;
-const left = 10 + (44 - size) / 2;
-const bottom = left + 1;
+const left = (44 - size) / 2;
+const bottom = (44 - size) / 2;
 
 const styles = StyleSheet.create({
   container: {

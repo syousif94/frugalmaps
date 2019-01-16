@@ -51,7 +51,7 @@ class SubmissionItem extends Component {
       ...item
     };
     this.props.setSubmission(data);
-    emitter.emit("scroll-submit", 1, false);
+    emitter.emit("scroll-submit", 1);
     this.props.navigation.pop();
   };
 

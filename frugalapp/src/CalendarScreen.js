@@ -98,9 +98,8 @@ class CalendarScreen extends Component {
           Buncha gets all of its data from user submissions.
         </Text>
         <Text style={[styles.footerText, { marginTop: 6 }]}>
-          If you know of something fun you'd like to share, tap on the{" "}
-          <Entypo name="circle-with-plus" size={12} color="#444" /> Submit tab
-          below.
+          If you know of something fun you'd like to share,{"\n"}just tap on{" "}
+          <Entypo name="circle-with-plus" size={12} color="#444" /> below
         </Text>
       </View>
     );

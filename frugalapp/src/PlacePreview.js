@@ -6,6 +6,7 @@ import { MapView, Linking } from "expo";
 import { INITIAL_REGION } from "./Constants";
 import * as Submission from "./store/submission";
 import RestaurantPicker from "./RestaurantPicker";
+import SubmissionsButton from "./SubmissionsButton";
 
 const mapStateToProps = state => ({
   place: state.submission.place,
@@ -123,6 +124,7 @@ class PlacePreview extends Component {
               showsUserLocation
               showsMyLocationButton={false}
             />
+            <SubmissionsButton />
             <View style={styles.reset}>
               <TouchableOpacity style={styles.resetBtn} onPress={this._reset}>
                 <Text style={styles.instructionText}>Clear Form</Text>
@@ -163,6 +165,7 @@ class PlacePreview extends Component {
               center={coordinate}
             />
           </MapView>
+          <SubmissionsButton />
           <View style={styles.reset}>
             <TouchableOpacity onPress={this._reset} style={styles.resetBtn}>
               <Text style={styles.instructionText}>Clear Form</Text>

@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { StyleSheet, View } from "react-native";
-import { IOS } from "./Constants";
+import { StyleSheet, View, Text } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import RestaurantsSuggesting from "./RestaurantsSuggesting";
 import SubmissionInput from "./SubmissionInput";
@@ -36,23 +35,22 @@ class RestaurantPicker extends Component {
     const { suggestions, value } = this.props;
     return (
       <View style={styles.container}>
-        <View>
-          <View style={styles.search}>
-            <Entypo name="magnifying-glass" size={18} color="#000" />
-            <SubmissionInput
-              containerStyle={{ flex: 1 }}
-              value={value}
-              ref={ref => (this._input = ref)}
-              style={styles.input}
-              placeholder="Restaurant"
-              onChangeText={this._onChangeText}
-              placeholderTextColor="#333"
-              returnKeyType="done"
-              autoCorrect={false}
-              underlineColorAndroid="transparent"
-              selectTextOnFocus
-            />
-          </View>
+        <Text style={styles.instruction}>Select a restaurant.</Text>
+        <View style={styles.search}>
+          <Entypo name="magnifying-glass" size={18} color="#000" />
+          <SubmissionInput
+            containerStyle={styles.inputContainer}
+            value={value}
+            ref={ref => (this._input = ref)}
+            style={styles.input}
+            placeholder="Restaurant"
+            onChangeText={this._onChangeText}
+            placeholderTextColor="#333"
+            returnKeyType="done"
+            autoCorrect={false}
+            underlineColorAndroid="transparent"
+            selectTextOnFocus
+          />
           <RestaurantsSuggesting />
         </View>
         {suggestions
@@ -81,13 +79,20 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff"
   },
-  search: {
+  instruction: {
     marginTop: 10,
+    marginBottom: 5,
+    color: "#555"
+  },
+  search: {
     backgroundColor: "#ededed",
     borderRadius: 8,
     flexDirection: "row",
     alignItems: "center",
     paddingLeft: 12
+  },
+  inputContainer: {
+    flex: 1
   },
   input: {
     height: 44,

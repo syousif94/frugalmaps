@@ -12,13 +12,14 @@ import {
 import Swiper from "react-native-swiper";
 import * as Submission from "./store/submission";
 import PublishedList from "./PublishedList";
+import SubmissionsScreen from "./SubmissionsScreen";
 import EditSpecial from "./EditSpecial";
 import PlacePreview from "./PlacePreview";
 import EventTypePicker from "./EventTypePicker";
 import emitter from "tiny-emitter/instance";
 import SubmissionInput from "./SubmissionInput";
 
-import { BLUE, RED, GREEN } from "./Colors";
+import { RED } from "./Colors";
 import DayPicker from "./SubmitDayPicker";
 import { validSubmission } from "./ValidateSubmission";
 
@@ -271,6 +272,7 @@ class SubmitScreen extends Component {
             {this._renderSubmit()}
             {this._renderDelete()}
           </EditSpecial>
+          <SubmissionsScreen />
         </Swiper>
       </View>
     );
