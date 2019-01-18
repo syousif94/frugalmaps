@@ -4,10 +4,7 @@ const servicesApi = require("./google");
 const event = require("./schema/event");
 const indexLocations = require("./saveLocations");
 const { db } = require("./firebase.js");
-
-const photoBase = `https://maps.googleapis.com/maps/api/place/photo?key=${
-  process.env.GOOGLE
-}&maxheight=800&photoreference=`;
+const processImages = require("./processImages");
 
 function formatTime(str) {
   const date = moment(str, ["h:ma", "H:m"]);
@@ -76,16 +73,7 @@ async function createEvent(req, res) {
       }
       const place = response.json.result;
 
-      const photoLinks = place.photos.map(photo => {
-        const url = `${photoBase}${photo.photo_reference}`;
-        return fetch(url).then(res => ({
-          url: res.url,
-          height: photo.height,
-          width: photo.width
-        }));
-      });
-
-      Promise.all(photoLinks)
+      processImages(place)
         .then(links => {
           place.photos = links;
           resolve(place);
@@ -145,8 +133,8 @@ async function createEvent(req, res) {
       neighborhoodText = `${neighborhood.long_name}, ${cityText}`;
     }
 
-    let startTime;
-    let endTime;
+    let startTime = null;
+    let endTime = null;
 
     if (start) {
       startTime = formatTime(start);

@@ -1,6 +1,8 @@
 import { Dimensions, Platform, View } from "react-native";
 import { SafeAreaView } from "react-navigation";
 
+export const AWSCF = "https://dwrg27ehb8gnf.cloudfront.net/";
+
 export const DAYS = ["M", "T", "W", "Th", "F", "Sa", "S"];
 
 export const ABBREVIATED_DAYS = [

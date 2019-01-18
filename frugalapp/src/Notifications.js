@@ -12,8 +12,8 @@ async function createNotification({ _source: item, _id: id }) {
 
   const duration = makeDuration(item.groupedHours[0]);
 
-  const title = `${item.title} · ${hours.hours} (${duration}hr)`;
-  const body = `${item.location} (${days}) · ${item.description}`;
+  const title = `${item.title} starts in 30 minutes!`;
+  const body = `${item.location} · ${hours.hours} (${duration}hr)`;
 
   const timesToNotify = _(item.groupedHours)
     .map(group => {

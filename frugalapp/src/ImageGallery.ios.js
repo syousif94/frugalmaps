@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import {
   View,
   StyleSheet,
-  Image,
   TouchableWithoutFeedback,
   FlatList,
   Text,
@@ -11,10 +10,11 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import _ from "lodash";
+import Image from "./ProgressiveImage";
 
 import { withNavigation } from "react-navigation";
 import { Entypo } from "@expo/vector-icons";
-import { WIDTH } from "./Constants";
+import { WIDTH, AWSCF } from "./Constants";
 import EventList from "./InfoEventList";
 
 import * as Events from "./store/events";
@@ -41,7 +41,14 @@ class ImageGallery extends Component {
   _renderItem = ({ item }) => {
     const { height, disabled, doc, horizontal = true } = this.props;
 
-    const { url: uri, height: imageHeight, width } = item;
+    if (!item.thumb) {
+      return null;
+    }
+
+    let preview = { uri: `${AWSCF}${item.thumb.key}` };
+    let uri = `${AWSCF}${item.full.key}`;
+    let imageHeight = item.full.height;
+    let width = item.full.width;
 
     const source = {
       uri
@@ -60,14 +67,12 @@ class ImageGallery extends Component {
             />
             <Image
               key={uri}
-              source={source}
-              style={[
-                styles.image,
-                {
-                  width: imageWidth,
-                  height
-                }
-              ]}
+              preview={preview}
+              uri={uri}
+              style={{
+                width: imageWidth,
+                height
+              }}
             />
           </View>
         </TouchableWithoutFeedback>
@@ -88,11 +93,20 @@ class ImageGallery extends Component {
           <ActivityIndicator style={styles.loader} size="large" color="#000" />
           <Image
             key={uri}
-            source={source}
-            style={[styles.vImage, { width: WIDTH, height }]}
+            preview={preview}
+            uri={uri}
+            style={{ width: WIDTH, height }}
           />
         </View>
       );
+    }
+  };
+
+  _keyExtractor = (item, index) => {
+    if (item.thumb) {
+      return `${item.thumb.key}${index}`;
+    } else {
+      return `${item.url}${index}`;
     }
   };
 
@@ -147,7 +161,7 @@ class ImageGallery extends Component {
                 style={touchableStyle}
                 data={data}
                 renderItem={this._renderItem}
-                keyExtractor={(item, i) => item.url + i}
+                keyExtractor={this._keyExtractor}
                 showsHorizontalScrollIndicator={false}
               />
             </View>
@@ -174,7 +188,7 @@ class ImageGallery extends Component {
           contentContainerStyle={containerStyle}
           data={data}
           renderItem={this._renderItem}
-          keyExtractor={(item, i) => item.url + i}
+          keyExtractor={this._keyExtractor}
           showsVerticalScrollIndicator={false}
         />
       );

@@ -3,8 +3,8 @@ const url = "https://us-central1-frugalmaps.cloudfunctions.net/api/";
 function api(endpoint, payload) {
   return new Promise(async (resolve, reject) => {
     const timeout = setTimeout(() => {
-      reject("Request failed..");
-    }, 12000);
+      reject("Request timed out..");
+    }, 40000);
 
     const res = await fetch(`${url}${endpoint}`, {
       method: "POST",
