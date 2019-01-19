@@ -9,6 +9,7 @@ import {
   Text
 } from "react-native";
 import Emitter from "tiny-emitter";
+import { db } from "./Firebase";
 
 import { toggleEvent } from "./Notifications";
 
@@ -25,16 +26,17 @@ export default class NotifyButton extends Component {
   state = {
     notify: false,
     toggle: new Animated.Value(0),
-    count: 2
+    count: 1
   };
 
   componentDidMount() {
     NotifyButton.emitter.on("toggled", this._onToggled);
     this._areNotificationsEnabled();
+    this._getReminderCount();
   }
 
-  componentDidUpdate(_, previous) {
-    if (previous.notify !== this.state.notify) {
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.notify !== this.state.notify) {
       const toValue = this.state.notify ? 1 : 0;
       Animated.timing(
         this.state.toggle,
@@ -42,11 +44,39 @@ export default class NotifyButton extends Component {
         { useNativeDriver: true }
       ).start();
     }
+    if (prevProps.event._id !== this.props.event._id) {
+      this._getReminderCount();
+    }
   }
 
   componentWillUnmount() {
     NotifyButton.emitter.off("toggled", this._onToggled);
+    this._unsubReminders();
   }
+
+  _reminderSubscription;
+
+  _getReminderCount = () => {
+    this._unsubReminders();
+    const {
+      event: { _id: id }
+    } = this.props;
+    this._reminderSubscription = db
+      .collection("reminders")
+      .doc(id)
+      .onSnapshot(snapshot => {
+        this.setState({
+          count: snapshot.data() || 1
+        });
+      });
+  };
+
+  _unsubReminders = () => {
+    if (this._reminderSubscription) {
+      this._reminderSubscription();
+      this._reminderSubscription = null;
+    }
+  };
 
   _onToggled = id => {
     if (this.props.event._id !== id) {
@@ -65,10 +95,12 @@ export default class NotifyButton extends Component {
 
       if (existingNotificationId && !this.state.notify) {
         this.setState({
+          count: this.state.count + 1,
           notify: true
         });
       } else if (!existingNotificationId && this.state.notify) {
         this.setState({
+          count: this.state.count - 1,
           notify: false
         });
       }

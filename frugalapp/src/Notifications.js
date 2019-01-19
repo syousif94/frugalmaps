@@ -4,6 +4,7 @@ import { Notifications, Permissions } from "expo";
 import { makeDuration, createDate, dayToISO } from "./Time";
 import { ABBREVIATED_DAYS } from "./Constants";
 import _ from "lodash";
+import api from "./API";
 
 async function createNotification({ _source: item, _id: id }) {
   const hours = item.groupedHours[0];
@@ -72,6 +73,19 @@ async function checkPermission() {
   return status;
 }
 
+async function syncReminder(id, state) {
+  try {
+    const token = await Notifications.getExpoPushTokenAsync();
+    api("sync-reminder", {
+      state,
+      id,
+      token
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export async function toggleEvent(event) {
   try {
     const { _id: id } = event;
@@ -89,6 +103,7 @@ export async function toggleEvent(event) {
         })
       );
       await AsyncStorage.removeItem(itemId);
+      syncReminder(id, false);
       return false;
     }
 
@@ -101,6 +116,7 @@ export async function toggleEvent(event) {
     const notificationId = await createNotification(event);
 
     await AsyncStorage.setItem(itemId, notificationId);
+    syncReminder(id, true);
     return true;
   } catch (error) {
     Alert.alert("Error", error.message);

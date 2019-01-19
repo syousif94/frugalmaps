@@ -25,7 +25,7 @@ class CalendarScreen extends Component {
   static id = "cal";
 
   componentDidMount() {
-    this.props.fetch();
+    this.props.restore();
     emitter.on("calendar-top", this._scrollToTop);
   }
 
@@ -186,7 +186,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  fetch: Events.actions.set.bind(null, { refreshing: true, queryType: null })
+  fetch: Events.actions.set.bind(null, { refreshing: true, queryType: null }),
+  restore: Events.actions.restore
 };
 
 export default connect(

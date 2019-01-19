@@ -1,11 +1,11 @@
 import { Permissions } from "expo";
-import { Image } from "react-native";
+import { AsyncStorage } from "react-native";
 import { combineEpics } from "redux-observable";
 import { Observable } from "rxjs/Observable";
 import emitter from "tiny-emitter/instance";
 import moment from "moment";
 import _ from "lodash";
-import { AWSCF } from "../Constants";
+// import { AWSCF } from "../Constants";
 
 import api from "../API";
 import * as Events from "./events";
@@ -151,13 +151,15 @@ const events = (action$, store) =>
             doc._source.photos = _(doc._source.photos)
               .shuffle()
               .value();
-            doc._source.photos.forEach(photo => {
-              Image.prefetch(`${AWSCF}${photo.thumb.key}`);
-            });
+            // doc._source.photos.forEach(photo => {
+            //   Image.prefetch(`${AWSCF}${photo.thumb.key}`);
+            // });
             const hit = _.cloneDeep(doc);
             hit._source.groupedHours = groupHours(hit._source);
             return hit;
           });
+
+          AsyncStorage.setItem("oldData", JSON.stringify(hits));
 
           if (bounds !== undefined) {
             emitter.emit("fit-bounds", bounds);
@@ -217,4 +219,38 @@ const events = (action$, store) =>
         })
     );
 
-export default combineEpics(events);
+const restore = action$ =>
+  action$.ofType(Events.type.restore).switchMap(() =>
+    Observable.defer(async () => {
+      try {
+        const dataStr = await AsyncStorage.getItem("oldData");
+
+        if (dataStr === null) {
+          return Events.actions.set({
+            refreshing: true,
+            queryType: null
+          });
+        }
+
+        const data = JSON.parse(dataStr);
+
+        const calendar = makeEvents(data);
+
+        return Events.actions.set({
+          refreshing: true,
+          queryType: null,
+          data,
+          calendar,
+          initialized: true
+        });
+      } catch (error) {
+        console.log(error);
+        return Events.actions.set({
+          refreshing: true,
+          queryType: null
+        });
+      }
+    })
+  );
+
+export default combineEpics(events, restore);

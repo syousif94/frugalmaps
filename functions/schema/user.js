@@ -1,4 +1,4 @@
-const location = {
+const user = {
   index: "users",
   type: "user",
   body: {
@@ -9,4 +9,4 @@ const location = {
   }
 };
 
-module.exports = location;
+module.exports = user;

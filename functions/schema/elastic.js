@@ -5,6 +5,7 @@ const client = require("../elastic");
 const event = require("./event");
 const location = require("./location");
 const user = require("./user");
+const reminder = require("./reminder");
 
 function indexExists(indexName) {
   return client.indices.exists({
@@ -82,6 +83,14 @@ function deleteUsers() {
   return deleteIndex(user.index);
 }
 
+function mapReminders() {
+  return initializeIndex(reminder);
+}
+
+function deleteReminders() {
+  return deleteIndex(reminder.index);
+}
+
 module.exports = {
   events: {
     map: mapEvents,
@@ -94,5 +103,9 @@ module.exports = {
   users: {
     map: mapUsers,
     delete: deleteUsers
+  },
+  reminders: {
+    map: mapReminders,
+    delete: deleteReminders
   }
 };
