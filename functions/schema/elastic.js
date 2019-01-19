@@ -4,6 +4,7 @@ require("isomorphic-fetch");
 const client = require("../elastic");
 const event = require("./event");
 const location = require("./location");
+const user = require("./user");
 
 function indexExists(indexName) {
   return client.indices.exists({
@@ -73,6 +74,14 @@ function deleteLocations() {
   return deleteIndex(location.index);
 }
 
+function mapUsers() {
+  return initializeIndex(user);
+}
+
+function deleteUsers() {
+  return deleteIndex(user.index);
+}
+
 module.exports = {
   events: {
     map: mapEvents,
@@ -81,5 +90,9 @@ module.exports = {
   locations: {
     map: mapLocations,
     delete: deleteLocations
+  },
+  users: {
+    map: mapUsers,
+    delete: deleteUsers
   }
 };

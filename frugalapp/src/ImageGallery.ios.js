@@ -5,12 +5,11 @@ import {
   TouchableWithoutFeedback,
   FlatList,
   Text,
+  Image,
   ActivityIndicator,
   TouchableOpacity
 } from "react-native";
 import { connect } from "react-redux";
-import _ from "lodash";
-import Image from "./ProgressiveImage";
 
 import { withNavigation } from "react-navigation";
 import { Entypo } from "@expo/vector-icons";
@@ -45,10 +44,9 @@ class ImageGallery extends Component {
       return null;
     }
 
-    let preview = { uri: `${AWSCF}${item.thumb.key}` };
-    let uri = `${AWSCF}${item.full.key}`;
-    let imageHeight = item.full.height;
-    let width = item.full.width;
+    let uri = `${AWSCF}${item.thumb.key}`;
+    let imageHeight = item.thumb.height;
+    let width = item.thumb.width;
 
     const source = {
       uri
@@ -67,8 +65,7 @@ class ImageGallery extends Component {
             />
             <Image
               key={uri}
-              preview={preview}
-              uri={uri}
+              source={source}
               style={{
                 width: imageWidth,
                 height
@@ -91,12 +88,7 @@ class ImageGallery extends Component {
       return (
         <View key={uri} style={[styles.vPhoto, { backgroundColor }]}>
           <ActivityIndicator style={styles.loader} size="large" color="#000" />
-          <Image
-            key={uri}
-            preview={preview}
-            uri={uri}
-            style={{ width: WIDTH, height }}
-          />
+          <Image key={uri} source={source} style={{ width: WIDTH, height }} />
         </View>
       );
     }
@@ -127,9 +119,7 @@ class ImageGallery extends Component {
       height
     };
 
-    const photos = _(item.photos)
-      .shuffle()
-      .value();
+    const photos = item.photos;
 
     const spacer = { url: "spacer" };
 
@@ -232,15 +222,9 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "#e0e0e0"
   },
-  image: {
-    resizeMode: "contain"
-  },
   vPhoto: {
     backgroundColor: "#e0e0e0",
     marginBottom: 1
-  },
-  vImage: {
-    resizeMode: "contain"
   },
   action: {
     position: "absolute",

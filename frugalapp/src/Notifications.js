@@ -8,8 +8,6 @@ import _ from "lodash";
 async function createNotification({ _source: item, _id: id }) {
   const hours = item.groupedHours[0];
 
-  const days = hours.days.join(", ");
-
   const duration = makeDuration(item.groupedHours[0]);
 
   const title = `${item.title} starts in 30 minutes!`;

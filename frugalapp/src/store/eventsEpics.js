@@ -1,9 +1,11 @@
 import { Permissions } from "expo";
+import { Image } from "react-native";
 import { combineEpics } from "redux-observable";
 import { Observable } from "rxjs/Observable";
 import emitter from "tiny-emitter/instance";
 import moment from "moment";
 import _ from "lodash";
+import { AWSCF } from "../Constants";
 
 import api from "../API";
 import * as Events from "./events";
@@ -146,6 +148,12 @@ const events = (action$, store) =>
           const { text, hits: docs, bounds } = res;
 
           const hits = docs.map(doc => {
+            doc._source.photos = _(doc._source.photos)
+              .shuffle()
+              .value();
+            doc._source.photos.forEach(photo => {
+              Image.prefetch(`${AWSCF}${photo.thumb.key}`);
+            });
             const hit = _.cloneDeep(doc);
             hit._source.groupedHours = groupHours(hit._source);
             return hit;

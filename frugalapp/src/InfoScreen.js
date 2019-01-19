@@ -161,10 +161,6 @@ class InfoScreen extends Component {
 
     const listTop = y + height;
 
-    console.log({
-      listTop
-    });
-
     this.setState({
       listTop
     });

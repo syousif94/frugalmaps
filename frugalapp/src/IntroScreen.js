@@ -43,8 +43,8 @@ class IntroScreen extends Component {
         </View>
         <View style={styles.prompts}>
           <Text style={styles.subText}>
-            Be sure to allow location access and notifications for the best
-            experience
+            Please allow location, calendar access, and notifications for the
+            best experience
           </Text>
         </View>
 
