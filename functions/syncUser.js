@@ -3,11 +3,30 @@ const user = require("./schema/user");
 
 module.exports = async function syncUser(req, res) {
   try {
-    const { token, location } = req.body;
+    const { token, location, postCode } = req.body;
+
+    if (postCode === process.env.POSTCODE) {
+      const users = await elastic
+        .search({
+          index: user.index,
+          type: user.type,
+          body: {
+            query: { match_all: {} },
+            size: 100
+          }
+        })
+        .then(res => res.hits.hits);
+      res.send({ users });
+      return;
+    }
+
+    if (!token || !location) {
+      throw new Error("Invalid request");
+    }
 
     const body = {
-      token,
-      location
+      pushtoken: token,
+      coordinates: location
     };
 
     await elastic.index({

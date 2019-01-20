@@ -220,7 +220,7 @@ const events = (action$, store) =>
     );
 
 const restore = action$ =>
-  action$.ofType(Events.type.restore).switchMap(() =>
+  action$.ofType(Events.types.restore).switchMap(() =>
     Observable.defer(async () => {
       try {
         const dataStr = await AsyncStorage.getItem("oldData");

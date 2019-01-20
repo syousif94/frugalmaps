@@ -27,6 +27,7 @@ app.post("/delete-event", require("./deleteEvent"));
 app.post("/delete-submissions", require("./deleteSubmissions"));
 
 app.post("/sync-user", require("./syncUser"));
+app.post("/sync-reminder", require("./syncReminder"));
 
 app.post("/events/published", require("./events/published"));
 app.post("/events/published/count", require("./events/publishedCount"));

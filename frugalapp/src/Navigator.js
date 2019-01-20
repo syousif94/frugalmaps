@@ -18,6 +18,7 @@ import IntroScreen from "./IntroScreen";
 
 import TabBar from "./TabBar";
 import Updater from "./Updater";
+import { sync } from "./User";
 
 const TabScreen = createBottomTabNavigator(
   {
@@ -56,6 +57,10 @@ const SwitchScreen = createSwitchNavigator(
 );
 
 export default class Navigator extends Component {
+  componentDidMount() {
+    sync();
+  }
+
   render() {
     return (
       <View style={styles.container}>

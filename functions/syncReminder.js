@@ -1,32 +1,98 @@
 const elastic = require("./elastic");
-const event = require("./schema/event");
-const reminder = require("./schema/reminder");
+const Event = require("./schema/event");
+const Reminder = require("./schema/reminder");
 const { db } = require("./firebase.js");
 
 module.exports = async function syncReminder(req, res) {
-  const { id, token, state } = req.body;
+  try {
+    const { id, token, state, postCode } = req.body;
 
-  const response = await elastic.mget({
-    body: {
-      docs: [
-        { _index: event.index, _type: event.type, _id: id },
-        { _index: reminder.index, _type: reminder.type, _id: `${id}${token}` }
-      ]
+    if (postCode === process.env.POSTCODE) {
+      const reminders = await elastic
+        .search({
+          index: Reminder.index,
+          type: Reminder.type,
+          body: {
+            query: { match_all: {} },
+            size: 100
+          }
+        })
+        .then(res => res.hits.hits);
+      res.send({ reminders });
+      return;
     }
-  });
 
-  const reminderRef = db.collection("reminders").doc(id);
-
-  await db.runTransaction(async tx => {
-    const doc = await tx.get(reminderRef);
-
-    if (!doc.exists && state) {
-      await tx.set(reminderRef, 2);
-      return 2;
+    if (!id || !token || state === undefined) {
+      throw new Error("Invalid request");
     }
-  });
 
-  console.log(response);
+    const reminderId = `${id}${token}`;
 
-  res.send({});
+    const [event, reminder] = await elastic.mget({
+      body: {
+        docs: [
+          { _index: Event.index, _type: Event.type, _id: id },
+          { _index: Reminder.index, _type: Reminder.type, _id: reminderId }
+        ]
+      }
+    });
+
+    if (!event.found) {
+      throw new Error("Invalid event");
+    }
+
+    if (reminder.found && !state) {
+      await elastic.delete({
+        index: Reminder.index,
+        type: Reminder.type,
+        id: reminderId
+      });
+    } else if (state && !reminder.found) {
+      await elastic.index({
+        index: Reminder.index,
+        type: Reminder.type,
+        id: reminderId,
+        body: {
+          pushtoken: token,
+          event: id
+        }
+      });
+    }
+
+    const reminderRef = db.collection("reminders").doc(id);
+
+    const count = await db.runTransaction(async tx => {
+      const doc = await tx.get(reminderRef);
+
+      if (!doc.exists && state) {
+        await tx.set(reminderRef, { count: 2 });
+        return 2;
+      }
+
+      const alreadyExists = state && reminder.found;
+      const notNeeded = !state && !reminder.found;
+
+      if (alreadyExists || notNeeded) {
+        return doc.data().count;
+      }
+
+      const incrementBy = state ? 1 : -1;
+
+      const count = doc.data().count + incrementBy;
+
+      if (count < 1) {
+        return 1;
+      }
+
+      await tx.update(reminderRef, {
+        count
+      });
+
+      return count;
+    });
+
+    res.send({ count });
+  } catch (error) {
+    res.send({ error: error.message });
+  }
 };
