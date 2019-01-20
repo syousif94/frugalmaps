@@ -65,9 +65,11 @@ export default class NotifyButton extends Component {
       .collection("reminders")
       .doc(id)
       .onSnapshot(snapshot => {
-        this.setState({
-          count: snapshot.data() || 1
-        });
+        if (snapshot.exists) {
+          this.setState({
+            count: snapshot.data().count || 1
+          });
+        }
       });
   };
 
@@ -95,12 +97,10 @@ export default class NotifyButton extends Component {
 
       if (existingNotificationId && !this.state.notify) {
         this.setState({
-          count: this.state.count + 1,
           notify: true
         });
       } else if (!existingNotificationId && this.state.notify) {
         this.setState({
-          count: this.state.count - 1,
           notify: false
         });
       }
@@ -120,7 +120,13 @@ export default class NotifyButton extends Component {
     const notify = await toggleEvent(event);
 
     if (notify !== undefined) {
+      const incrementBy = notify ? 1 : -1;
+      let count = this.state.count + incrementBy;
+      if (count < 1) {
+        count = 1;
+      }
       this.setState({
+        count,
         notify
       });
 

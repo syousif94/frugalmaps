@@ -30,7 +30,6 @@ async function createNotification({ _source: item, _id: id }) {
 
   const notifications = await Promise.all(
     timesToNotify.map(time => {
-      console.log(time.format("dddd, MMMM Do YYYY, h:mm:ss a"));
       return Notifications.scheduleLocalNotificationAsync(
         {
           title,
@@ -76,7 +75,7 @@ async function checkPermission() {
 async function syncReminder(id, state) {
   try {
     const token = await Notifications.getExpoPushTokenAsync();
-    api("sync-reminder", {
+    await api("sync-reminder", {
       state,
       id,
       token

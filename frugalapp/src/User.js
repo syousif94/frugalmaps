@@ -4,7 +4,7 @@ import locate from "./Locate";
 
 export async function sync() {
   try {
-    const { status } = await Permissions.askAsync(
+    const { status } = await Permissions.getAsync(
       Permissions.NOTIFICATIONS,
       Permissions.LOCATION
     );

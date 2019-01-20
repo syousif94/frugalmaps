@@ -28,7 +28,9 @@ module.exports = async function syncReminder(req, res) {
 
     const reminderId = `${id}${token}`;
 
-    const [event, reminder] = await elastic.mget({
+    const {
+      docs: [event, reminder]
+    } = await elastic.mget({
       body: {
         docs: [
           { _index: Event.index, _type: Event.type, _id: id },
@@ -72,8 +74,10 @@ module.exports = async function syncReminder(req, res) {
       const alreadyExists = state && reminder.found;
       const notNeeded = !state && !reminder.found;
 
-      if (alreadyExists || notNeeded) {
+      if (alreadyExists) {
         return doc.data().count;
+      } else if (notNeeded) {
+        return doc.exists ? doc.data().count : 1;
       }
 
       const incrementBy = state ? 1 : -1;
