@@ -20,6 +20,19 @@ const ballHeight = switchHeight - 4;
 const switchWidth = 18;
 const ballTranslate = switchWidth - 4 - ballHeight;
 
+function formatCount(count) {
+  if (count < 10) {
+    return `00${count}`;
+  } else if (count < 100) {
+    return `0${count}`;
+  } else if (count > 999) {
+    const scaledCount = $(count / 1000).toFixed(1);
+    return `${scaledCount}k`;
+  } else {
+    return count;
+  }
+}
+
 export default class NotifyButton extends Component {
   static emitter = new Emitter();
 
@@ -146,7 +159,7 @@ export default class NotifyButton extends Component {
       outputRange: ["#ccc", "#13BE24"]
     });
 
-    const count = `00${this.state.count}`;
+    const count = formatCount(this.state.count);
     return (
       <TouchableOpacity style={styles.action} onPress={this._onPress}>
         <Entypo style={styles.icon} name="bell" size={15} color="#000" />
