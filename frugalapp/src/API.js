@@ -1,4 +1,4 @@
-const url = "https://us-central1-frugalmaps.cloudfunctions.net/api/";
+export const url = "https://us-central1-frugalmaps.cloudfunctions.net/api/";
 
 function api(endpoint, payload) {
   return new Promise(async (resolve, reject) => {

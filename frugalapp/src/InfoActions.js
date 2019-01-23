@@ -1,9 +1,56 @@
 import React from "react";
-import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  Linking,
+  Share
+} from "react-native";
 // import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { WIDTH } from "./Constants";
+import { url } from "./API";
 
 // const iconColor = "#000";
+
+function call(source) {
+  try {
+    Linking.openURL(`tel:${source.phone}`);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+function web(source) {
+  try {
+    Linking.openURL(source.website);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+function hours() {}
+
+function go(source) {
+  try {
+    Linking.openURL(source.url);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function share(doc) {
+  const { _source: source, _id } = doc;
+  const shareURL = `${url}e/${_id}`;
+  try {
+    Share.share({
+      title: `${source.title}`,
+      message: `${source.location} ${source.description}\n${shareURL}`
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 export default () => {
   return (
