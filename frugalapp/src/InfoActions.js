@@ -45,7 +45,9 @@ async function share(doc) {
   try {
     await Share.share({
       title: `${source.title}`,
-      message: `${source.location} ${source.description}\n${shareURL}`
+      message: `${source.location}, ${source.city} · ${
+        source.description
+      }\n${shareURL}`
     });
   } catch (error) {
     console.log(error);
