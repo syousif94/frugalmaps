@@ -39,8 +39,18 @@ class SubmissionsScreen extends Component {
 
   _keyExtractor = (item, index) => item.id + index;
 
+  _renderEmpty = () => {
+    return (
+      <View style={styles.empty}>
+        <Text style={styles.emptyText}>
+          No submissions currently awaiting review
+        </Text>
+      </View>
+    );
+  };
+
   render() {
-    const { data, filter, refreshing } = this.props;
+    const { data, refreshing } = this.props;
     const SafeView = IOS ? SafeAreaView : View;
     return (
       <View style={styles.container}>
@@ -57,6 +67,7 @@ class SubmissionsScreen extends Component {
           renderItem={this._renderItem}
           style={styles.list}
           keyExtractor={this._keyExtractor}
+          ListEmptyComponent={this._renderEmpty}
           ItemSeparatorComponent={this._renderSeparator}
           contentInsetAdjustmentBehavior="always"
         />
@@ -94,5 +105,14 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: "#e0e0e0"
+  },
+  empty: {
+    paddingTop: 40,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  emptyText: {
+    fontSize: 12,
+    color: "#444"
   }
 });

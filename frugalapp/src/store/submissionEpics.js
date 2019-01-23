@@ -147,6 +147,8 @@ const saveEvent = (action$, store) =>
             ...oldData.filter(item => item._id !== res.event._id)
           ];
 
+          emitter.emit("scroll-submit", 0);
+
           const actions = [
             Submission.actions.reset(),
             Published.actions.set({

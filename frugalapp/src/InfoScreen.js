@@ -204,7 +204,7 @@ class InfoScreen extends Component {
                 doc={data}
               />
               <View style={styles.events}>
-                <InfoActions />
+                <InfoActions doc={data} />
                 <InfoEventList placeid={data._source.placeid} />
               </View>
             </ScrollView>

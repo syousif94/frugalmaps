@@ -43,7 +43,7 @@ async function share(doc) {
   const { _source: source, _id } = doc;
   const shareURL = `${url}e/${_id}`;
   try {
-    Share.share({
+    await Share.share({
       title: `${source.title}`,
       message: `${source.location} ${source.description}\n${shareURL}`
     });
@@ -52,45 +52,51 @@ async function share(doc) {
   }
 }
 
-export default () => {
+export default ({ doc }) => {
   return (
     <View style={styles.actions}>
       {["Call", "Web", "Hours", "Go", "Share"].map(text => {
         // let icon = null;
         let emoji = "";
+        let onPress;
         switch (text) {
           case "Call":
             // icon = <Ionicons name="ios-call" size={24} color={iconColor} />;
             emoji = "📞";
+            onPress = call.bind(null, doc._source);
             break;
           case "Web":
             // icon = (
             //   <MaterialIcons name="web-asset" size={24} color={iconColor} />
             // );
             emoji = "🔗";
+            onPress = web.bind(null, doc._source);
             break;
           case "Hours":
             // icon = <Ionicons name="ios-time" size={21} color={iconColor} />;
             emoji = "🕘";
+            onPress = hours;
             break;
           case "Go":
             // icon = (
             //   <MaterialIcons name="directions" size={23} color={iconColor} />
             // );
             emoji = "🚕";
+            onPress = go.bind(null, doc._source);
             break;
           case "Share":
             // icon = (
             //   <Ionicons name="ios-share-alt" size={24} color={iconColor} />
             // );
             emoji = "📫";
+            onPress = share.bind(null, doc);
             break;
           default:
             break;
         }
         return (
           <View key={text} style={styles.action}>
-            <TouchableOpacity style={styles.btn}>
+            <TouchableOpacity onPress={onPress} style={styles.btn}>
               <Text style={styles.icon}>{emoji}</Text>
               <Text style={styles.actionText}>{text}</Text>
             </TouchableOpacity>

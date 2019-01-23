@@ -29,13 +29,15 @@ export default class SubmissionInput extends Component {
     if (!this.props.value.length) return null;
 
     return (
-      <TouchableOpacity
-        style={styles.clear}
-        activeOpacity={1}
-        onPress={this._clear}
-      >
-        <Ionicons name="md-close" size={14} color="#fff" />
-      </TouchableOpacity>
+      <View style={styles.clearWrap} pointerEvents="box-none">
+        <TouchableOpacity
+          style={styles.clear}
+          activeOpacity={1}
+          onPress={this._clear}
+        >
+          <Ionicons name="md-close" size={14} color="#fff" />
+        </TouchableOpacity>
+      </View>
     );
   };
 
@@ -67,8 +69,15 @@ const styles = StyleSheet.create({
   btn: {
     flex: 1
   },
-  clear: {
+  clearWrap: {
     position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  clear: {
     height: 16,
     width: 16,
     borderRadius: 8,
@@ -77,7 +86,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: 1,
     paddingLeft: 1,
-    top: 19,
-    right: 20
+    marginRight: 20
   }
 });

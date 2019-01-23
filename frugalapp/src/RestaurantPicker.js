@@ -45,7 +45,7 @@ class RestaurantPicker extends Component {
             style={styles.input}
             placeholder="Restaurant"
             onChangeText={this._onChangeText}
-            placeholderTextColor="#333"
+            placeholderTextColor="#999"
             returnKeyType="done"
             autoCorrect={false}
             underlineColorAndroid="transparent"
@@ -98,7 +98,6 @@ const styles = StyleSheet.create({
     height: 44,
     fontSize: 16,
     paddingLeft: 10,
-    marginRight: 10,
     flex: 1
   }
 });
