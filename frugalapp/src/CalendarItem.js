@@ -14,16 +14,43 @@ class CalendarItem extends Component {
   };
 
   componentDidMount() {
-    this._interval = setInterval(() => {
-      this.setState({
-        time: Date.now()
-      });
-    }, 500);
+    const shouldTick = this._shouldTick();
+    if (shouldTick) {
+      this._tick();
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const shouldTick = this._shouldTick(nextProps);
+    if (shouldTick && !this._interval) {
+      this._tick();
+    } else if (!shouldTick && this._interval) {
+      clearInterval(this._interval);
+      this._interval = undefined;
+    }
   }
 
   componentWillUnmount() {
     clearInterval(this._interval);
   }
+
+  _tick = () => {
+    this._interval = setInterval(() => {
+      this.setState({
+        time: Date.now()
+      });
+    }, 500);
+  };
+
+  _shouldTick = props => {
+    const {
+      section: { title }
+    } = props || this.props;
+
+    const shouldTick = title !== "Closest";
+
+    return shouldTick;
+  };
 
   render() {
     const {

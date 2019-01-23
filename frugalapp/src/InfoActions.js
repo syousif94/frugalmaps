@@ -1,41 +1,41 @@
 import React from "react";
 import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
-import { MaterialIcons, Ionicons } from "@expo/vector-icons";
+// import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { WIDTH } from "./Constants";
 
-const iconColor = "#000";
+// const iconColor = "#000";
 
 export default () => {
   return (
     <View style={styles.actions}>
       {["Call", "Web", "Hours", "Go", "Share"].map(text => {
-        let icon = null;
+        // let icon = null;
         let emoji = "";
         switch (text) {
           case "Call":
-            icon = <Ionicons name="ios-call" size={24} color={iconColor} />;
+            // icon = <Ionicons name="ios-call" size={24} color={iconColor} />;
             emoji = "📞";
             break;
           case "Web":
-            icon = (
-              <MaterialIcons name="web-asset" size={24} color={iconColor} />
-            );
+            // icon = (
+            //   <MaterialIcons name="web-asset" size={24} color={iconColor} />
+            // );
             emoji = "🔗";
             break;
           case "Hours":
-            icon = <Ionicons name="ios-time" size={21} color={iconColor} />;
+            // icon = <Ionicons name="ios-time" size={21} color={iconColor} />;
             emoji = "🕘";
             break;
           case "Go":
-            icon = (
-              <MaterialIcons name="directions" size={23} color={iconColor} />
-            );
+            // icon = (
+            //   <MaterialIcons name="directions" size={23} color={iconColor} />
+            // );
             emoji = "🚕";
             break;
           case "Share":
-            icon = (
-              <Ionicons name="ios-share-alt" size={24} color={iconColor} />
-            );
+            // icon = (
+            //   <Ionicons name="ios-share-alt" size={24} color={iconColor} />
+            // );
             emoji = "📫";
             break;
           default:

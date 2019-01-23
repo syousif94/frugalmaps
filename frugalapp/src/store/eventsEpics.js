@@ -220,19 +220,42 @@ const events = (action$, store) =>
     );
 
 const fetchSelected = action$ =>
-  action$
-    .ofType(Events.types.fetch)
-    .switchMap(action =>
-      Observable.defer(async () => {
-        const id = action.payload.id;
-        try {
-          const event = await api("fetch-event", { id });
-        } catch (error) {
-          console.log(error);
-        }
+  action$.ofType(Events.types.fetch).switchMap(action =>
+    Observable.defer(async () => {
+      const id = action.payload.id;
+      const data = await api("fetch-event", { id }).then(res => {
+        const hits = res.events.map(doc => {
+          doc._source.photos = _(doc._source.photos)
+            .shuffle()
+            .value();
+          const hit = _.cloneDeep(doc);
+          hit._source.groupedHours = groupHours(hit._source);
+          return hit;
+        });
+
+        return hits;
+      });
+      return data;
+    })
+      .switchMap(data => {
+        const selectedEvent = data[0];
+
+        return Observable.of(
+          Events.actions.merge({
+            data
+          }),
+          Events.actions.set({
+            selectedEvent: {
+              data: selectedEvent
+            }
+          })
+        );
       })
-    )
-    .filter(action => action);
+      .catch(error => {
+        console.log(error);
+        return Observable.of(Events.actions.set({}));
+      })
+  );
 
 const restore = action$ =>
   action$.ofType(Events.types.restore).switchMap(() =>
@@ -268,4 +291,4 @@ const restore = action$ =>
     })
   );
 
-export default combineEpics(events, restore);
+export default combineEpics(events, restore, fetchSelected);

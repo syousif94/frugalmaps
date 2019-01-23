@@ -4,7 +4,7 @@ import { createSelector } from "reselect";
 import { createActions } from "./lib";
 import _ from "lodash";
 
-const mutations = ["set", "restore", "fetch"];
+const mutations = ["set", "restore", "fetch", "merge"];
 
 export const { actions, types } = createActions(mutations, "events");
 
@@ -122,6 +122,15 @@ function data(state = [], { type, payload }) {
     case types.set:
       if (payload.data !== undefined) {
         return payload.data;
+      }
+      return state;
+    case types.merge:
+      if (payload.data !== undefined) {
+        const newIDs = payload.data.map(doc => doc._id);
+        const newState = state.filter(doc => {
+          return newIDs.indexOf(doc._id) === -1;
+        });
+        return [...newState, ...payload.data];
       }
       return state;
     default:

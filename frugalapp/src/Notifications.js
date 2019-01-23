@@ -14,7 +14,7 @@ function handleNotification(navigator) {
       case "selected":
         store.dispatch(
           Events.actions.set({
-            id: notification.data.id
+            selectedId: notification.data.id
           })
         );
         navigator._navigation.navigate("Info");

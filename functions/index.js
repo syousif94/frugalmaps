@@ -23,6 +23,7 @@ app.post("/places/id", require("./places/id"));
 app.post("/save-event", require("./saveEvent"));
 app.post("/query-events", require("./queryEvents"));
 app.post("/delete-event", require("./deleteEvent"));
+app.post("/fetch-event", require("./fetchEvent"));
 
 app.post("/delete-submissions", require("./deleteSubmissions"));
 

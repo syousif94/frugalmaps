@@ -153,6 +153,7 @@ class TabBar extends Component {
 
   _onCalendar = () => {
     this.props.navigation.navigate("Calendar");
+    emitter.emit("reclip-calendar");
   };
 
   _onSubmit = () => {

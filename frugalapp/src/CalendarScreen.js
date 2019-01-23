@@ -24,14 +24,37 @@ import { ANDROID, IOS, PLACEMENT_ID } from "./Constants";
 class CalendarScreen extends Component {
   static id = "cal";
 
+  state = {
+    clipSubviews: true
+  };
+
   componentDidMount() {
     this.props.restore();
     emitter.on("calendar-top", this._scrollToTop);
+    if (IOS) {
+      emitter.on("reclip-calendar", this._reclip);
+    }
   }
 
   componentWillUnmount() {
     emitter.off("calendar-top", this._scrollToTop);
+    if (IOS) {
+      emitter.off("reclip-calendar", this._reclip);
+    }
   }
+
+  _reclip = () => {
+    this.setState(
+      {
+        clipSubviews: false
+      },
+      () => {
+        this.setState({
+          clipSubviews: true
+        });
+      }
+    );
+  };
 
   _scrollToTop = () => {
     this._list.getScrollResponder().scrollTo({ x: 0, y: 0, animated: false });
@@ -168,7 +191,7 @@ class CalendarScreen extends Component {
           {...androidProps}
           ListHeaderComponent={this._renderAd}
           ListFooterComponent={this._renderFooter}
-          removeClippedSubviews={ANDROID}
+          removeClippedSubviews={this.state.clipSubviews}
         />
         {this._renderInitial()}
         <SearchButton id={CalendarScreen.id} />
