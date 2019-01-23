@@ -193,6 +193,10 @@ async function createEvent(req, res) {
 
     const [{ _id }] = await Promise.all([save, ...saveLocations]);
 
+    if (!id) {
+      notifyNearbyUsers(_id, body);
+    }
+
     if (fid) {
       await db
         .collection("submissions")
@@ -211,6 +215,25 @@ async function createEvent(req, res) {
       error: error.message
     });
   }
+}
+
+async function notifyNearbyUsers(id, doc) {
+  const url = `https://us-central1-frugalmaps.cloudfunctions.net/api/notify-nearby`;
+
+  const payload = {
+    doc,
+    id,
+    postCode: process.env.POSTCODE
+  };
+
+  fetch(url, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  });
 }
 
 module.exports = createEvent;

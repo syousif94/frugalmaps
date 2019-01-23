@@ -5,6 +5,29 @@ import { makeDuration, createDate, dayToISO } from "./Time";
 import { ABBREVIATED_DAYS } from "./Constants";
 import _ from "lodash";
 import api from "./API";
+import store from "./store";
+import * as Events from "./store/events";
+
+function handleNotification(navigator) {
+  return notification => {
+    switch (notification.origin) {
+      case "selected":
+        store.dispatch(
+          Events.actions.set({
+            id: notification.data.id
+          })
+        );
+        navigator._navigation.navigate("Info");
+        break;
+      default:
+        break;
+    }
+  };
+}
+
+export function watchNotifications(navigator) {
+  Notifications.addListener(handleNotification(navigator));
+}
 
 async function createNotification({ _source: item, _id: id }) {
   const hours = item.groupedHours[0];

@@ -19,6 +19,7 @@ import locate from "./Locate";
 import InfoEventList from "./InfoEventList";
 import { FontAwesome } from "@expo/vector-icons";
 import InfoActions from "./InfoActions";
+import * as Events from "./store/events";
 
 class InfoScreen extends Component {
   static mapId = "infoScreen";
@@ -29,7 +30,14 @@ class InfoScreen extends Component {
   };
 
   componentDidMount() {
-    if (!this.props.event.data) {
+    const {
+      event: { data, id }
+    } = this.props;
+
+    if (!data && id) {
+      this.props.fetch({
+        id
+      });
     }
 
     if (ANDROID) {
@@ -118,16 +126,6 @@ class InfoScreen extends Component {
       authorized
     } = this.props;
 
-    if (!data) {
-      return (
-        <View style={[styles.info, styles.loading]}>
-          <ActivityIndicator style={styles.loading} size="large" color="#444" />
-        </View>
-      );
-    }
-
-    const { _source: item } = data;
-
     return (
       <View style={styles.map}>
         <View style={styles.map}>
@@ -170,6 +168,14 @@ class InfoScreen extends Component {
     const {
       event: { data }
     } = this.props;
+
+    if (!data) {
+      return (
+        <View style={[styles.container, styles.loading]}>
+          <ActivityIndicator style={styles.loading} size="large" color="#fff" />
+        </View>
+      );
+    }
 
     const item = data._source;
 
@@ -231,7 +237,14 @@ const mapStateToProps = state => ({
   authorized: state.location.authorized
 });
 
-export default connect(mapStateToProps)(InfoScreen);
+const mapActions = {
+  fetch: Events.actions.fetch
+};
+
+export default connect(
+  mapStateToProps,
+  mapActions
+)(InfoScreen);
 
 const styles = StyleSheet.create({
   container: {

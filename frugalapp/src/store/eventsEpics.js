@@ -219,6 +219,21 @@ const events = (action$, store) =>
         })
     );
 
+const fetchSelected = action$ =>
+  action$
+    .ofType(Events.types.fetch)
+    .switchMap(action =>
+      Observable.defer(async () => {
+        const id = action.payload.id;
+        try {
+          const event = await api("fetch-event", { id });
+        } catch (error) {
+          console.log(error);
+        }
+      })
+    )
+    .filter(action => action);
+
 const restore = action$ =>
   action$.ofType(Events.types.restore).switchMap(() =>
     Observable.defer(async () => {

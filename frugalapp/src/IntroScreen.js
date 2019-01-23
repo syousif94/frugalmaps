@@ -2,7 +2,11 @@ import React, { Component } from "react";
 import { View, StyleSheet, Image, TouchableOpacity, Text } from "react-native";
 import { SafeArea, HEIGHT, WIDTH } from "./Constants";
 import { withNavigation } from "react-navigation";
-import { grantLocation, grantNotifications } from "./Permissions";
+import {
+  grantLocation,
+  grantNotifications,
+  grantCalendar
+} from "./Permissions";
 import { Entypo } from "@expo/vector-icons";
 
 class IntroScreen extends Component {
@@ -10,6 +14,7 @@ class IntroScreen extends Component {
     try {
       await grantLocation();
       await grantNotifications();
+      await grantCalendar();
     } catch (error) {}
     this.props.navigation.navigate({
       routeName: "Home"

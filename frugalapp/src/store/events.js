@@ -4,7 +4,7 @@ import { createSelector } from "reselect";
 import { createActions } from "./lib";
 import _ from "lodash";
 
-const mutations = ["set", "restore"];
+const mutations = ["set", "restore", "fetch"];
 
 export const { actions, types } = createActions(mutations, "events");
 

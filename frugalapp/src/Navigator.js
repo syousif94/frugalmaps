@@ -16,6 +16,8 @@ import InfoScreen from "./InfoScreen";
 
 import IntroScreen from "./IntroScreen";
 
+import { watchNotifications } from "./Notifications";
+
 import TabBar from "./TabBar";
 import Updater from "./Updater";
 import { sync } from "./User";
@@ -59,12 +61,14 @@ const SwitchScreen = createSwitchNavigator(
 export default class Navigator extends Component {
   componentDidMount() {
     sync();
+
+    watchNotifications(this._nav);
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <SwitchScreen />
+        <SwitchScreen ref={ref => (this._nav = ref)} />
         <Updater />
       </View>
     );
