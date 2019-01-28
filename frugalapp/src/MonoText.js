@@ -11,6 +11,9 @@ export default ({
   colonStyle = { paddingBottom: 2.5 },
   suffixStyle = {}
 }) => {
+  if (!text || !text.length) {
+    return null;
+  }
   const countdownText = IOS
     ? text.split("").map((char, index) => {
         const style = [{ justifyContent: "center" }];

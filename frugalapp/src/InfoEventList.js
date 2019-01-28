@@ -25,7 +25,8 @@ const renderEvent = event => {
 
   let endingText = " minutes";
 
-  if (remaining.length > 9) {
+  if (!remaining) {
+  } else if (remaining.length > 9) {
     endingText = " days";
   } else if (remaining.length > 6) {
     endingText = " hours";
