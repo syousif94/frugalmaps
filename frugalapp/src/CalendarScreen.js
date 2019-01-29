@@ -25,7 +25,8 @@ class CalendarScreen extends Component {
   static id = "cal";
 
   state = {
-    clipSubviews: true
+    clipSubviews: true,
+    touchAd: true
   };
 
   componentDidMount() {
@@ -129,7 +130,9 @@ class CalendarScreen extends Component {
   };
 
   _renderAd = () => {
-    const { initialized } = this.props;
+    const { initialized, listTop } = this.props;
+
+    const pointerEvents = this.state.touchAd ? "box-none" : "none";
 
     if (initialized && IOS) {
       return (
@@ -138,12 +141,11 @@ class CalendarScreen extends Component {
             <Text style={styles.adText}>Loading Advertisement...</Text>
             <Text style={styles.adSubtext}>Occasionally fails</Text>
           </View>
-          <View style={styles.adContainer} pointerEvents="box-none">
+          <View style={styles.adContainer} pointerEvents={pointerEvents}>
             <FacebookAds.BannerView
               style={styles.ad}
               placementId={PLACEMENT_ID}
               type="standard"
-              onPress={() => console.log("click")}
               onError={err => console.log("error", err)}
             />
           </View>
@@ -152,6 +154,19 @@ class CalendarScreen extends Component {
     }
 
     return null;
+  };
+
+  _onScrollEnd = e => {
+    const y = e.nativeEvent.contentOffset.y;
+    if (y > 50 && this.state.touchAd) {
+      this.setState({
+        touchAd: false
+      });
+    } else if (y < 50 && !this.state.touchAd) {
+      this.setState({
+        touchAd: true
+      });
+    }
   };
 
   render() {
@@ -168,7 +183,9 @@ class CalendarScreen extends Component {
           initialNumToRender: 8,
           maxToRenderPerBatch: 5
         }
-      : {};
+      : {
+          onMomentumScrollEnd: this._onScrollEnd
+        };
 
     const listData = dataCount ? data : [];
 
@@ -247,7 +264,8 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.8 }]
   },
   adView: {
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
+    height: 50
   },
   adBanner: {
     position: "absolute",

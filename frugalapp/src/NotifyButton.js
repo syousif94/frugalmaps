@@ -39,17 +39,20 @@ export default class NotifyButton extends Component {
   state = {
     notify: false,
     toggle: new Animated.Value(0),
-    count: 1
+    count: 1,
+    ready: false
   };
 
   componentDidMount() {
     NotifyButton.emitter.on("toggled", this._onToggled);
-    this._areNotificationsEnabled();
+    this._areNotificationsEnabled(true);
     this._getReminderCount();
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.notify !== this.state.notify) {
+    if (!prevState.ready && this.state.ready && this.state.notify) {
+      this.state.toggle.setValue(1);
+    } else if (prevState.notify !== this.state.notify) {
       const toValue = this.state.notify ? 1 : 0;
       Animated.timing(
         this.state.toggle,
@@ -100,7 +103,7 @@ export default class NotifyButton extends Component {
     this._areNotificationsEnabled();
   };
 
-  _areNotificationsEnabled = async () => {
+  _areNotificationsEnabled = async init => {
     const {
       event: { _id: id, _source: item }
     } = this.props;
@@ -109,19 +112,31 @@ export default class NotifyButton extends Component {
       const existingNotificationId = await AsyncStorage.getItem(`${id}`);
 
       if (existingNotificationId && !this.state.notify) {
-        this.setState({
+        const update = {
           notify: true
-        });
+        };
+        if (init) {
+          update.ready = true;
+        }
+        this.setState(update);
       } else if (!existingNotificationId && this.state.notify) {
-        this.setState({
+        const update = {
           notify: false
-        });
+        };
+        if (init) {
+          update.ready = true;
+        }
+        this.setState(update);
       }
     } catch (error) {
       if (this.state.notify) {
-        this.setState({
+        const update = {
           notify: false
-        });
+        };
+        if (init) {
+          update.ready = true;
+        }
+        this.setState(update);
       }
       Alert.alert("Error", error.message);
     }
