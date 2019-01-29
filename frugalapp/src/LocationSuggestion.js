@@ -101,7 +101,7 @@ class LocationSuggestion extends Component {
   };
 
   render() {
-    const { item, index, type } = this.props;
+    const { item, index, type, hide } = this.props;
 
     let name = `${index + 1}. `;
 
@@ -137,6 +137,7 @@ class LocationSuggestion extends Component {
         onPress={this._onPress}
         onLongPress={this._onPressIn}
         onPressOut={this._onPressOut}
+        disabled={hide}
       >
         <View style={styles.info}>
           <Text style={styles.name}>{name}</Text>

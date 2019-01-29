@@ -131,9 +131,13 @@ class LocationLists extends Component {
             initialPage={1}
             alwaysBounceVertical={true}
           >
-            <LocationList tabLabel="Popular" id={this.props.id} />
-            <LocationList tabLabel="Closest" id={this.props.id} />
-            <LocationList tabLabel="Autocomplete" id={this.props.id} />
+            <LocationList hide={hide} tabLabel="Popular" id={this.props.id} />
+            <LocationList hide={hide} tabLabel="Closest" id={this.props.id} />
+            <LocationList
+              hide={hide}
+              tabLabel="Autocomplete"
+              id={this.props.id}
+            />
           </ScrollableTabView>
           <LocationListFooter id={id} />
         </View>

@@ -18,6 +18,7 @@ class LocationList extends Component {
       type={this.props.tabLabel}
       {...data}
       key={data.index}
+      hide={this.props.hide}
     />
   );
 
