@@ -132,6 +132,17 @@ export function timeRemaining(hours, iso) {
         diff = Math.min(nextDiff, diff);
       }
     }
+  } else if (hours.today) {
+    let daysAway = 7;
+    if (hours.days.length > 1) {
+      const nextDay = hours.days.find(day => day.daysAway > 0);
+      daysAway = nextDay.daysAway;
+    }
+    const nextStart = start.add(daysAway, "d");
+    const nextDiff = nextStart.valueOf() - time;
+    if (nextDiff >= 0) {
+      diff = nextDiff;
+    }
   }
   if (diff) {
     let hourFloat = diff / 3600000;

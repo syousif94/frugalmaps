@@ -2,11 +2,7 @@ import React, { Component } from "react";
 import { View, StyleSheet, Image, TouchableOpacity, Text } from "react-native";
 import { SafeArea, HEIGHT, WIDTH } from "./Constants";
 import { withNavigation } from "react-navigation";
-import {
-  grantLocation,
-  grantNotifications,
-  grantCalendar
-} from "./Permissions";
+import { grantLocation, grantNotifications } from "./Permissions";
 import { Entypo } from "@expo/vector-icons";
 
 class IntroScreen extends Component {
@@ -14,7 +10,7 @@ class IntroScreen extends Component {
     try {
       await grantLocation();
       await grantNotifications();
-      await grantCalendar();
+      // await grantCalendar();
     } catch (error) {}
     this.props.navigation.navigate({
       routeName: "Home"
@@ -48,7 +44,7 @@ class IntroScreen extends Component {
         </View>
         <View style={styles.prompts}>
           <Text style={styles.subText}>
-            Please allow location, calendar access, and notifications for the
+            Please allow location access and notifications when prompted for the
             best experience
           </Text>
         </View>

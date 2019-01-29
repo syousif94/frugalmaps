@@ -58,7 +58,11 @@ class LocationLists extends Component {
     }
   };
 
-  _renderTabBar = () => <LocationListBar />;
+  _renderTabBar = () => {
+    const { focused, listTop, listBottom } = this.props;
+    const hide = !focused || !listTop || (IOS && !listBottom);
+    return <LocationListBar hide={hide} />;
+  };
 
   _previewBounds = bounds => {
     const coords = [

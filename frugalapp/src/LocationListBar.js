@@ -20,8 +20,9 @@ export default class LocationListBar extends PureComponent {
   render() {
     const active = "#fff";
     const dim = "rgba(255,255,255,0.4)";
+    const pointerEvents = this.props.hide ? "none" : "auto";
     return (
-      <View style={styles.container}>
+      <View style={styles.container} pointerEvents={pointerEvents}>
         {this.props.tabs.map((name, page) => {
           const onPress = this.props.goToPage.bind(null, page);
           let outputRange = [dim, dim, dim];
