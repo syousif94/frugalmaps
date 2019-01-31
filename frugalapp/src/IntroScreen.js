@@ -34,12 +34,12 @@ class IntroScreen extends Component {
             Buncha is a calendar of fun and affordable stuff to do nearby
           </Text>
           <Text style={[styles.instructionText, bottomInstructionMargin]}>
-            Tap the <Entypo name="bell" size={18} color="#000" />
-            's to support fun stuff
+            Tap on the <Entypo name="bell" size={18} color="#000" />
+            's for reminders
           </Text>
           <Text style={[styles.instructionText, bottomInstructionMargin]}>
             Tap on <Entypo name="circle-with-plus" size={18} color="#000" /> to
-            share fun stuff
+            submit fun stuff
           </Text>
         </View>
         <View style={styles.prompts}>

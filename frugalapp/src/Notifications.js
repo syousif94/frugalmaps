@@ -7,6 +7,7 @@ import _ from "lodash";
 import api from "./API";
 import store from "./store";
 import * as Events from "./store/events";
+import CalendarManager from "./CalendarManager";
 
 function handleNotification(navigator) {
   return notification => {
@@ -125,6 +126,7 @@ export async function toggleEvent(event) {
         })
       );
       await AsyncStorage.removeItem(itemId);
+      await CalendarManager.toggleEvent(event, false);
       syncReminder(id, false);
       return false;
     }
@@ -138,6 +140,7 @@ export async function toggleEvent(event) {
     const notificationId = await createNotification(event);
 
     await AsyncStorage.setItem(itemId, notificationId);
+    await CalendarManager.toggleEvent(event, true);
     syncReminder(id, true);
     return true;
   } catch (error) {

@@ -130,7 +130,7 @@ class CalendarScreen extends Component {
   };
 
   _renderAd = () => {
-    const { initialized, listTop } = this.props;
+    const { initialized } = this.props;
 
     const pointerEvents = this.state.touchAd ? "box-none" : "none";
 

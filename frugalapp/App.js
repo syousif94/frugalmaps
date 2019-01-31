@@ -9,6 +9,7 @@ import { DEV, IOS } from "./src/Constants";
 import { AppLoading } from "expo";
 import cache from "./src/CacheAssets";
 import "./src/Firebase";
+import "./src/CalendarManager";
 
 if (DEV) {
   FacebookAds.AdSettings.addTestDevice(
