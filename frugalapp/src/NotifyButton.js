@@ -40,7 +40,7 @@ export default class NotifyButton extends Component {
     notify: false,
     toggle: new Animated.Value(0),
     count: 1,
-    ready: false
+    toggling: false
   };
 
   componentDidMount() {
@@ -50,15 +50,18 @@ export default class NotifyButton extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (!prevState.ready && this.state.ready && this.state.notify) {
-      this.state.toggle.setValue(1);
-    } else if (prevState.notify !== this.state.notify) {
+    const shouldToggle = prevState.notify !== this.state.notify;
+    if (shouldToggle) {
       const toValue = this.state.notify ? 1 : 0;
-      Animated.timing(
-        this.state.toggle,
-        { duration: 100, toValue },
-        { useNativeDriver: true }
-      ).start();
+      if (prevState.toggling) {
+        Animated.timing(
+          this.state.toggle,
+          { duration: 100, toValue },
+          { useNativeDriver: true }
+        ).start();
+      } else {
+        this.state.toggle.setValue(toValue);
+      }
     }
     if (prevProps.event._id !== this.props.event._id) {
       this._getReminderCount();
@@ -115,17 +118,11 @@ export default class NotifyButton extends Component {
         const update = {
           notify: true
         };
-        if (init) {
-          update.ready = true;
-        }
         this.setState(update);
       } else if (!existingNotificationId && this.state.notify) {
         const update = {
           notify: false
         };
-        if (init) {
-          update.ready = true;
-        }
         this.setState(update);
       }
     } catch (error) {
@@ -133,9 +130,6 @@ export default class NotifyButton extends Component {
         const update = {
           notify: false
         };
-        if (init) {
-          update.ready = true;
-        }
         this.setState(update);
       }
       Alert.alert("Error", error.message);
@@ -143,6 +137,15 @@ export default class NotifyButton extends Component {
   };
 
   _onPress = async () => {
+    await new Promise(resolve => {
+      this.setState(
+        {
+          toggling: true
+        },
+        resolve
+      );
+    });
+
     const { event } = this.props;
 
     const notify = await toggleEvent(event);
@@ -153,12 +156,18 @@ export default class NotifyButton extends Component {
       if (count < 1) {
         count = 1;
       }
+
       this.setState({
         count,
-        notify
+        notify,
+        toggling: false
       });
 
       NotifyButton.emitter.emit("toggled", event._id);
+    } else {
+      this.setState({
+        toggling: false
+      });
     }
   };
 
@@ -176,7 +185,11 @@ export default class NotifyButton extends Component {
 
     const count = formatCount(this.state.count);
     return (
-      <TouchableOpacity style={styles.action} onPress={this._onPress}>
+      <TouchableOpacity
+        disabled={this.state.toggling}
+        style={styles.action}
+        onPress={this._onPress}
+      >
         <Entypo style={styles.icon} name="bell" size={15} color="#000" />
         <Text style={styles.countText}>{count}</Text>
         <View style={styles.switch}>

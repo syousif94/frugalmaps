@@ -17,6 +17,7 @@ import InfoScreen from "./InfoScreen";
 import IntroScreen from "./IntroScreen";
 
 import { watchNotifications } from "./Notifications";
+import { watchLinking } from "./Linking";
 
 import TabBar from "./TabBar";
 import Updater from "./Updater";
@@ -63,6 +64,8 @@ export default class Navigator extends Component {
     sync();
 
     watchNotifications(this._nav);
+
+    watchLinking(this._nav);
   }
 
   render() {
