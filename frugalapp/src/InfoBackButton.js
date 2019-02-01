@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { StyleSheet, TouchableOpacity, View, Text } from "react-native";
+import { Entypo } from "@expo/vector-icons";
 
 import { withNavigation } from "react-navigation";
 import { BLUE } from "./Colors";
@@ -12,22 +12,48 @@ class BackButton extends Component {
 
   render() {
     return (
-      <TouchableOpacity onPress={this._back} style={styles.backBtn}>
-        <Ionicons color={BLUE} name="ios-arrow-back" size={28} />
-      </TouchableOpacity>
+      <View style={styles.container}>
+        <TouchableOpacity onPress={this._back} style={styles.backBtn}>
+          <Entypo
+            style={styles.icon}
+            name="chevron-left"
+            size={18}
+            color={BLUE}
+          />
+          <Text style={styles.text}>Back</Text>
+        </TouchableOpacity>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  backBtn: {
+  container: {
     position: "absolute",
-    top: 0,
-    left: 0,
-    bottom: 0,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    backgroundColor: "#fff",
+    top: 8,
+    left: 8,
+    height: 32,
+    borderRadius: 5
+  },
+  backBtn: {
+    flex: 1,
+    flexDirection: "row",
     justifyContent: "center",
-    width: 54,
     alignItems: "center"
+  },
+  icon: {
+    marginTop: 1.5,
+    marginLeft: 6
+  },
+  text: {
+    marginLeft: 4,
+    marginRight: 12,
+    color: BLUE,
+    fontSize: 12,
+    fontWeight: "600"
   }
 });
 

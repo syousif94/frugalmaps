@@ -65,7 +65,7 @@ class CalendarManager {
               ...times,
               title: item.title,
               notes: item.description,
-              location: `${item.location}\n${item.address}`,
+              location: `${item.location}`,
               availability: Calendar.Availability.FREE,
               timeZone: `${times.startDate.getTimezoneOffset()}`,
               recurrenceRule: {

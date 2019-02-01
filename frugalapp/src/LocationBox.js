@@ -8,7 +8,7 @@ import { connect } from "react-redux";
 import * as Location from "./store/location";
 import emitter from "tiny-emitter/instance";
 import { SafeArea as Container, ANDROID } from "./Constants";
-import { RED, BLUE, GREEN } from "./Colors";
+import { RED } from "./Colors";
 
 class LocationBox extends Component {
   constructor(props) {

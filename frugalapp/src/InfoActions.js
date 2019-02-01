@@ -10,6 +10,7 @@ import {
 // import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { WIDTH } from "./Constants";
 import { url } from "./API";
+import emitter from "tiny-emitter/instance";
 
 // const iconColor = "#000";
 
@@ -29,7 +30,9 @@ function web(source) {
   }
 }
 
-function hours() {}
+function hours() {
+  emitter.emit("toggle-hours");
+}
 
 function go(source) {
   try {
@@ -45,9 +48,7 @@ async function share(doc) {
   try {
     await Share.share({
       title: `${source.title}`,
-      message: `${source.location}, ${source.city} · ${
-        source.description
-      }\n${shareURL}`
+      message: `${source.location} · ${source.city}\n${shareURL}`
     });
   } catch (error) {
     console.log(error);

@@ -20,6 +20,8 @@ import InfoEventList from "./InfoEventList";
 import { FontAwesome } from "@expo/vector-icons";
 import InfoActions from "./InfoActions";
 import * as Events from "./store/events";
+import InfoHours from "./InfoHours";
+import InfoBackButton from "./InfoBackButton";
 
 class InfoScreen extends Component {
   static mapId = "infoScreen";
@@ -140,6 +142,7 @@ class InfoScreen extends Component {
               <MapMarker data={data} key={data._id} disabled />
             </MapView>
           )}
+          {ANDROID ? null : <InfoBackButton />}
           {ANDROID && this.state.loading ? null : (
             <LocateButton mapId={InfoScreen.mapId} size="small" />
           )}
@@ -205,6 +208,7 @@ class InfoScreen extends Component {
               />
               <View style={styles.events}>
                 <InfoActions doc={data} />
+                <InfoHours hours={data._source.hours} />
                 <InfoEventList placeid={data._source.placeid} />
               </View>
             </ScrollView>
@@ -284,8 +288,7 @@ const styles = StyleSheet.create({
     marginTop: 1,
     backgroundColor: "#fff",
     paddingHorizontal: 15,
-    paddingTop: 10,
-    paddingBottom: 25
+    paddingVertical: 10
   },
   info: {
     height: HEIGHT * 0.7,
