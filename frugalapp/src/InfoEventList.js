@@ -41,7 +41,7 @@ const renderEvent = event => {
 
   return (
     <View style={styles.event} key={id}>
-      <View style={styles.hours}>
+      <View style={styles.hours} pointerEvents="none">
         <MonoText
           characterWidth={7.5}
           style={styles.countdown}

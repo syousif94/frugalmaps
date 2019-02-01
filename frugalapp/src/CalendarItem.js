@@ -124,7 +124,7 @@ class CalendarItem extends Component {
           </View>
           {!isClosest ? (
             <View style={styles.event}>
-              <View>
+              <View pointerEvents="none">
                 <View style={styles.hours}>
                   <MonoText
                     text={remaining}

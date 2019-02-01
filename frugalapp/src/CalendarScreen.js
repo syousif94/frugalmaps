@@ -148,6 +148,7 @@ class CalendarScreen extends Component {
               placementId={PLACEMENT_ID}
               type="standard"
               onError={err => console.log("error", err)}
+              onPress={() => console.log("hi")}
             />
           </View>
         </View>
@@ -189,7 +190,7 @@ class CalendarScreen extends Component {
           onMomentumScrollBegin: this._onScrollEnd,
           onMomentumScrollEnd: this._onScrollEnd,
           initialNumToRender: 8,
-          maxToRenderPerBatch: 3
+          maxToRenderPerBatch: 1
         };
 
     const listData = dataCount ? data : [];

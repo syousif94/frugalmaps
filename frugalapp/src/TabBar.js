@@ -20,26 +20,26 @@ import { ANDROID, IOS } from "./Constants";
 
 const notched = Platform.OS === "ios" && Constants.statusBarHeight > 40;
 
-class Search extends Component {
-  render() {
-    const { selected, index, onPress } = this.props;
+// class Search extends Component {
+//   render() {
+//     const { selected, index, onPress } = this.props;
 
-    let iconColor = "#000";
-    const textStyle = [styles.text];
-    if (selected === index) {
-      iconColor = BLUE;
-      textStyle.push(styles.blueText);
-    }
-    return (
-      <TouchableOpacity style={styles.tab} onPress={onPress}>
-        <View style={styles.icon}>
-          <Entypo name="magnifying-glass" size={20} color={iconColor} />
-        </View>
-        <Text style={textStyle}>Search</Text>
-      </TouchableOpacity>
-    );
-  }
-}
+//     let iconColor = "#000";
+//     const textStyle = [styles.text];
+//     if (selected === index) {
+//       iconColor = BLUE;
+//       textStyle.push(styles.blueText);
+//     }
+//     return (
+//       <TouchableOpacity style={styles.tab} onPress={onPress}>
+//         <View style={styles.icon}>
+//           <Entypo name="magnifying-glass" size={20} color={iconColor} />
+//         </View>
+//         <Text style={textStyle}>Search</Text>
+//       </TouchableOpacity>
+//     );
+//   }
+// }
 
 class Calendar extends Component {
   render() {
