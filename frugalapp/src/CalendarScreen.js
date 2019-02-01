@@ -132,11 +132,13 @@ class CalendarScreen extends Component {
   _renderAd = () => {
     const { initialized } = this.props;
 
+    const wrapEvents = this.state.touchAd ? "box-none" : "none";
+
     const pointerEvents = this.state.touchAd ? "box-none" : "none";
 
     if (initialized && IOS) {
       return (
-        <View style={styles.adView} pointerEvents="box-none" key="ad">
+        <View style={styles.adView} pointerEvents={wrapEvents} key="ad">
           <View style={styles.adBanner} pointerEvents="none">
             <Text style={styles.adText}>Loading Advertisement...</Text>
             <Text style={styles.adSubtext}>Occasionally fails</Text>
