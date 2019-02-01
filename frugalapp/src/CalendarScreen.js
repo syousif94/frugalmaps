@@ -132,20 +132,19 @@ class CalendarScreen extends Component {
   _renderAd = () => {
     const { initialized } = this.props;
 
-    const wrapEvents = this.state.touchAd ? "box-none" : "none";
-
-    const pointerEvents = this.state.touchAd ? "box-none" : "none";
+    const pointerEvents = this.state.touchAd ? "auto" : "none";
 
     if (initialized && IOS) {
       return (
-        <View style={styles.adView} pointerEvents={wrapEvents} key="ad">
+        <View style={styles.adView} pointerEvents="box-none" key="ad">
           <View style={styles.adBanner} pointerEvents="none">
             <Text style={styles.adText}>Loading Advertisement...</Text>
             <Text style={styles.adSubtext}>Occasionally fails</Text>
           </View>
-          <View style={styles.adContainer} pointerEvents={pointerEvents}>
+          <View style={styles.adContainer} pointerEvents="box-none">
             <FacebookAds.BannerView
               style={styles.ad}
+              pointerEvents={pointerEvents}
               placementId={PLACEMENT_ID}
               type="standard"
               onError={err => console.log("error", err)}
@@ -186,7 +185,11 @@ class CalendarScreen extends Component {
           maxToRenderPerBatch: 5
         }
       : {
-          onMomentumScrollEnd: this._onScrollEnd
+          onScrollEndDrag: this._onScrollEnd,
+          onMomentumScrollBegin: this._onScrollEnd,
+          onMomentumScrollEnd: this._onScrollEnd,
+          initialNumToRender: 8,
+          maxToRenderPerBatch: 3
         };
 
     const listData = dataCount ? data : [];
@@ -267,7 +270,9 @@ const styles = StyleSheet.create({
   },
   adView: {
     backgroundColor: "#fff",
-    height: 50
+    height: 50,
+    maxHeight: 50,
+    overflow: "hidden"
   },
   adBanner: {
     position: "absolute",
@@ -290,11 +295,18 @@ const styles = StyleSheet.create({
     fontWeight: "400"
   },
   adContainer: {
-    height: 50,
-    overflow: "hidden"
+    position: "absolute",
+    top: -20,
+    left: 0,
+    right: 0,
+    height: 70
   },
   ad: {
-    marginTop: IOS ? -20 : 0
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 50
   },
   footer: {
     paddingHorizontal: 25
