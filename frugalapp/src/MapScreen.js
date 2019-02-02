@@ -12,7 +12,6 @@ import * as Location from "./store/location";
 import * as Events from "./store/events";
 import LocationBox from "./LocationBox";
 import LocationLists from "./LocationLists";
-import LocateMe from "./MapLocateButton";
 import MapMarker from "./MapMarker";
 import MapLoading from "./MapLoading";
 import locate from "./Locate";
@@ -190,7 +189,7 @@ class MapScreen extends Component {
             showsCompass={false}
             rotateEnabled={false}
             toolbarEnabled={false}
-            moveOnMarkerPress={false}
+            // moveOnMarkerPress={false}
             showsUserLocation={authorized}
             userLocationAnnotationTitle=""
             showsMyLocationButton={false}

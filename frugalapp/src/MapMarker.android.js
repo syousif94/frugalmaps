@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import { StyleSheet, View, Text, WebView } from "react-native";
-
+import { withNavigation } from "react-navigation";
+import { connect } from "react-redux";
 import { MapView } from "expo";
-
+import * as Events from "./store/events";
 import { makeHours } from "./Time";
+import { AWSCF } from "./Constants";
 
 export default class MapMarker extends Component {
   static imageHeight = 120;
@@ -37,7 +39,7 @@ export default class MapMarker extends Component {
             <Text style={styles.spotText}>{spot}</Text>
           </View>
         </View>
-        <Callout {...this.props} />
+        <ConnectedCallout {...this.props} />
       </MapView.Marker>
     );
   }
@@ -112,8 +114,20 @@ class Callout extends Component {
     }
   };
 
+  _onPress = () => {
+    const { data, navigation, set } = this.props;
+
+    set({
+      selectedEvent: {
+        data
+      }
+    });
+
+    navigation.navigate("Info");
+  };
+
   render() {
-    const { disabled, data } = this.props;
+    const { disabled } = this.props;
 
     if (disabled) {
       return null;
@@ -132,7 +146,7 @@ class Callout extends Component {
         : { html: calloutHTML(item) };
 
     return (
-      <MapView.Callout>
+      <MapView.Callout onPress={this._onPress}>
         <View style={calloutStyle} key={`${this.state.height}`}>
           <WebView style={{ height: MapMarker.imageHeight }} source={source} />
           {this._renderInfo()}
@@ -142,7 +156,15 @@ class Callout extends Component {
   }
 }
 
+const ConnectedCallout = connect(
+  null,
+  {
+    set: Events.actions.set
+  }
+)(withNavigation(Callout));
+
 const calloutHTML = item => {
+  const url = `${AWSCF}${item.photos[0].thumb.key}`;
   return `
     <html>
       <head>
@@ -162,9 +184,7 @@ const calloutHTML = item => {
       </style>
       </head>
       <body>
-      <div id="img" style="background-image: url('${
-        item.photos[0].url
-      }')"></div>
+      <div id="img" style="background-image: url('${url}')"></div>
       </body>
     </html>
   `;

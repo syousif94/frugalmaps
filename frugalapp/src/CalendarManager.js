@@ -14,6 +14,9 @@ class CalendarManager {
   _calendarName;
 
   toggleEvent = async ({ _source: item, _id: id }, create) => {
+    if (ANDROID) {
+      return;
+    }
     const calendar = await this._getCalendar();
 
     if (!calendar) {
