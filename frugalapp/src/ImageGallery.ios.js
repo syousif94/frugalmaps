@@ -230,7 +230,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 6,
     right: 6,
-
     backgroundColor: "rgba(0,0,0,0.5)",
     borderRadius: 6
   },

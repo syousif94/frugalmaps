@@ -101,7 +101,7 @@ class CalendarManager {
       let cal = calendars.find(cal => cal.title === this._calendarName);
 
       if (!cal) {
-        const details = {
+        let details = {
           title: this._calendarName,
           color: "#FF94CD"
         };
@@ -118,12 +118,17 @@ class CalendarManager {
           details.sourceId = sourceId;
           details.entityType = Calendar.EntityTypes.EVENT;
         } else if (ANDROID) {
-          details.source = {
-            isLocalAccount: true,
-            name: "buncha"
+          const existingDetails = calendars.find(
+            cal =>
+              cal.accessLevel === "owner" &&
+              cal.ownerAccount.indexOf("@gmail.com") > -1
+          );
+          details = {
+            ...existingDetails,
+            ...details
           };
+          delete details.id;
           details.name = this._calendarName;
-          details.ownerAccount = "buncha";
         }
 
         const id = await Calendar.createCalendarAsync(details);

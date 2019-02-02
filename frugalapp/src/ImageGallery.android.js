@@ -4,7 +4,8 @@ import {
   StyleSheet,
   Image,
   TouchableWithoutFeedback,
-  Text
+  Text,
+  TouchableOpacity
 } from "react-native";
 import { connect } from "react-redux";
 import _ from "lodash";
@@ -14,12 +15,23 @@ import { Entypo } from "@expo/vector-icons";
 import Swiper from "react-native-swiper";
 
 import * as Events from "./store/events";
-import { WIDTH } from "./Constants";
+import { WIDTH, AWSCF } from "./Constants";
 
 class ImageGallery extends Component {
   shouldComponentUpdate(next) {
     return next.doc._id !== this.props.doc._id;
   }
+
+  _onPress = () => {
+    const { set, navigation, doc } = this.props;
+
+    set({
+      selectedEvent: {
+        data: doc
+      }
+    });
+    navigation.navigate("Info");
+  };
 
   render() {
     const {
@@ -43,22 +55,18 @@ class ImageGallery extends Component {
 
     return (
       <View style={containerStyle}>
-        <TouchableWithoutFeedback
-          disabled={disabled}
-          onPress={() => {
-            set({
-              selectedEvent: {
-                data: doc
-              }
-            });
-            navigation.navigate("Info");
-          }}
-        >
+        <TouchableWithoutFeedback disabled={disabled} onPress={this._onPress}>
           <Swiper loadMinimal loop height={height} width={width}>
             {_(item.photos)
               .shuffle()
               .map(photo => {
-                const { url: uri } = photo;
+                if (!photo.thumb) {
+                  return null;
+                }
+
+                let uri = `${AWSCF}${photo.thumb.key}`;
+                // let imageHeight = item.thumb.height;
+                // let width = item.thumb.width;
 
                 const source = {
                   uri
@@ -80,20 +88,28 @@ class ImageGallery extends Component {
               .value()}
           </Swiper>
         </TouchableWithoutFeedback>
-        <Icon disabled={disabled} narrow={narrow} />
+        <Icon onPress={this._onPress} disabled={disabled} narrow={narrow} />
       </View>
     );
   }
 }
 
-const Icon = ({ disabled, narrow }) => {
+const Icon = ({ disabled, narrow, onPress }) => {
   if (disabled) {
     return null;
   }
   return (
     <View pointerEvents="none" style={styles.action}>
-      <Entypo name="info-with-circle" size={16} color="#fff" />
-      {narrow ? null : <Text style={styles.actionText}>More Info</Text>}
+      <TouchableOpacity style={styles.actionBtn} onPress={onPress}>
+        <Entypo name="info-with-circle" size={16} color="#fff" />
+        {narrow ? null : <Text style={styles.actionText}>More Info</Text>}
+        <Entypo
+          style={styles.chevron}
+          name="chevron-right"
+          size={18}
+          color="#fff"
+        />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -118,16 +134,22 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 6,
     right: 6,
-    flexDirection: "row",
     backgroundColor: "rgba(0,0,0,0.5)",
-    borderRadius: 6,
+    borderRadius: 6
+  },
+  actionBtn: {
+    flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 7,
+    paddingLeft: 7,
+    paddingRight: 4,
     paddingVertical: 4
   },
   actionText: {
     marginLeft: 8,
     fontWeight: "600",
     color: "#fff"
+  },
+  chevron: {
+    marginLeft: -1
   }
 });

@@ -77,14 +77,16 @@ export default class InfoHours extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    overflow: "hidden"
+    overflow: "hidden",
+    zIndex: 2
   },
   hours: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    paddingBottom: 5
+    paddingBottom: 5,
+    zIndex: 1
   },
   hoursTitle: {
     marginTop: 3,
