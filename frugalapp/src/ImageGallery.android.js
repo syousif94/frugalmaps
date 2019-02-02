@@ -8,7 +8,6 @@ import {
   TouchableOpacity
 } from "react-native";
 import { connect } from "react-redux";
-import _ from "lodash";
 
 import { withNavigation } from "react-navigation";
 import { Entypo } from "@expo/vector-icons";
@@ -34,15 +33,7 @@ class ImageGallery extends Component {
   };
 
   render() {
-    const {
-      doc,
-      height,
-      set,
-      navigation,
-      disabled,
-      width: galleryWidth,
-      narrow
-    } = this.props;
+    const { doc, height, disabled, width: galleryWidth, narrow } = this.props;
 
     const { _source: item } = doc;
 
@@ -57,35 +48,32 @@ class ImageGallery extends Component {
       <View style={containerStyle}>
         <TouchableWithoutFeedback disabled={disabled} onPress={this._onPress}>
           <Swiper loadMinimal loop height={height} width={width}>
-            {_(item.photos)
-              .shuffle()
-              .map(photo => {
-                if (!photo.thumb) {
-                  return null;
-                }
+            {item.photos.map(photo => {
+              if (!photo.thumb) {
+                return null;
+              }
 
-                let uri = `${AWSCF}${photo.thumb.key}`;
-                // let imageHeight = item.thumb.height;
-                // let width = item.thumb.width;
+              let uri = `${AWSCF}${photo.thumb.key}`;
+              // let imageHeight = item.thumb.height;
+              // let width = item.thumb.width;
 
-                const source = {
-                  uri
-                };
+              const source = {
+                uri
+              };
 
-                // const imageWidth = (height / imageHeight) * width;
+              // const imageWidth = (height / imageHeight) * width;
 
-                // const imageWidth = width;
+              // const imageWidth = width;
 
-                return (
-                  <View key={uri} style={styles.imageContainer}>
-                    <Image
-                      source={source}
-                      style={[styles.image, { width, height }]}
-                    />
-                  </View>
-                );
-              })
-              .value()}
+              return (
+                <View key={uri} style={styles.imageContainer}>
+                  <Image
+                    source={source}
+                    style={[styles.image, { width, height }]}
+                  />
+                </View>
+              );
+            })}
           </Swiper>
         </TouchableWithoutFeedback>
         <Icon onPress={this._onPress} disabled={disabled} narrow={narrow} />
