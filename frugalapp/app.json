@@ -36,6 +36,7 @@
         "backgroundColor": "#FF94CD",
         "foregroundImage": "./assets/foreground.png"
       },
+      "versionCode": 2,
       "permissions": [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
