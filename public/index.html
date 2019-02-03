@@ -171,7 +171,20 @@
     </div>
     <script>
       function openStore() {
-        alert("Not yet implemented");
+        const iOS =
+          /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+        const ANDROID = /Android/.test(navigator.userAgent);
+
+        if (iOS) {
+          alert("App Store version in review");
+        } else if (ANDROID) {
+          window.open(
+            "https://play.google.com/store/apps/details?id=me.syousif.LitCal"
+          );
+        } else {
+          alert("Please visit this page from your mobile device");
+        }
       }
     </script>
   </body>
