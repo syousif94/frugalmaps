@@ -2,6 +2,7 @@ const elastic = require("./elastic");
 const Event = require("./schema/event");
 const Reminder = require("./schema/reminder");
 const { db } = require("./firebase.js");
+const backup = require("./backupToS3");
 
 module.exports = async function syncReminder(req, res) {
   try {
@@ -50,15 +51,18 @@ module.exports = async function syncReminder(req, res) {
         id: reminderId
       });
     } else if (state && !reminder.found) {
+      const body = {
+        pushtoken: token,
+        event: id
+      };
       await elastic.index({
         index: Reminder.index,
         type: Reminder.type,
         id: reminderId,
-        body: {
-          pushtoken: token,
-          event: id
-        }
+        body
       });
+
+      backup(`reminder/${reminderId}`, body);
     }
 
     const reminderRef = db.collection("reminders").doc(id);

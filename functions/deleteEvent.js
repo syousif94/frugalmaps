@@ -1,5 +1,6 @@
 const elastic = require("./elastic");
 const event = require("./schema/event");
+const remove = require("./removeFromS3");
 
 function deleteEvent(req, res) {
   const { id, postCode } = req.body;
@@ -26,6 +27,8 @@ function deleteEvent(req, res) {
         error: error.message
       });
     });
+
+  remove(`event/${id}`);
 }
 
 module.exports = deleteEvent;

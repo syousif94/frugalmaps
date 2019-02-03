@@ -5,6 +5,7 @@ const event = require("./schema/event");
 const indexLocations = require("./saveLocations");
 const { db } = require("./firebase.js");
 const processImages = require("./processImages");
+const backup = require("./backupToS3");
 
 function formatTime(str) {
   const date = moment(str, ["h:ma", "H:m"]);
@@ -210,6 +211,8 @@ async function createEvent(req, res) {
         _source: body
       }
     });
+
+    backup(`event/${_id}`, body);
   } catch (error) {
     res.send({
       error: error.message

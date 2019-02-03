@@ -1,5 +1,6 @@
 const elastic = require("./elastic");
 const user = require("./schema/user");
+const backup = require("./backupToS3");
 
 module.exports = async function syncUser(req, res) {
   try {
@@ -37,6 +38,8 @@ module.exports = async function syncUser(req, res) {
     });
 
     res.send({});
+
+    backup(`user/${token}`, body);
   } catch (error) {
     res.send({
       error: error.message
