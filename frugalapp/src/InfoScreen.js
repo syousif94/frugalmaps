@@ -57,6 +57,14 @@ class InfoScreen extends Component {
     emitter.on(InfoScreen.mapId, this._showLocation);
   }
 
+  componentWillReceiveProps(next) {
+    if (next.event.id !== this.props.event.id) {
+      this.props.fetch({
+        id: next.event.id
+      });
+    }
+  }
+
   componentWillUnmount() {
     if (this._loadingTimeout) {
       clearTimeout(this._loadingTimeout);
