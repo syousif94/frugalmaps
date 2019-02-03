@@ -15,15 +15,14 @@ const groupData = hits => {
 
   return _(hits)
     .groupBy(hit => hit._source.placeid)
-    .map((events, _id) => {
+    .map(events => {
       return {
-        _id,
+        _id: events[0]._id,
         type: "group",
         _source: events[0]._source,
         events
       };
     })
-    .sortBy("_id")
     .value();
 };
 
