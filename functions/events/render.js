@@ -38,7 +38,7 @@ function parse(response) {
 }
 
 module.exports = functions.https.onRequest(async (req, res) => {
-  const id = req.path.split("/")[1];
+  const id = req.path.split("e/")[1];
 
   if (!id) {
     res.sendStatus(404);

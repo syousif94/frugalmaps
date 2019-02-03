@@ -9,7 +9,6 @@ import {
 } from "react-native";
 // import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { WIDTH } from "./Constants";
-import { url } from "./API";
 import emitter from "tiny-emitter/instance";
 
 // const iconColor = "#000";
@@ -44,7 +43,7 @@ function go(source) {
 
 async function share(doc) {
   const { _source: source, _id } = doc;
-  const shareURL = `https://us-central1-frugalmaps.cloudfunctions.net/e/${_id}`;
+  const shareURL = `https://buncha.app/e/${_id}`;
   try {
     await Share.share({
       title: `${source.location}`,

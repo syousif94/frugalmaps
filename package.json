@@ -9,6 +9,7 @@
     "deploy": "cd functions && npm run deploy",
     "server": "cd functions && npm run serve",
     "logs": "cd functions && npm run logs",
+    "web": "firebase deploy --only hosting",
     "elastic": "cd functions && npm run elastic"
   },
   "private": true
