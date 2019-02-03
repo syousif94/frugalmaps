@@ -43,4 +43,6 @@ const api = functions.https.onRequest((request, response) => {
   return app(request, response);
 });
 
-module.exports = { api };
+const e = require("./events/render");
+
+module.exports = { api, e };
