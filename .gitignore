@@ -5,3 +5,4 @@ node_modules
 aws.json
 .firebase
 firebase-debug.log
+*.paw
