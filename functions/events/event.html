@@ -219,13 +219,15 @@
         const ANDROID = /Android/.test(navigator.userAgent);
 
         if (iOS) {
-          alert("App Store version in review");
+          window.open(
+            "https://itunes.apple.com/us/app/buncha-local-calendar/id1440536868?ls=1&mt=8"
+          );
         } else if (ANDROID) {
           window.open(
             "https://play.google.com/store/apps/details?id=me.syousif.LitCal"
           );
         } else {
-          alert("Please visit this page from your mobile device");
+          alert("Please visit buncha.app from your mobile device");
         }
       }
     </script>
