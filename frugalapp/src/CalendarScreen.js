@@ -58,7 +58,8 @@ class CalendarScreen extends Component {
   };
 
   _scrollToTop = () => {
-    this._list.getScrollResponder().scrollTo({ x: 0, y: 0, animated: false });
+    const y = IOS ? -1 : 0;
+    this._list.getScrollResponder().scrollTo({ x: 0, y, animated: false });
   };
 
   _refresh = () => {
