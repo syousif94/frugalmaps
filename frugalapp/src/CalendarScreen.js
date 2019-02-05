@@ -6,11 +6,9 @@ import {
   ActivityIndicator,
   Text
 } from "react-native";
-import _ from "lodash";
 import { connect } from "react-redux";
 import { Entypo } from "@expo/vector-icons";
 import emitter from "tiny-emitter/instance";
-import { FacebookAds } from "expo";
 
 import Item from "./CalendarItem";
 import LocationBox from "./LocationBox";
@@ -19,7 +17,8 @@ import LocationLists from "./LocationLists";
 import CalendarEmpty from "./CalendarEmpty";
 import SearchButton from "./SearchButton";
 import * as Events from "./store/events";
-import { ANDROID, IOS, PLACEMENT_ID } from "./Constants";
+import { ANDROID, IOS } from "./Constants";
+import Ad from "./Ad";
 
 class CalendarScreen extends Component {
   static id = "cal";
@@ -133,30 +132,9 @@ class CalendarScreen extends Component {
   _renderAd = () => {
     const { initialized } = this.props;
 
-    const pointerEvents = this.state.touchAd ? "auto" : "none";
-
-    if (initialized && IOS) {
-      return (
-        <View style={styles.adView} pointerEvents="box-none" key="ad">
-          <View style={styles.adBanner} pointerEvents="none">
-            <Text style={styles.adText}>Loading Advertisement...</Text>
-            <Text style={styles.adSubtext}>Occasionally fails</Text>
-          </View>
-          <View style={styles.adContainer} pointerEvents="box-none">
-            <FacebookAds.BannerView
-              style={styles.ad}
-              pointerEvents={pointerEvents}
-              placementId={PLACEMENT_ID}
-              type="standard"
-              onError={err => console.log("error", err)}
-              onPress={() => console.log("hi")}
-            />
-          </View>
-        </View>
-      );
-    }
-
-    return null;
+    return (
+      <Ad key="ad" touchAd={this.state.touchAd} initialized={initialized} />
+    );
   };
 
   _onScrollEnd = e => {
@@ -270,46 +248,6 @@ const styles = StyleSheet.create({
   loading: {
     marginTop: 15,
     transform: [{ scale: 0.8 }]
-  },
-  adView: {
-    backgroundColor: "#fff",
-    height: 50,
-    maxHeight: 50,
-    overflow: "hidden"
-  },
-  adBanner: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 50,
-    paddingTop: 6,
-    paddingLeft: 10
-  },
-  adText: {
-    fontSize: 12,
-    color: "#000",
-    fontWeight: "500"
-  },
-  adSubtext: {
-    marginTop: 1,
-    fontSize: 9,
-    color: "#555",
-    fontWeight: "400"
-  },
-  adContainer: {
-    position: "absolute",
-    top: -20,
-    left: 0,
-    right: 0,
-    height: 70
-  },
-  ad: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 50
   },
   footer: {
     paddingHorizontal: 25
