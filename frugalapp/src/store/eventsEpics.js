@@ -135,8 +135,6 @@ const events = (action$, store) =>
 
         const res = await api("query-events", body);
 
-        console.log({ res });
-
         return { res, coordinates };
       })
         .retry(2)

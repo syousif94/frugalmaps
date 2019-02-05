@@ -51,7 +51,8 @@ export function closingPeriod(item, iso) {
     const { open, close } = parsePeriod(period);
     const beforeClose =
       (time > open && time < close && period.close.day === iso) ||
-      (time > open && period.open.day === iso);
+      (time > open && period.open.day === iso) ||
+      (period.open.day === iso && period.close.day !== period.open.day);
     return beforeClose;
   });
   return period;
@@ -250,6 +251,7 @@ export function groupHours(source) {
         text: DAYS[day],
         daysAway
       };
+
       const { hours, start, end } = makeHours(source, iso);
 
       // another good place for documentation
