@@ -23,8 +23,6 @@ const sortDays = (a, b) => {
     let aEnd = parseInt(a._source.groupedHours[0].end, 10);
     let bEnd = parseInt(b._source.groupedHours[0].end, 10);
 
-    console.log("start", { aStart, aEnd, bStart, bEnd });
-
     if (aEnd < aStart) {
       aEnd += 2400;
     }
@@ -32,8 +30,6 @@ const sortDays = (a, b) => {
     if (bEnd < bStart) {
       bEnd += 2400;
     }
-
-    console.log({ aEnd, bStart });
 
     diff = aEnd - bEnd;
   }

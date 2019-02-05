@@ -47,7 +47,7 @@ module.exports = async function popularCities(req, res) {
               }
             }
           ],
-          size: 5
+          size: 50
         }
       ];
     }

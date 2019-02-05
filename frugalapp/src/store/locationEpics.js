@@ -98,6 +98,8 @@ const suggestions = (action$, store) =>
 
           const res = await request;
 
+          console.log({ res });
+
           let popular = [];
           let closest = [];
 
@@ -106,7 +108,9 @@ const suggestions = (action$, store) =>
           }
 
           if (res.popular && res.popular.length) {
-            popular = res.popular.filter(val => val && val._source.name);
+            popular = res.popular
+              .filter(val => val && val._source.name)
+              .sort((a, b) => b._source.count - a._source.count);
           }
 
           return Location.actions.set({
