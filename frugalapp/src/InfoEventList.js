@@ -58,8 +58,10 @@ const renderEvent = event => {
             d = duration;
           }
           const marginTop = index !== 0 ? 1 : 0;
-          const flexDirection = hours.days.length > 4 ? "column" : "row";
-          const alignItems = hours.days.length > 4 ? "flex-start" : "center";
+          const longDays = hours.days.length > 4;
+          const flexDirection = longDays ? "column" : "row";
+          const alignItems = longDays ? "flex-start" : "center";
+          const timeMarginTop = longDays ? 1 : 0;
           return (
             <View
               style={[styles.hour, { marginTop, flexDirection, alignItems }]}
@@ -80,7 +82,7 @@ const renderEvent = event => {
                   );
                 })}
               </View>
-              <View style={styles.time}>
+              <View style={[styles.time, { marginTop: timeMarginTop }]}>
                 <Text style={styles.hourText}>
                   {hours.hours}{" "}
                   <Text style={styles.durationText}>{d ? d : duration}hr</Text>
@@ -91,8 +93,14 @@ const renderEvent = event => {
         })}
       </View>
       <View>
-        <Text style={styles.boldText}>{item.title}</Text>
-
+        <View style={styles.titleRow}>
+          <Text style={styles.boldText}>{item.title}</Text>
+          {item.type === "Happy Hour" ? (
+            <View style={styles.twentyOne}>
+              <Text style={styles.twentyOneText}>21+</Text>
+            </View>
+          ) : null}
+        </View>
         <Text style={[styles.infoText, styles.descriptionText]}>
           {item.description}
         </Text>
@@ -208,5 +216,23 @@ const styles = StyleSheet.create({
   },
   ending: {
     color: GREEN
+  },
+  titleRow: {
+    marginTop: 1,
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  twentyOne: {
+    marginLeft: 4,
+    backgroundColor: "#097396",
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 3,
+    alignItems: "center"
+  },
+  twentyOneText: {
+    fontSize: 10,
+    color: "#fff",
+    fontWeight: "700"
   }
 });

@@ -98,8 +98,6 @@ const suggestions = (action$, store) =>
 
           const res = await request;
 
-          console.log({ res });
-
           let popular = [];
           let closest = [];
 

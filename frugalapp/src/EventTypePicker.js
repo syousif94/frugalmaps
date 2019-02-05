@@ -42,24 +42,19 @@ class EventTypePicker extends Component {
           }
 
           let emoji = "";
-          let emoji2 = "";
 
           switch (text) {
             case "Brunch":
               emoji = "🍑🥞";
-              emoji2 = "🥂";
               break;
             case "Happy Hour":
               emoji = "🍷🍻";
-              emoji2 = "🍸🥃";
               break;
             case "Food":
               emoji = "🍕🌮";
-              emoji2 = "🌮";
               break;
             case "Game":
               emoji = "🎳🎯";
-              emoji2 = "🎳";
               break;
             default:
               break;
@@ -80,7 +75,14 @@ class EventTypePicker extends Component {
           return (
             <View style={typeStyle} key={index}>
               <TouchableOpacity style={styles.btn} onPress={onPress}>
-                <Text style={styles.emojiText}>{emoji}</Text>
+                <View style={styles.emojiRow}>
+                  <Text style={styles.emojiText}>{emoji}</Text>
+                  {text === "Happy Hour" ? (
+                    <View style={styles.twentyOne}>
+                      <Text style={styles.twentyOneText}>21+</Text>
+                    </View>
+                  ) : null}
+                </View>
                 <Text style={textStyle}>{text}</Text>
               </TouchableOpacity>
             </View>
@@ -127,5 +129,23 @@ const styles = StyleSheet.create({
   selectedText: {
     color: "#fff",
     fontWeight: "600"
+  },
+  emojiRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingRight: 5
+  },
+  twentyOne: {
+    marginLeft: 4,
+    backgroundColor: "#097396",
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 3,
+    alignItems: "center"
+  },
+  twentyOneText: {
+    fontSize: 10,
+    color: "#fff",
+    fontWeight: "700"
   }
 });
