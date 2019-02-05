@@ -39,19 +39,22 @@ export async function grantCalendar() {
   );
 
   if (IOS && askStatus === "denied") {
-    Alert.alert(
-      "Permission Denied",
-      "To enable calendar access, tap Open Settings and then toggle the Calendar switch.",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Open Settings",
-          onPress: () => {
-            Linking.openURL("app-settings:");
-          }
-        }
-      ]
-    );
+    throw new Error("Permission Denied");
+    // Alert.alert(
+    //   "Permission Denied",
+    //   "To enable calendar access, tap Open Settings and then toggle the Calendar switch.",
+    //   [
+    //     { text: "Cancel", style: "cancel" },
+    //     {
+    //       text: "Open Settings",
+    //       onPress: () => {
+    //         Linking.openURL("app-settings:");
+    //       }
+    //     }
+    //   ]
+    // );
+  } else if (askStatus === "granted") {
+    return false;
   }
 
   const { status } = await Permissions.askAsync(Permissions.CALENDAR);
@@ -59,6 +62,8 @@ export async function grantCalendar() {
   if (status !== "granted") {
     throw new Error("Permission Denied");
   }
+
+  return true;
 }
 
 export async function grantLocation() {

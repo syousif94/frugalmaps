@@ -97,11 +97,16 @@ class CalendarManager {
 
   _getCalendar = async () => {
     try {
-      await grantCalendar();
+      const shouldDelete = await grantCalendar();
 
       let calendars = await Calendar.getCalendarsAsync();
 
       let cal = calendars.find(cal => cal.title === this._calendarName);
+
+      if (shouldDelete && cal) {
+        Calendar.deleteCalendarAsync(cal.id);
+        cal = null;
+      }
 
       if (!cal) {
         let details = {

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Image, View, Text } from "react-native";
+import { StyleSheet, Image, View, Text, ScrollView } from "react-native";
 
 import { MapView } from "expo";
 
@@ -59,9 +59,15 @@ class Callout extends Component {
     return (
       <MapView.Callout>
         <View style={calloutStyle}>
-          <ImageGallery doc={data} height={130} narrow />
-          <Text style={styles.locationText}>{data._source.location}</Text>
-          <EventList placeid={data._source.placeid} />
+          <ScrollView
+            style={{ flex: 1, margin: -15 }}
+            contentContainerStyle={{ padding: 15 }}
+            scrollIndicatorInsets={{ top: 6, left: 0, right: 5, bottom: 6 }}
+          >
+            <ImageGallery doc={data} height={130} narrow />
+            <Text style={styles.locationText}>{data._source.location}</Text>
+            <EventList placeid={data._source.placeid} />
+          </ScrollView>
         </View>
       </MapView.Callout>
     );
