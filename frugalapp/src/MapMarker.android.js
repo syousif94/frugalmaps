@@ -1,21 +1,21 @@
-import React, { Component } from "react";
+import React, { PureComponent, Component } from "react";
 import { StyleSheet, View, Text, WebView } from "react-native";
 import { withNavigation } from "react-navigation";
 import { connect } from "react-redux";
 import { MapView } from "expo";
 import * as Events from "./store/events";
-import { makeISO, timeRemaining, makeHours } from "./Time";
+import { makeHours } from "./Time";
 import { AWSCF } from "./Constants";
 
 const redPin = require("../assets/pin.png");
 const greenPin = require("../assets/pin-now.png");
 
-export default class MapMarker extends Component {
+export default class MapMarker extends PureComponent {
   static imageHeight = 120;
   static offset = { x: 0, y: -14 };
 
   render() {
-    const { _source: item } = this.props.data;
+    const { _source: item, ending } = this.props.data;
 
     const coordinate = {
       latitude: item.coordinates[1],
@@ -28,9 +28,6 @@ export default class MapMarker extends Component {
       .toUpperCase();
 
     const spot = `${location.slice(0, 2)}\n${location.slice(2, 4)}`;
-
-    const iso = makeISO(item.days);
-    const { ending } = timeRemaining(item.groupedHours[0], iso);
 
     const pinSource = ending ? greenPin : redPin;
 

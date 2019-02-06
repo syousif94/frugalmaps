@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { StyleSheet, Image, View, Text, ScrollView } from "react-native";
-import { makeISO, timeRemaining } from "./Time";
 
 import { MapView } from "expo";
 
@@ -15,11 +14,13 @@ export default class MapMarker extends Component {
   static offset = { x: 0, y: -14 };
 
   shouldComponentUpdate(next) {
-    return next.data._id !== this.props.data._id;
+    return (
+      next.data._id !== this.props.data._id || next.ending !== this.props.ending
+    );
   }
 
   render() {
-    const { _source: item, _id } = this.props.data;
+    const { _source: item, _id, ending } = this.props.data;
 
     const coordinate = {
       latitude: item.coordinates[1],
@@ -32,9 +33,6 @@ export default class MapMarker extends Component {
       .toUpperCase();
 
     const spot = `${location.slice(0, 2)}\n${location.slice(2, 4)}`;
-
-    const iso = makeISO(item.days);
-    const { ending } = timeRemaining(item.groupedHours[0], iso);
 
     const pinSource = ending ? greenPin : redPin;
 
@@ -53,6 +51,7 @@ export default class MapMarker extends Component {
 }
 
 class Callout extends Component {
+  static scrollIndicatorInsets = { top: 6, left: 0, right: 5, bottom: 6 };
   render() {
     const { disabled, data } = this.props;
 
@@ -69,9 +68,9 @@ class Callout extends Component {
       <MapView.Callout>
         <View style={calloutStyle}>
           <ScrollView
-            style={{ flex: 1, margin: -15 }}
-            contentContainerStyle={{ padding: 15 }}
-            scrollIndicatorInsets={{ top: 6, left: 0, right: 5, bottom: 6 }}
+            style={styles.scroller}
+            contentContainerStyle={styles.scrollContent}
+            scrollIndicatorInsets={Callout.scrollIndicatorInsets}
           >
             <ImageGallery doc={data} height={130} narrow />
             <Text style={styles.locationText}>{data._source.location}</Text>
@@ -87,6 +86,13 @@ const styles = StyleSheet.create({
   marker: {
     width: 20,
     height: 28
+  },
+  scroller: {
+    flex: 1,
+    margin: -15
+  },
+  scrollContent: {
+    padding: 15
   },
   spot: {
     position: "absolute",

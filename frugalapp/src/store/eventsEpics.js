@@ -13,9 +13,15 @@ import * as Location from "./location";
 import { groupHours } from "../Time";
 import locate from "../Locate";
 
-const sortDays = (a, b) => {
-  const aStart = parseInt(a._source.groupedHours[0].start, 10);
-  const bStart = parseInt(b._source.groupedHours[0].start, 10);
+const sortDays = now => (a, b) => {
+  let aStart = parseInt(a._source.groupedHours[0].start, 10);
+  if (aStart > now) {
+    aStart += 2400;
+  }
+  let bStart = parseInt(b._source.groupedHours[0].start, 10);
+  if (bStart > now) {
+    bStart += 2400;
+  }
 
   let diff = aStart - bStart;
 
@@ -25,10 +31,16 @@ const sortDays = (a, b) => {
 
     if (aEnd < aStart) {
       aEnd += 2400;
+      if (aEnd < aStart) {
+        aEnd += 2400;
+      }
     }
 
     if (bEnd < bStart) {
       bEnd += 2400;
+      if (bEnd < bStart) {
+        bEnd += 2400;
+      }
     }
 
     diff = aEnd - bEnd;
@@ -65,9 +77,13 @@ const makeEvents = (hits, week = false) => {
     });
   });
 
-  const today = moment().weekday();
+  const now = moment();
+
+  const today = now.weekday();
 
   const todayIndex = initial.findIndex(day => day.iso === today);
+
+  const timeInt = parseInt(now.format("HHmm"), 10);
 
   if (week) {
     const todayAndAfter = initial.slice(todayIndex, 7);
@@ -84,7 +100,7 @@ const makeEvents = (hits, week = false) => {
         // day.data.groups = day.data.groups.map(group =>
         //   group.sort((a, b) => parseInt(a.start) - parseInt(b.start))
         // );
-        day.data = day.data.sort(sortDays);
+        day.data = day.data.sort(sortDays(timeInt));
         return { ...day, index };
       });
 
@@ -94,7 +110,7 @@ const makeEvents = (hits, week = false) => {
     today.title = "Today";
     today.data = today.data
       .filter(day => !day.sort || day.sort < 45)
-      .sort(sortDays);
+      .sort(sortDays(timeInt));
     return [today, closest];
   }
 };

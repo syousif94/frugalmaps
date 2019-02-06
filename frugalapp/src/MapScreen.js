@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 
 import emitter from "tiny-emitter/instance";
 import _ from "lodash";
+import { makeISO, timeRemaining } from "./Time";
 
 import { INITIAL_REGION, ANDROID } from "./Constants";
 
@@ -28,6 +29,10 @@ if (ANDROID) {
 class MapScreen extends Component {
   static mapId = "mapScreen";
   static searchId = "mapScreen";
+
+  state = {
+    now: Date.now()
+  };
 
   _search = false;
 
@@ -61,11 +66,17 @@ class MapScreen extends Component {
   componentDidMount() {
     emitter.on("fit-bounds", this._fitBounds);
     emitter.on(MapScreen.mapId, this._showLocation);
+    this._interval = setInterval(() => {
+      this.setState({
+        now: Date.now()
+      });
+    }, 60000);
   }
 
   componentWillUnmount() {
     emitter.off("fit-bounds", this._fitBounds);
     emitter.off(MapScreen.mapId, this._showLocation);
+    clearInterval(this._interval);
   }
 
   _showLocation = async () => {
@@ -196,9 +207,14 @@ class MapScreen extends Component {
             pitchEnabled={false}
           >
             {markers.map(data => {
-              const { _id } = data;
+              const { _id, _source: item } = data;
 
-              return <MapMarker data={data} key={_id} />;
+              const iso = makeISO(item.days);
+              const { ending } = timeRemaining(item.groupedHours[0], iso);
+
+              const key = `${_id}${ending}`;
+
+              return <MapMarker ending={ending} data={data} key={key} />;
             })}
           </MapView>
         </View>
