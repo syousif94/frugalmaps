@@ -1,10 +1,14 @@
 import React, { Component } from "react";
 import { StyleSheet, Image, View, Text, ScrollView } from "react-native";
+import { makeISO, timeRemaining } from "./Time";
 
 import { MapView } from "expo";
 
 import ImageGallery from "./ImageGallery";
 import EventList from "./InfoEventList";
+
+const redPin = require("../assets/pin.png");
+const greenPin = require("../assets/pin-now.png");
 
 export default class MapMarker extends Component {
   static imageHeight = 150;
@@ -29,10 +33,15 @@ export default class MapMarker extends Component {
 
     const spot = `${location.slice(0, 2)}\n${location.slice(2, 4)}`;
 
+    const iso = makeISO(item.days);
+    const { ending } = timeRemaining(item.groupedHours[0], iso);
+
+    const pinSource = ending ? greenPin : redPin;
+
     return (
       <MapView.Marker coordinate={coordinate} centerOffset={MapMarker.offset}>
         <View style={styles.marker}>
-          <Image source={require("../assets/pin.png")} style={styles.marker} />
+          <Image source={pinSource} style={styles.marker} />
           <View style={styles.spot}>
             <Text style={styles.spotText}>{spot}</Text>
           </View>

@@ -128,7 +128,7 @@ class LocationLists extends Component {
             contentProps={contentProps}
             showsHorizontalScrollIndicator={false}
             prerenderingSiblingsNumber={1}
-            initialPage={1}
+            // initialPage={1}
             alwaysBounceVertical={true}
           >
             <LocationList hide={hide} tabLabel="Popular" id={this.props.id} />

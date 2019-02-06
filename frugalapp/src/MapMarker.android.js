@@ -4,8 +4,11 @@ import { withNavigation } from "react-navigation";
 import { connect } from "react-redux";
 import { MapView } from "expo";
 import * as Events from "./store/events";
-import { makeHours } from "./Time";
+import { makeISO, timeRemaining, makeHours } from "./Time";
 import { AWSCF } from "./Constants";
+
+const redPin = require("../assets/pin.png");
+const greenPin = require("../assets/pin-now.png");
 
 export default class MapMarker extends Component {
   static imageHeight = 120;
@@ -26,10 +29,15 @@ export default class MapMarker extends Component {
 
     const spot = `${location.slice(0, 2)}\n${location.slice(2, 4)}`;
 
+    const iso = makeISO(item.days);
+    const { ending } = timeRemaining(item.groupedHours[0], iso);
+
+    const pinSource = ending ? greenPin : redPin;
+
     return (
       <MapView.Marker
         coordinate={coordinate}
-        image={require("../assets/pin.png")}
+        image={pinSource}
         ref={ref => (this._marker = ref)}
         tracksViewChanges
         tracksInfoWindowChanges
