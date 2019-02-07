@@ -184,10 +184,7 @@ class CalendarScreen extends Component {
       : {
           onScrollEndDrag: this._onScrollEnd,
           onMomentumScrollBegin: this._onScrollEnd,
-          onMomentumScrollEnd: this._onScrollEnd,
-          // initialNumToRender: 5,
-          // maxToRenderPerBatch: 25,
-          windowSize: 15
+          onMomentumScrollEnd: this._onScrollEnd
         };
 
     const listData = dataCount ? data : [];
