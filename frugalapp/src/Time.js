@@ -118,7 +118,6 @@ export function timeRemaining(hours, iso) {
   let remaining = null;
   const start = createDate(hours.start, iso);
   const end = createDate(hours.end, iso, hours.start);
-  const duration = makeDuration(hours);
   if (now.isBefore(end) && end.isBefore(start)) {
     ending = true;
     diff = end.valueOf() - time;
@@ -189,7 +188,7 @@ export function timeRemaining(hours, iso) {
     remaining = remaining.trim();
   }
 
-  return { remaining, ending, duration };
+  return { remaining, ending };
 }
 
 export function makeHours(item, iso) {
@@ -267,7 +266,8 @@ export function groupHours(source) {
           days: [dayInfo],
           hours,
           start,
-          end
+          end,
+          duration: makeDuration({ start, end })
         });
       }
 

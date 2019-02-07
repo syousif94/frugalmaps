@@ -7,32 +7,36 @@ import NotifyButton from "./NotifyButton";
 import EventList from "./InfoEventList";
 import MonoText from "./MonoText";
 import { FontAwesome } from "@expo/vector-icons";
+import Emitter from "tiny-emitter";
 
 class CalendarItem extends Component {
+  static emitter = new Emitter();
+
   state = {
     time: Date.now()
   };
 
   componentDidMount() {
-    const shouldTick = this._shouldTick();
-    if (shouldTick) {
-      this._tick();
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const shouldTick = this._shouldTick(nextProps);
-    if (shouldTick && !this._interval) {
-      this._tick();
-    } else if (!shouldTick && this._interval) {
-      clearInterval(this._interval);
-      this._interval = undefined;
-    }
+    CalendarItem.emitter.on("visible", this._onVisible);
   }
 
   componentWillUnmount() {
+    CalendarItem.emitter.off("visible", this._onVisible);
     clearInterval(this._interval);
   }
+
+  _onVisible = viewable => {
+    const { item } = this.props;
+
+    const inView = !!viewable.find(view => view.item === item);
+
+    if (inView && !this._interval) {
+      this._tick();
+    } else if (!inView && this._interval) {
+      clearInterval(this._interval);
+      this._interval = undefined;
+    }
+  };
 
   _tick = () => {
     this._interval = setInterval(() => {
@@ -72,10 +76,7 @@ class CalendarItem extends Component {
       distanceText = ` · ${sort[0].toFixed(1)} miles`;
     }
 
-    const { remaining, ending, duration } = timeRemaining(
-      item.groupedHours[0],
-      iso
-    );
+    const { remaining, ending } = timeRemaining(item.groupedHours[0], iso);
 
     const countdownStyle = [styles.countdownText];
 
@@ -96,7 +97,6 @@ class CalendarItem extends Component {
     }
 
     const locationText = `${index + 1}. ${item.location}`;
-    const titleText = item.title;
 
     const paddingVertical = isClosest ? 10 : 0;
     const marginTop = isClosest ? 0 : 10;
@@ -136,11 +136,6 @@ class CalendarItem extends Component {
                     colonStyle={{ paddingBottom: 1 }}
                   />
                   {item.groupedHours.map((hours, index) => {
-                    let d;
-                    if (index !== 0) {
-                      const { duration } = timeRemaining(hours, iso);
-                      d = duration;
-                    }
                     const marginTop = index !== 0 ? 1 : 0;
                     const longDays = hours.days.length > 4;
                     const flexDirection = longDays ? "column" : "row";
@@ -176,7 +171,7 @@ class CalendarItem extends Component {
                           <Text style={styles.hourText}>
                             {hours.hours}{" "}
                             <Text style={styles.durationText}>
-                              {d ? d : duration}hr
+                              {hours.duration}hr
                             </Text>
                           </Text>
                         </View>
@@ -203,7 +198,7 @@ class CalendarItem extends Component {
         <ImageGallery width={WIDTH - 20} doc={this.props.item} height={150} />
         {isClosest ? (
           <View style={styles.info}>
-            <EventList placeid={item.placeid} />
+            <EventList time={this.state.time} placeid={item.placeid} />
           </View>
         ) : null}
       </View>

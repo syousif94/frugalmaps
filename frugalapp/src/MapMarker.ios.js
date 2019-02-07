@@ -77,7 +77,7 @@ class Callout extends Component {
           >
             <ImageGallery doc={data} height={130} narrow />
             <Text style={styles.locationText}>{data._source.location}</Text>
-            <EventList placeid={data._source.placeid} />
+            <EventList tick placeid={data._source.placeid} />
           </ScrollView>
         </View>
       </MapView.Callout>

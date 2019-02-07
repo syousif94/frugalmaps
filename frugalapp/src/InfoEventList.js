@@ -16,10 +16,7 @@ const mapStateToProps = (state, props) => ({
 const renderEvent = event => {
   const { _source: item, _id: id } = event;
   const iso = makeISO(item.days);
-  const { remaining, ending, duration } = timeRemaining(
-    item.groupedHours[0],
-    iso
-  );
+  const { remaining, ending } = timeRemaining(item.groupedHours[0], iso);
 
   const countdownStyle = [styles.countdownText];
 
@@ -52,11 +49,6 @@ const renderEvent = event => {
           colonStyle={{ paddingBottom: 1 }}
         />
         {item.groupedHours.map((hours, index) => {
-          let d;
-          if (index !== 0) {
-            const { duration } = timeRemaining(hours, iso);
-            d = duration;
-          }
           const marginTop = index !== 0 ? 1 : 0;
           const longDays = hours.days.length > 4;
           const flexDirection = longDays ? "column" : "row";
@@ -85,7 +77,7 @@ const renderEvent = event => {
               <View style={[styles.time, { marginTop: timeMarginTop }]}>
                 <Text style={styles.hourText}>
                   {hours.hours}{" "}
-                  <Text style={styles.durationText}>{d ? d : duration}hr</Text>
+                  <Text style={styles.durationText}>{hours.duration}hr</Text>
                 </Text>
               </View>
             </View>
@@ -116,15 +108,19 @@ class InfoEventList extends Component {
   };
 
   componentDidMount() {
-    this._interval = setInterval(() => {
-      this.setState({
-        time: Date.now()
-      });
-    }, 500);
+    if (this.props.tick) {
+      this._interval = setInterval(() => {
+        this.setState({
+          time: Date.now()
+        });
+      }, 500);
+    }
   }
 
   componentWillUnmount() {
-    clearInterval(this._interval);
+    if (this._interval) {
+      clearInterval(this._interval);
+    }
   }
 
   render() {

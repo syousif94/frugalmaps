@@ -150,6 +150,23 @@ class CalendarScreen extends Component {
     }
   };
 
+  _itemsChanged = ({ viewableItems, changed }) => {
+    Item.emitter.emit("visible", viewableItems);
+  };
+
+  _keyExtractor = (item, index) => (item._id || item.title) + index;
+
+  _renderItem = data => {
+    const key = `${data.item._id}${data.index}`;
+    return <Item {...data} key={key} itemKey={key} />;
+  };
+
+  _renderSectionHeader = data => <Header {...data} key={data.index} />;
+
+  _setRef = ref => {
+    this._list = ref;
+  };
+
   render() {
     const { refreshing, data } = this.props;
 
@@ -179,22 +196,21 @@ class CalendarScreen extends Component {
       <View style={styles.container}>
         <LocationBox id={CalendarScreen.id} />
         <SectionList
-          ref={ref => {
-            this._list = ref;
-          }}
+          ref={this._setRef}
           contentContainerStyle={containerStyle}
           onRefresh={this._refresh}
           refreshing={refreshing}
           style={styles.list}
-          renderItem={data => <Item {...data} key={data.index} />}
-          renderSectionHeader={data => <Header {...data} key={data.index} />}
+          renderItem={this._renderItem}
+          renderSectionHeader={this._renderSectionHeader}
           sections={listData}
-          keyExtractor={(item, index) => item + index}
+          keyExtractor={this._keyExtractor}
           ListEmptyComponent={this._renderEmpty}
           {...androidProps}
           ListHeaderComponent={this._renderAd}
           ListFooterComponent={this._renderFooter}
           removeClippedSubviews={this.state.clipSubviews}
+          onViewableItemsChanged={this._itemsChanged}
         />
         {this._renderInitial()}
         <SearchButton id={CalendarScreen.id} />
