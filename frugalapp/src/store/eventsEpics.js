@@ -13,37 +13,42 @@ import * as Location from "./location";
 import { groupHours } from "../Time";
 import locate from "../Locate";
 
-const sortDays = now => (a, b) => {
+const sortDays = (now, away) => (a, b) => {
   let aStart = parseInt(a._source.groupedHours[0].start, 10);
-  if (aStart > now) {
+  let aEnd = parseInt(a._source.groupedHours[0].end, 10);
+
+  if (aEnd < aStart) {
+    aEnd += 2400;
+  }
+
+  if (!away && aEnd < now) {
     aStart += 2400;
+    aEnd += 2400;
   }
+
   let bStart = parseInt(b._source.groupedHours[0].start, 10);
-  if (bStart > now) {
-    bStart += 2400;
+  let bEnd = parseInt(b._source.groupedHours[0].end, 10);
+
+  if (bEnd < bStart) {
+    bEnd += 2400;
   }
 
-  let diff = aStart - bStart;
+  if (!away && bEnd < now) {
+    bStart += 2400;
+    bEnd += 2400;
+  }
 
-  if (diff === 0) {
-    let aEnd = parseInt(a._source.groupedHours[0].end, 10);
-    let bEnd = parseInt(b._source.groupedHours[0].end, 10);
+  let diff;
 
-    if (aEnd < aStart) {
-      aEnd += 2400;
-      if (aEnd < aStart) {
-        aEnd += 2400;
-      }
-    }
+  const bothNow =
+    !away && (aStart <= now && aEnd > now && bStart <= now && bEnd > now);
 
-    if (bEnd < bStart) {
-      bEnd += 2400;
-      if (bEnd < bStart) {
-        bEnd += 2400;
-      }
-    }
+  const sameStart = aStart === bStart;
 
+  if (bothNow || sameStart) {
     diff = aEnd - bEnd;
+  } else {
+    diff = aStart - bStart;
   }
 
   return diff;
@@ -90,19 +95,11 @@ const makeEvents = (hits, week = false) => {
 
     const beforeToday = initial.slice(0, todayIndex);
 
-    const days = [...todayAndAfter, ...beforeToday]
-      .map((day, index) => {
-        day.away = index;
-        return day;
-      })
-      // .filter(day => day.data.length)
-      .map((day, index) => {
-        // day.data.groups = day.data.groups.map(group =>
-        //   group.sort((a, b) => parseInt(a.start) - parseInt(b.start))
-        // );
-        day.data = day.data.sort(sortDays(timeInt));
-        return { ...day, index };
-      });
+    const days = [...todayAndAfter, ...beforeToday].map((day, index) => {
+      day.away = index;
+      day.data = day.data.sort(sortDays(timeInt, index));
+      return { ...day, index };
+    });
 
     return days;
   } else {

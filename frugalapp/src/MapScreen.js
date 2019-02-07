@@ -212,9 +212,7 @@ class MapScreen extends Component {
               const iso = makeISO(item.days);
               const { ending } = timeRemaining(item.groupedHours[0], iso);
 
-              const key = `${_id}${ending}`;
-
-              return <MapMarker ending={ending} data={data} key={key} />;
+              return <MapMarker ending={ending} data={data} key={_id} />;
             })}
           </MapView>
         </View>

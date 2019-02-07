@@ -15,7 +15,10 @@ export default class MapMarker extends PureComponent {
   static offset = { x: 0, y: -14 };
 
   render() {
-    const { _source: item, ending } = this.props.data;
+    const {
+      data: { _source: item },
+      ending
+    } = this.props;
 
     const coordinate = {
       latitude: item.coordinates[1],

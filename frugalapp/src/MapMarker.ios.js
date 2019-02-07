@@ -20,7 +20,10 @@ export default class MapMarker extends Component {
   }
 
   render() {
-    const { _source: item, _id, ending } = this.props.data;
+    const {
+      data: { _source: item, _id },
+      ending
+    } = this.props;
 
     const coordinate = {
       latitude: item.coordinates[1],
