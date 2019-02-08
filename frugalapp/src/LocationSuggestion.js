@@ -26,6 +26,7 @@ class LocationSuggestion extends Component {
     setEvents({
       refreshing: true,
       bounds,
+      day: "All Events",
       queryType: "City"
     });
 

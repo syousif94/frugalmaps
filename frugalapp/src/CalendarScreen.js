@@ -225,7 +225,11 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  fetch: Events.actions.set.bind(null, { refreshing: true, queryType: null }),
+  fetch: Events.actions.set.bind(null, {
+    refreshing: true,
+    queryType: null,
+    day: "All Events"
+  }),
   restore: Events.actions.restore
 };
 
