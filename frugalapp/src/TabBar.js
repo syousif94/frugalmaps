@@ -148,12 +148,16 @@ class TabBar extends Component {
   };
 
   _onMap = () => {
-    this.props.navigation.navigate("Map");
+    requestAnimationFrame(() => {
+      this.props.navigation.navigate("Map");
+    });
   };
 
   _onCalendar = () => {
     this.props.navigation.navigate("Calendar");
-    emitter.emit("reclip-calendar");
+    requestAnimationFrame(() => {
+      emitter.emit("reclip-calendar");
+    });
   };
 
   _onSubmit = () => {

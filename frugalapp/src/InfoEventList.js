@@ -109,18 +109,37 @@ class InfoEventList extends Component {
 
   componentDidMount() {
     if (this.props.tick) {
-      this._interval = setInterval(() => {
-        this.setState({
-          time: Date.now()
-        });
-      }, 500);
+      this._startTick();
     }
   }
 
-  componentWillUnmount() {
+  componentWillReceiveProps(next) {
+    if (this.props.tick !== next.tick) {
+      if (next.tick && !this._interval) {
+        this._startTick();
+      } else if (!next.tick && this._interval) {
+        this._stopTick();
+      }
+    }
+  }
+
+  _startTick = () => {
+    this._interval = setInterval(() => {
+      this.setState({
+        time: Date.now()
+      });
+    }, 500);
+  };
+
+  _stopTick = () => {
     if (this._interval) {
       clearInterval(this._interval);
+      this._interval = undefined;
     }
+  };
+
+  componentWillUnmount() {
+    this._stopTick();
   }
 
   render() {

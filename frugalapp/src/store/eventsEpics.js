@@ -5,7 +5,6 @@ import { Observable } from "rxjs/Observable";
 import emitter from "tiny-emitter/instance";
 import moment from "moment";
 import _ from "lodash";
-// import { AWSCF } from "../Constants";
 
 import api from "../API";
 import * as Events from "./events";
@@ -112,6 +111,26 @@ const makeEvents = (hits, week = false) => {
   }
 };
 
+const makeMarkers = days => {
+  return _(days)
+    .map(day => {
+      const clone = _.cloneDeep(day);
+      clone.data = _(day.data)
+        .groupBy(hit => hit._source.placeid)
+        .map(events => {
+          return {
+            _id: events[0]._id,
+            type: "group",
+            _source: events[0]._source,
+            events
+          };
+        })
+        .value();
+      return clone;
+    })
+    .value();
+};
+
 const events = (action$, store) =>
   action$
     .ofType(Events.types.set)
@@ -158,9 +177,7 @@ const events = (action$, store) =>
             doc._source.photos = _(doc._source.photos)
               .shuffle()
               .value();
-            // doc._source.photos.forEach(photo => {
-            //   Image.prefetch(`${AWSCF}${photo.thumb.key}`);
-            // });
+
             const hit = _.cloneDeep(doc);
             hit._source.groupedHours = groupHours(hit._source);
             return hit;
@@ -175,7 +192,16 @@ const events = (action$, store) =>
           const weeklyCalendar =
             action.payload.weekly || action.payload.queryType === "City";
 
-          const calendar = makeEvents(hits, weeklyCalendar);
+          const mode = weeklyCalendar ? "calendar" : "list";
+
+          const list = makeEvents(hits, false);
+
+          const calendar = makeEvents(hits, true);
+
+          const markers = makeMarkers([
+            { title: "All Events", data: hits },
+            ...calendar
+          ]);
 
           let day;
 
@@ -207,11 +233,14 @@ const events = (action$, store) =>
               bounds: action.payload.bounds ? undefined : null
             }),
             Events.actions.set({
+              list,
               data: hits,
               refreshing: false,
               calendar,
               day,
-              initialized: true
+              initialized: true,
+              mode,
+              markers
             })
           );
         })
@@ -279,13 +308,22 @@ const restore = action$ =>
 
         const data = JSON.parse(dataStr);
 
-        const calendar = makeEvents(data);
+        const list = makeEvents(data);
+
+        const calendar = makeEvents(data, true);
+
+        const markers = makeMarkers([
+          { title: "All Events", data },
+          ...calendar
+        ]);
 
         return Events.actions.set({
           refreshing: true,
           queryType: null,
           data,
+          list,
           calendar,
+          markers,
           initialized: true
         });
       } catch (error) {

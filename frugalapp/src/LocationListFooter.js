@@ -29,10 +29,9 @@ class LocationListFooter extends PureComponent {
   };
 
   _onWeekly = () => {
-    emitter.emit("calendar-top");
+    emitter.emit("calendar-top", 0);
     this.props.setEvents({
-      refreshing: true,
-      weekly: true
+      mode: "calendar"
     });
     emitter.emit("blur-location-box", this.props.id);
   };

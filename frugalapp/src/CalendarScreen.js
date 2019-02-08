@@ -56,8 +56,8 @@ class CalendarScreen extends Component {
     );
   };
 
-  _scrollToTop = () => {
-    const y = IOS ? -40 : 0;
+  _scrollToTop = top => {
+    const y = top !== undefined ? top : IOS ? -40 : 0;
     this._list.getScrollResponder().scrollTo({ x: 0, y, animated: false });
   };
 
@@ -221,7 +221,7 @@ const mapStateToProps = state => ({
   initialized: state.events.initialized,
   listTop: state.location.listTop,
   refreshing: state.events.refreshing,
-  data: state.events.calendar
+  data: Events.homeList(state)
 });
 
 const mapDispatchToProps = {

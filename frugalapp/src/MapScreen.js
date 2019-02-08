@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { StyleSheet, View, PanResponder } from "react-native";
 import { MapView } from "expo";
 import { connect } from "react-redux";
@@ -17,6 +17,7 @@ import MapMarker from "./MapMarker";
 import MapLoading from "./MapLoading";
 import locate from "./Locate";
 import SearchButton from "./SearchButton";
+import DayPicker from "./MapDayPicker";
 
 var initialAndroidBounds = null;
 
@@ -26,7 +27,7 @@ if (ANDROID) {
   });
 }
 
-class MapScreen extends Component {
+class MapScreen extends PureComponent {
   static mapId = "mapScreen";
   static searchId = "mapScreen";
 
@@ -181,6 +182,14 @@ class MapScreen extends Component {
     }
   };
 
+  _setMapRef = ref => {
+    this._map = ref;
+  };
+
+  _setDayPickerRef = ref => {
+    this._dayPicker = ref;
+  };
+
   render() {
     const { markers, authorized } = this.props;
 
@@ -193,16 +202,14 @@ class MapScreen extends Component {
         <View style={styles.map} {...this._panResponder.panHandlers}>
           <MapView
             onLayout={this._setFrame}
-            ref={ref => (this._map = ref)}
+            ref={this._setMapRef}
             style={styles.map}
             initialRegion={INITIAL_REGION}
             onRegionChangeComplete={this._onRegionChangeComplete}
             showsCompass={false}
             rotateEnabled={false}
             toolbarEnabled={false}
-            // moveOnMarkerPress={false}
             showsUserLocation={authorized}
-            userLocationAnnotationTitle=""
             showsMyLocationButton={false}
             pitchEnabled={false}
           >
@@ -216,16 +223,16 @@ class MapScreen extends Component {
             })}
           </MapView>
         </View>
-        {/* <LocateMe mapId={MapScreen.mapId} /> */}
         <SearchButton id={MapScreen.searchId} />
         <LocationLists id={MapScreen.searchId} />
+        <DayPicker ref={this._setDayPickerRef} />
       </View>
     );
   }
 }
 
 const mapStateToProps = state => ({
-  markers: Events.markers(state),
+  markers: Events.markerList(state),
   authorized: state.location.authorized
 });
 

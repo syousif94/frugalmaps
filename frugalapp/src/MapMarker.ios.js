@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, PureComponent } from "react";
 import { StyleSheet, Image, View, Text, ScrollView } from "react-native";
 
 import { MapView } from "expo";
@@ -18,6 +18,18 @@ export default class MapMarker extends Component {
       next.data._id !== this.props.data._id || next.ending !== this.props.ending
     );
   }
+
+  _onSelect = () => {
+    this._callout.toggleTick(true);
+  };
+
+  _onDeselect = () => {
+    this._callout.toggleTick(false);
+  };
+
+  _setCalloutRef = ref => {
+    this._callout = ref;
+  };
 
   render() {
     const {
@@ -40,21 +52,37 @@ export default class MapMarker extends Component {
     const pinSource = ending ? greenPin : redPin;
 
     return (
-      <MapView.Marker coordinate={coordinate} centerOffset={MapMarker.offset}>
+      <MapView.Marker
+        coordinate={coordinate}
+        centerOffset={MapMarker.offset}
+        onSelect={this._onSelect}
+        onDeselect={this._onDeselect}
+      >
         <View style={styles.marker}>
           <Image source={pinSource} style={styles.marker} />
           <View style={styles.spot}>
             <Text style={styles.spotText}>{spot}</Text>
           </View>
         </View>
-        <Callout key={_id} {...this.props} />
+        <Callout ref={this._setCalloutRef} key={_id} {...this.props} />
       </MapView.Marker>
     );
   }
 }
 
-class Callout extends Component {
+class Callout extends PureComponent {
   static scrollIndicatorInsets = { top: 6, left: 0, right: 5, bottom: 6 };
+
+  state = {
+    tick: false
+  };
+
+  toggleTick = tick => {
+    this.setState({
+      tick
+    });
+  };
+
   render() {
     const { disabled, data } = this.props;
 
@@ -77,7 +105,7 @@ class Callout extends Component {
           >
             <ImageGallery doc={data} height={130} narrow />
             <Text style={styles.locationText}>{data._source.location}</Text>
-            <EventList tick placeid={data._source.placeid} />
+            <EventList tick={this.state.tick} placeid={data._source.placeid} />
           </ScrollView>
         </View>
       </MapView.Callout>
