@@ -10,7 +10,7 @@ import {
 import { MapView } from "expo";
 import { connect } from "react-redux";
 import ImageGallery from "./ImageGallery";
-import { INITIAL_REGION, ANDROID, HEIGHT, IOS, SafeArea } from "./Constants";
+import { INITIAL_REGION, ANDROID, IOS, SafeArea, HEIGHT } from "./Constants";
 import MapMarker from "./MapMarker";
 import LocateButton from "./MapLocateButton";
 import emitter from "tiny-emitter/instance";
@@ -200,17 +200,24 @@ class InfoScreen extends Component {
 
     const streetAddress = item.address.split(",")[0];
 
+    const paddingStyle = {
+      height: this.state.listTop * 3,
+      backgroundColor: "#000",
+      marginTop: this.state.listTop * -2
+    };
+
     return (
       <View style={styles.container}>
         <View style={styles.info}>
           {ANDROID && this.state.loading ? null : (
             <ScrollView
-              contentContainerStyle={{ paddingTop: this.state.listTop }}
+              contentContainerStyle={{ paddingBottom: 60 }}
               style={styles.container}
             >
+              <View style={paddingStyle} />
               <ImageGallery
                 backgroundColor="#000"
-                height={HEIGHT * 0.35}
+                height={HEIGHT * 0.25}
                 disabled
                 doc={data}
               />
@@ -261,7 +268,7 @@ export default connect(
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000"
+    backgroundColor: "#fff"
   },
   headerContainer: {
     position: "absolute",
@@ -290,7 +297,7 @@ const styles = StyleSheet.create({
     fontSize: 12
   },
   map: {
-    flex: 1
+    height: HEIGHT * 0.175
   },
   events: {
     marginTop: 1,
@@ -299,8 +306,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10
   },
   info: {
-    height: HEIGHT * 0.7,
-    marginBottom: 1
+    flex: 1,
+    borderBottomWidth: 1,
+    borderColor: "#000"
   },
   rating: {
     position: "absolute",
@@ -316,6 +324,7 @@ const styles = StyleSheet.create({
   },
   loading: {
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    backgroundColor: "#000"
   }
 });
