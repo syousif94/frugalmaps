@@ -158,19 +158,20 @@ class TabBar extends Component {
   };
 
   _onCalendar = () => {
-    this.props.navigation.navigate("Calendar");
-    requestAnimationFrame(() => {
-      emitter.emit("reclip-calendar");
+    InteractionManager.runAfterInteractions(() => {
+      this.props.navigation.navigate("Calendar");
+      requestAnimationFrame(() => {
+        emitter.emit("reclip-calendar");
+      });
     });
   };
 
   _onSubmit = () => {
-    this.props.navigation.navigate("Submit");
-    // emitter.emit("focus-picker");
-  };
+    InteractionManager.runAfterInteractions(() => {
+      this.props.navigation.navigate("Submit");
+    });
 
-  _onSearch = () => {
-    this.props.navigation.navigate("Search");
+    // emitter.emit("focus-picker");
   };
 
   _onLayout = e => {

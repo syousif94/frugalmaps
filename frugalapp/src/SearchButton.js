@@ -1,12 +1,19 @@
 import React, { Component } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  InteractionManager
+} from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import { BLUE } from "./Colors";
 import emitter from "tiny-emitter/instance";
 
 class SearchButton extends Component {
   _onPress = () => {
-    emitter.emit("focus-location-box", this.props.id);
+    InteractionManager.runAfterInteractions(() => {
+      emitter.emit("focus-location-box", this.props.id);
+    });
   };
   render() {
     return (

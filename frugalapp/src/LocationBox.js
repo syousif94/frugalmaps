@@ -66,7 +66,8 @@ class LocationBox extends Component {
 
   _onFocus = () => {
     this.props.set({
-      focused: true
+      focused: true,
+      text: ""
     });
   };
 
@@ -127,7 +128,11 @@ class LocationBox extends Component {
             <Entypo name="magnifying-glass" size={18} color="#000" />
             <TextInput
               ref={ref => (this._input = ref)}
-              placeholder={refreshing ? "Locating..." : "Search cities..."}
+              placeholder={
+                refreshing
+                  ? "Locating..."
+                  : "Search cities, places, descriptions..."
+              }
               style={styles.input}
               placeholderTextColor="#333"
               returnKeyType="done"
@@ -138,7 +143,6 @@ class LocationBox extends Component {
               autoCapitalize="words"
               clearButtonMode={focused ? "always" : "never"}
               underlineColorAndroid="transparent"
-              selectTextOnFocus
               autoCorrect={ANDROID}
             />
           </View>

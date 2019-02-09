@@ -6,6 +6,7 @@ import api from "../API";
 import * as Location from "./location";
 import { defer } from "./lib";
 import locate from "../Locate";
+import { groupHours } from "../Time";
 
 const coordinates = action$ =>
   action$
@@ -64,7 +65,18 @@ const completions = (action$, store) =>
             query
           });
 
-          const completions = res.values.filter(val => val && val.name);
+          let completions;
+
+          if (res.events) {
+            completions = res.events.map(hit => {
+              if (hit._source) {
+                hit._source.groupedHours = groupHours(hit._source);
+              }
+              return hit;
+            });
+          } else {
+            completions = res.values;
+          }
 
           return Location.actions.set({
             completions

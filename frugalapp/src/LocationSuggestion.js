@@ -138,7 +138,7 @@ class LocationSuggestion extends Component {
         onPress={this._onPress}
         onLongPress={this._onPressIn}
         onPressOut={this._onPressOut}
-        disabled={hide}
+        // disabled={hide}
       >
         <View style={styles.info}>
           <Text style={styles.name}>{name}</Text>
