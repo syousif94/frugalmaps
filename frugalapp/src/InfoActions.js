@@ -57,7 +57,7 @@ async function share(doc) {
 export default ({ doc }) => {
   return (
     <View style={styles.actions}>
-      {["Call", "Web", "Hours", "Go", "Share"].map(text => {
+      {["Hours", "Go", "Share", "Web", "Call"].map(text => {
         // let icon = null;
         let emoji = "";
         let onPress;
@@ -123,15 +123,15 @@ const styles = StyleSheet.create({
   },
   btn: {
     flex: 1,
-    paddingTop: 12,
-    paddingBottom: 10,
+    paddingTop: 9,
+    paddingBottom: 6,
     alignItems: "center"
   },
   icon: {
     fontSize: 18
   },
   actionText: {
-    marginTop: 8,
+    marginTop: 5,
     fontSize: 10,
     fontWeight: "500",
     color: "#000"

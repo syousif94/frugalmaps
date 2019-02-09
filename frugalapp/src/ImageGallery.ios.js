@@ -7,7 +7,8 @@ import {
   Text,
   Image,
   ActivityIndicator,
-  TouchableOpacity
+  TouchableOpacity,
+  InteractionManager
 } from "react-native";
 import { connect } from "react-redux";
 
@@ -29,12 +30,14 @@ class ImageGallery extends Component {
   _onPress = () => {
     const { set, navigation, doc } = this.props;
 
-    set({
-      selectedEvent: {
-        data: doc
-      }
+    InteractionManager.runAfterInteractions(() => {
+      set({
+        selectedEvent: {
+          data: doc
+        }
+      });
+      navigation.navigate("Info");
     });
-    navigation.navigate("Info");
   };
 
   _renderItem = ({ item }) => {
