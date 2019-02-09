@@ -25,7 +25,8 @@ class CalendarScreen extends Component {
 
   state = {
     clipSubviews: true,
-    touchAd: true
+    touchAd: true,
+    windowSize: 2
   };
 
   componentDidMount() {
@@ -33,6 +34,11 @@ class CalendarScreen extends Component {
     emitter.on("calendar-top", this._scrollToTop);
     if (IOS) {
       emitter.on("reclip-calendar", this._reclip);
+      setTimeout(() => {
+        this.setState({
+          windowSize: 21
+        });
+      }, 500);
     }
   }
 
@@ -184,7 +190,8 @@ class CalendarScreen extends Component {
       : {
           onScrollEndDrag: this._onScrollEnd,
           onMomentumScrollBegin: this._onScrollEnd,
-          onMomentumScrollEnd: this._onScrollEnd
+          onMomentumScrollEnd: this._onScrollEnd,
+          windowSize: this.state.windowSize
         };
 
     const listData = dataCount ? data : [];

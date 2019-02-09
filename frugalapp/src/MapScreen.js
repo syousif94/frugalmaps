@@ -32,7 +32,8 @@ class MapScreen extends PureComponent {
   static searchId = "mapScreen";
 
   state = {
-    now: Date.now()
+    now: Date.now(),
+    markers: false
   };
 
   _search = false;
@@ -67,16 +68,28 @@ class MapScreen extends PureComponent {
   componentDidMount() {
     emitter.on("fit-bounds", this._fitBounds);
     emitter.on(MapScreen.mapId, this._showLocation);
-    this._interval = setInterval(() => {
-      this.setState({
-        now: Date.now()
-      });
-    }, 60000);
+    emitter.once("enable-markers", this._enableMarkers);
   }
+
+  _enableMarkers = () => {
+    this.setState(
+      {
+        markers: true
+      },
+      () => {
+        this._interval = setInterval(() => {
+          this.setState({
+            now: Date.now()
+          });
+        }, 60000);
+      }
+    );
+  };
 
   componentWillUnmount() {
     emitter.off("fit-bounds", this._fitBounds);
     emitter.off(MapScreen.mapId, this._showLocation);
+    // emitter.off("enable-markers", this._enableMarkers);
     clearInterval(this._interval);
   }
 
@@ -119,7 +132,9 @@ class MapScreen extends PureComponent {
         longitude: bounds.southwest.lng
       }
     ];
-    this._map.fitToCoordinates(coords, { animated });
+    requestAnimationFrame(() => {
+      this._map.fitToCoordinates(coords, { animated });
+    });
   };
 
   _onRegionChangeComplete = async () => {
@@ -213,14 +228,16 @@ class MapScreen extends PureComponent {
             showsMyLocationButton={false}
             pitchEnabled={false}
           >
-            {markers.map(data => {
-              const { _id, _source: item } = data;
+            {this.state.markers
+              ? markers.map(data => {
+                  const { _id, _source: item } = data;
 
-              const iso = makeISO(item.days);
-              const { ending } = timeRemaining(item.groupedHours[0], iso);
+                  const iso = makeISO(item.days);
+                  const { ending } = timeRemaining(item.groupedHours[0], iso);
 
-              return <MapMarker ending={ending} data={data} key={_id} />;
-            })}
+                  return <MapMarker ending={ending} data={data} key={_id} />;
+                })
+              : null}
           </MapView>
         </View>
         <SearchButton id={MapScreen.searchId} />

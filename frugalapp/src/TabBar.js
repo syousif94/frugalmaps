@@ -6,7 +6,8 @@ import {
   Text,
   TouchableOpacity,
   Platform,
-  Keyboard
+  Keyboard,
+  InteractionManager
 } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import { connect } from "react-redux";
@@ -148,8 +149,11 @@ class TabBar extends Component {
   };
 
   _onMap = () => {
-    requestAnimationFrame(() => {
+    InteractionManager.runAfterInteractions(() => {
       this.props.navigation.navigate("Map");
+      requestAnimationFrame(() => {
+        emitter.emit("enable-markers");
+      });
     });
   };
 
