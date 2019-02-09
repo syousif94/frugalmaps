@@ -2,6 +2,7 @@ import React, { Component, PureComponent } from "react";
 import { StyleSheet, Image, View, Text, ScrollView } from "react-native";
 
 import { MapView } from "expo";
+import { FontAwesome } from "@expo/vector-icons";
 
 import ImageGallery from "./ImageGallery";
 import EventList from "./InfoEventList";
@@ -95,6 +96,17 @@ class Callout extends PureComponent {
       height: 230
     };
 
+    let streetText = data._source.address
+      .split(",")
+      .find(val => val.length > 5)
+      .trim();
+
+    const sort = data.events[0].sort;
+
+    if (sort && sort[0]) {
+      streetText = `${sort[0].toFixed(1)}mi · ${streetText}`;
+    }
+
     return (
       <MapView.Callout>
         <View style={calloutStyle}>
@@ -104,7 +116,16 @@ class Callout extends PureComponent {
             scrollIndicatorInsets={Callout.scrollIndicatorInsets}
           >
             <ImageGallery doc={data} height={130} narrow />
-            <Text style={styles.locationText}>{data._source.location}</Text>
+            <View style={styles.locationInfo}>
+              <View>
+                <Text style={styles.locationText}>{data._source.location}</Text>
+                <Text style={styles.streetText}>{streetText}</Text>
+              </View>
+              <View style={styles.rating}>
+                <FontAwesome name="star" size={12} color="#FFA033" />
+                <Text style={styles.ratingText}>{data._source.rating}</Text>
+              </View>
+            </View>
             <EventList tick={this.state.tick} placeid={data._source.placeid} />
           </ScrollView>
         </View>
@@ -142,10 +163,31 @@ const styles = StyleSheet.create({
     fontSize: 6,
     fontWeight: "700"
   },
-  locationText: {
+  locationInfo: {
     marginTop: 5,
+    flexDirection: "row"
+  },
+  locationText: {
     fontSize: 14,
     fontWeight: "600",
     color: "#000"
+  },
+  streetText: {
+    color: "#444",
+    fontSize: 10
+  },
+  rating: {
+    position: "absolute",
+    top: 0,
+    right: 5,
+    bottom: 0,
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  ratingText: {
+    color: "#FFA033",
+    fontSize: 12,
+    fontWeight: "600",
+    marginLeft: 3
   }
 });

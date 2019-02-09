@@ -217,7 +217,7 @@ class InfoScreen extends Component {
               <View style={paddingStyle} />
               <ImageGallery
                 backgroundColor="#000"
-                height={HEIGHT * 0.25}
+                height={HEIGHT * 0.28}
                 disabled
                 doc={data}
               />
