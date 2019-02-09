@@ -111,7 +111,7 @@ const makeEvents = (hits, week = false) => {
   }
 };
 
-const makeMarkers = days => {
+const makeMarkers = (days, bounds) => {
   return _(days)
     .map(day => {
       const clone = _.cloneDeep(day);
@@ -124,6 +124,18 @@ const makeMarkers = days => {
             _source: events[0]._source,
             events
           };
+        })
+        .filter(events => {
+          if (!bounds) return true;
+
+          const [lng, lat] = events._source.coordinates;
+
+          return (
+            lng <= bounds.northeast.lng &&
+            lng >= bounds.southwest.lng &&
+            lat >= bounds.southwest.lat &&
+            lat <= bounds.northeast.lat
+          );
         })
         .value();
       return clone;
@@ -185,10 +197,6 @@ const events = (action$, store) =>
 
           AsyncStorage.setItem("oldData", JSON.stringify(hits));
 
-          if (bounds !== undefined) {
-            emitter.emit("fit-bounds", bounds);
-          }
-
           const weeklyCalendar =
             action.payload.weekly || action.payload.queryType === "City";
 
@@ -198,10 +206,10 @@ const events = (action$, store) =>
 
           const calendar = makeEvents(hits, true);
 
-          const markers = makeMarkers([
-            { title: "All Events", data: hits },
-            ...calendar
-          ]);
+          const markers = makeMarkers(
+            [{ title: "All Events", data: hits }, ...calendar],
+            bounds
+          );
 
           let day;
 
@@ -223,6 +231,10 @@ const events = (action$, store) =>
             if (!day) {
               day = "All Events";
             }
+          }
+
+          if (bounds !== undefined) {
+            emitter.emit("fit-bounds", bounds);
           }
 
           return Observable.of(

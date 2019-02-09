@@ -153,6 +153,7 @@ class ImageGallery extends Component {
                 renderItem={this._renderItem}
                 keyExtractor={this._keyExtractor}
                 showsHorizontalScrollIndicator={false}
+                ItemSeparatorComponent={() => <View style={styles.divider} />}
               />
             </View>
           </View>
@@ -215,12 +216,14 @@ export default connect(
 
 const styles = StyleSheet.create({
   photo: {
-    backgroundColor: "#fff",
-    marginRight: 2
+    backgroundColor: "#fff"
   },
   loader: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "#e0e0e0"
+  },
+  divider: {
+    width: 2
   },
   vPhoto: {
     backgroundColor: "#e0e0e0",
