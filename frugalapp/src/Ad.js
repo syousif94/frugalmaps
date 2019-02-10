@@ -5,12 +5,12 @@ import { IOS, PLACEMENT_ID } from "./Constants";
 
 export default class Ad extends PureComponent {
   state = {
-    hide: false
+    failed: false
   };
 
   _hideAd = () => {
     this.setState({
-      hide: true
+      failed: true
     });
   };
 
@@ -21,23 +21,21 @@ export default class Ad extends PureComponent {
 
     if (initialized && IOS) {
       return (
-        <View style={styles.adView} pointerEvents="box-none" key="ad">
+        <View style={styles.adView} pointerEvents="box-none">
           <View style={styles.adBanner} pointerEvents="none">
             <Text style={styles.adText}>Loading Advertisement...</Text>
             <Text style={styles.adSubtext}>Occasionally fails</Text>
           </View>
-          {this.state.hide ? null : (
-            <View style={styles.adContainer} pointerEvents="box-none">
-              <FacebookAds.BannerView
-                key={`ad${this.state.key}`}
-                style={styles.ad}
-                pointerEvents={pointerEvents}
-                placementId={PLACEMENT_ID}
-                type="standard"
-                onError={this._hideAd}
-              />
-            </View>
-          )}
+          <View style={styles.adContainer} pointerEvents="box-none">
+            <FacebookAds.BannerView
+              key={`ad${this.state.key}`}
+              style={styles.ad}
+              pointerEvents={pointerEvents}
+              placementId={PLACEMENT_ID}
+              type="standard"
+              onError={this._hideAd}
+            />
+          </View>
         </View>
       );
     }

@@ -190,6 +190,18 @@ function list(state = [], { type, payload }) {
   }
 }
 
+function adKey(state = `${Date.now()}`, { type, payload }) {
+  switch (type) {
+    case types.set:
+      if (payload.adKey !== undefined) {
+        return payload.adKey;
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
 function selectedEvent(state = { id: null, data: null }, { type, payload }) {
   switch (type) {
     case types.set:
@@ -225,5 +237,6 @@ export default combineReducers({
   selectedEvent,
   mode,
   list,
-  markers
+  markers,
+  adKey
 });

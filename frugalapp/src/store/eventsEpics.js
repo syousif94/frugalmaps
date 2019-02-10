@@ -252,7 +252,8 @@ const events = (action$, store) =>
               day,
               initialized: true,
               mode,
-              markers
+              markers,
+              adKey: `${Date.now()}`
             })
           );
         })

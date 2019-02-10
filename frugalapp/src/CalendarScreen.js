@@ -25,8 +25,7 @@ class CalendarScreen extends Component {
 
   state = {
     clipSubviews: true,
-    touchAd: true,
-    windowSize: 2
+    touchAd: true
   };
 
   componentDidMount() {
@@ -34,11 +33,6 @@ class CalendarScreen extends Component {
     emitter.on("calendar-top", this._scrollToTop);
     if (IOS) {
       emitter.on("reclip-calendar", this._reclip);
-      setTimeout(() => {
-        this.setState({
-          windowSize: 21
-        });
-      }, 500);
     }
   }
 
@@ -136,10 +130,10 @@ class CalendarScreen extends Component {
   };
 
   _renderAd = () => {
-    const { initialized } = this.props;
+    const { initialized, adKey } = this.props;
 
     return (
-      <Ad key="ad" touchAd={this.state.touchAd} initialized={initialized} />
+      <Ad key={adKey} touchAd={this.state.touchAd} initialized={initialized} />
     );
   };
 
@@ -164,10 +158,10 @@ class CalendarScreen extends Component {
 
   _renderItem = data => {
     const key = `${data.item._id}${data.index}`;
-    return <Item {...data} key={key} itemKey={key} />;
+    return <Item {...data} itemKey={key} />;
   };
 
-  _renderSectionHeader = data => <Header {...data} key={data.index} />;
+  _renderSectionHeader = data => <Header {...data} />;
 
   _setRef = ref => {
     this._list = ref;
@@ -190,8 +184,7 @@ class CalendarScreen extends Component {
       : {
           onScrollEndDrag: this._onScrollEnd,
           onMomentumScrollBegin: this._onScrollEnd,
-          onMomentumScrollEnd: this._onScrollEnd,
-          windowSize: this.state.windowSize
+          onMomentumScrollEnd: this._onScrollEnd
         };
 
     const listData = dataCount ? data : [];
@@ -228,7 +221,8 @@ const mapStateToProps = state => ({
   initialized: state.events.initialized,
   listTop: state.location.listTop,
   refreshing: state.events.refreshing,
-  data: Events.homeList(state)
+  data: Events.homeList(state),
+  adKey: state.events.adKey
 });
 
 const mapDispatchToProps = {
