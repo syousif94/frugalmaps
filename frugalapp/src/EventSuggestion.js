@@ -3,15 +3,25 @@ import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { withNavigation } from "react-navigation";
 import { connect } from "react-redux";
 import * as Events from "./store/events";
+import * as Location from "./store/location";
+import store from "./store";
 
 class Suggestion extends Component {
   _onPress = () => {
-    const { set, navigation, item } = this.props;
+    const { set, navigation, item, setLocation } = this.props;
 
     set({
       selectedEvent: {
         data: item
       }
+    });
+
+    const {
+      location: { lastQuery }
+    } = store.getState();
+
+    setLocation({
+      text: lastQuery
     });
 
     navigation.navigate("Info");
@@ -47,7 +57,8 @@ class Suggestion extends Component {
 export default connect(
   null,
   {
-    set: Events.actions.set
+    set: Events.actions.set,
+    setLocation: Location.actions.set
   }
 )(withNavigation(Suggestion));
 

@@ -7,15 +7,13 @@ import {
   Text,
   Image,
   ActivityIndicator,
-  TouchableOpacity,
-  InteractionManager
+  TouchableOpacity
 } from "react-native";
 import { connect } from "react-redux";
 
 import { withNavigation } from "react-navigation";
 import { Entypo } from "@expo/vector-icons";
-import { WIDTH, AWSCF } from "./Constants";
-import EventList from "./InfoEventList";
+import { AWSCF } from "./Constants";
 
 import * as Events from "./store/events";
 
@@ -30,18 +28,16 @@ class ImageGallery extends Component {
   _onPress = () => {
     const { set, navigation, doc } = this.props;
 
-    InteractionManager.runAfterInteractions(() => {
-      set({
-        selectedEvent: {
-          data: doc
-        }
-      });
-      navigation.navigate("Info");
+    set({
+      selectedEvent: {
+        data: doc
+      }
     });
+    navigation.navigate("Info");
   };
 
   _renderItem = ({ item }) => {
-    const { height, disabled, doc, horizontal = true } = this.props;
+    const { height } = this.props;
 
     if (!item.thumb) {
       return null;
@@ -55,46 +51,21 @@ class ImageGallery extends Component {
       uri
     };
 
-    if (horizontal) {
-      const imageWidth = (height / imageHeight) * width;
+    const imageWidth = (height / imageHeight) * width;
 
-      return (
-        <TouchableWithoutFeedback disabled={disabled} onPress={this._onPress}>
-          <View key={uri} style={[styles.photo, { height }]}>
-            <ActivityIndicator
-              style={styles.loader}
-              size="small"
-              color="#000"
-            />
-            <Image
-              key={uri}
-              source={source}
-              style={{
-                width: imageWidth,
-                height
-              }}
-            />
-          </View>
-        </TouchableWithoutFeedback>
-      );
-    } else if (uri === "spacer") {
-      return (
-        <View style={styles.info}>
-          <EventList placeid={doc._source.placeid} />
-        </View>
-      );
-    } else {
-      const height = (WIDTH / width) * imageHeight;
-
-      const backgroundColor = "#444";
-
-      return (
-        <View key={uri} style={[styles.vPhoto, { backgroundColor }]}>
-          <ActivityIndicator style={styles.loader} size="large" color="#000" />
-          <Image key={uri} source={source} style={{ width: WIDTH, height }} />
-        </View>
-      );
-    }
+    return (
+      <View key={uri} style={[styles.photo, { height }]}>
+        <ActivityIndicator style={styles.loader} size="small" color="#000" />
+        <Image
+          key={uri}
+          source={source}
+          style={{
+            width: imageWidth,
+            height
+          }}
+        />
+      </View>
+    );
   };
 
   _keyExtractor = (item, index) => {
@@ -112,8 +83,7 @@ class ImageGallery extends Component {
       narrow,
       disabled,
       backgroundColor = "#f2f2f2",
-      horizontal = true,
-      paddingTop
+      horizontal = true
     } = this.props;
 
     const { _source: item } = doc;
@@ -139,53 +109,28 @@ class ImageGallery extends Component {
       i++;
     }
 
-    if (horizontal) {
-      const imagesStyle = {
-        height,
-        backgroundColor
-      };
+    const imagesStyle = {
+      height,
+      backgroundColor
+    };
 
-      return (
-        <View>
-          <View style={imagesStyle}>
-            <View style={touchableStyle}>
-              <FlatList
-                horizontal
-                style={touchableStyle}
-                data={data}
-                renderItem={this._renderItem}
-                keyExtractor={this._keyExtractor}
-                showsHorizontalScrollIndicator={false}
-              />
-            </View>
+    return (
+      <View>
+        <View style={imagesStyle}>
+          <View style={touchableStyle}>
+            <FlatList
+              horizontal
+              style={touchableStyle}
+              data={data}
+              renderItem={this._renderItem}
+              keyExtractor={this._keyExtractor}
+              showsHorizontalScrollIndicator={false}
+            />
           </View>
-          <Icon onPress={this._onPress} disabled={disabled} narrow={narrow} />
         </View>
-      );
-    } else {
-      if (paddingTop === null) {
-        return null;
-      }
-
-      const containerStyle = {
-        paddingTop
-      };
-      return (
-        <FlatList
-          style={styles.vList}
-          ListHeaderComponent={() => (
-            <View style={styles.banner}>
-              <Text style={styles.bannerText}>Scroll up to view photos</Text>
-            </View>
-          )}
-          contentContainerStyle={containerStyle}
-          data={data}
-          renderItem={this._renderItem}
-          keyExtractor={this._keyExtractor}
-          showsVerticalScrollIndicator={false}
-        />
-      );
-    }
+        <Icon onPress={this._onPress} disabled={disabled} narrow={narrow} />
+      </View>
+    );
   }
 }
 

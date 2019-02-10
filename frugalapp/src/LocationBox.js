@@ -87,10 +87,16 @@ class LocationBox extends Component {
     }
   };
 
-  _renderQueryType = () => {
-    const { queryType } = this.props;
+  _resetToLast = () => {
+    this.props.set({
+      text: this.props.lastQuery
+    });
+  };
 
-    if (!queryType) {
+  _renderQueryType = () => {
+    const { queryType, focused } = this.props;
+
+    if (!queryType || focused) {
       return null;
     }
 
@@ -144,6 +150,7 @@ class LocationBox extends Component {
               clearButtonMode={focused ? "always" : "never"}
               underlineColorAndroid="transparent"
               autoCorrect={ANDROID}
+              onSubmitEditing={this._resetToLast}
             />
           </View>
           {this._renderQueryType()}

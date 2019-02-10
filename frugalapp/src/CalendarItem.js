@@ -96,34 +96,30 @@ class CalendarItem extends Component {
       endingText += " away";
     }
 
-    const locationText = `${index + 1}. ${item.location}`;
+    const locationText = item.location;
 
     const paddingVertical = isClosest ? 10 : 0;
-    const marginTop = isClosest ? 0 : 10;
-    const marginBottom = isClosest ? 0 : 6;
+    const marginTop = isClosest ? 0 : 8;
+    const marginBottom = isClosest ? 0 : 10;
 
     return (
       <View style={containerStyle}>
         <View style={[styles.info, { paddingVertical }]}>
-          <View style={[styles.location, { marginTop, marginBottom }]}>
-            <View style={styles.locationInfo}>
-              <Text numberOfLines={1} style={styles.locationText}>
-                {locationText}
-              </Text>
-              <Text numberOfLines={1} style={styles.subText}>
-                {item.city}
-                {distanceText}
-              </Text>
-            </View>
-            <View style={styles.rating}>
-              <FontAwesome name="star" size={16} color="#FFA033" />
-              <Text style={styles.ratingText}>
-                {parseFloat(item.rating, 10).toFixed(1)}
-              </Text>
-            </View>
-          </View>
           {!isClosest ? (
             <View style={styles.event}>
+              <View>
+                <View style={styles.titleRow}>
+                  <Text style={styles.titleText}>
+                    {index + 1}. {item.title}
+                  </Text>
+                  {item.type === "Happy Hour" ? (
+                    <View style={styles.twentyOne}>
+                      <Text style={styles.twentyOneText}>21+</Text>
+                    </View>
+                  ) : null}
+                </View>
+                <Text style={styles.descriptionText}>{item.description}</Text>
+              </View>
               <View pointerEvents="none">
                 <View style={styles.hours}>
                   <MonoText
@@ -132,8 +128,8 @@ class CalendarItem extends Component {
                     textStyle={countdownStyle}
                     characterWidth={7.5}
                     style={styles.countdown}
-                    suffixStyle={{ fontSize: 9 }}
-                    colonStyle={{ paddingBottom: 1 }}
+                    suffixStyle={styles.suffix}
+                    colonStyle={styles.colon}
                   />
                   {item.groupedHours.map((hours, index) => {
                     const marginTop = index !== 0 ? 1 : 0;
@@ -180,20 +176,26 @@ class CalendarItem extends Component {
                   })}
                 </View>
               </View>
-              <View>
-                <View style={styles.titleRow}>
-                  <Text style={styles.titleText}>{item.title}</Text>
-                  {item.type === "Happy Hour" ? (
-                    <View style={styles.twentyOne}>
-                      <Text style={styles.twentyOneText}>21+</Text>
-                    </View>
-                  ) : null}
-                </View>
-                <Text style={styles.descriptionText}>{item.description}</Text>
-              </View>
               <NotifyButton {...{ event: this.props.item }} key={id} />
             </View>
           ) : null}
+          <View style={[styles.location, { marginTop, marginBottom }]}>
+            <View style={styles.locationInfo}>
+              <Text numberOfLines={1} style={styles.locationText}>
+                {locationText}
+              </Text>
+              <Text numberOfLines={1} style={styles.subText}>
+                {item.city}
+                {distanceText}
+              </Text>
+            </View>
+            <View style={styles.rating}>
+              <FontAwesome name="star" size={16} color="#FFA033" />
+              <Text style={styles.ratingText}>
+                {parseFloat(item.rating, 10).toFixed(1)}
+              </Text>
+            </View>
+          </View>
         </View>
         <ImageGallery width={WIDTH - 20} doc={this.props.item} height={150} />
         {isClosest ? (
@@ -221,7 +223,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15
   },
   event: {
-    marginBottom: 10
+    marginTop: 10
   },
   titleText: {
     marginTop: 2,
@@ -240,7 +242,7 @@ const styles = StyleSheet.create({
     color: "#444",
     fontSize: 14,
     lineHeight: 19,
-    maxWidth: WIDTH - 80
+    paddingRight: 50
   },
   location: {
     flexDirection: "row",
@@ -336,5 +338,11 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: "#fff",
     fontWeight: "700"
+  },
+  suffix: {
+    fontSize: 9
+  },
+  colon: {
+    paddingBottom: 1
   }
 });

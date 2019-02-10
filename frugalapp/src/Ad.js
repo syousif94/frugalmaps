@@ -5,20 +5,14 @@ import { IOS, PLACEMENT_ID } from "./Constants";
 
 export default class Ad extends PureComponent {
   state = {
-    key: 1
+    hide: false
   };
 
-  _reloadAd = () => {
-    this._timeout = setTimeout(() => {
-      this.setState({
-        key: this.state.key + 1
-      });
-    }, 1000);
+  _hideAd = () => {
+    this.setState({
+      hide: true
+    });
   };
-
-  componentWillUnmount() {
-    clearTimeout(this._timeout);
-  }
 
   render() {
     const { touchAd, initialized } = this.props;
@@ -32,17 +26,18 @@ export default class Ad extends PureComponent {
             <Text style={styles.adText}>Loading Advertisement...</Text>
             <Text style={styles.adSubtext}>Occasionally fails</Text>
           </View>
-          <View style={styles.adContainer} pointerEvents="box-none">
-            <FacebookAds.BannerView
-              key={`ad${this.state.key}`}
-              style={styles.ad}
-              pointerEvents={pointerEvents}
-              placementId={PLACEMENT_ID}
-              type="standard"
-              onError={this._reloadAd}
-              onPress={() => console.log("hi")}
-            />
-          </View>
+          {this.state.hide ? null : (
+            <View style={styles.adContainer} pointerEvents="box-none">
+              <FacebookAds.BannerView
+                key={`ad${this.state.key}`}
+                style={styles.ad}
+                pointerEvents={pointerEvents}
+                placementId={PLACEMENT_ID}
+                type="standard"
+                onError={this._hideAd}
+              />
+            </View>
+          )}
         </View>
       );
     }

@@ -158,16 +158,16 @@ class TabBar extends Component {
   };
 
   _onCalendar = () => {
-    InteractionManager.runAfterInteractions(() => {
+    requestAnimationFrame(() => {
       this.props.navigation.navigate("Calendar");
-      requestAnimationFrame(() => {
+      InteractionManager.runAfterInteractions(() => {
         emitter.emit("reclip-calendar");
       });
     });
   };
 
   _onSubmit = () => {
-    InteractionManager.runAfterInteractions(() => {
+    requestAnimationFrame(() => {
       this.props.navigation.navigate("Submit");
     });
 

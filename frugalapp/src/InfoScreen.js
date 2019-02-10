@@ -42,13 +42,11 @@ class InfoScreen extends Component {
       });
     }
 
-    if (ANDROID) {
-      this._loadingTimeout = setTimeout(() => {
-        this.setState({
-          loading: false
-        });
-      }, 150);
-    }
+    this._loadingTimeout = setTimeout(() => {
+      this.setState({
+        loading: false
+      });
+    }, 150);
 
     if (IOS) {
       StatusBar.setBarStyle("light-content");
@@ -139,7 +137,7 @@ class InfoScreen extends Component {
     return (
       <View style={styles.map}>
         <View style={styles.map}>
-          {ANDROID && this.state.loading ? null : (
+          {this.state.loading ? null : (
             <MapView
               ref={ref => (this._map = ref)}
               style={styles.map}
@@ -150,8 +148,8 @@ class InfoScreen extends Component {
               <MapMarker data={data} key={data._id} disabled />
             </MapView>
           )}
-          {ANDROID ? null : <InfoBackButton />}
-          {ANDROID && this.state.loading ? null : (
+          <InfoBackButton />
+          {this.state.loading ? null : (
             <LocateButton mapId={InfoScreen.mapId} size="small" />
           )}
         </View>
@@ -209,7 +207,7 @@ class InfoScreen extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.info}>
-          {ANDROID && this.state.loading ? null : (
+          {this.state.loading ? null : (
             <ScrollView
               contentContainerStyle={{ paddingBottom: 60 }}
               style={styles.container}

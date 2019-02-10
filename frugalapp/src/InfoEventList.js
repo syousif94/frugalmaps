@@ -13,7 +13,7 @@ const mapStateToProps = (state, props) => ({
   events: Events.placeEvents(state, props)
 });
 
-const renderEvent = event => {
+const renderEvent = (event, index) => {
   const { _source: item, _id: id } = event;
   const iso = makeISO(item.days);
   const { remaining, ending } = timeRemaining(item.groupedHours[0], iso);
@@ -36,8 +36,29 @@ const renderEvent = event => {
     endingText += " away";
   }
 
+  const eventStyle = [styles.event];
+
+  if (!index) {
+    eventStyle.push(styles.firstEvent);
+  }
+
   return (
-    <View style={styles.event} key={id}>
+    <View style={eventStyle} key={id}>
+      <View>
+        <View style={styles.titleRow}>
+          <Text style={styles.boldText}>
+            {index + 1}. {item.title}
+          </Text>
+          {item.type === "Happy Hour" ? (
+            <View style={styles.twentyOne}>
+              <Text style={styles.twentyOneText}>21+</Text>
+            </View>
+          ) : null}
+        </View>
+        <Text style={[styles.infoText, styles.descriptionText]}>
+          {item.description}
+        </Text>
+      </View>
       <View style={styles.hours} pointerEvents="none">
         <MonoText
           characterWidth={7.5}
@@ -45,8 +66,8 @@ const renderEvent = event => {
           text={remaining}
           suffix={endingText}
           textStyle={countdownStyle}
-          suffixStyle={{ fontSize: 9 }}
-          colonStyle={{ paddingBottom: 1 }}
+          suffixStyle={styles.suffix}
+          colonStyle={styles.colon}
         />
         {item.groupedHours.map((hours, index) => {
           const marginTop = index !== 0 ? 1 : 0;
@@ -83,19 +104,6 @@ const renderEvent = event => {
             </View>
           );
         })}
-      </View>
-      <View>
-        <View style={styles.titleRow}>
-          <Text style={styles.boldText}>{item.title}</Text>
-          {item.type === "Happy Hour" ? (
-            <View style={styles.twentyOne}>
-              <Text style={styles.twentyOneText}>21+</Text>
-            </View>
-          ) : null}
-        </View>
-        <Text style={[styles.infoText, styles.descriptionText]}>
-          {item.description}
-        </Text>
       </View>
       <NotifyButton {...{ event }} />
     </View>
@@ -157,10 +165,12 @@ const styles = StyleSheet.create({
     // paddingVertical: 5
   },
   event: {
-    marginVertical: 3
+    marginVertical: 6
+  },
+  firstEvent: {
+    marginTop: 3
   },
   boldText: {
-    marginTop: 2,
     fontSize: 14,
     color: "#000",
     fontWeight: "600"
@@ -172,13 +182,12 @@ const styles = StyleSheet.create({
     lineHeight: 19
   },
   descriptionText: {
-    maxWidth: WIDTH - 80
+    paddingRight: 50
   },
   time: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center"
-    // justifyContent: "space-between"
   },
   hours: {
     marginTop: 2
@@ -249,5 +258,11 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: "#fff",
     fontWeight: "700"
+  },
+  suffix: {
+    fontSize: 9
+  },
+  colon: {
+    paddingBottom: 1
   }
 });

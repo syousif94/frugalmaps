@@ -144,7 +144,8 @@ const styles = StyleSheet.create({
     margin: -15
   },
   scrollContent: {
-    padding: 15
+    padding: 15,
+    paddingBottom: 9
   },
   spot: {
     position: "absolute",
@@ -165,9 +166,11 @@ const styles = StyleSheet.create({
   },
   locationInfo: {
     marginTop: 5,
+    marginBottom: 2,
     flexDirection: "row"
   },
   locationText: {
+    marginTop: 1,
     fontSize: 14,
     fontWeight: "600",
     color: "#000"

@@ -205,7 +205,7 @@ export default class NotifyButton extends Component {
 const styles = StyleSheet.create({
   action: {
     position: "absolute",
-    top: 5,
+    top: 0,
     right: 0,
     height: 50,
     backgroundColor: "#fafafa",
