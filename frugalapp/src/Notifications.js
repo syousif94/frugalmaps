@@ -13,6 +13,15 @@ function handleNotification(navigator) {
   return notification => {
     switch (notification.origin) {
       case "selected":
+        const {
+          events: {
+            selectedEvent: { id }
+          }
+        } = store.getState();
+
+        if (id === notification.data.id) {
+          return;
+        }
         store.dispatch(
           Events.actions.set({
             selectedId: notification.data.id

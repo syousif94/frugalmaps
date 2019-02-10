@@ -136,23 +136,21 @@ class InfoScreen extends Component {
 
     return (
       <View style={styles.map}>
-        <View style={styles.map}>
-          {this.state.loading ? null : (
-            <MapView
-              ref={ref => (this._map = ref)}
-              style={styles.map}
-              initialRegion={INITIAL_REGION}
-              onLayout={this._focusAnnotation}
-              showsUserLocation={authorized}
-            >
-              <MapMarker data={data} key={data._id} disabled />
-            </MapView>
-          )}
-          <InfoBackButton />
-          {this.state.loading ? null : (
-            <LocateButton mapId={InfoScreen.mapId} size="small" />
-          )}
-        </View>
+        {this.state.loading ? null : (
+          <MapView
+            ref={ref => (this._map = ref)}
+            style={styles.map}
+            initialRegion={INITIAL_REGION}
+            onLayout={this._focusAnnotation}
+            showsUserLocation={authorized}
+          >
+            <MapMarker data={data} key={data._id} disabled />
+          </MapView>
+        )}
+        <InfoBackButton />
+        {this.state.loading ? null : (
+          <LocateButton mapId={InfoScreen.mapId} size="small" />
+        )}
       </View>
     );
   };
@@ -207,15 +205,15 @@ class InfoScreen extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.info}>
-          {this.state.loading ? null : (
+          {this.state.loading || (IOS && !this.state.listTop) ? null : (
             <ScrollView
-              contentContainerStyle={{ paddingBottom: 60 }}
+              contentContainerStyle={styles.scrollContent}
               style={styles.container}
             >
               <View style={paddingStyle} />
               <ImageGallery
                 backgroundColor="#000"
-                height={HEIGHT * 0.28}
+                height={HEIGHT * 0.24}
                 disabled
                 doc={data}
               />
@@ -280,6 +278,9 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingTop: ANDROID ? 5 : 0
   },
+  scrollContent: {
+    paddingBottom: 20
+  },
   headerInfo: { paddingRight: 60 },
   locationText: {
     color: "#fff",
@@ -295,7 +296,7 @@ const styles = StyleSheet.create({
     fontSize: 12
   },
   map: {
-    height: HEIGHT * 0.175
+    height: HEIGHT * 0.22
   },
   events: {
     marginTop: 1,

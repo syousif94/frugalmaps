@@ -12,6 +12,15 @@ function handleLink(navigator) {
     if (!selectedId) {
       return;
     }
+    const {
+      events: {
+        selectedEvent: { id }
+      }
+    } = store.getState();
+
+    if (id === selectedId) {
+      return;
+    }
     store.dispatch(
       Events.actions.set({
         selectedId
