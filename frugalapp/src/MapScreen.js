@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import emitter from "tiny-emitter/instance";
 import _ from "lodash";
 import { makeISO, timeRemaining } from "./Time";
+import CalendarDayPicker from "./CalendarDayPicker";
 
 import { INITIAL_REGION, ANDROID } from "./Constants";
 
@@ -17,7 +18,6 @@ import MapMarker from "./MapMarker";
 import MapLoading from "./MapLoading";
 import locate from "./Locate";
 import SearchButton from "./SearchButton";
-import DayPicker from "./MapDayPicker";
 
 var initialAndroidBounds = null;
 
@@ -53,9 +53,9 @@ class MapScreen extends PureComponent {
         if (!this._search) {
           this._search = true;
         }
-        if (this._dayPicker) {
-          this._dayPicker.getWrappedInstance().close();
-        }
+        // if (this._dayPicker) {
+        //   this._dayPicker.getWrappedInstance().close();
+        // }
         return false;
       },
       onStartShouldSetPanResponderCapture: (evt, gestureState) => false,
@@ -240,9 +240,9 @@ class MapScreen extends PureComponent {
               : null}
           </MapView>
         </View>
+        <CalendarDayPicker />
         <SearchButton id={MapScreen.searchId} />
         <LocationLists id={MapScreen.searchId} />
-        <DayPicker ref={this._setDayPickerRef} />
       </View>
     );
   }

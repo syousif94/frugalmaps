@@ -9,18 +9,18 @@ const mutations = ["set", "restore", "fetch", "merge"];
 export const { actions, types } = createActions(mutations, "events");
 
 export const homeList = createSelector(
-  state => state.events.mode,
+  state => state.events.day,
   state => state.events.list,
   state => state.events.calendar,
-  (mode, list, calendar) => {
-    switch (mode) {
-      case "list":
-        return list;
-      case "calendar":
-        return calendar;
-      default:
-        return [];
+  (day, list, calendar) => {
+    if (day === "All") {
+      return list;
     }
+    const events = calendar.find(datum => {
+      return datum.title === day;
+    });
+
+    return [events];
   }
 );
 
@@ -73,7 +73,7 @@ export const markerList = createSelector(
   }
 );
 
-function day(state = null, { type, payload }) {
+function day(state = "All", { type, payload }) {
   switch (type) {
     case types.set:
       if (payload.day !== undefined) {
@@ -166,35 +166,11 @@ function queryType(state = null, { type, payload }) {
   }
 }
 
-function mode(state = "list", { type, payload }) {
-  switch (type) {
-    case types.set:
-      if (payload.mode !== undefined) {
-        return payload.mode;
-      }
-      return state;
-    default:
-      return state;
-  }
-}
-
 function list(state = [], { type, payload }) {
   switch (type) {
     case types.set:
       if (payload.list !== undefined) {
         return payload.list;
-      }
-      return state;
-    default:
-      return state;
-  }
-}
-
-function adKey(state = `${Date.now()}`, { type, payload }) {
-  switch (type) {
-    case types.set:
-      if (payload.adKey !== undefined) {
-        return payload.adKey;
       }
       return state;
     default:
@@ -235,8 +211,6 @@ export default combineReducers({
   day,
   initialized,
   selectedEvent,
-  mode,
   list,
-  markers,
-  adKey
+  markers
 });

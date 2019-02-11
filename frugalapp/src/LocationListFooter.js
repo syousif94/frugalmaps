@@ -18,62 +18,17 @@ class LocationListFooter extends PureComponent {
     emitter.emit("blur-location-box", this.props.id);
   };
 
-  _onNewest = () => {
-    emitter.emit("calendar-top");
-    this.props.setEvents({
-      refreshing: true,
-      recent: true,
-      queryType: null
-    });
-    emitter.emit("blur-location-box", this.props.id);
-  };
-
-  _onWeekly = () => {
-    emitter.emit("calendar-top", 0);
-    this.props.setEvents({
-      mode: "calendar"
-    });
-    emitter.emit("blur-location-box", this.props.id);
-  };
-
-  _renderRightBtn = () => {
-    if (this.props.locationAuthorized) {
-      return (
+  render() {
+    return (
+      <View style={styles.footer} pointerEvents="box-none">
         <View style={styles.footerBtnBg}>
           <TouchableOpacity onPress={this._onClosest} style={styles.footerBtn}>
             <View style={[styles.footerBtnIcon]} pointerEvents="none">
               <FontAwesome name="location-arrow" size={14} color="#fff" />
             </View>
-            <Text style={styles.footerBtnText}>Current Location</Text>
+            <Text style={styles.footerBtnText}>Nearby</Text>
           </TouchableOpacity>
         </View>
-      );
-    } else {
-      return (
-        <View style={styles.footerBtnBg}>
-          <TouchableOpacity onPress={this._onNewest} style={styles.footerBtn}>
-            <View style={[styles.footerBtnIcon]} pointerEvents="none">
-              <Entypo name="new" size={17} color="#fff" />
-            </View>
-            <Text style={styles.footerBtnText}>Most Recent</Text>
-          </TouchableOpacity>
-        </View>
-      );
-    }
-  };
-
-  render() {
-    return (
-      <View style={styles.footer} pointerEvents="box-none">
-        <View style={styles.footerBtnBg}>
-          <TouchableOpacity onPress={this._onWeekly} style={styles.footerBtn}>
-            <View style={[styles.footerBtnIcon]} pointerEvents="none">
-              <Entypo name="calendar" size={17} color="#fff" />
-            </View>
-            <Text style={styles.footerBtnText}>Week View</Text>
-          </TouchableOpacity>
-        </View>
-        {this._renderRightBtn()}
       </View>
     );
   }
@@ -98,19 +53,19 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     right: 0,
-    left: 0,
     height: LocationListFooter.height,
     flexDirection: "row",
     padding: 2
   },
   footerBtnBg: {
-    flex: 1,
     margin: 2,
     borderRadius: 4,
     backgroundColor: "rgba(0,0,0,0.6)"
   },
   footerBtn: {
     flex: 1,
+    paddingLeft: 12,
+    paddingRight: 9,
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "row"

@@ -155,7 +155,7 @@ export async function updateNotifications(events) {
       const notificationId = await createNotification(event);
 
       AsyncStorage.setItem(id, notificationId);
-      CalendarManager.toggleEvent(event, true);
+      // CalendarManager.toggleEvent(event, true);
     })
   );
 }

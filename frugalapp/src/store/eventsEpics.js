@@ -53,7 +53,7 @@ const sortDays = (now, away) => (a, b) => {
   return diff;
 };
 
-const makeEvents = (hits, week = false) => {
+const makeEvents = (hits, week = false, nearest = false) => {
   const initial = [
     { title: "Monday", data: [], iso: 1, away: 0 },
     { title: "Tuesday", data: [], iso: 2, away: 0 },
@@ -96,6 +96,9 @@ const makeEvents = (hits, week = false) => {
 
     const days = [...todayAndAfter, ...beforeToday].map((day, index) => {
       day.away = index;
+      if (nearest) {
+        day.data = day.data.filter(day => !day.sort || day.sort < 45);
+      }
       day.data = day.data.sort(sortDays(timeInt, index));
       return { ...day, index };
     });
@@ -104,9 +107,10 @@ const makeEvents = (hits, week = false) => {
   } else {
     const today = initial[todayIndex];
     today.title = "Today";
-    today.data = today.data
-      .filter(day => !day.sort || day.sort < 45)
-      .sort(sortDays(timeInt));
+    if (nearest) {
+      today.data = today.data.filter(day => !day.sort || day.sort < 45);
+    }
+    today.data = today.data.sort(sortDays(timeInt));
     return [today, closest];
   }
 };
@@ -195,41 +199,44 @@ const events = (action$, store) =>
             return hit;
           });
 
-          AsyncStorage.setItem("oldData", JSON.stringify(hits));
+          const cityQuery = action.payload.queryType === "City";
 
-          const weeklyCalendar =
-            action.payload.weekly || action.payload.queryType === "City";
+          const nearestQuery = !action.payload.bounds && !cityQuery;
 
-          const mode = weeklyCalendar ? "calendar" : "list";
+          if (nearestQuery) {
+            AsyncStorage.setItem("oldData", JSON.stringify(hits));
+          }
 
-          const list = makeEvents(hits, false);
+          const list = makeEvents(hits, false, nearestQuery);
 
-          const calendar = makeEvents(hits, true);
+          const calendar = makeEvents(hits, true, nearestQuery);
 
           const markers = makeMarkers(
-            [{ title: "All Events", data: hits }, ...calendar],
+            [{ title: "All", data: hits }, ...calendar],
             bounds
           );
 
-          let day;
+          let day = "All";
 
-          const {
-            events: { day: storeDay }
-          } = store.getState();
+          if (action.payload.bounds && !cityQuery) {
+            const {
+              events: { day: storeDay }
+            } = store.getState();
 
-          if (calendar.length) {
-            if (storeDay) {
-              const storeDayData = calendar.find(
-                data => data.title === storeDay
-              );
+            if (calendar.length) {
+              if (storeDay) {
+                const storeDayData = calendar.find(
+                  data => data.title === storeDay
+                );
 
-              if (storeDayData) {
-                day = storeDay;
+                if (storeDayData) {
+                  day = storeDay;
+                }
               }
-            }
 
-            if (!day) {
-              day = "All Events";
+              if (!day) {
+                day = "All";
+              }
             }
           }
 
@@ -251,9 +258,7 @@ const events = (action$, store) =>
               calendar,
               day,
               initialized: true,
-              mode,
-              markers,
-              adKey: `${Date.now()}`
+              markers
             })
           );
         })
@@ -321,14 +326,11 @@ const restore = action$ =>
 
         const data = JSON.parse(dataStr);
 
-        const list = makeEvents(data);
+        const list = makeEvents(data, false, true);
 
-        const calendar = makeEvents(data, true);
+        const calendar = makeEvents(data, true, true);
 
-        const markers = makeMarkers([
-          { title: "All Events", data },
-          ...calendar
-        ]);
+        const markers = makeMarkers([{ title: "All", data }, ...calendar]);
 
         return Events.actions.set({
           refreshing: true,
