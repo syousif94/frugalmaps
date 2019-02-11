@@ -1,7 +1,7 @@
 import { Linking, AsyncStorage, Alert } from "react-native";
 
 import { Notifications, Permissions } from "expo";
-import { makeDuration, createDate, dayToISO } from "./Time";
+import { makeDuration, createDate, dayToISO, groupHours } from "./Time";
 import { ABBREVIATED_DAYS } from "./Constants";
 import _ from "lodash";
 import api from "./API";
@@ -39,13 +39,15 @@ export function watchNotifications(navigator) {
   Notifications.addListener(handleNotification(navigator));
 }
 
-async function createNotification({ _source: item, _id: id }) {
+export async function createNotification({ _source: item, _id: id }) {
   const hours = item.groupedHours[0];
 
   const duration = makeDuration(item.groupedHours[0]);
 
   const title = `${item.title} starts in 30 minutes!`;
-  const body = `${item.location} · ${hours.hours} (${duration}hr)`;
+  const body = `${item.location} · ${hours.hours} (${duration}hr)\n${
+    item.description
+  }`;
 
   const timesToNotify = _(item.groupedHours)
     .map(group => {
@@ -118,13 +120,51 @@ async function syncReminder(id, state) {
   }
 }
 
+export async function updateNotifications(events) {
+  const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+
+  if (status !== "granted") {
+    return;
+  }
+
+  await Promise.all(
+    events.map(async event => {
+      const id = event._id;
+
+      const existingNotificationId = await AsyncStorage.getItem(id);
+
+      if (existingNotificationId) {
+        const ids = JSON.parse(existingNotificationId);
+
+        await Promise.all(
+          ids.map(id => {
+            return Notifications.cancelScheduledNotificationAsync(id);
+          })
+        );
+      }
+
+      if (!event.found) {
+        AsyncStorage.removeItem(id);
+        CalendarManager.toggleEvent(event, false);
+        syncReminder(id, false);
+        return;
+      }
+
+      event._source.groupedHours = groupHours(event._source);
+
+      const notificationId = await createNotification(event);
+
+      AsyncStorage.setItem(id, notificationId);
+      CalendarManager.toggleEvent(event, true);
+    })
+  );
+}
+
 export async function toggleEvent(event) {
   try {
     const { _id: id } = event;
 
-    const itemId = `${id}`;
-
-    const existingNotificationId = await AsyncStorage.getItem(itemId);
+    const existingNotificationId = await AsyncStorage.getItem(id);
 
     if (existingNotificationId) {
       const ids = JSON.parse(existingNotificationId);
@@ -134,7 +174,7 @@ export async function toggleEvent(event) {
           return Notifications.cancelScheduledNotificationAsync(id);
         })
       );
-      await AsyncStorage.removeItem(itemId);
+      await AsyncStorage.removeItem(id);
       await CalendarManager.toggleEvent(event, false);
       syncReminder(id, false);
       return false;
@@ -148,7 +188,7 @@ export async function toggleEvent(event) {
 
     const notificationId = await createNotification(event);
 
-    await AsyncStorage.setItem(itemId, notificationId);
+    await AsyncStorage.setItem(id, notificationId);
     await CalendarManager.toggleEvent(event, true);
     syncReminder(id, true);
     return true;

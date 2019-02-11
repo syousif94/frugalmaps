@@ -70,7 +70,11 @@ export function createDate(time, iso, start) {
   }
   if (date.isBefore(now)) {
     date = date.add(7, "d");
+    if (date.isBefore(now)) {
+      date = date.add(7, "d");
+    }
   }
+
   return date;
 }
 

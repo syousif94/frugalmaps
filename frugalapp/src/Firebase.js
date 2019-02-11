@@ -14,6 +14,9 @@ var config = {
 firebase.initializeApp(config);
 
 export const db = firebase.firestore();
+
+firebase.firestore.setLogLevel("debug");
+
 db.settings({
   timestampsInSnapshots: true
 });

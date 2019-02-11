@@ -24,6 +24,7 @@ app.post("/save-event", require("./saveEvent"));
 app.post("/query-events", require("./queryEvents"));
 app.post("/delete-event", require("./deleteEvent"));
 app.post("/fetch-event", require("./fetchEvent"));
+app.post("/fetch-events", require("./fetchEvents"));
 
 app.post("/delete-submissions", require("./deleteSubmissions"));
 
