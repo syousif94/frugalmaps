@@ -15,7 +15,7 @@ firebase.initializeApp(config);
 
 export const db = firebase.firestore();
 
-firebase.firestore.setLogLevel("debug");
+firebase.firestore.setLogLevel("silent");
 
 db.settings({
   timestampsInSnapshots: true

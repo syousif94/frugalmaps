@@ -7,21 +7,18 @@ import NotifyButton from "./NotifyButton";
 import EventList from "./InfoEventList";
 import MonoText from "./MonoText";
 import { FontAwesome } from "@expo/vector-icons";
-import Emitter from "tiny-emitter";
 
 class CalendarItem extends Component {
-  static emitter = new Emitter();
-
   state = {
     time: Date.now()
   };
 
   componentDidMount() {
-    CalendarItem.emitter.on("visible", this._onVisible);
+    this.props.emitter.on("visible", this._onVisible);
   }
 
   componentWillUnmount() {
-    CalendarItem.emitter.off("visible", this._onVisible);
+    this.props.emitter.off("visible", this._onVisible);
     clearInterval(this._interval);
   }
 

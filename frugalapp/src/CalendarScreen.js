@@ -9,6 +9,7 @@ import {
 import { connect } from "react-redux";
 import { Entypo } from "@expo/vector-icons";
 import emitter from "tiny-emitter/instance";
+import Emitter from "tiny-emitter";
 
 import Item from "./CalendarItem";
 import LocationBox from "./LocationBox";
@@ -22,6 +23,7 @@ import Ad from "./Ad";
 
 class CalendarScreen extends Component {
   static id = "cal";
+  static emitter = new Emitter();
 
   state = {
     clipSubviews: true,
@@ -151,14 +153,14 @@ class CalendarScreen extends Component {
   };
 
   _itemsChanged = ({ viewableItems, changed }) => {
-    Item.emitter.emit("visible", viewableItems);
+    CalendarScreen.emitter.emit("visible", viewableItems);
   };
 
   _keyExtractor = (item, index) => (item._id || item.title) + index;
 
   _renderItem = data => {
     const key = `${data.item._id}${data.index}`;
-    return <Item {...data} itemKey={key} />;
+    return <Item {...data} itemKey={key} emitter={CalendarScreen.emitter} />;
   };
 
   _renderSectionHeader = data => <Header {...data} />;
