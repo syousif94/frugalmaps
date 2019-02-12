@@ -23,7 +23,7 @@ class CalendarScreen extends Component {
         <LocationBox id={CalendarScreen.id} />
         <CalendarList />
         <CalendarInitial />
-        <CalendarDayPicker />
+        <CalendarDayPicker scroll />
         <SearchButton id={CalendarScreen.id} />
         <LocationLists id={CalendarScreen.id} />
       </View>

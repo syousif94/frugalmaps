@@ -7,11 +7,9 @@ import {
   Linking,
   Share
 } from "react-native";
-// import { MaterialIcons, Ionicons } from "@expo/vector-icons";
-import { WIDTH } from "./Constants";
-import emitter from "tiny-emitter/instance";
+import { SMS } from "expo";
 
-// const iconColor = "#000";
+import { WIDTH } from "./Constants";
 
 function call(source) {
   try {
@@ -29,10 +27,6 @@ function web(source) {
   }
 }
 
-function hours() {
-  emitter.emit("toggle-hours");
-}
-
 function go(source) {
   try {
     Linking.openURL(source.url);
@@ -45,9 +39,14 @@ async function share(doc) {
   const { _source: source, _id } = doc;
   const shareURL = `https://buncha.app/e/${_id}`;
   try {
+    const canSMS = SMS.isAvailableAsync();
+    if (canSMS) {
+      await SMS.sendSMSAsync([], `${shareURL}`);
+      return;
+    }
     await Share.share({
       title: `${source.location}`,
-      message: `${source.location} · ${source.city}\n${shareURL}`
+      message: `${shareURL}`
     });
   } catch (error) {
     console.log(error);
@@ -57,40 +56,25 @@ async function share(doc) {
 export default ({ doc }) => {
   return (
     <View style={styles.actions}>
-      {["Hours", "Go", "Share", "Web", "Call"].map(text => {
+      {["Call", "Web", "Share", "Go"].map(text => {
         // let icon = null;
         let emoji = "";
         let onPress;
         switch (text) {
           case "Call":
-            // icon = <Ionicons name="ios-call" size={24} color={iconColor} />;
             emoji = "📞";
             onPress = call.bind(null, doc._source);
             break;
           case "Web":
-            // icon = (
-            //   <MaterialIcons name="web-asset" size={24} color={iconColor} />
-            // );
             emoji = "🔗";
             onPress = web.bind(null, doc._source);
             break;
-          case "Hours":
-            // icon = <Ionicons name="ios-time" size={21} color={iconColor} />;
-            emoji = "🕘";
-            onPress = hours;
-            break;
           case "Go":
-            // icon = (
-            //   <MaterialIcons name="directions" size={23} color={iconColor} />
-            // );
             emoji = "🚕";
             onPress = go.bind(null, doc._source);
             break;
           case "Share":
-            // icon = (
-            //   <Ionicons name="ios-share-alt" size={24} color={iconColor} />
-            // );
-            emoji = "📫";
+            emoji = "💬";
             onPress = share.bind(null, doc);
             break;
           default:
@@ -117,7 +101,7 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   action: {
-    width: (WIDTH - 30) / 5 - 8,
+    width: (WIDTH - 25) / 4 - 8,
     backgroundColor: "#ededed",
     borderRadius: 5
   },

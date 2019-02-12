@@ -219,8 +219,8 @@ class InfoScreen extends Component {
               />
               <View style={styles.events}>
                 <InfoActions doc={data} />
-                <InfoHours hours={data._source.hours} />
                 <InfoEventList placeid={data._source.placeid} tick />
+                <InfoHours hours={data._source.hours} />
               </View>
             </ScrollView>
           )}

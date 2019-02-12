@@ -31,6 +31,12 @@ class DayPicker extends PureComponent {
   };
 
   _selectDay = day => {
+    if (day === this.props.day && this.props.scroll) {
+      requestAnimationFrame(() => {
+        emitter.emit("calendar-top", 0, true);
+      });
+      return;
+    }
     requestAnimationFrame(() => {
       this.props.set({
         day

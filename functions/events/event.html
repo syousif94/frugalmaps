@@ -168,6 +168,38 @@
         font-weight: 400;
         color: #444;
       }
+
+      .events {
+        padding: 5px;
+        padding-bottom: 90px;
+      }
+
+      .event {
+        margin: 5px 5px 15px;
+      }
+
+      .days {
+        margin-top: 5px;
+        display: flex;
+        align-items: center;
+      }
+
+      .day {
+        padding: 2px 5px;
+        border-radius: 3px;
+        background: #18ab2e;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 600;
+        margin-right: 5px;
+      }
+
+      .hours {
+        font-size: 12px;
+        color: #444;
+        margin-left: 3px;
+        margin-right: 2px;
+      }
     </style>
   </head>
   <body>
@@ -209,6 +241,26 @@
           >Open in Buncha
           <div class="action-info">App required to open link</div></a
         >
+      </div>
+
+      <div class="events">
+        {{#each events}}
+        <div class="event">
+          <div class="info-title">{{ this._source.title }}</div>
+          <div class="info-detail">
+            {{ this._source.description }}
+          </div>
+          <div class="days">
+            {{#each this._source.groupedHours}}
+            {{#each this.days}}
+            <div class="day">{{ this.text }}</div>
+            {{/each}}
+            <div class="hours">{{ this.hours }}</div>
+            <div class="hours">({{ this.duration }}hr)</div>
+            {{/each}}
+          </div>
+        </div>
+        {{/each}}
       </div>
     </div>
     <script>
