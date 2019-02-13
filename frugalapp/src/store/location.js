@@ -17,7 +17,7 @@ export const makeData = createSelector(
         return closest;
       case "Popular":
         return popular;
-      case "Autocomplete":
+      case "Search":
         return completions;
       default:
         break;

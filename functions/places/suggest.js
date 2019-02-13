@@ -3,6 +3,7 @@ const elastic = require("../elastic");
 const event = require("../schema/event");
 const querystring = require("querystring");
 const Fuse = require("fuse.js");
+const turf = require("@turf/turf");
 
 const base = `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=${
   process.env.GOOGLE
@@ -54,7 +55,7 @@ module.exports = async function suggestPlaces(req, res) {
               match: {
                 title: {
                   query: input,
-                  fuzziness: 3
+                  fuzziness: 4
                 }
               }
             },
@@ -62,7 +63,7 @@ module.exports = async function suggestPlaces(req, res) {
               match: {
                 location: {
                   query: input,
-                  fuzziness: 3
+                  fuzziness: 4
                 }
               }
             },
@@ -70,7 +71,7 @@ module.exports = async function suggestPlaces(req, res) {
               match: {
                 description: {
                   query: input,
-                  fuzziness: 3
+                  fuzziness: 4
                 }
               }
             },
@@ -78,7 +79,7 @@ module.exports = async function suggestPlaces(req, res) {
               match_phrase_prefix: {
                 title: {
                   query: input,
-                  max_expansions: 30
+                  max_expansions: 50
                 }
               }
             },
@@ -86,7 +87,7 @@ module.exports = async function suggestPlaces(req, res) {
               match_phrase_prefix: {
                 location: {
                   query: input,
-                  max_expansions: 30
+                  max_expansions: 50
                 }
               }
             },
@@ -94,7 +95,7 @@ module.exports = async function suggestPlaces(req, res) {
               match_phrase_prefix: {
                 description: {
                   query: input,
-                  max_expansions: 30
+                  max_expansions: 50
                 }
               }
             }
@@ -127,43 +128,89 @@ module.exports = async function suggestPlaces(req, res) {
 
     const [values, events] = await Promise.all([valuesQuery, eventsQuery]);
 
-    const cities = values
-      .filter(val => val.name)
-      .map((val, index) => {
-        return { id: index, name: val.name };
-      });
+    const cities = values.filter(val => val.name);
 
-    const eventList = events.map((val, index) => {
-      return {
-        id: index + cities.length,
-        name: val._source.title,
-        description: val._source.description,
-        location: val._source.location
+    let sorted;
+
+    if (lat && lng) {
+      const currentLocation = turf.point([lng, lat]);
+
+      const distanceOpts = { units: "miles" };
+
+      const [closeCities, remainingCities] = cities.reduce(
+        (acc, cur, index) => {
+          const to = turf.point([
+            cur.geometry.location.lng,
+            cur.geometry.location.lat
+          ]);
+          const distance = turf.distance(currentLocation, to, { distanceOpts });
+
+          if (distance > 2000) {
+            acc[1].push(cur);
+          } else {
+            acc[0].push({ id: index, city: cur.name });
+          }
+
+          return acc;
+        },
+        [[], []]
+      );
+
+      const [closeEvents, remainingEvents] = events.reduce(
+        (acc, cur, index) => {
+          if (cur.sort[0] > 45) {
+            acc[1].push(cur);
+          } else {
+            acc[0].push({
+              id: index + cities.length,
+              name: cur._source.title,
+              description: cur._source.description,
+              location: cur._source.location
+            });
+          }
+
+          return acc;
+        },
+        [[], []]
+      );
+
+      const fuseOpts = {
+        keys: [
+          { name: "name", weight: "0.8" },
+          { name: "description", weight: "0.5" },
+          { name: "location", weight: "0.6" },
+          { name: "city", weight: "0.6" }
+        ],
+        id: "id",
+        shouldSort: true,
+        findAllMatches: true,
+        tokenize: true,
+        matchAllTokens: true,
+        distance: 100,
+        threshold: 0.6
       };
-    });
 
-    const fuse = new Fuse([...cities, ...eventList], {
-      keys: ["name", "description", "location"],
-      id: "id",
-      shouldSort: true,
-      findAllMatches: true,
-      tokenize: true,
-      matchAllTokens: true,
-      distance: 100,
-      threshold: 0.6
-    });
+      const nearbyFuse = new Fuse([...closeCities, ...closeEvents], fuseOpts);
 
-    const sortedResults = fuse.search(input.split(",")[0]);
+      const getData = id => {
+        if (id < cities.length) {
+          return cities[id];
+        } else {
+          return events[id - cities.length];
+        }
+      };
 
-    const sorted = sortedResults.map(id => {
-      if (id >= cities.length) {
-        return events[id - cities.length];
-      }
-      return values[id];
-    });
+      const searchText = input.split(",")[0];
+
+      const sortedNeary = nearbyFuse.search(searchText).map(getData);
+
+      sorted = [...sortedNeary, ...remainingEvents, ...remainingCities];
+    } else {
+      sorted = interleave(cities, events);
+    }
 
     res.send({
-      values,
+      values: cities,
       events: sorted
     });
   } catch (error) {
@@ -172,3 +219,25 @@ module.exports = async function suggestPlaces(req, res) {
     });
   }
 };
+
+function interleave() {
+  const arrs = [].slice.call(arguments);
+  const maxLength = Math.max.apply(
+    Math,
+    arrs.map(function(arr) {
+      return arr.length;
+    })
+  );
+
+  const result = [];
+
+  for (let i = 0; i < maxLength; ++i) {
+    arrs.forEach(function(arr) {
+      if (arr.length > i) {
+        result.push(arr[i]);
+      }
+    });
+  }
+
+  return result;
+}

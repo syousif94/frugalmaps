@@ -8,6 +8,7 @@ import api from "./API";
 import store from "./store";
 import * as Events from "./store/events";
 import CalendarManager from "./CalendarManager";
+import moment from "moment";
 
 function handleNotification(navigator) {
   return notification => {
@@ -40,6 +41,8 @@ export function watchNotifications(navigator) {
 }
 
 export async function createNotification({ _source: item, _id: id }) {
+  const now = moment();
+
   const hours = item.groupedHours[0];
 
   const duration = makeDuration(item.groupedHours[0]);
@@ -54,8 +57,11 @@ export async function createNotification({ _source: item, _id: id }) {
       const isoDays = group.days.map(day => {
         const start = group.start;
         const iso = dayToISO(ABBREVIATED_DAYS.indexOf(day.text));
-        const date = createDate(start, iso);
-        return date.subtract(30, "m");
+        let date = createDate(start, iso).subtract(30, "m");
+        if (date.isBefore(now)) {
+          date = date.add(7, "d");
+        }
+        return date;
       });
 
       return isoDays;

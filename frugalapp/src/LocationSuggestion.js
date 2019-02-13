@@ -15,7 +15,7 @@ class LocationSuggestion extends Component {
 
     emitter.emit("calendar-top");
 
-    if (type !== "Autocomplete") {
+    if (type !== "Search") {
       bounds = item._source.bounds;
       text = item._source.name;
     } else {
@@ -46,7 +46,7 @@ class LocationSuggestion extends Component {
 
     let bounds;
 
-    if (type !== "Autocomplete") {
+    if (type !== "Search") {
       bounds = item._source.bounds;
     } else {
       bounds = item.geometry.viewport;
@@ -66,7 +66,7 @@ class LocationSuggestion extends Component {
   _renderCount = () => {
     const { item, type } = this.props;
 
-    if (type === "Autocomplete") {
+    if (type === "Search") {
       return null;
     }
 
@@ -107,7 +107,7 @@ class LocationSuggestion extends Component {
 
     let addressText = "";
 
-    if (type !== "Autocomplete") {
+    if (type !== "Search") {
       const [city, state] = item._source.name.split(", ");
       name += city;
       addressText = state;

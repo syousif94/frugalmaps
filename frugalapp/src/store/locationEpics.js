@@ -68,14 +68,16 @@ const completions = (action$, store) =>
           let completions;
 
           if (res.events) {
-            completions = res.events.map(hit => {
-              if (hit._source) {
-                hit._source.groupedHours = groupHours(hit._source);
-              }
-              return hit;
-            });
+            completions = res.events
+              .filter(val => val._source || val.name)
+              .map(hit => {
+                if (hit._source) {
+                  hit._source.groupedHours = groupHours(hit._source);
+                }
+                return hit;
+              });
           } else {
-            completions = res.values;
+            completions = res.values.filter(val => val.name);
           }
 
           return Location.actions.set({

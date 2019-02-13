@@ -133,7 +133,7 @@ class LocationLists extends Component {
           >
             <LocationList tabLabel="Popular" id={this.props.id} />
             <LocationList tabLabel="Closest" id={this.props.id} />
-            <LocationList tabLabel="Autocomplete" id={this.props.id} />
+            <LocationList tabLabel="Search" id={this.props.id} />
           </ScrollableTabView>
           <LocationListFooter id={id} />
         </View>
