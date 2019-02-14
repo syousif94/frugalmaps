@@ -17,8 +17,6 @@ class PublishedItem extends Component {
       item: { _id: id, _source: item }
     } = this.props;
 
-    console.log({ item });
-
     const {
       days = [],
       start,

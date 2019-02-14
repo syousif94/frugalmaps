@@ -47,41 +47,29 @@ const completions = (action$, store) =>
     .mergeMap(action =>
       Observable.defer(async () => {
         try {
-          const text = action.payload.text;
+          const input = action.payload.text;
 
-          let query = `input=${text}&types=(cities)`;
+          const body = {
+            input
+          };
 
           const {
             location: { coordinates }
           } = store.getState();
 
           if (coordinates) {
-            const { latitude, longitude } = coordinates;
-            const locationQuery = `&location=${latitude},${longitude}&radius=10000`;
-            query = `${query}${locationQuery}`;
+            const { latitude: lat, longitude: lng } = coordinates;
+            body.lat = lat;
+            body.lng = lng;
           }
 
-          const res = await api("places/suggest", {
-            query
-          });
-
-          let completions;
-
-          if (res.events) {
-            completions = res.events
-              .filter(val => val._source || val.name)
-              .map(hit => {
-                if (hit._source) {
-                  hit._source.groupedHours = groupHours(hit._source);
-                }
-                return hit;
-              });
-          } else {
-            completions = res.values.filter(val => val.name);
-          }
+          const res = await api("events/suggest", body);
 
           return Location.actions.set({
-            completions
+            completions: res.events.map(event => {
+              event._source.groupedHours = groupHours(event._source);
+              return event;
+            })
           });
         } catch (error) {
           console.log({ completions: error });

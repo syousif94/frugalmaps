@@ -35,6 +35,7 @@ app.post("/notify-nearby", require("./notifyNearby"));
 app.post("/events/published", require("./events/published"));
 app.post("/events/published/count", require("./events/publishedCount"));
 app.post("/events/submissions", require("./events/submissions"));
+app.post("/events/suggest", require("./events/suggest"));
 
 // not as clean, but a better endpoint to consume
 const api = functions.https.onRequest((request, response) => {

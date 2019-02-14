@@ -15,9 +15,9 @@ export default class RestaurantSuggestion extends Component {
       <View style={styles.container}>
         <TouchableOpacity style={styles.item} onPress={this._onPress}>
           <Text style={styles.name}>
-            {index + 1}. {item.name}
+            {index + 1}. {item.main_text}
           </Text>
-          <Text style={styles.address}>{item.formatted_address}</Text>
+          <Text style={styles.address}>{item.secondary_text}</Text>
         </TouchableOpacity>
       </View>
     );

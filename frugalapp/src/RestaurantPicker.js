@@ -26,7 +26,7 @@ class RestaurantPicker extends Component {
   };
   _onSelect = place => {
     this.props.setSubmission({
-      place,
+      placeid: place.place_id,
       id: null,
       fid: null
     });
