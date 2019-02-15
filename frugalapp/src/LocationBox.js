@@ -151,6 +151,7 @@ class LocationBox extends Component {
               underlineColorAndroid="transparent"
               autoCorrect={ANDROID}
               onSubmitEditing={this._resetToLast}
+              clearTextOnFocus
             />
           </View>
           {this._renderQueryType()}

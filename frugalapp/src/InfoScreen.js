@@ -190,8 +190,8 @@ class InfoScreen extends Component {
 
     let distanceText = "";
 
-    if (sort && sort[0]) {
-      distanceText = `${sort[0].toFixed(1)} miles`;
+    if (sort && sort[sort.length - 1]) {
+      distanceText = `${sort[sort.length - 1].toFixed(1)} miles`;
     }
 
     const streetAddress = item.address.split(",")[0];

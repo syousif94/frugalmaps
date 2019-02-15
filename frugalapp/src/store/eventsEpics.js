@@ -199,6 +199,23 @@ const events = (action$, store) =>
             return hit;
           });
 
+          let recent;
+
+          if (res.recent) {
+            recent = [
+              {
+                title: "Newest",
+                data: res.recent.map(doc => {
+                  doc._source.photos = _(doc._source.photos)
+                    .shuffle()
+                    .value();
+                  doc._source.groupedHours = groupHours(doc._source);
+                  return doc;
+                })
+              }
+            ];
+          }
+
           const cityQuery = action.payload.queryType === "City";
 
           const nearestQuery = !action.payload.bounds && !cityQuery;
@@ -211,10 +228,13 @@ const events = (action$, store) =>
 
           const calendar = makeEvents(hits, true, nearestQuery);
 
-          const markers = makeMarkers(
-            [{ title: "All", data: hits }, ...calendar],
-            bounds
-          );
+          let markerData = [{ title: "All", data: hits }, ...calendar];
+
+          if (recent) {
+            markerData = [...recent, ...markerData];
+          }
+
+          const markers = makeMarkers(markerData, bounds);
 
           let day = "All";
 
@@ -244,6 +264,12 @@ const events = (action$, store) =>
             emitter.emit("fit-bounds", bounds);
           }
 
+          const data = recent
+            ? _([...hits, ...recent[0].data])
+                .uniqBy("_id")
+                .value()
+            : hits;
+
           return Observable.of(
             Location.actions.set({
               coordinates,
@@ -253,12 +279,13 @@ const events = (action$, store) =>
             }),
             Events.actions.set({
               list,
-              data: hits,
+              data,
               refreshing: false,
               calendar,
               day,
               initialized: true,
-              markers
+              markers,
+              recent
             })
           );
         })

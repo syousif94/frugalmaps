@@ -88,8 +88,8 @@ class LocationSuggestion extends Component {
       return null;
     }
 
-    if (item.sort && item.sort[0]) {
-      const miles = `${item.sort[0].toFixed(2)} mi`;
+    if (item.sort && item.sort[item.sort.length - 1]) {
+      const miles = `${item.sort[item.sort.length - 1].toFixed(2)} mi`;
       return (
         <View style={styles.count}>
           <Text style={styles.countText}>{miles}</Text>

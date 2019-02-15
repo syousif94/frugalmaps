@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import ImageGallery from "./ImageGallery";
-import { timeRemaining } from "./Time";
+import { timeRemaining, makeISO } from "./Time";
 import { WIDTH } from "./Constants";
 import NotifyButton from "./NotifyButton";
 import EventList from "./InfoEventList";
@@ -56,7 +56,7 @@ class CalendarItem extends Component {
   render() {
     const {
       item: { _source: item, sort, _id: id },
-      section: { data, iso, title },
+      section: { data, title },
       index
     } = this.props;
 
@@ -69,8 +69,14 @@ class CalendarItem extends Component {
 
     let distanceText = "";
 
-    if (sort && sort[0]) {
-      distanceText = ` · ${sort[0].toFixed(1)} miles`;
+    if (sort && sort[sort.length - 1]) {
+      distanceText = ` · ${sort[sort.length - 1].toFixed(1)} miles`;
+    }
+
+    let iso = this.props.section.iso;
+
+    if (!iso) {
+      iso = makeISO(item.days);
     }
 
     const { remaining, ending } = timeRemaining(item.groupedHours[0], iso);

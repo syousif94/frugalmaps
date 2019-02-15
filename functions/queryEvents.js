@@ -3,7 +3,7 @@ const event = require("./schema/event");
 const servicesApi = require("./google");
 // const turf = require("@turf/turf");
 
-function queryEvents(req, res) {
+async function queryEvents(req, res) {
   const { bounds: queryBounds, lat, lng, recent = false } = req.body;
 
   const body = {
@@ -13,17 +13,19 @@ function queryEvents(req, res) {
     size: 99
   };
 
+  const recentSort = [{ updatedAt: "desc" }];
+
   if (lat && lng) {
-    body.sort = [
-      {
-        _geo_distance: {
-          coordinates: [lng, lat],
-          order: "asc",
-          unit: "mi",
-          distance_type: "plane"
-        }
+    const sort = {
+      _geo_distance: {
+        coordinates: [lng, lat],
+        order: "asc",
+        unit: "mi",
+        distance_type: "plane"
       }
-    ];
+    };
+    body.sort = [sort];
+    recentSort.push(sort);
   }
 
   let text;
@@ -31,6 +33,8 @@ function queryEvents(req, res) {
   let query;
 
   let bounds;
+
+  let recentQuery;
 
   if (queryBounds) {
     const { northeast, southwest } = queryBounds;
@@ -51,12 +55,50 @@ function queryEvents(req, res) {
       }
     };
 
+    recentQuery = elastic.search({
+      index: event.index,
+      type: event.type,
+      body: {
+        query: {
+          bool: {
+            must: [{ match_all: {} }],
+            filter: {
+              geo_bounding_box: {
+                coordinates
+              }
+            }
+          }
+        },
+        sort: recentSort,
+        size: 100
+      }
+    });
+
     query = elastic.search({
       index: event.index,
       type: event.type,
       body
     });
   } else if (!recent && lat && lng) {
+    recentQuery = elastic.search({
+      index: event.index,
+      type: event.type,
+      body: {
+        query: {
+          bool: {
+            must: [{ match_all: {} }],
+            filter: {
+              geo_distance: {
+                distance: "45mi",
+                coordinates: [lng, lat]
+              }
+            }
+          }
+        },
+        sort: recentSort,
+        size: 100
+      }
+    });
     const reverseGeocode = new Promise((resolve, reject) => {
       servicesApi.reverseGeocode(
         {
@@ -114,12 +156,6 @@ function queryEvents(req, res) {
       body.query = {
         bool: {
           must: [{ match_all: {} }]
-          // filter: {
-          //   geo_distance: {
-          //     distance: "20mi",
-          //     coordinates: [lng, lat]
-          //   }
-          // }
         }
       };
 
@@ -165,24 +201,34 @@ function queryEvents(req, res) {
       type: event.type,
       body
     });
+    recentQuery = false;
   }
 
-  query
-    .then(results => {
-      const hits = results.hits.hits;
+  try {
+    let hits;
+    let recent;
 
-      res.send({
-        text,
-        hits,
-        bounds,
-        global: !queryBounds
-      });
-    })
-    .catch(error => {
-      res.send({
-        error: error.message
-      });
+    if (recentQuery) {
+      [hits, recent] = await Promise.all([
+        query.then(res => res.hits.hits),
+        recentQuery.then(res => res.hits.hits)
+      ]);
+    } else {
+      hits = await query.then(res => res.hits.hits);
+    }
+
+    res.send({
+      text,
+      hits,
+      bounds,
+      global: !queryBounds,
+      recent
     });
+  } catch (error) {
+    res.send({
+      error: error.message
+    });
+  }
 }
 
 module.exports = queryEvents;

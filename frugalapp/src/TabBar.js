@@ -9,7 +9,7 @@ import {
   Keyboard,
   InteractionManager
 } from "react-native";
-import { Entypo } from "@expo/vector-icons";
+import { Entypo, MaterialIcons } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import moment from "moment";
 import emitter from "tiny-emitter/instance";
@@ -21,26 +21,30 @@ import { ANDROID, IOS } from "./Constants";
 
 const notched = Platform.OS === "ios" && Constants.statusBarHeight > 40;
 
-// class Search extends Component {
-//   render() {
-//     const { selected, index, onPress } = this.props;
+class Friends extends Component {
+  render() {
+    const { selected, index, onPress } = this.props;
 
-//     let iconColor = "#000";
-//     const textStyle = [styles.text];
-//     if (selected === index) {
-//       iconColor = BLUE;
-//       textStyle.push(styles.blueText);
-//     }
-//     return (
-//       <TouchableOpacity style={styles.tab} onPress={onPress}>
-//         <View style={styles.icon}>
-//           <Entypo name="magnifying-glass" size={20} color={iconColor} />
-//         </View>
-//         <Text style={textStyle}>Search</Text>
-//       </TouchableOpacity>
-//     );
-//   }
-// }
+    let iconColor = "#000";
+    const textStyle = [styles.text];
+    if (selected === index) {
+      iconColor = BLUE;
+      textStyle.push(styles.blueText);
+    }
+    return (
+      <TouchableOpacity style={styles.tab} onPress={onPress}>
+        <View style={styles.icon}>
+          <MaterialIcons
+            name="perm-contact-calendar"
+            size={20}
+            color={iconColor}
+          />
+        </View>
+        <Text style={textStyle}>Friends</Text>
+      </TouchableOpacity>
+    );
+  }
+}
 
 class Calendar extends Component {
   render() {
@@ -167,11 +171,16 @@ class TabBar extends Component {
   };
 
   _onSubmit = () => {
+    const {
+      navigation: { navigate, state }
+    } = this.props;
+    const animated =
+      state.routeName === "Home" && state.routes[state.index].key === "Submit";
     requestAnimationFrame(() => {
-      this.props.navigation.navigate("Submit");
-    });
+      navigate("Submit");
 
-    // emitter.emit("focus-picker");
+      emitter.emit("scroll-submit", 1, animated);
+    });
   };
 
   _onLayout = e => {
@@ -197,8 +206,10 @@ class TabBar extends Component {
       <SafeAreaView style={styles.container} onLayout={this._onLayout}>
         <View style={styles.footer}>
           <Calendar selected={selected} onPress={this._onCalendar} index={0} />
+
           <Upload selected={selected} index={1} onPress={this._onSubmit} />
           <Map selected={selected} index={2} onPress={this._onMap} />
+          {/* <Friends selected={selected} index={3} onPress={this._onSubmit} /> */}
         </View>
       </SafeAreaView>
     );

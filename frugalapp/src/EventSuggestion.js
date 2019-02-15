@@ -35,8 +35,8 @@ class Suggestion extends Component {
 
     let cityText = item.city;
 
-    if (sort && sort[0]) {
-      cityText = `${sort[0].toFixed(1)}mi · ${cityText}`;
+    if (sort && sort[sort.length - 1]) {
+      cityText = `${sort[sort.length - 1].toFixed(1)}mi · ${cityText}`;
     }
 
     return (

@@ -103,8 +103,8 @@ class Callout extends PureComponent {
 
     const sort = data.events[0].sort;
 
-    if (sort && sort[0]) {
-      streetText = `${sort[0].toFixed(1)}mi · ${streetText}`;
+    if (sort && sort[sort.length - 1]) {
+      streetText = `${sort[sort.length - 1].toFixed(1)}mi · ${streetText}`;
     }
 
     return (

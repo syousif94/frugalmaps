@@ -12,12 +12,13 @@ export const homeList = createSelector(
   state => state.events.day,
   state => state.events.list,
   state => state.events.calendar,
-  (day, list, calendar) => {
+  state => state.events.recent,
+  (day, list, calendar, recent) => {
     if (day === "All") {
       return list;
     }
     if (day === "Newest") {
-      return list;
+      return recent;
     }
     const events = calendar.find(datum => {
       return datum.title === day;
@@ -181,6 +182,18 @@ function list(state = [], { type, payload }) {
   }
 }
 
+function recent(state = [{ title: "Newest", data: [] }], { type, payload }) {
+  switch (type) {
+    case types.set:
+      if (payload.recent !== undefined) {
+        return payload.recent;
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
 function selectedEvent(state = { id: null, data: null }, { type, payload }) {
   switch (type) {
     case types.set:
@@ -215,5 +228,6 @@ export default combineReducers({
   initialized,
   selectedEvent,
   list,
-  markers
+  markers,
+  recent
 });

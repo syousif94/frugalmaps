@@ -55,12 +55,8 @@ class DayPicker extends PureComponent {
     this._list = ref;
   };
   render() {
-    const { calendar, day, data } = this.props;
-    const days = [
-      { title: "Newest", data },
-      { title: "All", data },
-      ...calendar
-    ];
+    const { calendar, day, data, recent } = this.props;
+    const days = [...recent, { title: "All", data }, ...calendar];
     return (
       <ScrollView
         ref={this._setRef}
@@ -97,7 +93,8 @@ class DayPicker extends PureComponent {
 const mapStateToProps = state => ({
   day: state.events.day,
   calendar: state.events.calendar,
-  data: state.events.data
+  data: state.events.data,
+  recent: state.events.recent
 });
 
 const mapDispatchToProps = {
