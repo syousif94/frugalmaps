@@ -53,18 +53,16 @@ class RestaurantPicker extends Component {
           />
           <RestaurantsSuggesting />
         </View>
-        {suggestions
-          .filter(item => item && item.place_id && item.name)
-          .map((item, index) => {
-            return (
-              <RestaurantSuggestion
-                item={item}
-                index={index}
-                onPress={this._onSelect}
-                key={item.place_id}
-              />
-            );
-          })}
+        {suggestions.map((item, index) => {
+          return (
+            <RestaurantSuggestion
+              item={item}
+              index={index}
+              onPress={this._onSelect}
+              key={item.place_id}
+            />
+          );
+        })}
       </View>
     );
   }

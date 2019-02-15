@@ -10,51 +10,27 @@ module.exports = async function suggestEvents(req, res) {
         bool: {
           should: [
             {
-              match: {
-                title: {
-                  query: input,
-                  fuzziness: 4
-                }
+              multi_match: {
+                query: input,
+                type: "phrase_prefix",
+                fields: ["title", "description", "location"]
               }
             },
             {
-              match: {
-                location: {
-                  query: input,
-                  fuzziness: 4
-                }
+              multi_match: {
+                query: input,
+                type: "best_fields",
+                fields: ["title", "description", "location"],
+                operator: "and",
+                fuzziness: 3,
+                tie_breaker: 0.3
               }
             },
             {
-              match: {
-                description: {
-                  query: input,
-                  fuzziness: 4
-                }
-              }
-            },
-            {
-              match_phrase_prefix: {
-                title: {
-                  query: input,
-                  max_expansions: 50
-                }
-              }
-            },
-            {
-              match_phrase_prefix: {
-                location: {
-                  query: input,
-                  max_expansions: 50
-                }
-              }
-            },
-            {
-              match_phrase_prefix: {
-                description: {
-                  query: input,
-                  max_expansions: 50
-                }
+              multi_match: {
+                query: input,
+                type: "phrase",
+                fields: ["title", "description", "location"]
               }
             }
           ]
