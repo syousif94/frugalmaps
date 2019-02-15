@@ -10,6 +10,7 @@ import { ANDROID } from "./Constants";
 import MapScreen from "./MapScreen";
 import CalendarScreen from "./CalendarScreen";
 import SubmitScreen from "./SubmitScreen";
+import FriendsScreen from "./FriendsScreen";
 
 import SubmissionsScreen from "./SubmissionsScreen";
 import InfoScreen from "./InfoScreen";
@@ -27,7 +28,8 @@ const TabScreen = createBottomTabNavigator(
   {
     Calendar: CalendarScreen,
     Submit: SubmitScreen,
-    Map: MapScreen
+    Map: MapScreen,
+    Friends: FriendsScreen
   },
   {
     initialRoute: "Calendar",
