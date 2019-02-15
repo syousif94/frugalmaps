@@ -137,7 +137,7 @@ class LocationBox extends Component {
               placeholder={
                 refreshing
                   ? "Locating..."
-                  : "Search cities, places, descriptions..."
+                  : "Search events, venues, descriptions..."
               }
               style={styles.input}
               placeholderTextColor="#333"

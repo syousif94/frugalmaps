@@ -56,7 +56,11 @@ class DayPicker extends PureComponent {
   };
   render() {
     const { calendar, day, data } = this.props;
-    const days = [{ title: "All", data }, ...calendar];
+    const days = [
+      { title: "Newest", data },
+      { title: "All", data },
+      ...calendar
+    ];
     return (
       <ScrollView
         ref={this._setRef}
@@ -121,10 +125,10 @@ const styles = StyleSheet.create({
     margin: 3.5,
     height: 30,
     borderRadius: 15,
-    backgroundColor: "rgba(90,90,90,0.65)"
+    backgroundColor: "rgba(100,100,100,0.7)"
   },
   selected: {
-    backgroundColor: "rgba(0,0,0,0.6)"
+    backgroundColor: "rgba(0,0,0,0.65)"
   },
   btn: {
     flex: 1,

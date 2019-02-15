@@ -16,6 +16,9 @@ export const homeList = createSelector(
     if (day === "All") {
       return list;
     }
+    if (day === "Newest") {
+      return list;
+    }
     const events = calendar.find(datum => {
       return datum.title === day;
     });

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList, Text } from "react-native";
 import { connect } from "react-redux";
 
 import LocationSuggestion from "./LocationSuggestion";
@@ -15,15 +15,13 @@ class LocationList extends Component {
 
   _renderItem = data => {
     if (data.item._type === "event") {
-      const key = `${data.item._id}${data.index}`;
-      return <EventSuggestion {...data} key={key} />;
+      return <EventSuggestion {...data} />;
     }
     return (
       <LocationSuggestion
         id={this.props.id}
         type={this.props.tabLabel}
         {...data}
-        key={data.index}
         // hide={this.props.hide}
       />
     );
@@ -34,6 +32,33 @@ class LocationList extends Component {
       return item._id;
     }
     return `${index}`;
+  };
+
+  _renderEmpty = () => {
+    switch (this.props.tabLabel) {
+      case "Search":
+        return (
+          <View style={styles.empty}>
+            <Text style={styles.emptyHeader}>Type to search</Text>
+            <Text style={styles.emptyText}>
+              Try brunch, trivia, karaoke, wine, etc.
+            </Text>
+          </View>
+        );
+      case "Closest":
+        return (
+          <View style={styles.empty}>
+            <Text style={styles.emptyHeader}>Location access required</Text>
+            <Text style={styles.emptyText}>Enable in Settings</Text>
+          </View>
+        );
+      default:
+        return (
+          <View style={styles.empty}>
+            <Text style={styles.emptyHeader}>Probably still loading</Text>
+          </View>
+        );
+    }
   };
 
   render() {
@@ -48,6 +73,7 @@ class LocationList extends Component {
         keyboardDismissMode="none"
         keyboardShouldPersistTaps="handled"
         alwaysBounceVertical={true}
+        ListEmptyComponent={this._renderEmpty}
       />
     );
   }
@@ -69,5 +95,19 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingBottom: LocationListFooter.height
+  },
+  empty: {
+    marginTop: 20,
+    alignItems: "center"
+  },
+  emptyHeader: {
+    fontSize: 14,
+    color: "#777",
+    fontWeight: "500",
+    marginBottom: 8
+  },
+  emptyText: {
+    fontSize: 12,
+    color: "#444"
   }
 });

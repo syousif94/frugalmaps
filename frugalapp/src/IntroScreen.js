@@ -20,7 +20,7 @@ class IntroScreen extends Component {
 
   render() {
     const topInstructionMargin = { marginTop: 200 };
-    const bottomInstructionMargin = { marginTop: 8 };
+    const bottomInstructionMargin = { marginTop: 12 };
     return (
       <View style={styles.container}>
         <View style={styles.bg}>
@@ -36,12 +36,12 @@ class IntroScreen extends Component {
           </Text>
           <Text style={[styles.instructionText, bottomInstructionMargin]}>
             Tap on the <Entypo name="bell" size={18} color="#000" />
-            's for reminders
+            's to manage reminders and send invites
           </Text>
-          <Text style={[styles.instructionText, bottomInstructionMargin]}>
+          {/* <Text style={[styles.instructionText, bottomInstructionMargin]}>
             Hold down on <Entypo name="bell" size={18} color="#000" />
             's to send invites
-          </Text>
+          </Text> */}
           <Text style={[styles.instructionText, bottomInstructionMargin]}>
             Tap on <Entypo name="circle-with-plus" size={18} color="#000" /> to
             submit fun stuff

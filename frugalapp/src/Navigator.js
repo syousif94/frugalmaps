@@ -22,6 +22,7 @@ import { watchLinking } from "./Linking";
 import TabBar from "./TabBar";
 import Updater from "./Updater";
 import { sync } from "./User";
+import RemindModal from "./RemindModal";
 
 const TabScreen = createBottomTabNavigator(
   {
@@ -72,6 +73,7 @@ export default class Navigator extends Component {
     return (
       <View style={styles.container}>
         <SwitchScreen ref={ref => (this._nav = ref)} />
+        {/* <RemindModal /> */}
         <Updater />
       </View>
     );

@@ -48,6 +48,39 @@ class Suggestion extends Component {
           <Text style={styles.location}>{item.location}</Text>
           <Text style={styles.city}>{cityText}</Text>
           <Text style={styles.description}>{item.description}</Text>
+          {item.groupedHours.map((hours, index) => {
+            const longDays = hours.days.length > 4;
+            const flexDirection = longDays ? "column" : "row";
+            const alignItems = longDays ? "flex-start" : "center";
+            const timeMarginTop = longDays ? 1 : 0;
+            return (
+              <View
+                style={[styles.hour, { flexDirection, alignItems }]}
+                key={index}
+              >
+                <View style={styles.days}>
+                  {hours.days.map(day => {
+                    return (
+                      <View style={styles.day} key={day.text}>
+                        <Text style={styles.dayText}>{day.text}</Text>
+                        {day.daysAway === 0 ? null : (
+                          <View style={styles.daysAway}>
+                            <Text style={styles.dayText}>{day.daysAway}</Text>
+                          </View>
+                        )}
+                      </View>
+                    );
+                  })}
+                </View>
+                <View style={[styles.time, { marginTop: timeMarginTop }]}>
+                  <Text style={styles.hourText}>
+                    {hours.hours}{" "}
+                    <Text style={styles.durationText}>{hours.duration}hr</Text>
+                  </Text>
+                </View>
+              </View>
+            );
+          })}
         </View>
       </TouchableOpacity>
     );
@@ -89,5 +122,49 @@ const styles = StyleSheet.create({
   description: {
     marginTop: 2,
     color: "#444"
+  },
+  days: {
+    flexDirection: "row",
+    marginRight: 3
+  },
+  day: {
+    flexDirection: "row",
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 3,
+    backgroundColor: "#18AB2E",
+    alignItems: "center",
+    marginRight: 2
+  },
+  daysAway: {
+    marginLeft: 2,
+    marginRight: -1,
+    paddingHorizontal: 2,
+    borderRadius: 2.5,
+    backgroundColor: "rgba(0,0,0,0.2)"
+  },
+  dayText: {
+    fontSize: 10,
+    color: "#fff",
+    fontWeight: "700"
+  },
+  time: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between"
+  },
+  hour: {
+    marginTop: 3,
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap"
+  },
+  hourText: {
+    color: "#444",
+    fontSize: 14
+  },
+  durationText: {
+    fontSize: 9
   }
 });
