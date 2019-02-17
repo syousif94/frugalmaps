@@ -177,8 +177,6 @@ const events = (action$, store) =>
 
         if (action.payload.bounds) {
           body.bounds = action.payload.bounds;
-        } else if (action.payload.recent) {
-          body.recent = true;
         }
 
         const res = await api("query-events", body);
@@ -221,7 +219,7 @@ const events = (action$, store) =>
           const nearestQuery = !action.payload.bounds && !cityQuery;
 
           if (nearestQuery) {
-            AsyncStorage.setItem("oldData", JSON.stringify(hits));
+            AsyncStorage.setItem("oldData", JSON.stringify({ hits, recent }));
           }
 
           const list = makeEvents(hits, false, nearestQuery);
@@ -351,13 +349,37 @@ const restore = action$ =>
           });
         }
 
-        const data = JSON.parse(dataStr);
+        let data;
+
+        let recent;
+
+        const value = JSON.parse(dataStr);
+
+        if (Array.isArray(value)) {
+          data = value;
+        } else {
+          data = value.hits;
+          recent = value.recent;
+        }
 
         const list = makeEvents(data, false, true);
 
         const calendar = makeEvents(data, true, true);
 
-        const markers = makeMarkers([{ title: "All", data }, ...calendar]);
+        // const markers = makeMarkers([{ title: "All", data }, ...calendar]);
+
+        let markerData = [{ title: "All", data }, ...calendar];
+
+        if (recent) {
+          markerData = [...recent, ...markerData];
+        }
+
+        const markers = makeMarkers(markerData);
+        data = recent
+          ? _([...data, ...recent[0].data])
+              .uniqBy("_id")
+              .value()
+          : data;
 
         return Events.actions.set({
           refreshing: true,
@@ -366,7 +388,8 @@ const restore = action$ =>
           list,
           calendar,
           markers,
-          initialized: true
+          initialized: true,
+          recent
         });
       } catch (error) {
         console.log(error);

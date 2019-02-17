@@ -30,6 +30,7 @@ export default class FriendForm extends PureComponent {
                   style={styles.input}
                   placeholder="Name"
                   placeholderTextColor="#999"
+                  underlineColorAndroid="transparent"
                 />
               </TouchableWithoutFeedback>
               <TouchableWithoutFeedback>
@@ -39,6 +40,7 @@ export default class FriendForm extends PureComponent {
                   placeholderTextColor="#999"
                   keyboardType="numeric"
                   returnKeyType="done"
+                  underlineColorAndroid="transparent"
                 />
               </TouchableWithoutFeedback>
               <View style={styles.contacts}>
@@ -49,11 +51,9 @@ export default class FriendForm extends PureComponent {
             </View>
           </View>
           <Text style={styles.instructionText}>
-            Fill out the form to see what your friends are going to.
-          </Text>
-          <Text style={styles.instructionText}>
-            You can block anyone in your contacts list from seeing your
-            activity.
+            Fill out the form to see what your friends are going to. Only people
+            in your contacts can see your activity and you can block any of
+            them.
           </Text>
         </ScrollView>
         <Text style={styles.instructionText}>
