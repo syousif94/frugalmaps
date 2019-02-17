@@ -69,13 +69,6 @@ export function createDate(time, iso, start) {
     date.add(1, "d");
   }
 
-  console.log({
-    time,
-    iso,
-    start,
-    date
-  });
-
   if (date.isBefore(now)) {
     date = date.add(7, "d");
     if (date.isBefore(now)) {
