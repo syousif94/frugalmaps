@@ -38,20 +38,32 @@ export default class FriendForm extends PureComponent {
                   placeholder="Number"
                   placeholderTextColor="#999"
                   keyboardType="numeric"
+                  returnKeyType="done"
                 />
               </TouchableWithoutFeedback>
               <View style={styles.contacts}>
-                <TouchableOpacity style={styles.contactsBtn}>
-                  <Text style={styles.contactsText}>Access Contacts</Text>
+                <TouchableOpacity style={styles.btn}>
+                  <Text style={styles.btnText}>Load Contacts</Text>
                 </TouchableOpacity>
               </View>
             </View>
           </View>
           <Text style={styles.instructionText}>
-            All fields and contact access are required to share what you're
-            going to and see what your friends are going to.
+            Fill out the form to see what your friends are going to.
+          </Text>
+          <Text style={styles.instructionText}>
+            You can block anyone in your contacts list from seeing your
+            activity.
           </Text>
         </ScrollView>
+        <Text style={styles.instructionText}>
+          All fields and contact access required.
+        </Text>
+        <View style={styles.done}>
+          <TouchableOpacity style={styles.btn}>
+            <Text style={styles.btnText}>Done</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -104,15 +116,21 @@ const styles = StyleSheet.create({
     backgroundColor: BLUE,
     borderRadius: 8
   },
-  contactsBtn: {
+  btn: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center"
   },
-  contactsText: {
+  btnText: {
     fontSize: 16,
     color: "#fff",
     fontWeight: "600"
+  },
+  done: {
+    height: 44,
+    margin: 10,
+    backgroundColor: "#2FE56E",
+    borderRadius: 8
   },
   instructionText: {
     marginTop: 15,
