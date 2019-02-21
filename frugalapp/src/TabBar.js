@@ -212,7 +212,7 @@ class TabBar extends Component {
       <SafeAreaView style={styles.container} onLayout={this._onLayout}>
         <View style={styles.footer}>
           <Calendar selected={selected} onPress={this._onCalendar} index={0} />
-          <Map selected={selected} index={2} onPress={this._onMap} />
+          {/* <Map selected={selected} index={2} onPress={this._onMap} /> */}
           <Upload selected={selected} index={1} onPress={this._onSubmit} />
           <Friends selected={selected} index={3} onPress={this._onFriends} />
         </View>

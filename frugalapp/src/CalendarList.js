@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { StyleSheet, View, SectionList, Text } from "react-native";
+import { StyleSheet, View, FlatList, Text } from "react-native";
 import { connect } from "react-redux";
 import emitter from "tiny-emitter/instance";
 import Emitter from "tiny-emitter";
@@ -10,6 +10,7 @@ import { ANDROID, IOS } from "./Constants";
 import CalendarEmpty from "./CalendarEmpty";
 import { Entypo } from "@expo/vector-icons";
 import Header from "./CalendarListHeader";
+import CalendarListHeader from "./CalendarListHeader";
 
 class CalendarList extends PureComponent {
   static emitter = new Emitter();
@@ -85,9 +86,8 @@ class CalendarList extends PureComponent {
     );
   };
 
-  _renderAd = () => {
+  _renderHeader = () => {
     const { initialized } = this.props;
-
     return <Ad touchAd={this.state.touchAd} initialized={initialized} />;
   };
 
@@ -111,8 +111,11 @@ class CalendarList extends PureComponent {
   _keyExtractor = (item, index) => (item._id || item.title) + index;
 
   _renderItem = data => {
+    const iso = this.props.data[0].iso;
     const key = `${data.item._id}${data.index}`;
-    return <Item {...data} itemKey={key} emitter={CalendarList.emitter} />;
+    return (
+      <Item {...data} itemKey={key} emitter={CalendarList.emitter} iso={iso} />
+    );
   };
 
   _renderSectionHeader = data => <Header {...data} />;
@@ -122,7 +125,7 @@ class CalendarList extends PureComponent {
   };
 
   render() {
-    const { refreshing, data, day } = this.props;
+    const { data, day } = this.props;
 
     const containerStyle = {
       paddingBottom: data.length ? 110 : 0
@@ -138,25 +141,27 @@ class CalendarList extends PureComponent {
           onMomentumScrollEnd: this._onScrollEnd
         };
 
+    const listData = data && data[0] ? data[0].data : [];
+
     return (
-      <SectionList
-        key={day}
-        ref={this._setRef}
-        contentContainerStyle={containerStyle}
-        onRefresh={this._refresh}
-        refreshing={refreshing}
-        style={styles.list}
-        renderItem={this._renderItem}
-        renderSectionHeader={this._renderSectionHeader}
-        sections={data}
-        keyExtractor={this._keyExtractor}
-        ListEmptyComponent={this._renderEmpty}
-        {...androidProps}
-        ListHeaderComponent={this._renderAd}
-        ListFooterComponent={this._renderFooter}
-        removeClippedSubviews={this.state.clipSubviews}
-        onViewableItemsChanged={this._itemsChanged}
-      />
+      <View style={styles.container}>
+        <CalendarListHeader section={data && data[0]} />
+        <FlatList
+          key={day}
+          ref={this._setRef}
+          contentContainerStyle={containerStyle}
+          style={styles.list}
+          renderItem={this._renderItem}
+          data={listData}
+          keyExtractor={this._keyExtractor}
+          ListEmptyComponent={this._renderEmpty}
+          {...androidProps}
+          ListHeaderComponent={this._renderHeader}
+          ListFooterComponent={this._renderFooter}
+          removeClippedSubviews={this.state.clipSubviews}
+          onViewableItemsChanged={this._itemsChanged}
+        />
+      </View>
     );
   }
 }
@@ -183,11 +188,15 @@ export default connect(
 )(CalendarList);
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
   list: {
     flex: 1,
     backgroundColor: "#efefef"
   },
   footer: {
+    paddingTop: 20,
     paddingHorizontal: 25
   },
   footerText: {

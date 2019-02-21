@@ -7,6 +7,10 @@ export default class CalendarListHeader extends PureComponent {
   render() {
     const { section } = this.props;
 
+    if (!section) {
+      return null;
+    }
+
     return (
       <View style={styles.container}>
         <View style={styles.info}>
@@ -19,7 +23,6 @@ export default class CalendarListHeader extends PureComponent {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 5,
     backgroundColor: "rgba(90,90,90,0.45)",
     height: CalendarListHeader.height
   },

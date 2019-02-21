@@ -1,12 +1,18 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity
+} from "react-native";
 import ImageGallery from "./ImageGallery";
 import { timeRemaining, makeISO } from "./Time";
 import { WIDTH } from "./Constants";
 import NotifyButton from "./NotifyButton";
-import EventList from "./InfoEventList";
 import MonoText from "./MonoText";
 import { FontAwesome } from "@expo/vector-icons";
+import emitter from "tiny-emitter/instance";
 
 class CalendarItem extends Component {
   state = {
@@ -53,18 +59,21 @@ class CalendarItem extends Component {
     return shouldTick;
   };
 
+  _onMap = () => {
+    const { item } = this.props;
+
+    emitter.emit("fit-marker", item);
+  };
+
   render() {
     const {
-      item: { _source: item, sort, _id: id },
-      section: { data, title },
+      item: { _source: item, sort },
       index
     } = this.props;
 
-    const isClosest = title === "Closest";
-
     const containerStyle = [
       styles.container,
-      { marginBottom: index + 1 === data.length ? 10 : 5 }
+      { marginTop: index === 0 ? 10 : 5 }
     ];
 
     let distanceText = "";
@@ -73,7 +82,7 @@ class CalendarItem extends Component {
       distanceText = ` · ${sort[sort.length - 1].toFixed(1)} miles`;
     }
 
-    let iso = this.props.section.iso;
+    let iso = this.props.iso;
 
     if (!iso) {
       iso = makeISO(item.days);
@@ -101,88 +110,11 @@ class CalendarItem extends Component {
 
     const locationText = item.location;
 
-    const paddingVertical = isClosest ? 10 : 0;
-    const marginTop = isClosest ? 0 : 8;
-    const marginBottom = isClosest ? 0 : 10;
-
     return (
       <View style={containerStyle}>
-        <View style={[styles.info, { paddingVertical }]}>
-          {!isClosest ? (
-            <View style={styles.event}>
-              <View>
-                <View style={styles.titleRow}>
-                  <Text style={styles.titleText}>
-                    {index + 1}. {item.title}
-                  </Text>
-                  {item.type === "Happy Hour" ? (
-                    <View style={styles.twentyOne}>
-                      <Text style={styles.twentyOneText}>21+</Text>
-                    </View>
-                  ) : null}
-                </View>
-                <Text style={styles.descriptionText}>{item.description}</Text>
-              </View>
-              <View pointerEvents="none">
-                <View style={styles.hours}>
-                  <MonoText
-                    text={remaining}
-                    suffix={endingText}
-                    textStyle={countdownStyle}
-                    characterWidth={7.5}
-                    style={styles.countdown}
-                    suffixStyle={styles.suffix}
-                    colonStyle={styles.colon}
-                  />
-                  {item.groupedHours.map((hours, index) => {
-                    const marginTop = index !== 0 ? 1 : 0;
-                    const longDays = hours.days.length > 4;
-                    const flexDirection = longDays ? "column" : "row";
-                    const alignItems = longDays ? "flex-start" : "center";
-                    const timeMarginTop = longDays ? 1 : 0;
-                    return (
-                      <View
-                        style={[
-                          styles.hour,
-                          { marginTop, flexDirection, alignItems }
-                        ]}
-                        key={index}
-                      >
-                        <View style={styles.days}>
-                          {hours.days.map(day => {
-                            return (
-                              <View style={styles.day} key={day.text}>
-                                <Text style={styles.dayText}>{day.text}</Text>
-                                {day.daysAway === 0 ? null : (
-                                  <View style={styles.daysAway}>
-                                    <Text style={styles.dayText}>
-                                      {day.daysAway}
-                                    </Text>
-                                  </View>
-                                )}
-                              </View>
-                            );
-                          })}
-                        </View>
-                        <View
-                          style={[styles.time, { marginTop: timeMarginTop }]}
-                        >
-                          <Text style={styles.hourText}>
-                            {hours.hours}{" "}
-                            <Text style={styles.durationText}>
-                              {hours.duration}hr
-                            </Text>
-                          </Text>
-                        </View>
-                      </View>
-                    );
-                  })}
-                </View>
-              </View>
-              <NotifyButton {...{ event: this.props.item }} key={id} />
-            </View>
-          ) : null}
-          <View style={[styles.location, { marginTop, marginBottom }]}>
+        <ImageGallery width={WIDTH - 20} doc={this.props.item} height={150} />
+        <TouchableOpacity onPress={this._onMap} style={styles.info}>
+          <View style={styles.location}>
             <View style={styles.locationInfo}>
               <Text numberOfLines={1} style={styles.locationText}>
                 {locationText}
@@ -199,13 +131,60 @@ class CalendarItem extends Component {
               </Text>
             </View>
           </View>
-        </View>
-        <ImageGallery width={WIDTH - 20} doc={this.props.item} height={150} />
-        {isClosest ? (
-          <View style={styles.info}>
-            <EventList time={this.state.time} placeid={item.placeid} />
+        </TouchableOpacity>
+        <View style={styles.event}>
+          <MonoText
+            text={remaining}
+            suffix={endingText}
+            textStyle={countdownStyle}
+            characterWidth={7.5}
+            style={styles.countdown}
+            suffixStyle={styles.suffix}
+            colonStyle={styles.colon}
+          />
+          <View style={styles.titleRow}>
+            <Text style={styles.titleText}>
+              {index + 1}. {item.title}
+            </Text>
+            {item.type === "Happy Hour" ? (
+              <View style={styles.twentyOne}>
+                <Text style={styles.twentyOneText}>21+</Text>
+              </View>
+            ) : null}
           </View>
-        ) : null}
+          {item.groupedHours.map((hours, index) => {
+            return (
+              <View style={styles.hour} key={index}>
+                <View style={styles.time}>
+                  <Text style={styles.hourText} numberOfLines={1}>
+                    {hours.hours}{" "}
+                    <Text style={styles.durationText}>{hours.duration}hr</Text>
+                  </Text>
+                </View>
+                <View style={styles.days}>
+                  {hours.days.map(day => {
+                    return (
+                      <View style={styles.day} key={day.text}>
+                        <Text style={styles.dayText}>{day.text}</Text>
+                        {day.daysAway === 0 ? null : (
+                          <View style={styles.daysAway}>
+                            <Text style={styles.dayText}>{day.daysAway}</Text>
+                          </View>
+                        )}
+                      </View>
+                    );
+                  })}
+                </View>
+              </View>
+            );
+          })}
+          <Text style={styles.descriptionText}>{item.description}</Text>
+          <View style={{ flexDirection: "row", marginBottom: 5, marginTop: 7 }}>
+            <NotifyButton event={this.props.item} />
+            <View style={{ width: 10 }} />
+            <NotifyButton event={this.props.item} />
+          </View>
+        </View>
       </View>
     );
   }
@@ -216,17 +195,15 @@ export default CalendarItem;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
-    marginVertical: 5,
-    marginHorizontal: 10,
-    borderRadius: 4,
-    overflow: "hidden"
+    marginVertical: 5
   },
   info: {
     paddingVertical: 10,
     paddingHorizontal: 15
   },
   event: {
-    marginTop: 10
+    paddingHorizontal: 15,
+    paddingBottom: 10
   },
   titleText: {
     marginTop: 2,
@@ -253,18 +230,13 @@ const styles = StyleSheet.create({
   },
   locationInfo: { flex: 1 },
   time: {
-    flex: 1,
+    marginBottom: 3,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between"
   },
-  hours: {
-    marginTop: 2
-  },
   hour: {
-    flexDirection: "row",
-    alignItems: "center",
-    flexWrap: "wrap"
+    marginVertical: 3
   },
   hourText: {
     color: "#444",
@@ -291,8 +263,7 @@ const styles = StyleSheet.create({
     color: "#18AB2E"
   },
   days: {
-    flexDirection: "row",
-    marginRight: 3
+    flexDirection: "row"
   },
   day: {
     flexDirection: "row",

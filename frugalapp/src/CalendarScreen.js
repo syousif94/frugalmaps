@@ -3,12 +3,13 @@ import { StyleSheet, View } from "react-native";
 import { connect } from "react-redux";
 import CalendarList from "./CalendarList";
 
-import LocationBox from "./LocationBox";
-import LocationLists from "./LocationLists";
-import SearchButton from "./SearchButton";
+// import LocationBox from "./LocationBox";
+// import LocationLists from "./LocationLists";
+// import SearchButton from "./SearchButton";
 import * as Events from "./store/events";
 import CalendarDayPicker from "./CalendarDayPicker";
 import CalendarInitial from "./CalendarInitial";
+import CalendarMap from "./CalendarMap";
 
 class CalendarScreen extends Component {
   static id = "cal";
@@ -20,12 +21,13 @@ class CalendarScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <LocationBox id={CalendarScreen.id} />
+        {/* <LocationBox id={CalendarScreen.id} /> */}
+        <CalendarMap />
         <CalendarList />
         <CalendarInitial />
         <CalendarDayPicker scroll />
-        <SearchButton id={CalendarScreen.id} />
-        <LocationLists id={CalendarScreen.id} />
+        {/* <SearchButton id={CalendarScreen.id} /> */}
+        {/* <LocationLists id={CalendarScreen.id} /> */}
       </View>
     );
   }

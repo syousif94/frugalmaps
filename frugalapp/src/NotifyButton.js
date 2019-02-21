@@ -190,12 +190,16 @@ export default class NotifyButton extends Component {
         style={styles.action}
         onPress={this._onPress}
       >
-        <Entypo style={styles.icon} name="bell" size={15} color="#000" />
-        <Text style={styles.countText}>{count}</Text>
-        <View style={styles.switch}>
-          <Animated.View
-            style={[styles.switchBall, { transform, backgroundColor }]}
-          />
+        <Entypo style={styles.icon} name="bell" size={16} color="#000" />
+        <Text style={styles.remindText}>Remind Me</Text>
+        <View style={{ flex: 1 }} />
+        <View>
+          <Text style={styles.countText}>{count}</Text>
+          <View style={styles.switch}>
+            <Animated.View
+              style={[styles.switchBall, { transform, backgroundColor }]}
+            />
+          </View>
         </View>
       </TouchableOpacity>
     );
@@ -204,20 +208,16 @@ export default class NotifyButton extends Component {
 
 const styles = StyleSheet.create({
   action: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    height: 50,
     backgroundColor: "#fafafa",
     borderRadius: 5,
     borderWidth: 1,
     borderColor: "#e0e0e0",
-    width: 32,
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    paddingTop: 2
+    padding: 5,
+    flex: 1
   },
-  icon: {},
+  icon: { marginTop: 1, marginLeft: 3 },
   switch: {
     height: switchHeight,
     borderRadius: switchHeight / 2,
@@ -235,6 +235,12 @@ const styles = StyleSheet.create({
     height: ballHeight,
     width: ballHeight,
     borderRadius: ballHeight / 2
+  },
+  remindText: {
+    fontSize: 14,
+    color: "#000",
+    fontWeight: "500",
+    marginLeft: 7
   },
   countText: {
     fontSize: 7,

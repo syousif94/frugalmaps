@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import {
   View,
   StyleSheet,
-  TouchableWithoutFeedback,
   FlatList,
   Text,
   Image,
@@ -12,7 +11,7 @@ import {
 import { connect } from "react-redux";
 
 import { withNavigation } from "react-navigation";
-import { Entypo } from "@expo/vector-icons";
+import { Entypo, FontAwesome } from "@expo/vector-icons";
 import { AWSCF } from "./Constants";
 
 import * as Events from "./store/events";
@@ -128,7 +127,9 @@ class ImageGallery extends Component {
             />
           </View>
         </View>
-        <Icon onPress={this._onPress} disabled={disabled} narrow={narrow} />
+        <View style={styles.actions}>
+          <Icon onPress={this._onPress} disabled={disabled} narrow={narrow} />
+        </View>
       </View>
     );
   }
@@ -154,6 +155,16 @@ const Icon = ({ disabled, narrow, onPress = null }) => {
   );
 };
 
+const MapIcon = ({ onPress }) => {
+  return (
+    <View style={styles.action}>
+      <TouchableOpacity style={styles.mapBtn} onPress={onPress}>
+        <FontAwesome name="map-marker" size={16} color="#fff" />
+      </TouchableOpacity>
+    </View>
+  );
+};
+
 export default connect(
   null,
   {
@@ -170,14 +181,14 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "#e0e0e0"
   },
-  vPhoto: {
-    backgroundColor: "#e0e0e0",
-    marginBottom: 1
+  actions: {
+    position: "absolute",
+    bottom: 3,
+    right: 3,
+    flexDirection: "row"
   },
   action: {
-    position: "absolute",
-    bottom: 6,
-    right: 6,
+    margin: 3,
     backgroundColor: "rgba(0,0,0,0.5)",
     borderRadius: 6
   },
@@ -188,6 +199,13 @@ const styles = StyleSheet.create({
     paddingRight: 4,
     paddingVertical: 4
   },
+  mapBtn: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    width: 30,
+    paddingBottom: 2
+  },
   chevron: {
     marginLeft: -1
   },
@@ -196,25 +214,5 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontWeight: "600",
     color: "#fff"
-  },
-  banner: {
-    height: 18,
-    backgroundColor: "#999",
-    paddingLeft: 15,
-    justifyContent: "center"
-  },
-  bannerText: {
-    color: "#fff",
-    fontSize: 10,
-    fontWeight: "600"
-  },
-  vList: {
-    flex: 1
-  },
-  info: {
-    backgroundColor: "#fff",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    marginBottom: 1
   }
 });

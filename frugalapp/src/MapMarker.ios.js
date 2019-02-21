@@ -6,6 +6,7 @@ import { FontAwesome } from "@expo/vector-icons";
 
 import ImageGallery from "./ImageGallery";
 import EventList from "./InfoEventList";
+import emitter from "tiny-emitter/instance";
 
 const redPin = require("../assets/pin.png");
 const greenPin = require("../assets/pin-now.png");
@@ -20,16 +21,52 @@ export default class MapMarker extends Component {
     );
   }
 
-  _onSelect = () => {
-    this._callout.toggleTick(true);
+  componentDidMount() {
+    emitter.on("fit-marker", this._fitMarker);
+    emitter.on("hide-callouts", this._hideCallout);
+  }
+
+  componentWillUnmount() {
+    emitter.off("fit-marker", this._fitMarker);
+    emitter.off("hide-callouts", this._hideCallout);
+  }
+
+  _visibleCallout = false;
+
+  _hideCallout = () => {
+    if (this._visibleCallout) {
+      this._visibleCallout = false;
+      this._marker.hideCallout();
+    }
   };
 
-  _onDeselect = () => {
-    this._callout.toggleTick(false);
+  _fitMarker = doc => {
+    const {
+      _source: { placeid }
+    } = doc;
+
+    if (placeid === this.props.data._source.placeid) {
+      setTimeout(() => {
+        this._visibleCallout = true;
+        this._marker.showCallout();
+      }, 500);
+    }
   };
 
-  _setCalloutRef = ref => {
-    this._callout = ref;
+  // _onSelect = () => {
+  //   this._callout.toggleTick(true);
+  // };
+
+  // _onDeselect = () => {
+  //   this._callout.toggleTick(false);
+  // };
+
+  // _setCalloutRef = ref => {
+  //   this._callout = ref;
+  // };
+
+  _setRef = ref => {
+    this._marker = ref;
   };
 
   render() {
@@ -52,12 +89,20 @@ export default class MapMarker extends Component {
 
     const pinSource = ending ? greenPin : redPin;
 
+    const streetText = item.address
+      .split(",")
+      .find(val => val.length > 5)
+      .trim();
+
     return (
       <MapView.Marker
         coordinate={coordinate}
         centerOffset={MapMarker.offset}
-        onSelect={this._onSelect}
-        onDeselect={this._onDeselect}
+        title={item.location}
+        description={streetText}
+        ref={this._setRef}
+        // onSelect={this._onSelect}
+        // onDeselect={this._onDeselect}
       >
         <View style={styles.marker}>
           <Image source={pinSource} style={styles.marker} />
@@ -65,7 +110,7 @@ export default class MapMarker extends Component {
             <Text style={styles.spotText}>{spot}</Text>
           </View>
         </View>
-        <Callout ref={this._setCalloutRef} key={_id} {...this.props} />
+        {/* <Callout ref={this._setCalloutRef} key={_id} {...this.props} /> */}
       </MapView.Marker>
     );
   }

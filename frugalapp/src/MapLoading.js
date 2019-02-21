@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { View, Animated, StyleSheet, ActivityIndicator } from "react-native";
 import { connect } from "react-redux";
+import { SafeArea } from "./Constants";
 
 const mapStateToProps = state => ({
   refreshing: state.events.refreshing
@@ -48,21 +49,23 @@ class MapLoading extends Component {
   };
 
   render() {
-    const containerStyle = [
-      styles.container,
+    const fadeStyle = [
+      styles.fade,
       {
         opacity: this.state.opacity
       }
     ];
     return (
-      <Animated.View style={containerStyle} pointerEvents="none">
-        <View style={styles.bg} />
-        <ActivityIndicator
-          animating={this.state.loading}
-          color="#555"
-          style={styles.indicator}
-        />
-      </Animated.View>
+      <SafeArea style={styles.container} pointerEvents="none">
+        <Animated.View style={fadeStyle}>
+          <View style={styles.bg} />
+          <ActivityIndicator
+            animating={this.state.loading}
+            color="#fff"
+            style={styles.indicator}
+          />
+        </Animated.View>
+      </SafeArea>
     );
   }
 }
@@ -70,14 +73,14 @@ class MapLoading extends Component {
 export default connect(mapStateToProps)(MapLoading);
 
 const size = 24;
-const left = 10 + (44 - size) / 2;
-const bottom = left + 28;
 
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    bottom,
-    left,
+    top: 0,
+    left: 6
+  },
+  fade: {
     height: size,
     width: size,
     justifyContent: "center",
@@ -85,7 +88,8 @@ const styles = StyleSheet.create({
   },
   bg: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "#ededed"
+    backgroundColor: "rgba(0,0,0,0.5)",
+    borderRadius: 6
   },
   indicator: {
     transform: [{ scale: 0.8 }]

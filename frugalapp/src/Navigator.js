@@ -7,7 +7,7 @@ import {
 } from "react-navigation";
 
 import { ANDROID } from "./Constants";
-import MapScreen from "./MapScreen";
+// import MapScreen from "./MapScreen";
 import CalendarScreen from "./CalendarScreen";
 import SubmitScreen from "./SubmitScreen";
 import FriendsScreen from "./FriendsScreen";
@@ -28,7 +28,7 @@ const TabScreen = createBottomTabNavigator(
   {
     Calendar: CalendarScreen,
     Submit: SubmitScreen,
-    Map: MapScreen,
+    // Map: MapScreen,
     Friends: FriendsScreen
   },
   {
@@ -40,7 +40,7 @@ const TabScreen = createBottomTabNavigator(
 
 const MainScreen = createStackNavigator(
   {
-    Home: TabScreen,
+    Home: CalendarScreen,
     Submissions: SubmissionsScreen,
     Info: InfoScreen
   },

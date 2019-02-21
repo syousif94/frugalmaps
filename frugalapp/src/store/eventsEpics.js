@@ -94,14 +94,16 @@ const makeEvents = (hits, week = false, nearest = false) => {
 
     const beforeToday = initial.slice(0, todayIndex);
 
-    const days = [...todayAndAfter, ...beforeToday].map((day, index) => {
-      day.away = index;
-      if (nearest) {
-        day.data = day.data.filter(day => !day.sort || day.sort < 45);
-      }
-      day.data = day.data.sort(sortDays(timeInt, index));
-      return { ...day, index };
-    });
+    const days = [...todayAndAfter, ...beforeToday]
+      .map((day, index) => {
+        day.away = index;
+        if (nearest) {
+          day.data = day.data.filter(day => !day.sort || day.sort < 45);
+        }
+        day.data = day.data.sort(sortDays(timeInt, index));
+        return { ...day, index };
+      })
+      .filter(day => day.data.length);
 
     return days;
   } else {
@@ -234,7 +236,7 @@ const events = (action$, store) =>
 
           const markers = makeMarkers(markerData, bounds);
 
-          let day = "All";
+          let day = calendar[0].title;
 
           if (action.payload.bounds && !cityQuery) {
             const {
@@ -250,10 +252,6 @@ const events = (action$, store) =>
                 if (storeDayData) {
                   day = storeDay;
                 }
-              }
-
-              if (!day) {
-                day = "All";
               }
             }
           }
@@ -366,7 +364,7 @@ const restore = action$ =>
 
         const calendar = makeEvents(data, true, true);
 
-        // const markers = makeMarkers([{ title: "All", data }, ...calendar]);
+        const day = calendar[0].title;
 
         let markerData = [{ title: "All", data }, ...calendar];
 
@@ -389,7 +387,8 @@ const restore = action$ =>
           calendar,
           markers,
           initialized: true,
-          recent
+          recent,
+          day
         });
       } catch (error) {
         console.log(error);
