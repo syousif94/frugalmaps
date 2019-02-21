@@ -22,6 +22,7 @@ import SubmissionInput from "./SubmissionInput";
 import { RED } from "./Colors";
 import DayPicker from "./SubmitDayPicker";
 import { validSubmission } from "./ValidateSubmission";
+import PopButton from "./PopButton";
 
 const mapStateToProps = state => ({
   id: state.submission.id,
@@ -274,6 +275,7 @@ class SubmitScreen extends Component {
           </EditSpecial>
           <SubmissionsScreen />
         </Swiper>
+        <PopButton />
       </View>
     );
   }

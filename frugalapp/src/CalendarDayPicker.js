@@ -1,36 +1,10 @@
 import React, { PureComponent } from "react";
-import {
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-  Text,
-  View
-} from "react-native";
+import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
 import { connect } from "react-redux";
 import * as Events from "./store/events";
 import emitter from "tiny-emitter/instance";
-import { SafeArea } from "./Constants";
 
 class DayPicker extends PureComponent {
-  componentDidMount() {
-    emitter.on("scroll-picker", this._scrollTo);
-  }
-
-  componentWillUnmount() {
-    emitter.off("scroll-picker", this._scrollTo);
-  }
-
-  componentDidUpdate(prev) {
-    if (this.props.day === "All" && prev.day !== this.props.day) {
-      this._scrollTo(0, true);
-    }
-  }
-
-  _scrollTo = (offset, animated = false) => {
-    const x = offset !== undefined ? offset : 0;
-    this._list.getScrollResponder().scrollTo({ x, y: 0, animated });
-  };
-
   _selectDay = day => {
     if (day === this.props.day && this.props.scroll) {
       requestAnimationFrame(() => {
@@ -42,52 +16,32 @@ class DayPicker extends PureComponent {
       this.props.set({
         day
       });
-      emitter.emit("scroll-picker", this._lastPosition);
     });
   };
 
-  _lastPosition;
-
-  _onScrollEnd = e => {
-    this._lastPosition = e.nativeEvent.contentOffset.x;
-  };
-
-  _setRef = ref => {
-    this._list = ref;
-  };
   render() {
     const { calendar, day, recent } = this.props;
     const days = [...recent, ...calendar];
     return (
-      <SafeArea style={styles.container}>
-        <ScrollView
-          ref={this._setRef}
-          onScrollEndDrag={this._onScrollEnd}
-          onMomentumScrollEnd={this._onScrollEnd}
-          horizontal
-          alwaysBounceHorizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.content}
-        >
-          {days.map(data => {
-            const btnStyle = [styles.btnBg];
-            if (day === data.title) {
-              btnStyle.push(styles.selected);
-            }
-            const onPress = this._selectDay.bind(null, data.title);
-            return (
-              <View key={data.title} style={btnStyle}>
-                <TouchableOpacity style={styles.btn} onPress={onPress}>
-                  <Text style={styles.btnText}>{data.title}</Text>
-                  <View style={styles.count}>
-                    <Text style={styles.btnText}>{data.data.length}</Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            );
-          })}
-        </ScrollView>
-      </SafeArea>
+      <View style={styles.container}>
+        {days.map(data => {
+          const btnStyle = [styles.btnBg];
+          if (day === data.title) {
+            btnStyle.push(styles.selected);
+          }
+          const onPress = this._selectDay.bind(null, data.title);
+          return (
+            <View key={data.title} style={btnStyle}>
+              <TouchableOpacity style={styles.btn} onPress={onPress}>
+                <Text style={styles.btnText}>{data.title}</Text>
+                <View style={styles.count}>
+                  <Text style={styles.btnText}>{data.data.length}</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          );
+        })}
+      </View>
     );
   }
 }
@@ -109,15 +63,9 @@ export default connect(
 
 const styles = StyleSheet.create({
   container: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 44
-  },
-  content: {
+    flexDirection: "row",
+    flexWrap: "wrap",
     padding: 3.5
-    // paddingRight: 90
   },
   btnBg: {
     margin: 3.5,

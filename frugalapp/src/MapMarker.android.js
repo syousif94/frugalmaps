@@ -6,6 +6,7 @@ import { MapView } from "expo";
 import * as Events from "./store/events";
 import { makeHours } from "./Time";
 import { AWSCF } from "./Constants";
+import emitter from "tiny-emitter/instance";
 
 const redPin = require("../assets/pin.png");
 const greenPin = require("../assets/pin-now.png");
@@ -13,6 +14,41 @@ const greenPin = require("../assets/pin-now.png");
 export default class MapMarker extends PureComponent {
   static imageHeight = 120;
   static offset = { x: 0, y: -14 };
+
+  componentDidMount() {
+    emitter.on("fit-marker", this._fitMarker);
+    emitter.on("hide-callouts", this._hideCallout);
+  }
+
+  componentWillUnmount() {
+    emitter.off("fit-marker", this._fitMarker);
+    emitter.off("hide-callouts", this._hideCallout);
+  }
+
+  _visibleCallout = false;
+
+  _hideCallout = () => {
+    if (this._visibleCallout) {
+      this._visibleCallout = false;
+      this._marker.hideCallout();
+    }
+  };
+
+  _fitMarker = doc => {
+    const {
+      _source: { placeid }
+    } = doc;
+
+    if (placeid === this.props.data._source.placeid) {
+      setTimeout(() => {
+        this._visibleCallout = true;
+        this._marker.showCallout();
+      }, 500);
+    }
+  };
+  _setRef = ref => {
+    this._marker = ref;
+  };
 
   render() {
     const {
@@ -34,20 +70,25 @@ export default class MapMarker extends PureComponent {
 
     const pinSource = ending ? greenPin : redPin;
 
+    const streetText = item.address
+      .split(",")
+      .find(val => val.length > 5)
+      .trim();
+
     return (
       <MapView.Marker
         coordinate={coordinate}
         image={pinSource}
-        ref={ref => (this._marker = ref)}
-        tracksViewChanges
-        tracksInfoWindowChanges
+        title={item.location}
+        description={streetText}
+        ref={this._setRef}
       >
         <View style={styles.marker}>
           <View style={styles.spot}>
             <Text style={styles.spotText}>{spot}</Text>
           </View>
         </View>
-        <ConnectedCallout {...this.props} />
+        {/* <ConnectedCallout {...this.props} /> */}
       </MapView.Marker>
     );
   }

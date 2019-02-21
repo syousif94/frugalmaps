@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { View, Animated, StyleSheet, ActivityIndicator } from "react-native";
 import { connect } from "react-redux";
-import { SafeArea } from "./Constants";
+import { SafeArea, ANDROID } from "./Constants";
 
 const mapStateToProps = state => ({
   refreshing: state.events.refreshing
@@ -48,6 +48,20 @@ class MapLoading extends Component {
     }, 1000);
   };
 
+  _renderIndicator = () => {
+    if (ANDROID && !this.state.loading) {
+      return null;
+    }
+
+    return (
+      <ActivityIndicator
+        animating={this.state.loading}
+        color="#fff"
+        style={styles.indicator}
+      />
+    );
+  };
+
   render() {
     const fadeStyle = [
       styles.fade,
@@ -59,11 +73,7 @@ class MapLoading extends Component {
       <SafeArea style={styles.container} pointerEvents="none">
         <Animated.View style={fadeStyle}>
           <View style={styles.bg} />
-          <ActivityIndicator
-            animating={this.state.loading}
-            color="#fff"
-            style={styles.indicator}
-          />
+          {this._renderIndicator()}
         </Animated.View>
       </SafeArea>
     );
@@ -81,6 +91,7 @@ const styles = StyleSheet.create({
     left: 6
   },
   fade: {
+    marginTop: 6,
     height: size,
     width: size,
     justifyContent: "center",

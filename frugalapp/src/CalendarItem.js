@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import ImageGallery from "./ImageGallery";
 import { timeRemaining, makeISO } from "./Time";
-import { WIDTH } from "./Constants";
+import { WIDTH, ANDROID } from "./Constants";
 import NotifyButton from "./NotifyButton";
 import MonoText from "./MonoText";
 import { FontAwesome } from "@expo/vector-icons";
@@ -68,7 +68,7 @@ class CalendarItem extends Component {
 
     const containerStyle = [
       styles.container,
-      { marginTop: index === 0 ? 10 : 5 }
+      { marginTop: index === 0 ? (ANDROID ? 0 : 10) : 5 }
     ];
 
     let distanceText = "";
@@ -110,7 +110,7 @@ class CalendarItem extends Component {
 
     return (
       <View style={containerStyle}>
-        <ImageGallery width={WIDTH - 20} doc={this.props.item} height={150} />
+        <ImageGallery width={WIDTH} doc={this.props.item} height={150} />
         <TouchableOpacity onPress={this._onMap} style={styles.info}>
           <View style={styles.location}>
             <View style={styles.locationInfo}>
@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
     marginBottom: 2
   },
   countdownText: {
-    color: "#E3210B",
+    color: "#E3210B", // "#EA841A",
     fontSize: 12,
     fontWeight: "700"
   },
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
     marginRight: 2
   },
   ended: {
-    backgroundColor: "#EA841A"
+    backgroundColor: "#999"
   },
   daysAway: {
     marginLeft: 2,

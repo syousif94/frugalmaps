@@ -20,27 +20,24 @@ import IntroScreen from "./IntroScreen";
 import { watchNotifications } from "./Notifications";
 import { watchLinking } from "./Linking";
 
-import TabBar from "./TabBar";
 import Updater from "./Updater";
 import { sync } from "./User";
 
-const TabScreen = createBottomTabNavigator(
+const HomeScreen = createStackNavigator(
   {
     Calendar: CalendarScreen,
-    Submit: SubmitScreen,
-    // Map: MapScreen,
-    Friends: FriendsScreen
+    Submit: SubmitScreen
   },
   {
-    initialRoute: "Calendar",
-    tabBarComponent: TabBar,
-    lazy: ANDROID
+    mode: "modal",
+    headerMode: "none",
+    initialRoute: "Calendar"
   }
 );
 
 const MainScreen = createStackNavigator(
   {
-    Home: CalendarScreen,
+    Home: HomeScreen,
     Submissions: SubmissionsScreen,
     Info: InfoScreen
   },

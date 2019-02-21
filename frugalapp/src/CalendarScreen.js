@@ -7,9 +7,11 @@ import CalendarList from "./CalendarList";
 // import LocationLists from "./LocationLists";
 // import SearchButton from "./SearchButton";
 import * as Events from "./store/events";
-import CalendarDayPicker from "./CalendarDayPicker";
+// import CalendarDayPicker from "./CalendarDayPicker";
 import CalendarInitial from "./CalendarInitial";
 import CalendarMap from "./CalendarMap";
+import MenuButton from "./MenuButton";
+import Menu from "./Menu";
 
 class CalendarScreen extends Component {
   static id = "cal";
@@ -25,7 +27,9 @@ class CalendarScreen extends Component {
         <CalendarMap />
         <CalendarList />
         <CalendarInitial />
-        <CalendarDayPicker scroll />
+        <MenuButton />
+        <Menu />
+        {/* <CalendarDayPicker scroll /> */}
         {/* <SearchButton id={CalendarScreen.id} /> */}
         {/* <LocationLists id={CalendarScreen.id} /> */}
       </View>
