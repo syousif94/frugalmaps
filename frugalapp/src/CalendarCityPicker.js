@@ -4,7 +4,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   Text,
-  View
+  View,
+  Animated
 } from "react-native";
 import { connect } from "react-redux";
 import * as Events from "./store/events";
@@ -49,47 +50,62 @@ class CityPicker extends PureComponent {
     this._list = ref;
   };
   render() {
-    const { data } = this.props;
+    const { data, position } = this.props;
+
+    const translateY = position.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, -90]
+    });
+
+    const containerStyle = [
+      styles.container,
+      {
+        transform: [{ translateY }]
+      }
+    ];
+
     return (
-      <ScrollView
-        ref={this._setRef}
-        style={styles.container}
-        onScrollEndDrag={this._onScrollEnd}
-        onMomentumScrollEnd={this._onScrollEnd}
-        horizontal
-        alwaysBounceHorizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.content}
-      >
-        {data.map((item, index) => {
-          let name = `${index + 1}. `;
-          let addressText = "";
-          const [city, state] = item._source.name.split(", ");
-          name += city;
-          addressText = state;
-          const btnStyle = [styles.btnBg];
+      <Animated.View style={containerStyle}>
+        <ScrollView
+          ref={this._setRef}
+          style={styles.scroll}
+          onScrollEndDrag={this._onScrollEnd}
+          onMomentumScrollEnd={this._onScrollEnd}
+          horizontal
+          alwaysBounceHorizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.content}
+        >
+          {data.map((item, index) => {
+            let name = `${index + 1}. `;
+            let addressText = "";
+            const [city, state] = item._source.name.split(", ");
+            name += city;
+            addressText = state;
+            const btnStyle = [styles.btnBg];
 
-          if (item.sort && item.sort[item.sort.length - 1]) {
-            const miles = `${item.sort[item.sort.length - 1].toFixed(2)} mi`;
-            addressText = `${addressText} · ${miles}`;
-          }
+            if (item.sort && item.sort[item.sort.length - 1]) {
+              const miles = `${item.sort[item.sort.length - 1].toFixed(2)} mi`;
+              addressText = `${addressText} · ${miles}`;
+            }
 
-          const onPress = this._onPress.bind(null, item);
-          return (
-            <View style={btnStyle} key={name}>
-              <TouchableOpacity style={styles.btn} onPress={onPress}>
-                <View>
-                  <Text style={styles.cityText}>{name}</Text>
-                  <Text style={styles.addressText}>{addressText}</Text>
-                </View>
-                <View style={styles.count}>
-                  <Text style={styles.btnText}>{item._source.count}</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          );
-        })}
-      </ScrollView>
+            const onPress = this._onPress.bind(null, item);
+            return (
+              <View style={btnStyle} key={name}>
+                <TouchableOpacity style={styles.btn} onPress={onPress}>
+                  <View>
+                    <Text style={styles.cityText}>{name}</Text>
+                    <Text style={styles.addressText}>{addressText}</Text>
+                  </View>
+                  <View style={styles.count}>
+                    <Text style={styles.btnText}>{item._source.count}</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            );
+          })}
+        </ScrollView>
+      </Animated.View>
     );
   }
 }
@@ -113,7 +129,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     left: 0,
-    right: 0,
+    right: 0
+  },
+  scroll: {
     height: 44
   },
   content: {

@@ -1,7 +1,8 @@
 import React, { PureComponent } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, Animated, Text } from "react-native";
 import { MapView } from "expo";
 import { connect } from "react-redux";
+import { Entypo } from "@expo/vector-icons";
 
 import emitter from "tiny-emitter/instance";
 import { makeISO, timeRemaining } from "./Time";
@@ -29,18 +30,37 @@ class CalendarMap extends PureComponent {
   static searchId = "mapScreen";
 
   state = {
-    now: Date.now()
+    now: Date.now(),
+    expanded: false,
+    position: new Animated.Value(0)
   };
 
   componentDidMount() {
     emitter.on("fit-bounds", this._fitBounds);
     emitter.on("fit-marker", this._fitMarker);
+    emitter.on("toggle-map", this._toggleMap);
   }
 
   componentWillUnmount() {
     emitter.off("fit-bounds", this._fitBounds);
     emitter.off("fit-marker", this._fitMarker);
+    emitter.off("toggle-map", this._toggleMap);
   }
+
+  _toggleMap = () => {
+    const toValue = this.state.expanded ? 0 : 1;
+
+    Animated.timing(
+      this.state.position,
+      { toValue, duration: 350 },
+      { useNativeDriver: true }
+    ).start(() => {
+      this._fitBounds(this._lastBounds);
+      this.setState({
+        expanded: !this.state.expanded
+      });
+    });
+  };
 
   _showLocation = async () => {
     const coords = this.props.markers.map(marker => {
@@ -69,8 +89,14 @@ class CalendarMap extends PureComponent {
     });
   };
 
+  _lastBounds;
+
   _fitBounds = (bounds, animated = true) => {
-    this._search = false;
+    if (!bounds) {
+      return;
+    }
+    this._lastBounds = bounds;
+    const padding = this.state.expanded ? 0 : -30;
     const coords = [
       {
         latitude: bounds.northeast.lat,
@@ -85,10 +111,10 @@ class CalendarMap extends PureComponent {
       this._map.fitToCoordinates(coords, {
         animated,
         edgePadding: {
-          top: -30,
-          right: -30,
-          bottom: -30,
-          left: -30
+          top: padding,
+          right: padding,
+          bottom: padding,
+          left: padding
         }
       });
     });
@@ -134,36 +160,65 @@ class CalendarMap extends PureComponent {
   render() {
     const { markers, authorized } = this.props;
 
+    const containerStyle = [
+      {
+        height: this.state.position.interpolate({
+          inputRange: [0, 1],
+          outputRange: [HEIGHT * 0.31, HEIGHT]
+        })
+      }
+    ];
+
+    const toggleStyle = [styles.toggle, { opacity: this.state.position }];
+
+    const togglePointerEvents = this.state.expanded ? "auto" : "none";
+
     return (
-      <View style={styles.container}>
-        <View style={styles.map}>
-          <MapView
-            onLayout={this._setFrame}
-            ref={this._setMapRef}
-            style={styles.map}
-            initialRegion={INITIAL_REGION}
-            onRegionChangeComplete={this._onRegionChangeComplete}
-            showsCompass={false}
-            rotateEnabled={false}
-            toolbarEnabled={false}
-            showsUserLocation={authorized}
-            showsMyLocationButton={false}
-            pitchEnabled={false}
-            onPress={this._hideCallouts}
-          >
-            {markers.map(data => {
-              const { _id, _source: item } = data;
+      <Animated.View style={containerStyle}>
+        <MapView
+          onLayout={this._setFrame}
+          ref={this._setMapRef}
+          style={styles.map}
+          initialRegion={INITIAL_REGION}
+          onRegionChangeComplete={this._onRegionChangeComplete}
+          showsCompass={false}
+          rotateEnabled={false}
+          toolbarEnabled={false}
+          showsUserLocation={authorized}
+          showsMyLocationButton={false}
+          pitchEnabled={false}
+          onPress={this._hideCallouts}
+        >
+          {markers.map(data => {
+            const { _id, _source: item } = data;
 
-              const iso = makeISO(item.days);
-              const { ending } = timeRemaining(item.groupedHours[0], iso);
+            const iso = makeISO(item.days);
+            const { ending } = timeRemaining(item.groupedHours[0], iso);
 
-              return <MapMarker ending={ending} data={data} key={_id} />;
-            })}
-          </MapView>
-          <CityPicker tabLabel="Closest" />
-        </View>
+            return (
+              <MapMarker
+                ending={ending}
+                data={data}
+                key={`${_id}${this.state.expanded}`}
+                expanded={this.state.expanded}
+              />
+            );
+          })}
+        </MapView>
+        <CityPicker tabLabel="Closest" position={this.state.position} />
         <MapLoading />
-      </View>
+        <Animated.View style={toggleStyle} pointerEvents={togglePointerEvents}>
+          <TouchableOpacity onPress={this._toggleMap} style={styles.toggleBtn}>
+            <Entypo
+              style={styles.icon}
+              name="chevron-up"
+              size={16}
+              color="#fff"
+            />
+            <Text style={styles.btnText}>Map</Text>
+          </TouchableOpacity>
+        </Animated.View>
+      </Animated.View>
     );
   }
 }
@@ -174,10 +229,30 @@ export default connect(
 )(CalendarMap);
 
 const styles = StyleSheet.create({
-  container: {
-    height: HEIGHT * 0.31
-  },
   map: {
     flex: 1
+  },
+  toggle: {
+    position: "absolute",
+    bottom: 45,
+    left: 25
+  },
+  toggleBtn: {
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "rgba(90,90,90,0.6)",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingRight: 10,
+    paddingLeft: 8
+  },
+  btnText: {
+    fontSize: 14,
+    color: "#fff",
+    fontWeight: "600",
+    marginLeft: 6
+  },
+  icon: {
+    marginTop: 2
   }
 });

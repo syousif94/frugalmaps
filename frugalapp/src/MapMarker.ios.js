@@ -53,17 +53,17 @@ export default class MapMarker extends Component {
     }
   };
 
-  // _onSelect = () => {
-  //   this._callout.toggleTick(true);
-  // };
+  _onSelect = () => {
+    this._callout.toggleTick(true);
+  };
 
-  // _onDeselect = () => {
-  //   this._callout.toggleTick(false);
-  // };
+  _onDeselect = () => {
+    this._callout.toggleTick(false);
+  };
 
-  // _setCalloutRef = ref => {
-  //   this._callout = ref;
-  // };
+  _setCalloutRef = ref => {
+    this._callout = ref;
+  };
 
   _setRef = ref => {
     this._marker = ref;
@@ -72,7 +72,8 @@ export default class MapMarker extends Component {
   render() {
     const {
       data: { _source: item, _id },
-      ending
+      ending,
+      expanded
     } = this.props;
 
     const coordinate = {
@@ -89,20 +90,30 @@ export default class MapMarker extends Component {
 
     const pinSource = ending ? greenPin : redPin;
 
-    const streetText = item.address
-      .split(",")
-      .find(val => val.length > 5)
-      .trim();
+    let markerProps;
+
+    if (expanded) {
+      markerProps = {
+        onSelect: this._onSelect,
+        onDeselect: this._onDeselect
+      };
+    } else {
+      const streetText = item.address
+        .split(",")
+        .find(val => val.length > 5)
+        .trim();
+      markerProps = {
+        title: item.location,
+        description: streetText
+      };
+    }
 
     return (
       <MapView.Marker
         coordinate={coordinate}
         centerOffset={MapMarker.offset}
-        title={item.location}
-        description={streetText}
         ref={this._setRef}
-        // onSelect={this._onSelect}
-        // onDeselect={this._onDeselect}
+        {...markerProps}
       >
         <View style={styles.marker}>
           <Image source={pinSource} style={styles.marker} />
@@ -110,7 +121,9 @@ export default class MapMarker extends Component {
             <Text style={styles.spotText}>{spot}</Text>
           </View>
         </View>
-        {/* <Callout ref={this._setCalloutRef} key={_id} {...this.props} /> */}
+        {expanded ? (
+          <Callout ref={this._setCalloutRef} key={_id} {...this.props} />
+        ) : null}
       </MapView.Marker>
     );
   }

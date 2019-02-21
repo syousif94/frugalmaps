@@ -4,10 +4,6 @@ import api from "./API";
 import { updateNotifications } from "./Notifications";
 
 class NotificationUpdater {
-  constructor() {
-    this._updateKeys();
-  }
-
   _getKeys = async () => {
     const keys = await AsyncStorage.getAllKeys();
 
@@ -24,7 +20,7 @@ class NotificationUpdater {
     return res.events;
   };
 
-  _updateKeys = async () => {
+  updateKeys = async () => {
     try {
       const notificationIds = await this._getKeys();
 
