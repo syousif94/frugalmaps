@@ -116,6 +116,7 @@ export function makeDuration(hours) {
 }
 
 export function timeRemaining(hours, iso) {
+  let ended = false;
   const time = Date.now();
   let ending = false;
   let now = moment();
@@ -134,10 +135,12 @@ export function timeRemaining(hours, iso) {
       const nextStart = start.subtract(7 - nextDay.daysAway, "d");
       const nextDiff = nextStart.valueOf() - time;
       if (nextDiff >= 0) {
+        ended = true;
         diff = Math.min(nextDiff, diff);
       }
     }
   } else if (hours.today) {
+    ended = true;
     let daysAway = 7;
     if (hours.days.length > 1) {
       const nextDay = hours.days.find(day => day.daysAway > 0);
@@ -193,7 +196,7 @@ export function timeRemaining(hours, iso) {
     remaining = remaining.trim();
   }
 
-  return { remaining, ending };
+  return { remaining, ending, ended };
 }
 
 export function makeHours(item, iso) {

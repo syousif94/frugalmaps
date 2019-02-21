@@ -15,7 +15,7 @@ const mapStateToProps = (state, props) => ({
 const renderEvent = (event, index) => {
   const { _source: item, _id: id } = event;
   const iso = makeISO(item.days);
-  const { remaining, ending } = timeRemaining(item.groupedHours[0], iso);
+  const { remaining, ending, ended } = timeRemaining(item.groupedHours[0], iso);
 
   const countdownStyle = [styles.countdownText];
 
@@ -82,6 +82,9 @@ const renderEvent = (event, index) => {
               <View style={styles.days}>
                 {hours.days.map(day => {
                   const dayStyle = [styles.day];
+                  if (day.daysAway === 0 && ended) {
+                    dayStyle.push(styles.ended);
+                  }
                   return (
                     <View style={dayStyle} key={day.text}>
                       <Text style={styles.dayText}>{day.text}</Text>
@@ -239,6 +242,9 @@ const styles = StyleSheet.create({
   },
   ending: {
     color: GREEN
+  },
+  ended: {
+    backgroundColor: "#EA841A"
   },
   titleRow: {
     marginTop: 1,

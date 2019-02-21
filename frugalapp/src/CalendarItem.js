@@ -1,11 +1,5 @@
 import React, { Component } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  TouchableOpacity
-} from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import ImageGallery from "./ImageGallery";
 import { timeRemaining, makeISO } from "./Time";
 import { WIDTH } from "./Constants";
@@ -13,6 +7,7 @@ import NotifyButton from "./NotifyButton";
 import MonoText from "./MonoText";
 import { FontAwesome } from "@expo/vector-icons";
 import emitter from "tiny-emitter/instance";
+import { RED } from "./Colors";
 
 class CalendarItem extends Component {
   state = {
@@ -88,7 +83,10 @@ class CalendarItem extends Component {
       iso = makeISO(item.days);
     }
 
-    const { remaining, ending } = timeRemaining(item.groupedHours[0], iso);
+    const { remaining, ending, ended } = timeRemaining(
+      item.groupedHours[0],
+      iso
+    );
 
     const countdownStyle = [styles.countdownText];
 
@@ -163,8 +161,12 @@ class CalendarItem extends Component {
                 </View>
                 <View style={styles.days}>
                   {hours.days.map(day => {
+                    const dayStyle = [styles.day];
+                    if (day.daysAway === 0 && ended) {
+                      dayStyle.push(styles.ended);
+                    }
                     return (
-                      <View style={styles.day} key={day.text}>
+                      <View style={dayStyle} key={day.text}>
                         <Text style={styles.dayText}>{day.text}</Text>
                         {day.daysAway === 0 ? null : (
                           <View style={styles.daysAway}>
@@ -273,6 +275,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#18AB2E",
     alignItems: "center",
     marginRight: 2
+  },
+  ended: {
+    backgroundColor: "#EA841A"
   },
   daysAway: {
     marginLeft: 2,
