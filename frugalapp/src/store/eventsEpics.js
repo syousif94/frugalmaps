@@ -9,7 +9,7 @@ import _ from "lodash";
 import api from "../API";
 import * as Events from "./events";
 import * as Location from "./location";
-import { groupHours, timeRemaining, makeISO } from "../Time";
+import { groupHours, timeRemaining, makeISO, makeYesterdayISO } from "../Time";
 import locate from "../Locate";
 import { ANDROID } from "../Constants";
 
@@ -65,12 +65,12 @@ const makeEvents = (hits, week = false, nearest = false) => {
     { title: "Sunday", data: [], iso: 0, away: 0 }
   ];
 
-  const closest = {
-    title: "Closest",
-    data: _.uniqBy(hits, "_source.placeid"),
-    iso: 0,
-    away: 0
-  };
+  // const closest = {
+  //   title: "Closest",
+  //   data: _.uniqBy(hits, "_source.placeid"),
+  //   iso: 0,
+  //   away: 0
+  // };
 
   if (!hits) {
     return initial;
@@ -114,7 +114,7 @@ const makeEvents = (hits, week = false, nearest = false) => {
       today.data = today.data.filter(day => !day.sort || day.sort < 45);
     }
     today.data = today.data.sort(sortDays(timeInt));
-    return [today, closest];
+    return [today];
   }
 };
 
@@ -134,7 +134,15 @@ const makeMarkers = (days, bounds) => {
               event._source.groupedHours[0],
               iso
             );
-            return ending;
+            if (ending || event._source.groupedHours.length === 1) {
+              return ending;
+            }
+            const yesterdayISO = makeYesterdayISO(event._source.days);
+            const { ending: endingYesterday } = timeRemaining(
+              event._source.groupedHours[event._source.groupedHours.length - 1],
+              yesterdayISO
+            );
+            return endingYesterday;
           });
 
           if (endingEvents.length) {
@@ -257,9 +265,40 @@ const events = (action$, store) =>
             AsyncStorage.setItem("oldData", JSON.stringify({ hits, recent }));
           }
 
-          const list = makeEvents(hits, false, nearestQuery);
-
           const calendar = makeEvents(hits, true, nearestQuery);
+
+          const listData = _.uniqBy(
+            [
+              ...calendar[calendar.length - 1].data.filter(event => {
+                const iso = calendar[calendar.length - 1].iso;
+                const { ending } = timeRemaining(
+                  event._source.groupedHours[
+                    event._source.groupedHours.length - 1
+                  ],
+                  iso
+                );
+                return ending;
+              }),
+              ...calendar[0].data.filter(event => {
+                const { ended } = timeRemaining(
+                  event._source.groupedHours[0],
+                  calendar[0].iso
+                );
+                return !ended;
+              }),
+              ...calendar
+                .slice(1)
+                .reduce((events, event) => [...events, ...event.data], [])
+            ],
+            "_id"
+          );
+
+          const list = [
+            {
+              title: "Up Next",
+              data: listData
+            }
+          ];
 
           let markerData = [{ title: "All", data: hits }, ...calendar];
 
@@ -397,9 +436,42 @@ const restore = action$ =>
           recent = value.recent;
         }
 
-        const list = makeEvents(data, false, true);
+        // const list = makeEvents(data, false, true);
 
         const calendar = makeEvents(data, true, true);
+
+        const listData = _.uniqBy(
+          [
+            ...calendar[calendar.length - 1].data.filter(event => {
+              const iso = calendar[calendar.length - 1].iso;
+              const { ending } = timeRemaining(
+                event._source.groupedHours[
+                  event._source.groupedHours.length - 1
+                ],
+                iso
+              );
+              return ending;
+            }),
+            ...calendar[0].data.filter(event => {
+              const { ended } = timeRemaining(
+                event._source.groupedHours[0],
+                calendar[0].iso
+              );
+              return !ended;
+            }),
+            ...calendar
+              .slice(1)
+              .reduce((events, event) => [...events, ...event.data], [])
+          ],
+          "_id"
+        );
+
+        const list = [
+          {
+            title: "Up Next",
+            data: listData
+          }
+        ];
 
         // const markers = makeMarkers([{ title: "All", data }, ...calendar]);
 

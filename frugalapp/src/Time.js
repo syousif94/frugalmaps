@@ -101,6 +101,14 @@ export function makeISO(days) {
   return dayToISO(closestDay);
 }
 
+export function makeYesterdayISO(days) {
+  const today = moment().weekday();
+
+  const yesterdayISO = days.find(day => dayToISO(day) - today === -1);
+
+  return dayToISO(yesterdayISO);
+}
+
 export function makeDuration(hours) {
   const start = moment(hours.start, ["h:ma", "H:m"]);
   let end = moment(hours.end, ["h:ma", "H:m"]);
@@ -116,7 +124,6 @@ export function makeDuration(hours) {
 }
 
 export function timeRemaining(hours, iso) {
-  let ended = false;
   const time = Date.now();
   let ending = false;
   let now = moment();
@@ -129,9 +136,6 @@ export function timeRemaining(hours, iso) {
     diff = end.valueOf() - time;
   } else if (now.isBefore(start)) {
     diff = start.valueOf() - time;
-
-    ended = hours.today;
-
     if (hours.today && hours.days.length > 1) {
       const nextDay = hours.days.find(day => day.daysAway > 0);
       const nextStart = start.subtract(7 - nextDay.daysAway, "d");
@@ -141,7 +145,6 @@ export function timeRemaining(hours, iso) {
       }
     }
   } else if (hours.today) {
-    ended = true;
     let daysAway = 7;
     if (hours.days.length > 1) {
       const nextDay = hours.days.find(day => day.daysAway > 0);
@@ -196,6 +199,9 @@ export function timeRemaining(hours, iso) {
 
     remaining = remaining.trim();
   }
+
+  const ended =
+    !ending && hours.today && end.isAfter(start) && now.isBefore(start);
 
   return { remaining, ending, ended };
 }

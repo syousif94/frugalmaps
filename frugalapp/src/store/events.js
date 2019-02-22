@@ -3,6 +3,7 @@ import moment from "moment";
 import { createSelector } from "reselect";
 import { createActions } from "./lib";
 import _ from "lodash";
+import { makeYesterdayISO, timeRemaining } from "../Time";
 
 const mutations = ["set", "restore", "fetch", "merge"];
 
@@ -43,7 +44,7 @@ export const placeEvents = createSelector(
 
     const today = moment().weekday();
 
-    return group.sort((_a, _b) => {
+    let sorted = group.sort((_a, _b) => {
       let a = _a._source.groupedHours[0].iso - today;
       if (a < 0) {
         a += 7;
@@ -54,6 +55,34 @@ export const placeEvents = createSelector(
       }
       return a - b;
     });
+
+    sorted = sorted.sort((_a, _b) => {
+      let a = 0;
+      const aISO = makeYesterdayISO(_a._source.days);
+      if (aISO) {
+        const { ending: aEnding } = timeRemaining(
+          _a._source.groupedHours[_a._source.groupedHours.length - 1],
+          aISO
+        );
+
+        a = aEnding ? 1 : 0;
+      }
+
+      let b = 0;
+      const bISO = makeYesterdayISO(_b._source.days);
+      if (bISO) {
+        const { ending: bEnding } = timeRemaining(
+          _b._source.groupedHours[_b._source.groupedHours.length - 1],
+          bISO
+        );
+
+        b = bEnding ? 1 : 0;
+      }
+
+      return a - b;
+    });
+
+    return sorted;
   }
 );
 

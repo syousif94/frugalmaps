@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import ImageGallery from "./ImageGallery";
-import { timeRemaining, makeISO } from "./Time";
+import { timeRemaining, makeISO, makeYesterdayISO } from "./Time";
 import { WIDTH, ANDROID } from "./Constants";
 import NotifyButton from "./NotifyButton";
 import GoingButton from "./GoingButton";
@@ -78,15 +78,38 @@ class CalendarItem extends Component {
     }
 
     let iso = this.props.iso;
+    let yesterdayIso;
 
     if (!iso) {
       iso = makeISO(item.days);
+      yesterdayIso = makeYesterdayISO(item.days);
     }
 
-    const { remaining, ending, ended } = timeRemaining(
+    let remaining;
+    let ending;
+    let ended;
+
+    const { remaining: r, ending: e, ended: ed } = timeRemaining(
       item.groupedHours[0],
       iso
     );
+
+    remaining = r;
+    ending = e;
+    ended = ed;
+
+    if (yesterdayIso && !ending) {
+      const { remaining: r, ending: e, ended: ed } = timeRemaining(
+        item.groupedHours[item.groupedHours.length - 1],
+        yesterdayIso
+      );
+
+      if (e) {
+        remaining = r;
+        ending = e;
+        ended = ed;
+      }
+    }
 
     const countdownStyle = [styles.countdownText];
 
@@ -181,9 +204,9 @@ class CalendarItem extends Component {
             );
           })}
           <Text style={styles.descriptionText}>{item.description}</Text>
-          <View style={{ flexDirection: "row", marginBottom: 5, marginTop: 7 }}>
+          <View style={styles.actions}>
             <GoingButton event={this.props.item} />
-            <View style={{ width: 10 }} />
+            <View style={styles.actionsDivider} />
             <NotifyButton event={this.props.item} />
           </View>
         </View>
@@ -323,5 +346,7 @@ const styles = StyleSheet.create({
   },
   colon: {
     paddingBottom: 1
-  }
+  },
+  actions: { flexDirection: "row", marginBottom: 5, marginTop: 7 },
+  actionsDivider: { width: 10 }
 });

@@ -3,9 +3,10 @@ import { connect } from "react-redux";
 import { View, StyleSheet, Text } from "react-native";
 
 import * as Events from "./store/events";
-import { makeISO, timeRemaining } from "./Time";
+import { timeRemaining, makeISO, makeYesterdayISO } from "./Time";
 import MonoText from "./MonoText";
 import NotifyButton from "./NotifyButton";
+import GoingButton from "./GoingButton";
 import { GREEN } from "./Colors";
 
 const mapStateToProps = (state, props) => ({
@@ -15,7 +16,35 @@ const mapStateToProps = (state, props) => ({
 const renderEvent = (event, index) => {
   const { _source: item, _id: id } = event;
   const iso = makeISO(item.days);
-  const { remaining, ending, ended } = timeRemaining(item.groupedHours[0], iso);
+
+  let remaining;
+  let ending;
+  let ended;
+
+  const { remaining: r, ending: e, ended: ed } = timeRemaining(
+    item.groupedHours[0],
+    iso
+  );
+
+  remaining = r;
+  ending = e;
+  ended = ed;
+
+  if (!ending) {
+    const yesterdayIso = makeYesterdayISO(item.days);
+    if (yesterdayIso) {
+      const { remaining: r, ending: e, ended: ed } = timeRemaining(
+        item.groupedHours[item.groupedHours.length - 1],
+        yesterdayIso
+      );
+
+      if (e) {
+        remaining = r;
+        ending = e;
+        ended = ed;
+      }
+    }
+  }
 
   const countdownStyle = [styles.countdownText];
 
@@ -43,71 +72,63 @@ const renderEvent = (event, index) => {
 
   return (
     <View style={eventStyle} key={id}>
-      <View>
-        <View style={styles.titleRow}>
-          <Text style={styles.boldText}>
-            {index + 1}. {item.title}
-          </Text>
-          {item.type === "Happy Hour" ? (
-            <View style={styles.twentyOne}>
-              <Text style={styles.twentyOneText}>21+</Text>
-            </View>
-          ) : null}
-        </View>
-        <Text style={[styles.infoText, styles.descriptionText]}>
-          {item.description}
+      <MonoText
+        characterWidth={7.5}
+        style={styles.countdown}
+        text={remaining}
+        suffix={endingText}
+        textStyle={countdownStyle}
+        suffixStyle={styles.suffix}
+        colonStyle={styles.colon}
+      />
+      <View style={styles.titleRow}>
+        <Text style={styles.boldText}>
+          {index + 1}. {item.title}
         </Text>
+        {item.type === "Happy Hour" ? (
+          <View style={styles.twentyOne}>
+            <Text style={styles.twentyOneText}>21+</Text>
+          </View>
+        ) : null}
       </View>
-      <View style={styles.hours} pointerEvents="none">
-        <MonoText
-          characterWidth={7.5}
-          style={styles.countdown}
-          text={remaining}
-          suffix={endingText}
-          textStyle={countdownStyle}
-          suffixStyle={styles.suffix}
-          colonStyle={styles.colon}
-        />
-        {item.groupedHours.map((hours, index) => {
-          const marginTop = index !== 0 ? 1 : 0;
-          const longDays = hours.days.length > 4;
-          const flexDirection = longDays ? "column" : "row";
-          const alignItems = longDays ? "flex-start" : "center";
-          const timeMarginTop = longDays ? 1 : 0;
-          return (
-            <View
-              style={[styles.hour, { marginTop, flexDirection, alignItems }]}
-              key={index}
-            >
-              <View style={styles.days}>
-                {hours.days.map(day => {
-                  const dayStyle = [styles.day];
-                  if (day.daysAway === 0 && ended) {
-                    dayStyle.push(styles.ended);
-                  }
-                  return (
-                    <View style={dayStyle} key={day.text}>
-                      <Text style={styles.dayText}>{day.text}</Text>
-                      {day.daysAway === 0 ? null : (
-                        <View style={styles.daysAway}>
-                          <Text style={styles.dayText}>{day.daysAway}</Text>
-                        </View>
-                      )}
-                    </View>
-                  );
-                })}
-              </View>
-              <View style={[styles.time, { marginTop: timeMarginTop }]}>
-                <Text style={styles.hourText}>
-                  {hours.hours}{" "}
-                  <Text style={styles.durationText}>{hours.duration}hr</Text>
-                </Text>
-              </View>
+      {item.groupedHours.map((hours, index) => {
+        return (
+          <View style={styles.hour} key={index}>
+            <View style={styles.time}>
+              <Text style={styles.hourText} numberOfLines={1}>
+                {hours.hours}{" "}
+                <Text style={styles.durationText}>{hours.duration}hr</Text>
+              </Text>
             </View>
-          );
-        })}
+            <View style={styles.days}>
+              {hours.days.map(day => {
+                const dayStyle = [styles.day];
+                if (day.daysAway === 0 && ended) {
+                  dayStyle.push(styles.ended);
+                }
+                return (
+                  <View style={dayStyle} key={day.text}>
+                    <Text style={styles.dayText}>{day.text}</Text>
+                    {day.daysAway === 0 ? null : (
+                      <View style={styles.daysAway}>
+                        <Text style={styles.dayText}>{day.daysAway}</Text>
+                      </View>
+                    )}
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+        );
+      })}
+      <Text style={[styles.infoText, styles.descriptionText]}>
+        {item.description}
+      </Text>
+      <View style={styles.actions}>
+        <GoingButton event={event} />
+        <View style={styles.actionsDivider} />
+        <NotifyButton event={event} />
       </View>
-      <NotifyButton {...{ event }} />
     </View>
   );
 };
@@ -187,16 +208,13 @@ const styles = StyleSheet.create({
     paddingRight: 50
   },
   time: {
-    flex: 1,
+    marginBottom: 3,
     flexDirection: "row",
-    alignItems: "center"
-  },
-  hours: {
-    marginTop: 2
+    alignItems: "center",
+    justifyContent: "space-between"
   },
   hour: {
-    flexDirection: "row",
-    alignItems: "center"
+    marginVertical: 3
   },
   hourText: {
     color: "#444",
@@ -206,8 +224,7 @@ const styles = StyleSheet.create({
     fontSize: 9
   },
   days: {
-    flexDirection: "row",
-    marginRight: 3
+    flexDirection: "row"
   },
   day: {
     flexDirection: "row",
@@ -269,5 +286,7 @@ const styles = StyleSheet.create({
   },
   colon: {
     paddingBottom: 1
-  }
+  },
+  actions: { flexDirection: "row", marginBottom: 5, marginTop: 7 },
+  actionsDivider: { width: 10 }
 });

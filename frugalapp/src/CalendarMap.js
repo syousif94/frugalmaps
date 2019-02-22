@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { Entypo } from "@expo/vector-icons";
 
 import emitter from "tiny-emitter/instance";
-import { makeISO, timeRemaining } from "./Time";
+import { makeISO, timeRemaining, makeYesterdayISO } from "./Time";
 import { INITIAL_REGION, HEIGHT } from "./Constants";
 
 import * as Location from "./store/location";
@@ -201,7 +201,16 @@ class CalendarMap extends PureComponent {
             const { _id, _source: item } = data;
 
             const iso = makeISO(item.days);
-            const { ending } = timeRemaining(item.groupedHours[0], iso);
+            let { ending } = timeRemaining(item.groupedHours[0], iso);
+
+            if (!ending && item.groupedHours.length > 1) {
+              const yesterdayISO = makeYesterdayISO(item.days);
+              const { ending: endingYesterday } = timeRemaining(
+                item.groupedHours[item.groupedHours.length - 1],
+                yesterdayISO
+              );
+              ending = endingYesterday;
+            }
 
             return (
               <MapMarker
