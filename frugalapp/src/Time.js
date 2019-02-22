@@ -130,12 +130,13 @@ export function timeRemaining(hours, iso) {
   } else if (now.isBefore(start)) {
     diff = start.valueOf() - time;
 
+    ended = hours.today;
+
     if (hours.today && hours.days.length > 1) {
       const nextDay = hours.days.find(day => day.daysAway > 0);
       const nextStart = start.subtract(7 - nextDay.daysAway, "d");
       const nextDiff = nextStart.valueOf() - time;
       if (nextDiff >= 0) {
-        ended = true;
         diff = Math.min(nextDiff, diff);
       }
     }

@@ -5,7 +5,7 @@ export default class GoingButton extends PureComponent {
   render() {
     return (
       <View style={styles.container}>
-        <TouchableOpacity styles={styles.btn}>
+        <TouchableOpacity style={styles.btn}>
           <Text>Going</Text>
         </TouchableOpacity>
       </View>

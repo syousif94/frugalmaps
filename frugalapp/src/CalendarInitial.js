@@ -1,47 +1,26 @@
 import React, { PureComponent } from "react";
-import { View, StyleSheet, Text, ActivityIndicator } from "react-native";
+import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { connect } from "react-redux";
-import { ANDROID } from "./Constants";
+import { HEIGHT } from "./Constants";
 
 class CalendarInitial extends PureComponent {
   render() {
-    const { initialized, listTop } = this.props;
+    const { initialized } = this.props;
 
-    if (initialized || !listTop) {
+    if (initialized) {
       return null;
     }
 
-    const style = [
-      styles.initialLoad,
-      {
-        top: listTop
-      }
-    ];
-
-    if (ANDROID) {
-      return (
-        <View style={style}>
-          <Text style={styles.initialText}>
-            Initial location may take several seconds
-          </Text>
-        </View>
-      );
-    }
-
     return (
-      <View style={style}>
+      <View style={styles.initialLoad}>
         <ActivityIndicator style={styles.loading} size="large" color="#444" />
-        <Text style={styles.initialText}>
-          Initial location may take several seconds
-        </Text>
       </View>
     );
   }
 }
 
 const mapStateToProps = state => ({
-  initialized: state.events.initialized,
-  listTop: state.location.listTop
+  initialized: state.events.initialized
 });
 
 export default connect(mapStateToProps)(CalendarInitial);
@@ -49,21 +28,15 @@ export default connect(mapStateToProps)(CalendarInitial);
 const styles = StyleSheet.create({
   initialLoad: {
     position: "absolute",
+    top: HEIGHT * 0.31,
+    backgroundColor: "#fff",
     bottom: 0,
     left: 0,
     right: 0,
     alignItems: "center"
   },
-  initialText: {
-    width: 220,
-    marginTop: ANDROID ? 100 : 25,
-    textAlign: "center",
-    fontSize: 12,
-    lineHeight: 16,
-    color: "#444"
-  },
   loading: {
-    marginTop: 15,
+    marginTop: 65,
     transform: [{ scale: 0.8 }]
   }
 });

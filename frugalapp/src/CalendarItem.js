@@ -4,10 +4,10 @@ import ImageGallery from "./ImageGallery";
 import { timeRemaining, makeISO } from "./Time";
 import { WIDTH, ANDROID } from "./Constants";
 import NotifyButton from "./NotifyButton";
+import GoingButton from "./GoingButton";
 import MonoText from "./MonoText";
 import { FontAwesome } from "@expo/vector-icons";
 import emitter from "tiny-emitter/instance";
-import { RED } from "./Colors";
 
 class CalendarItem extends Component {
   state = {
@@ -182,7 +182,7 @@ class CalendarItem extends Component {
           })}
           <Text style={styles.descriptionText}>{item.description}</Text>
           <View style={{ flexDirection: "row", marginBottom: 5, marginTop: 7 }}>
-            <NotifyButton event={this.props.item} />
+            <GoingButton event={this.props.item} />
             <View style={{ width: 10 }} />
             <NotifyButton event={this.props.item} />
           </View>

@@ -233,6 +233,7 @@ class MapScreen extends PureComponent {
                   const { _id, _source: item } = data;
 
                   const iso = makeISO(item.days);
+
                   const { ending } = timeRemaining(item.groupedHours[0], iso);
 
                   return <MapMarker ending={ending} data={data} key={_id} />;

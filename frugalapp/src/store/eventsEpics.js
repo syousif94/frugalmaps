@@ -9,8 +9,9 @@ import _ from "lodash";
 import api from "../API";
 import * as Events from "./events";
 import * as Location from "./location";
-import { groupHours } from "../Time";
+import { groupHours, timeRemaining, makeISO } from "../Time";
 import locate from "../Locate";
+import { ANDROID } from "../Constants";
 
 const sortDays = (now, away) => (a, b) => {
   let aStart = parseInt(a._source.groupedHours[0].start, 10);
@@ -118,17 +119,49 @@ const makeEvents = (hits, week = false, nearest = false) => {
 };
 
 const makeMarkers = (days, bounds) => {
+  const today = moment().weekday();
   return _(days)
     .map(day => {
       const clone = _.cloneDeep(day);
       clone.data = _(day.data)
         .groupBy(hit => hit._source.placeid)
         .map(events => {
+          let firstEvent;
+
+          const endingEvents = events.filter(event => {
+            const iso = makeISO(event._source.days);
+            const { ending } = timeRemaining(
+              event._source.groupedHours[0],
+              iso
+            );
+            return ending;
+          });
+
+          if (endingEvents.length) {
+            firstEvent = endingEvents[0];
+          }
+
+          const sortedEvents = events.sort((_a, _b) => {
+            let a = _a._source.groupedHours[0].iso - today;
+            if (a < 0) {
+              a += 7;
+            }
+            let b = _b._source.groupedHours[0].iso - today;
+            if (b < 0) {
+              b += 7;
+            }
+            return a - b;
+          });
+
+          if (!firstEvent) {
+            firstEvent = sortedEvents[0];
+          }
+
           return {
             _id: events[0]._id,
             type: "group",
-            _source: events[0]._source,
-            events
+            _source: firstEvent._source,
+            events: sortedEvents
           };
         })
         .filter(events => {
@@ -220,7 +253,7 @@ const events = (action$, store) =>
 
           const nearestQuery = !action.payload.bounds && !cityQuery;
 
-          if (nearestQuery) {
+          if (nearestQuery && !ANDROID) {
             AsyncStorage.setItem("oldData", JSON.stringify({ hits, recent }));
           }
 

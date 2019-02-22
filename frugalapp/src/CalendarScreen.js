@@ -12,12 +12,17 @@ import CalendarInitial from "./CalendarInitial";
 import CalendarMap from "./CalendarMap";
 import MenuButton from "./MenuButton";
 import Menu from "./Menu";
+import { ANDROID } from "./Constants";
 
 class CalendarScreen extends Component {
   static id = "cal";
 
   componentDidMount() {
-    this.props.restore();
+    if (ANDROID) {
+      this.props.fetch();
+    } else {
+      this.props.restore();
+    }
   }
 
   render() {
@@ -38,6 +43,7 @@ class CalendarScreen extends Component {
 }
 
 const mapDispatchToProps = {
+  fetch: Events.actions.set.bind(null, { refreshing: true }),
   restore: Events.actions.restore
 };
 
