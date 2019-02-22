@@ -55,10 +55,14 @@ class CalendarMap extends PureComponent {
       { toValue, duration: 350 },
       { useNativeDriver: true }
     ).start(() => {
-      this._fitBounds(this._lastBounds);
-      this.setState({
-        expanded: !this.state.expanded
-      });
+      if (!this.state.expanded) {
+        this._fitBounds(this._lastBounds);
+      }
+      setTimeout(() => {
+        this.setState({
+          expanded: !this.state.expanded
+        });
+      }, 40);
     });
   };
 
@@ -96,7 +100,9 @@ class CalendarMap extends PureComponent {
       return;
     }
     this._lastBounds = bounds;
+
     const padding = this.state.expanded ? 0 : -30;
+
     const coords = [
       {
         latitude: bounds.northeast.lat,
@@ -111,10 +117,10 @@ class CalendarMap extends PureComponent {
       this._map.fitToCoordinates(coords, {
         animated,
         edgePadding: {
-          top: padding,
-          right: padding,
-          bottom: padding,
-          left: padding
+          top: 10,
+          right: 0,
+          bottom: 0,
+          left: 0
         }
       });
     });
@@ -124,6 +130,8 @@ class CalendarMap extends PureComponent {
     const {
       _source: { viewport }
     } = doc;
+
+    this._lastBounds = null;
 
     const coords = [
       {
