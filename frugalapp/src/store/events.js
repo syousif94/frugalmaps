@@ -15,7 +15,7 @@ export const homeList = createSelector(
   state => state.events.calendar,
   state => state.events.recent,
   (day, list, calendar, recent) => {
-    if (day === "All") {
+    if (day === "Up Next") {
       return list;
     }
     if (day === "Newest") {
@@ -106,7 +106,7 @@ export const markerList = createSelector(
   }
 );
 
-function day(state = "All", { type, payload }) {
+function day(state = "Up Next", { type, payload }) {
   switch (type) {
     case types.set:
       if (payload.day !== undefined) {

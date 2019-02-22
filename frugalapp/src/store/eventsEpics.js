@@ -300,7 +300,7 @@ const events = (action$, store) =>
             }
           ];
 
-          let markerData = [{ title: "All", data: hits }, ...calendar];
+          let markerData = [{ title: "Up Next", data: hits }, ...calendar];
 
           if (recent) {
             markerData = [...recent, ...markerData];
@@ -308,7 +308,7 @@ const events = (action$, store) =>
 
           const markers = makeMarkers(markerData, bounds);
 
-          let day = "All";
+          let day = "Up Next";
 
           if (action.payload.bounds && !cityQuery) {
             const {
@@ -327,7 +327,7 @@ const events = (action$, store) =>
               }
 
               if (!day) {
-                day = "All";
+                day = "Up Next";
               }
             }
           }
@@ -473,9 +473,9 @@ const restore = action$ =>
           }
         ];
 
-        // const markers = makeMarkers([{ title: "All", data }, ...calendar]);
+        // const markers = makeMarkers([{ title: "Up Next", data }, ...calendar]);
 
-        let markerData = [{ title: "All", data }, ...calendar];
+        let markerData = [{ title: "Up Next", data }, ...calendar];
 
         if (recent) {
           markerData = [...recent, ...markerData];

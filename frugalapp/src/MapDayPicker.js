@@ -137,7 +137,7 @@ class DayPicker extends Component {
 
     const iconEvents = open ? "none" : "auto";
 
-    const calendar = [{ title: "All" }, ...data];
+    const calendar = [{ title: "Up Next" }, ...data];
 
     return (
       <Animated.View style={constainerStyle}>

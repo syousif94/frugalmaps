@@ -177,7 +177,7 @@ const mapDispatchToProps = {
   fetch: Events.actions.set.bind(null, {
     refreshing: true,
     queryType: null,
-    day: "All"
+    day: "Up Next"
   }),
   restore: Events.actions.restore
 };

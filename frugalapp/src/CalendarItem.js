@@ -99,7 +99,7 @@ class CalendarItem extends Component {
     ended = ed;
 
     if (yesterdayIso && !ending) {
-      const { remaining: r, ending: e, ended: ed } = timeRemaining(
+      const { remaining: r, ending: e } = timeRemaining(
         item.groupedHours[item.groupedHours.length - 1],
         yesterdayIso
       );
@@ -107,7 +107,6 @@ class CalendarItem extends Component {
       if (e) {
         remaining = r;
         ending = e;
-        ended = ed;
       }
     }
 

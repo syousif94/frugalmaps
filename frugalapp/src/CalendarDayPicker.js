@@ -20,8 +20,8 @@ class DayPicker extends PureComponent {
   };
 
   render() {
-    const { calendar, day, recent } = this.props;
-    const days = [...recent, ...calendar];
+    const { calendar, day, recent, list } = this.props;
+    const days = [...list, ...recent, ...calendar];
     return (
       <View style={styles.container}>
         {days.map(data => {
@@ -49,7 +49,8 @@ class DayPicker extends PureComponent {
 const mapStateToProps = state => ({
   day: state.events.day,
   calendar: state.events.calendar,
-  recent: state.events.recent
+  recent: state.events.recent,
+  list: state.events.list
 });
 
 const mapDispatchToProps = {
