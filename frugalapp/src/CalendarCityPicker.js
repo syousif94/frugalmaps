@@ -33,6 +33,7 @@ class CityPicker extends PureComponent {
 
     emitter.emit("fit-bounds", bounds);
     emitter.emit("hide-callouts", bounds);
+    emitter.emit("calendar-top", 0, true);
   };
 
   _scrollTo = (offset, animated = false) => {

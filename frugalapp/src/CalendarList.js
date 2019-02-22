@@ -48,7 +48,7 @@ class CalendarList extends PureComponent {
   };
 
   _scrollToTop = (top, animated = false) => {
-    const y = top !== undefined ? top : IOS ? -40 : 0;
+    const y = top !== undefined ? top : 0;
     this._list.getScrollResponder().scrollTo({ x: 0, y, animated });
   };
 
