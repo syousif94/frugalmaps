@@ -190,6 +190,45 @@ const makeMarkers = (days, bounds) => {
     .value();
 };
 
+function makeListData(calendar) {
+  return _.uniqBy(
+    [
+      ...calendar[calendar.length - 1].data.filter(event => {
+        const iso = calendar[calendar.length - 1].iso;
+        const { ending } = timeRemaining(
+          event._source.groupedHours[event._source.groupedHours.length - 1],
+          iso
+        );
+        return ending;
+      }),
+      ...calendar[0].data.filter(event => {
+        const { ended } = timeRemaining(
+          event._source.groupedHours[0],
+          calendar[0].iso
+        );
+        return !ended;
+      }),
+      ...(calendar.length > 1 ? calendar.slice(1) : calendar).reduce(
+        (events, day) => {
+          let data = day.data;
+          if (calendar.length < 2) {
+            data = data.filter(event => {
+              const { ended } = timeRemaining(
+                event._source.groupedHours[0],
+                day.iso
+              );
+              return ended;
+            });
+          }
+          return [...events, ...data];
+        },
+        []
+      )
+    ],
+    "_id"
+  );
+}
+
 const events = (action$, store) =>
   action$
     .ofType(Events.types.set)
@@ -267,31 +306,7 @@ const events = (action$, store) =>
 
           const calendar = makeEvents(hits, true, nearestQuery);
 
-          const listData = _.uniqBy(
-            [
-              ...calendar[calendar.length - 1].data.filter(event => {
-                const iso = calendar[calendar.length - 1].iso;
-                const { ending } = timeRemaining(
-                  event._source.groupedHours[
-                    event._source.groupedHours.length - 1
-                  ],
-                  iso
-                );
-                return ending;
-              }),
-              ...calendar[0].data.filter(event => {
-                const { ended } = timeRemaining(
-                  event._source.groupedHours[0],
-                  calendar[0].iso
-                );
-                return !ended;
-              }),
-              ...calendar
-                .slice(1)
-                .reduce((events, event) => [...events, ...event.data], [])
-            ],
-            "_id"
-          );
+          const listData = makeListData(calendar);
 
           const list = [
             {
@@ -440,31 +455,7 @@ const restore = action$ =>
 
         const calendar = makeEvents(data, true, true);
 
-        const listData = _.uniqBy(
-          [
-            ...calendar[calendar.length - 1].data.filter(event => {
-              const iso = calendar[calendar.length - 1].iso;
-              const { ending } = timeRemaining(
-                event._source.groupedHours[
-                  event._source.groupedHours.length - 1
-                ],
-                iso
-              );
-              return ending;
-            }),
-            ...calendar[0].data.filter(event => {
-              const { ended } = timeRemaining(
-                event._source.groupedHours[0],
-                calendar[0].iso
-              );
-              return !ended;
-            }),
-            ...calendar
-              .slice(1)
-              .reduce((events, event) => [...events, ...event.data], [])
-          ],
-          "_id"
-        );
+        const listData = makeListData(calendar);
 
         const list = [
           {

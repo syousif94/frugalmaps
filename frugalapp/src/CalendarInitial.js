@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
-import { View, StyleSheet, ActivityIndicator } from "react-native";
+import { View, StyleSheet, ActivityIndicator, Text } from "react-native";
 import { connect } from "react-redux";
-import { HEIGHT } from "./Constants";
+import { HEIGHT, ANDROID } from "./Constants";
 
 class CalendarInitial extends PureComponent {
   render() {
@@ -14,6 +14,7 @@ class CalendarInitial extends PureComponent {
     return (
       <View style={styles.initialLoad}>
         <ActivityIndicator style={styles.loading} size="large" color="#444" />
+        {ANDROID ? <Text style={styles.text}>Locating</Text> : null}
       </View>
     );
   }
@@ -38,5 +39,10 @@ const styles = StyleSheet.create({
   loading: {
     marginTop: 65,
     transform: [{ scale: 0.8 }]
+  },
+  text: {
+    marginTop: 15,
+    color: "#444",
+    fontSize: 12
   }
 });

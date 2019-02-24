@@ -7,22 +7,9 @@ const mutations = ["set", "coordinates", "suggestions", "completions"];
 export const { actions, types } = createActions(mutations, "location");
 
 export const makeData = createSelector(
-  (state, props) => props.tabLabel,
   state => state.location.popular,
   state => state.location.closest,
-  state => state.location.completions,
-  (type, popular, closest, completions) => {
-    switch (type) {
-      case "Closest":
-        return closest;
-      case "Popular":
-        return popular;
-      case "Search":
-        return completions;
-      default:
-        break;
-    }
-  }
+  (popular, closest) => (closest.length ? closest : popular)
 );
 
 function coordinates(state = null, { type, payload }) {

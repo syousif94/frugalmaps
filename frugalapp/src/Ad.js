@@ -19,7 +19,7 @@ export default class Ad extends PureComponent {
 
     const pointerEvents = touchAd ? "auto" : "none";
 
-    if (IOS && initialized) {
+    if (initialized) {
       return (
         <View style={styles.adView} pointerEvents="box-none">
           <View style={styles.adBanner} pointerEvents="none">
@@ -76,13 +76,15 @@ const styles = StyleSheet.create({
     top: IOS ? -20 : 0,
     left: 0,
     right: 0,
-    height: IOS ? 70 : 50
+    height: IOS ? 70 : 50,
+    elevation: 3
   },
   ad: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    height: 50
+    height: 50,
+    elevation: 3
   }
 });

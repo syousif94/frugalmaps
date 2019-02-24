@@ -232,7 +232,7 @@ class CalendarMap extends PureComponent {
               size={16}
               color="#fff"
             />
-            <Text style={styles.btnText}>Map</Text>
+            <Text style={styles.btnText}>List</Text>
           </TouchableOpacity>
         </Animated.View>
       </Animated.View>

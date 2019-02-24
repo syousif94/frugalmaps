@@ -102,7 +102,11 @@ export function makeISO(days) {
 }
 
 export function makeYesterdayISO(days) {
-  const today = moment().weekday();
+  let today = moment().weekday();
+
+  if (today === 0) {
+    today = 7;
+  }
 
   const yesterdayISO = days.find(day => dayToISO(day) - today === -1);
 

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import ImageGallery from "./ImageGallery";
 import { timeRemaining, makeISO, makeYesterdayISO } from "./Time";
-import { WIDTH, ANDROID } from "./Constants";
+import { WIDTH } from "./Constants";
 import NotifyButton from "./NotifyButton";
 import GoingButton from "./GoingButton";
 import MonoText from "./MonoText";
@@ -68,7 +68,7 @@ class CalendarItem extends Component {
 
     const containerStyle = [
       styles.container,
-      { marginTop: index === 0 ? (ANDROID ? 0 : 10) : 5 }
+      { marginTop: index === 0 ? 10 : 5 }
     ];
 
     let distanceText = "";
@@ -132,7 +132,7 @@ class CalendarItem extends Component {
 
     return (
       <View style={containerStyle}>
-        <ImageGallery width={WIDTH} doc={this.props.item} height={150} />
+        <ImageGallery width={WIDTH - 20} doc={this.props.item} height={150} />
         <TouchableOpacity onPress={this._onMap} style={styles.info}>
           <View style={styles.location}>
             <View style={styles.locationInfo}>
@@ -219,7 +219,10 @@ export default CalendarItem;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
-    marginVertical: 5
+    marginVertical: 5,
+    marginHorizontal: 10,
+    borderRadius: 8,
+    overflow: "hidden"
   },
   info: {
     paddingVertical: 10,
@@ -341,7 +344,7 @@ const styles = StyleSheet.create({
     fontWeight: "700"
   },
   suffix: {
-    fontSize: 9
+    fontSize: 12
   },
   colon: {
     paddingBottom: 1

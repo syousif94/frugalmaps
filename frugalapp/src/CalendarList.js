@@ -133,8 +133,7 @@ class CalendarList extends PureComponent {
 
     const androidProps = ANDROID
       ? {
-          initialNumToRender: 8,
-          maxToRenderPerBatch: 5
+          initialNumToRender: 0
         }
       : {
           onScrollEndDrag: this._onScrollEnd,

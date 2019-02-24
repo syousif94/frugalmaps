@@ -3,11 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { connect } from "react-redux";
 import CalendarList from "./CalendarList";
 
-// import LocationBox from "./LocationBox";
-// import LocationLists from "./LocationLists";
-// import SearchButton from "./SearchButton";
 import * as Events from "./store/events";
-// import CalendarDayPicker from "./CalendarDayPicker";
 import CalendarInitial from "./CalendarInitial";
 import CalendarMap from "./CalendarMap";
 import MenuButton from "./MenuButton";
@@ -28,15 +24,11 @@ class CalendarScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {/* <LocationBox id={CalendarScreen.id} /> */}
         <CalendarMap />
         <CalendarList />
         <CalendarInitial />
         <MenuButton />
         <Menu />
-        {/* <CalendarDayPicker scroll /> */}
-        {/* <SearchButton id={CalendarScreen.id} /> */}
-        {/* <LocationLists id={CalendarScreen.id} /> */}
       </View>
     );
   }
