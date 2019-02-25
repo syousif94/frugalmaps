@@ -142,7 +142,7 @@ export function timeRemaining(hours, iso) {
     diff = start.valueOf() - time;
     if (hours.today && hours.days.length > 1) {
       const nextDay = hours.days.find(day => day.daysAway > 0);
-      const nextStart = start.subtract(7 - nextDay.daysAway, "d");
+      const nextStart = start.clone().subtract(7 - nextDay.daysAway, "d");
       const nextDiff = nextStart.valueOf() - time;
       if (nextDiff >= 0) {
         diff = Math.min(nextDiff, diff);
@@ -154,7 +154,7 @@ export function timeRemaining(hours, iso) {
       const nextDay = hours.days.find(day => day.daysAway > 0);
       daysAway = nextDay.daysAway;
     }
-    const nextStart = start.add(daysAway, "d");
+    const nextStart = start.clone().add(daysAway, "d");
     const nextDiff = nextStart.valueOf() - time;
     if (nextDiff >= 0) {
       diff = nextDiff;
@@ -205,7 +205,10 @@ export function timeRemaining(hours, iso) {
   }
 
   const ended =
-    !ending && hours.today && end.isAfter(start) && now.isBefore(start);
+    !ending &&
+    hours.today &&
+    end.isAfter(start) &&
+    start.isAfter(now.endOf("day"));
 
   return { remaining, ending, ended };
 }

@@ -71,12 +71,6 @@ class CalendarItem extends Component {
       { marginTop: index === 0 ? 10 : 5 }
     ];
 
-    let distanceText = "";
-
-    if (sort && sort[sort.length - 1]) {
-      distanceText = ` · ${sort[sort.length - 1].toFixed(1)} miles`;
-    }
-
     let iso = this.props.iso;
     let yesterdayIso;
 
@@ -99,7 +93,7 @@ class CalendarItem extends Component {
     ended = ed;
 
     if (yesterdayIso !== undefined && !ending) {
-      const { remaining: r, ending: e } = timeRemaining(
+      const { remaining: r, ending: e, ended: ed } = timeRemaining(
         item.groupedHours[item.groupedHours.length - 1],
         yesterdayIso
       );
@@ -130,6 +124,12 @@ class CalendarItem extends Component {
 
     const locationText = item.location;
 
+    let cityText = item.neighborhood || item.city;
+
+    if (sort && sort[sort.length - 1]) {
+      cityText = `${sort[sort.length - 1].toFixed(1)} mi · ${cityText}`;
+    }
+
     return (
       <View style={containerStyle}>
         <ImageGallery width={WIDTH - 20} doc={this.props.item} height={150} />
@@ -140,8 +140,7 @@ class CalendarItem extends Component {
                 {locationText}
               </Text>
               <Text numberOfLines={1} style={styles.subText}>
-                {item.city}
-                {distanceText}
+                {cityText}
               </Text>
             </View>
             <View style={styles.rating}>

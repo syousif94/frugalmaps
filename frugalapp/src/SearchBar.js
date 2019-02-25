@@ -14,7 +14,9 @@ class SearchBar extends PureComponent {
   };
 
   focus = () => {
-    this._input.focus();
+    requestAnimationFrame(() => {
+      this._input.focus();
+    });
   };
 
   _onFocus = () => {
@@ -45,7 +47,7 @@ class SearchBar extends PureComponent {
             clearButtonMode="always"
             underlineColorAndroid="transparent"
             autoCorrect={false}
-            clearTextOnFocus
+            selectTextOnFocus
             onSubmitEditing={this._onSubmit}
           />
         </View>

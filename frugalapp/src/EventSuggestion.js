@@ -33,7 +33,7 @@ class Suggestion extends Component {
       index
     } = this.props;
 
-    let cityText = item.city;
+    let cityText = item.neighborhood || item.city;
 
     if (sort && sort[sort.length - 1]) {
       cityText = `${sort[sort.length - 1].toFixed(1)}mi · ${cityText}`;

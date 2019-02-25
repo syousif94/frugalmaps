@@ -235,7 +235,9 @@ class InfoScreen extends Component {
                 {item.location}{" "}
                 <Text style={styles.distanceText}>{distanceText}</Text>
               </Text>
-              <Text style={styles.subText}>{item.city}</Text>
+              <Text style={styles.subText}>
+                {item.neighborhood || item.city}
+              </Text>
               <Text style={styles.subText}>{streetAddress}</Text>
               <View style={styles.rating}>
                 <FontAwesome name="star" size={16} color="#FFA033" />

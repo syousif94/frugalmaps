@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
     color: GREEN
   },
   ended: {
-    backgroundColor: "#EA841A"
+    backgroundColor: "#999"
   },
   titleRow: {
     marginTop: 1,
@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
     fontWeight: "700"
   },
   suffix: {
-    fontSize: 9
+    fontSize: 12
   },
   colon: {
     paddingBottom: 1

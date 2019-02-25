@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import { IOS, ANDROID } from "./Constants";
+import EventSuggestion from "./EventSuggestion";
 
 class SearchSuggestions extends PureComponent {
   state = {
@@ -52,6 +53,10 @@ class SearchSuggestions extends PureComponent {
     }
   };
 
+  _renderItem = data => <EventSuggestion {...data} />;
+
+  _keyExtractor = item => item._id;
+
   render() {
     const containerStyle = [
       styles.container,
@@ -69,7 +74,15 @@ class SearchSuggestions extends PureComponent {
 
     return (
       <Animated.View style={containerStyle} pointerEvents={pointerEvents}>
-        <FlatList data={this.props.results} style={styles.list} />
+        <FlatList
+          data={this.props.results}
+          style={styles.list}
+          renderItem={this._renderItem}
+          keyExtractor={this._keyExtractor}
+          keyboardDismissMode="none"
+          keyboardShouldPersistTaps="handled"
+          alwaysBounceVertical={true}
+        />
       </Animated.View>
     );
   }
