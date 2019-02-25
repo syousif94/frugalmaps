@@ -73,6 +73,8 @@ class InfoScreen extends Component {
     if (IOS) {
       StatusBar.setBarStyle("dark-content");
     }
+
+    emitter.emit("info-pop");
   }
 
   _showLocation = async () => {

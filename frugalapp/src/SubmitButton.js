@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import { withNavigation } from "react-navigation";
+import { HEIGHT } from "./Constants";
 
 class SubmitButton extends Component {
   _onPress = () => {
@@ -26,7 +27,7 @@ export default withNavigation(SubmitButton);
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    bottom: 35,
+    bottom: HEIGHT * 0.4 + 35,
     height: 50,
     borderRadius: 25,
     right: 20,

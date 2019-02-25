@@ -5,11 +5,13 @@ import location from "./location";
 import submission from "./submission";
 import submissions from "./submissions";
 import published from "./published";
+import search from "./search";
 
 export default combineReducers({
   events,
   location,
   submission,
   submissions,
-  published
+  published,
+  search
 });
