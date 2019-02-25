@@ -98,7 +98,7 @@ class CalendarItem extends Component {
     ending = e;
     ended = ed;
 
-    if (yesterdayIso && !ending) {
+    if (yesterdayIso !== undefined && !ending) {
       const { remaining: r, ending: e } = timeRemaining(
         item.groupedHours[item.groupedHours.length - 1],
         yesterdayIso

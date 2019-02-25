@@ -32,7 +32,7 @@ const renderEvent = (event, index) => {
 
   if (!ending) {
     const yesterdayIso = makeYesterdayISO(item.days);
-    if (yesterdayIso) {
+    if (yesterdayIso !== undefined) {
       const { remaining: r, ending: e, ended: ed } = timeRemaining(
         item.groupedHours[item.groupedHours.length - 1],
         yesterdayIso
