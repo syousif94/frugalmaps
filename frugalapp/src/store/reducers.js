@@ -6,6 +6,7 @@ import submission from "./submission";
 import submissions from "./submissions";
 import published from "./published";
 import search from "./search";
+import going from "./going";
 
 export default combineReducers({
   events,
@@ -13,5 +14,6 @@ export default combineReducers({
   submission,
   submissions,
   published,
-  search
+  search,
+  going
 });

@@ -1,31 +1,31 @@
 import React, { PureComponent } from "react";
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
+import { connect } from "react-redux";
+import * as Going from "./store/going";
 
-export default class GoingButton extends PureComponent {
+class GoingButton extends PureComponent {
+  _onPress = () => {
+    this.props.set({
+      selected: this.props.event
+    });
+  };
   render() {
     return (
-      <TouchableOpacity style={styles.btn}>
-        <Text style={styles.btnText}>Going</Text>
-        <View>
-          <Text style={styles.countText}>Thu</Text>
-          <Text style={styles.countText}>3/2</Text>
-        </View>
-        <View>
-          <Text style={styles.countText}>Thu</Text>
-          <Text style={styles.countText}>3/2</Text>
-        </View>
-        <View>
-          <Text style={styles.countText}>Thu</Text>
-          <Text style={styles.countText}>3/2</Text>
-        </View>
-        <View>
-          <Text style={styles.countText}>Thu</Text>
-          <Text style={styles.countText}>3/2</Text>
-        </View>
+      <TouchableOpacity style={styles.btn} onPress={this._onPress}>
+        <Text style={styles.btnText}>Make Plans</Text>
       </TouchableOpacity>
     );
   }
 }
+
+const mapDispatch = {
+  set: Going.actions.set
+};
+
+export default connect(
+  null,
+  mapDispatch
+)(GoingButton);
 
 const styles = StyleSheet.create({
   btn: {

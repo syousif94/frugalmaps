@@ -1,12 +1,7 @@
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-import {
-  createBottomTabNavigator,
-  createStackNavigator,
-  createSwitchNavigator
-} from "react-navigation";
+import { createStackNavigator, createSwitchNavigator } from "react-navigation";
 
-import { ANDROID } from "./Constants";
 // import MapScreen from "./MapScreen";
 import CalendarScreen from "./CalendarScreen";
 import SubmitScreen from "./SubmitScreen";
@@ -22,6 +17,8 @@ import { watchLinking } from "./Linking";
 
 import Updater from "./Updater";
 import { sync } from "./User";
+
+import GoingModal from "./GoingModal";
 
 const HomeScreen = createStackNavigator(
   {
@@ -71,6 +68,7 @@ export default class Navigator extends Component {
     return (
       <View style={styles.container}>
         <SwitchScreen ref={ref => (this._nav = ref)} />
+        <GoingModal />
         <Updater />
       </View>
     );

@@ -204,15 +204,6 @@ export function timeRemaining(hours, iso) {
     remaining = remaining.trim();
   }
 
-  if (ending) {
-    console.log({
-      start: start.format("h:mma ddd MMM/D"),
-      end: end.format("h:mma ddd MMM/D"),
-      now: now.format("h:mma ddd MMM/D"),
-      iso
-    });
-  }
-
   const ended =
     !ending &&
     hours.today &&
