@@ -201,15 +201,25 @@ class CalendarMap extends PureComponent {
             const { _id, _source: item } = data;
 
             const iso = makeISO(item.days);
-            let { ending } = timeRemaining(item.groupedHours[0], iso);
+
+            const hours = item.groupedHours.find(group =>
+              group.days.find(day => day.iso === iso)
+            );
+
+            let { ending } = timeRemaining(hours, iso);
 
             if (!ending && item.groupedHours.length > 1) {
               const yesterdayISO = makeYesterdayISO(item.days);
-              const { ending: endingYesterday } = timeRemaining(
-                item.groupedHours[item.groupedHours.length - 1],
-                yesterdayISO
+              const hours = item.groupedHours.find(group =>
+                group.days.find(day => day.iso === yesterdayISO)
               );
-              ending = endingYesterday;
+              if (hours) {
+                const { ending: endingYesterday } = timeRemaining(
+                  hours,
+                  yesterdayISO
+                );
+                ending = endingYesterday;
+              }
             }
 
             return (

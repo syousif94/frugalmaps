@@ -83,24 +83,27 @@ class CalendarItem extends Component {
     let ending;
     let ended;
 
-    const { remaining: r, ending: e, ended: ed } = timeRemaining(
-      item.groupedHours[0],
-      iso
+    const hours = item.groupedHours.find(group =>
+      group.days.find(day => day.iso === iso)
     );
+
+    const { remaining: r, ending: e, ended: ed } = timeRemaining(hours, iso);
 
     remaining = r;
     ending = e;
     ended = ed;
 
     if (yesterdayIso !== undefined && !ending) {
-      const { remaining: r, ending: e, ended: ed } = timeRemaining(
-        item.groupedHours[item.groupedHours.length - 1],
-        yesterdayIso
+      const hours = item.groupedHours.find(group =>
+        group.days.find(day => day.iso === yesterdayIso)
       );
+      if (hours) {
+        const { remaining: r, ending: e } = timeRemaining(hours, yesterdayIso);
 
-      if (e) {
-        remaining = r;
-        ending = e;
+        if (e) {
+          remaining = r;
+          ending = e;
+        }
       }
     }
 

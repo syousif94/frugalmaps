@@ -130,19 +130,25 @@ const makeMarkers = (days, bounds) => {
 
           const endingEvents = events.filter(event => {
             const iso = makeISO(event._source.days);
-            const { ending } = timeRemaining(
-              event._source.groupedHours[0],
-              iso
+            const hours = event._source.groupedHours.find(group =>
+              group.days.find(day => day.iso === iso)
             );
+            const { ending } = timeRemaining(hours, iso);
             if (ending || event._source.groupedHours.length === 1) {
               return ending;
             }
             const yesterdayISO = makeYesterdayISO(event._source.days);
-            const { ending: endingYesterday } = timeRemaining(
-              event._source.groupedHours[event._source.groupedHours.length - 1],
-              yesterdayISO
+            const yHours = event._source.groupedHours.find(group =>
+              group.days.find(day => day.iso === yesterdayISO)
             );
-            return endingYesterday;
+            if (yHours) {
+              const { ending: endingYesterday } = timeRemaining(
+                yHours,
+                yesterdayISO
+              );
+              return endingYesterday;
+            }
+            return false;
           });
 
           if (endingEvents.length) {
@@ -195,17 +201,17 @@ function makeListData(calendar) {
     [
       ...calendar[calendar.length - 1].data.filter(event => {
         const iso = calendar[calendar.length - 1].iso;
-        const { ending } = timeRemaining(
-          event._source.groupedHours[event._source.groupedHours.length - 1],
-          iso
+        const hours = event._source.groupedHours.find(group =>
+          group.days.find(day => day.iso === iso)
         );
+        const { ending } = timeRemaining(hours, iso);
         return ending;
       }),
       ...calendar[0].data.filter(event => {
-        const { ended } = timeRemaining(
-          event._source.groupedHours[0],
-          calendar[0].iso
+        const hours = event._source.groupedHours.find(group =>
+          group.days.find(day => day.iso === calendar[0].iso)
         );
+        const { ended } = timeRemaining(hours, calendar[0].iso);
         return !ended;
       }),
       ...(calendar.length > 1 ? calendar.slice(1) : calendar).reduce(
@@ -213,10 +219,10 @@ function makeListData(calendar) {
           let data = day.data;
           if (calendar.length < 2) {
             data = data.filter(event => {
-              const { ended } = timeRemaining(
-                event._source.groupedHours[0],
-                day.iso
+              const hours = event._source.groupedHours.find(group =>
+                group.days.find(groupDay => groupDay.iso === day.iso)
               );
+              const { ended } = timeRemaining(hours, day.iso);
               return ended;
             });
           }
