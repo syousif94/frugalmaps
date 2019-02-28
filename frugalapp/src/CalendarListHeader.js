@@ -21,6 +21,9 @@ export default class CalendarListHeader extends PureComponent {
       <View style={styles.container}>
         <View style={styles.info}>
           <Text style={styles.titleText}>{section.title}</Text>
+          <View style={styles.count}>
+            <Text style={styles.countText}>{section.data.length}</Text>
+          </View>
         </View>
         <TouchableOpacity style={styles.btn} onPress={this._onPress}>
           <View style={styles.btnBg}>
@@ -30,7 +33,6 @@ export default class CalendarListHeader extends PureComponent {
               size={14}
               color="#fff"
             />
-            <Text style={styles.btnText}>Map</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -47,33 +49,42 @@ const styles = StyleSheet.create({
   info: {
     paddingHorizontal: 10,
     flex: 1,
-    justifyContent: "center"
+    flexDirection: "row",
+    alignItems: "center"
   },
   titleText: {
+    fontSize: 14,
     fontWeight: "600",
     color: "#fff"
   },
-  btn: {
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 4
-  },
-  btnBg: {
-    height: 20,
-    borderRadius: 11,
+  count: {
+    height: 16,
+    borderRadius: 4,
     backgroundColor: "rgba(0,0,0,0.2)",
     flexDirection: "row",
     alignItems: "center",
-    paddingRight: 10,
-    paddingLeft: 8
+    marginLeft: 6,
+    paddingHorizontal: 3
   },
-  btnText: {
-    fontSize: 12,
+  countText: {
+    fontSize: 9,
     color: "#fff",
-    fontWeight: "600",
-    marginLeft: 6
+    fontWeight: "700"
+  },
+  btn: {
+    justifyContent: "center",
+    paddingRight: 6,
+    paddingLeft: 60
+  },
+  btnBg: {
+    borderRadius: 4,
+    height: 16,
+    backgroundColor: "rgba(0,0,0,0.2)",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 6
   },
   icon: {
-    marginTop: 2
+    marginTop: 1
   }
 });

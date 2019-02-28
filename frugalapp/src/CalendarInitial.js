@@ -14,7 +14,7 @@ class CalendarInitial extends PureComponent {
     return (
       <View style={styles.initialLoad}>
         <ActivityIndicator style={styles.loading} size="large" color="#444" />
-        {ANDROID ? <Text style={styles.text}>Locating</Text> : null}
+        {ANDROID ? <Text style={styles.text}>Loading</Text> : null}
       </View>
     );
   }
