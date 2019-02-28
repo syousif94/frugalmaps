@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 import * as Events from "./store/events";
 import * as Location from "./store/location";
 import emitter from "tiny-emitter/instance";
+import { ANDROID, HEIGHT } from "./Constants";
 
 class CityPicker extends PureComponent {
   _onPress = item => {
@@ -53,10 +54,15 @@ class CityPicker extends PureComponent {
   render() {
     const { data, position } = this.props;
 
-    const translateY = position.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, -90]
-    });
+    const translateY = ANDROID
+      ? position.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, -90]
+        })
+      : position.interpolate({
+          inputRange: [0, 1],
+          outputRange: [-HEIGHT * 0.69, -90]
+        });
 
     const containerStyle = [
       styles.container,

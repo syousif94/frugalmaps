@@ -1,12 +1,18 @@
 import React, { PureComponent } from "react";
-import { StyleSheet, TouchableOpacity, Animated, Text } from "react-native";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  Animated,
+  Text,
+  View
+} from "react-native";
 import { MapView } from "expo";
 import { connect } from "react-redux";
 import { Entypo } from "@expo/vector-icons";
 
 import emitter from "tiny-emitter/instance";
 import { makeISO, timeRemaining, makeYesterdayISO } from "./Time";
-import { INITIAL_REGION, HEIGHT } from "./Constants";
+import { INITIAL_REGION, HEIGHT, IOS, ANDROID } from "./Constants";
 
 import * as Location from "./store/location";
 import * as Events from "./store/events";
@@ -31,7 +37,6 @@ class CalendarMap extends PureComponent {
 
   state = {
     now: Date.now(),
-    expanded: false,
     position: new Animated.Value(0)
   };
 
@@ -47,20 +52,22 @@ class CalendarMap extends PureComponent {
     emitter.off("toggle-map", this._toggleMap);
   }
 
+  _expanded = false;
+
   _toggleMap = () => {
-    const toValue = this.state.expanded ? 0 : 1;
+    const toValue = this._expanded ? 0 : 1;
+    this._expanded = !this._expanded;
+
+    this._fitBounds(this._lastBounds);
 
     Animated.timing(
       this.state.position,
       { toValue, duration: 350 },
       { useNativeDriver: true }
     ).start(() => {
-      if (!this.state.expanded) {
-        this._fitBounds(this._lastBounds);
-      }
       setTimeout(() => {
         this.setState({
-          expanded: !this.state.expanded
+          expanded: this._expanded
         });
       }, 40);
     });
@@ -101,7 +108,7 @@ class CalendarMap extends PureComponent {
     }
     this._lastBounds = bounds;
 
-    const padding = this.state.expanded ? 0 : -30;
+    const bottom = ANDROID || this._expanded ? 0 : HEIGHT * 0.65;
 
     const coords = [
       {
@@ -117,9 +124,9 @@ class CalendarMap extends PureComponent {
       this._map.fitToCoordinates(coords, {
         animated,
         edgePadding: {
-          top: 10,
+          top: -20,
           right: 0,
-          bottom: 0,
+          bottom,
           left: 0
         }
       });
@@ -131,7 +138,7 @@ class CalendarMap extends PureComponent {
       _source: { viewport }
     } = doc;
 
-    this._lastBounds = null;
+    this._lastBounds = viewport;
 
     const coords = [
       {
@@ -144,14 +151,16 @@ class CalendarMap extends PureComponent {
       }
     ];
 
+    const bottom = ANDROID || this._expanded ? 0 : HEIGHT * 0.6;
+
     requestAnimationFrame(() => {
       this._map.fitToCoordinates(coords, {
         animated: true,
         edgePadding: {
-          top: 80,
-          right: 80,
-          bottom: 80,
-          left: 80
+          top: 0,
+          right: 0,
+          bottom,
+          left: 0
         }
       });
     });
@@ -165,21 +174,55 @@ class CalendarMap extends PureComponent {
     emitter.emit("hide-callouts");
   };
 
-  render() {
-    const { markers, authorized } = this.props;
+  _onToggle = () => {
+    emitter.emit("toggle-map");
+  };
 
-    const containerStyle = [
+  _initialRegion = false;
+
+  _setFrame = () => {
+    if (ANDROID || this._initialRegion) {
+      return;
+    }
+    this._initialRegion = true;
+
+    const coords = [
       {
-        height: this.state.position.interpolate({
-          inputRange: [0, 1],
-          outputRange: [HEIGHT * 0.31, HEIGHT]
-        })
+        latitude: 49.699615,
+        longitude: -132.530455
+      },
+      {
+        latitude: 16.09332,
+        longitude: -59.823265
       }
     ];
+
+    this._map.fitToCoordinates(coords, {
+      animated: false,
+      edgePadding: {
+        top: -20,
+        right: 0,
+        bottom: HEIGHT * 0.65,
+        left: 0
+      }
+    });
+  };
+
+  render() {
+    const { markers, authorized } = this.props;
 
     const toggleStyle = [styles.toggle, { opacity: this.state.position }];
 
     const togglePointerEvents = this.state.expanded ? "auto" : "none";
+
+    const containerStyle = IOS
+      ? { ...StyleSheet.absoluteFillObject }
+      : {
+          height: this.state.position.interpolate({
+            inputRange: [0, 1],
+            outputRange: [HEIGHT * 0.31, HEIGHT]
+          })
+        };
 
     return (
       <Animated.View style={containerStyle}>
@@ -235,7 +278,7 @@ class CalendarMap extends PureComponent {
         <CityPicker tabLabel="Closest" position={this.state.position} />
         <MapLoading />
         <Animated.View style={toggleStyle} pointerEvents={togglePointerEvents}>
-          <TouchableOpacity onPress={this._toggleMap} style={styles.toggleBtn}>
+          <TouchableOpacity onPress={this._onToggle} style={styles.toggleBtn}>
             <Entypo
               style={styles.icon}
               name="chevron-up"

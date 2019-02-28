@@ -1,12 +1,12 @@
 import React, { PureComponent } from "react";
-import { StyleSheet, View, FlatList, Text } from "react-native";
+import { Animated, StyleSheet, View, FlatList, Text } from "react-native";
 import { connect } from "react-redux";
 import emitter from "tiny-emitter/instance";
 import Emitter from "tiny-emitter";
 import Item from "./CalendarItem";
 import * as Events from "./store/events";
 import Ad from "./Ad";
-import { ANDROID, IOS } from "./Constants";
+import { ANDROID, IOS, HEIGHT } from "./Constants";
 import CalendarEmpty from "./CalendarEmpty";
 import { Entypo } from "@expo/vector-icons";
 import Header from "./CalendarListHeader";
@@ -17,22 +17,40 @@ class CalendarList extends PureComponent {
 
   state = {
     clipSubviews: true,
-    touchAd: true
+    touchAd: true,
+    position: new Animated.Value(0)
   };
+
+  _expanded = false;
 
   componentDidMount() {
     emitter.on("calendar-top", this._scrollToTop);
+
     if (IOS) {
+      emitter.on("toggle-map", this._toggleMap);
       emitter.on("reclip-calendar", this._reclip);
     }
   }
 
   componentWillUnmount() {
     emitter.off("calendar-top", this._scrollToTop);
+
     if (IOS) {
+      emitter.off("toggle-map", this._toggleMap);
       emitter.off("reclip-calendar", this._reclip);
     }
   }
+
+  _toggleMap = () => {
+    const toValue = this._expanded ? 0 : 1;
+    this._expanded = !this._expanded;
+
+    Animated.timing(
+      this.state.position,
+      { toValue, duration: 350 },
+      { useNativeDriver: true }
+    ).start();
+  };
 
   _reclip = () => {
     this.setState(
@@ -127,7 +145,7 @@ class CalendarList extends PureComponent {
   render() {
     const { data, day } = this.props;
 
-    const containerStyle = {
+    const contentStyle = {
       paddingBottom: data.length ? 110 : 0
     };
 
@@ -142,13 +160,25 @@ class CalendarList extends PureComponent {
 
     const listData = data && data[0] ? data[0].data : [];
 
+    const translateY = this.state.position.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, HEIGHT * 0.69]
+    });
+
+    const containerStyle = [
+      styles.container,
+      {
+        transform: [{ translateY }]
+      }
+    ];
+
     return (
-      <View style={styles.container}>
+      <Animated.View style={containerStyle}>
         <CalendarListHeader section={data && data[0]} />
         <FlatList
           key={day}
           ref={this._setRef}
-          contentContainerStyle={containerStyle}
+          contentContainerStyle={contentStyle}
           style={styles.list}
           renderItem={this._renderItem}
           data={listData}
@@ -160,7 +190,7 @@ class CalendarList extends PureComponent {
           removeClippedSubviews={this.state.clipSubviews}
           onViewableItemsChanged={this._itemsChanged}
         />
-      </View>
+      </Animated.View>
     );
   }
 }
@@ -188,6 +218,7 @@ export default connect(
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: IOS ? HEIGHT * 0.31 : 0,
     flex: 1
   },
   list: {
