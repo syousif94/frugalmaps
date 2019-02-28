@@ -126,7 +126,6 @@ const renderEvent = (event, index) => {
       </Text>
       <View style={styles.actions}>
         <GoingButton event={event} />
-        <View style={styles.actionsDivider} />
         <NotifyButton event={event} />
       </View>
     </View>

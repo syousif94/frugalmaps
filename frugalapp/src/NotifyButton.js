@@ -215,7 +215,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: 5,
-    flex: 1
+    marginLeft: 5,
+    flexBasis: "48%",
+    minWidth: 140
   },
   icon: { marginTop: 1, marginLeft: 3 },
   switch: {

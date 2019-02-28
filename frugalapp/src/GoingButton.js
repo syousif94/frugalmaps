@@ -37,7 +37,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    paddingHorizontal: 7
+    paddingHorizontal: 7,
+    marginRight: 5
   },
   btnText: {
     fontSize: 14,

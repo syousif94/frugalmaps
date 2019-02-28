@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 15,
-    paddingBottom: 9
+    paddingBottom: 5
   },
   spot: {
     position: "absolute",
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     color: "#FFA033",
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: "600",
     marginLeft: 3
   }

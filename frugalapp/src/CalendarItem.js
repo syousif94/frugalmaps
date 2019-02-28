@@ -207,7 +207,6 @@ class CalendarItem extends Component {
           <Text style={styles.descriptionText}>{item.description}</Text>
           <View style={styles.actions}>
             <GoingButton event={this.props.item} />
-            <View style={styles.actionsDivider} />
             <NotifyButton event={this.props.item} />
           </View>
         </View>
