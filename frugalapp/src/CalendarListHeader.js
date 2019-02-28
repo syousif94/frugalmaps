@@ -23,13 +23,15 @@ export default class CalendarListHeader extends PureComponent {
           <Text style={styles.titleText}>{section.title}</Text>
         </View>
         <TouchableOpacity style={styles.btn} onPress={this._onPress}>
-          <Entypo
-            style={styles.icon}
-            name="chevron-down"
-            size={14}
-            color="#fff"
-          />
-          <Text style={styles.btnText}>Map</Text>
+          <View style={styles.btnBg}>
+            <Entypo
+              style={styles.icon}
+              name="chevron-down"
+              size={14}
+              color="#fff"
+            />
+            <Text style={styles.btnText}>Map</Text>
+          </View>
         </TouchableOpacity>
       </View>
     );
@@ -40,26 +42,30 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "rgba(90,90,90,0.45)",
     height: CalendarListHeader.height,
-    flexDirection: "row",
-    alignItems: "center"
+    flexDirection: "row"
   },
   info: {
     paddingHorizontal: 10,
-    flex: 1
+    flex: 1,
+    justifyContent: "center"
   },
   titleText: {
     fontWeight: "600",
     color: "#fff"
   },
   btn: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 4
+  },
+  btnBg: {
     height: 20,
     borderRadius: 11,
     backgroundColor: "rgba(0,0,0,0.2)",
     flexDirection: "row",
     alignItems: "center",
     paddingRight: 10,
-    paddingLeft: 8,
-    marginRight: 4
+    paddingLeft: 8
   },
   btnText: {
     fontSize: 12,

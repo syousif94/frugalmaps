@@ -152,6 +152,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover"
   },
   actions: {
+    backgroundColor: "#fff",
     flexDirection: "row"
   },
   actionBtn: {

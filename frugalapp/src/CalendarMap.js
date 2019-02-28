@@ -1,11 +1,5 @@
 import React, { PureComponent } from "react";
-import {
-  StyleSheet,
-  TouchableOpacity,
-  Animated,
-  Text,
-  View
-} from "react-native";
+import { StyleSheet, TouchableOpacity, Animated, Text } from "react-native";
 import { MapView } from "expo";
 import { connect } from "react-redux";
 import { Entypo } from "@expo/vector-icons";
@@ -58,13 +52,18 @@ class CalendarMap extends PureComponent {
     const toValue = this._expanded ? 0 : 1;
     this._expanded = !this._expanded;
 
-    this._fitBounds(this._lastBounds);
+    if (IOS) {
+      this._fitBounds(this._lastBounds);
+    }
 
     Animated.timing(
       this.state.position,
       { toValue, duration: 350 },
       { useNativeDriver: true }
     ).start(() => {
+      if (ANDROID) {
+        this._fitBounds(this._lastBounds);
+      }
       setTimeout(() => {
         this.setState({
           expanded: this._expanded
@@ -124,7 +123,7 @@ class CalendarMap extends PureComponent {
       this._map.fitToCoordinates(coords, {
         animated,
         edgePadding: {
-          top: -20,
+          top: 0,
           right: 0,
           bottom,
           left: 0
@@ -175,7 +174,9 @@ class CalendarMap extends PureComponent {
   };
 
   _onToggle = () => {
-    emitter.emit("toggle-map");
+    requestAnimationFrame(() => {
+      emitter.emit("toggle-map");
+    });
   };
 
   _initialRegion = false;
