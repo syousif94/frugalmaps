@@ -5,7 +5,7 @@ import { createStackNavigator, createSwitchNavigator } from "react-navigation";
 // import MapScreen from "./MapScreen";
 import CalendarScreen from "./CalendarScreen";
 import SubmitScreen from "./SubmitScreen";
-import FriendsScreen from "./FriendsScreen";
+// import FriendsScreen from "./FriendsScreen";
 
 import SubmissionsScreen from "./SubmissionsScreen";
 import InfoScreen from "./InfoScreen";
