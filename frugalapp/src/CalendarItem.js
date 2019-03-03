@@ -54,10 +54,27 @@ class CalendarItem extends Component {
     return shouldTick;
   };
 
-  _onMap = () => {
+  // _onMap = () => {
+  //   const { item } = this.props;
+
+  //   emitter.emit("fit-marker", item);
+  // };
+
+  _resetOnRelease = false;
+
+  _onPressIn = () => {
     const { item } = this.props;
 
+    this._resetOnRelease = true;
     emitter.emit("fit-marker", item);
+  };
+
+  _onPressOut = () => {
+    if (this._resetOnRelease) {
+      this._resetOnRelease = false;
+      emitter.emit("reset-marker");
+      emitter.emit("hide-callouts");
+    }
   };
 
   render() {
@@ -136,7 +153,12 @@ class CalendarItem extends Component {
     return (
       <View style={containerStyle}>
         <ImageGallery width={WIDTH - 20} doc={this.props.item} height={150} />
-        <TouchableOpacity onPress={this._onMap} style={styles.info}>
+        <TouchableOpacity
+          delayLongPress={250}
+          onLongPress={this._onPressIn}
+          onPressOut={this._onPressOut}
+          style={styles.info}
+        >
           <View style={styles.location}>
             <View style={styles.locationInfo}>
               <Text numberOfLines={1} style={styles.locationText}>
@@ -155,56 +177,60 @@ class CalendarItem extends Component {
           </View>
         </TouchableOpacity>
         <View style={styles.event}>
-          <MonoText
-            text={remaining}
-            suffix={endingText}
-            textStyle={countdownStyle}
-            characterWidth={7.5}
-            style={styles.countdown}
-            suffixStyle={styles.suffix}
-            colonStyle={styles.colon}
-          />
-          <View style={styles.titleRow}>
-            <Text style={styles.titleText}>
-              {index + 1}. {item.title}
-            </Text>
-            {item.type === "Happy Hour" ? (
-              <View style={styles.twentyOne}>
-                <Text style={styles.twentyOneText}>21+</Text>
-              </View>
-            ) : null}
+          <View pointerEvents="none">
+            <MonoText
+              text={remaining}
+              suffix={endingText}
+              textStyle={countdownStyle}
+              characterWidth={7.5}
+              style={styles.countdown}
+              suffixStyle={styles.suffix}
+              colonStyle={styles.colon}
+            />
+            <View style={styles.titleRow}>
+              <Text style={styles.titleText}>
+                {index + 1}. {item.title}
+              </Text>
+              {item.type === "Happy Hour" ? (
+                <View style={styles.twentyOne}>
+                  <Text style={styles.twentyOneText}>21+</Text>
+                </View>
+              ) : null}
+            </View>
+            {item.groupedHours.map((hours, index) => {
+              return (
+                <View style={styles.hour} key={index}>
+                  <View style={styles.time}>
+                    <Text style={styles.hourText} numberOfLines={1}>
+                      {hours.hours}{" "}
+                      <Text style={styles.durationText}>
+                        {hours.duration}hr
+                      </Text>
+                    </Text>
+                  </View>
+                  <View style={styles.days}>
+                    {hours.days.map(day => {
+                      const dayStyle = [styles.day];
+                      if (day.daysAway === 0 && ended) {
+                        dayStyle.push(styles.ended);
+                      }
+                      return (
+                        <View style={dayStyle} key={day.text}>
+                          <Text style={styles.dayText}>{day.text}</Text>
+                          {day.daysAway === 0 ? null : (
+                            <View style={styles.daysAway}>
+                              <Text style={styles.dayText}>{day.daysAway}</Text>
+                            </View>
+                          )}
+                        </View>
+                      );
+                    })}
+                  </View>
+                </View>
+              );
+            })}
+            <Text style={styles.descriptionText}>{item.description}</Text>
           </View>
-          {item.groupedHours.map((hours, index) => {
-            return (
-              <View style={styles.hour} key={index}>
-                <View style={styles.time}>
-                  <Text style={styles.hourText} numberOfLines={1}>
-                    {hours.hours}{" "}
-                    <Text style={styles.durationText}>{hours.duration}hr</Text>
-                  </Text>
-                </View>
-                <View style={styles.days}>
-                  {hours.days.map(day => {
-                    const dayStyle = [styles.day];
-                    if (day.daysAway === 0 && ended) {
-                      dayStyle.push(styles.ended);
-                    }
-                    return (
-                      <View style={dayStyle} key={day.text}>
-                        <Text style={styles.dayText}>{day.text}</Text>
-                        {day.daysAway === 0 ? null : (
-                          <View style={styles.daysAway}>
-                            <Text style={styles.dayText}>{day.daysAway}</Text>
-                          </View>
-                        )}
-                      </View>
-                    );
-                  })}
-                </View>
-              </View>
-            );
-          })}
-          <Text style={styles.descriptionText}>{item.description}</Text>
           <View style={styles.actions}>
             <GoingButton event={this.props.item} />
             <NotifyButton event={this.props.item} />
@@ -350,6 +376,5 @@ const styles = StyleSheet.create({
   colon: {
     paddingBottom: 1
   },
-  actions: { flexDirection: "row", marginBottom: 5, marginTop: 7 },
-  actionsDivider: { width: 10 }
+  actions: { flexDirection: "row", marginBottom: 3, marginTop: 9 }
 });

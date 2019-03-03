@@ -2,6 +2,7 @@ import React, { PureComponent } from "react";
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
 import { connect } from "react-redux";
 import * as Going from "./store/going";
+import { Ionicons } from "@expo/vector-icons";
 
 class GoingButton extends PureComponent {
   _onPress = () => {
@@ -10,9 +11,26 @@ class GoingButton extends PureComponent {
     });
   };
   render() {
+    const { narrow } = this.props;
     return (
       <TouchableOpacity style={styles.btn} onPress={this._onPress}>
+        <View style={styles.cal}>
+          <Text style={styles.day}>Thu</Text>
+          <Text style={styles.date}>14</Text>
+        </View>
         <Text style={styles.btnText}>Make Plans</Text>
+        <View style={styles.spacer} />
+        {narrow ? null : (
+          <View style={styles.icon}>
+            <Ionicons
+              style={styles.iconTop}
+              name="ios-arrow-up"
+              size={12}
+              color={"#666"}
+            />
+            <Ionicons name="ios-arrow-down" size={12} color={"#666"} />
+          </View>
+        )}
       </TouchableOpacity>
     );
   }
@@ -29,26 +47,49 @@ export default connect(
 
 const styles = StyleSheet.create({
   btn: {
-    backgroundColor: "#fafafa",
+    backgroundColor: "#efefef",
     borderRadius: 5,
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
-    flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-around",
-    paddingHorizontal: 7,
-    marginRight: 5
+    marginRight: 5,
+    flex: 1,
+    height: 30,
+    overflow: "hidden"
   },
   btnText: {
     fontSize: 14,
     color: "#000",
-    fontWeight: "500"
-  },
-  countText: {
-    fontSize: 7,
     fontWeight: "500",
-    color: "#444",
-    textAlign: "center"
+    marginLeft: 8
+  },
+  cal: {
+    height: 30,
+    alignItems: "center",
+    backgroundColor: "#6C7B80",
+    justifyContent: "center",
+    paddingHorizontal: 6
+  },
+  day: {
+    fontSize: 7,
+    fontWeight: "700",
+    color: "#fff"
+  },
+  date: {
+    fontSize: 10,
+    fontWeight: "700",
+    color: "#fff"
+  },
+  spacer: {
+    flex: 1
+  },
+  icon: {
+    height: 30,
+    width: 16,
+    marginRight: 4,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  iconTop: {
+    marginBottom: -6
   }
 });

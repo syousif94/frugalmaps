@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   cancelText: {
     fontSize: 15,
     fontWeight: "500",
-    color: RED
+    color: "#E3210B"
   },
   saveText: {
     fontSize: 15,

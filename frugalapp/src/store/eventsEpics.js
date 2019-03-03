@@ -199,6 +199,7 @@ const makeMarkers = (days, bounds) => {
 function makeListData(calendar) {
   return _.uniqBy(
     [
+      // events started yesterday ending today
       ...calendar[calendar.length - 1].data.filter(event => {
         const iso = calendar[calendar.length - 1].iso;
         const hours = event._source.groupedHours.find(group =>
@@ -207,6 +208,7 @@ function makeListData(calendar) {
         const { ending } = timeRemaining(hours, iso);
         return ending;
       }),
+      // events today that haven't ended
       ...calendar[0].data.filter(event => {
         const hours = event._source.groupedHours.find(group =>
           group.days.find(day => day.iso === calendar[0].iso)
@@ -214,6 +216,7 @@ function makeListData(calendar) {
         const { ended } = timeRemaining(hours, calendar[0].iso);
         return !ended;
       }),
+      // remaining events
       ...(calendar.length > 1 ? calendar.slice(1) : calendar).reduce(
         (events, day) => {
           let data = day.data;
@@ -229,7 +232,17 @@ function makeListData(calendar) {
           return [...events, ...data];
         },
         []
-      )
+      ),
+      ...(calendar.length > 1 ? calendar[0].data : []).filter(event => {
+        const hours = event._source.groupedHours.find(group =>
+          group.days.find(day => day.iso === calendar[0].iso)
+        );
+        if (hours.days.length === 1) {
+          const { ended } = timeRemaining(hours, calendar[0].iso);
+          return ended;
+        }
+        return false;
+      })
     ],
     "_id"
   );
@@ -431,6 +444,63 @@ const fetchSelected = action$ =>
       })
   );
 
+const reorder = (action$, store) =>
+  action$.ofType(Events.types.reorder).switchMap(() =>
+    Observable.defer(async () => {
+      try {
+        const dataStr = await AsyncStorage.getItem("oldData");
+
+        if (dataStr === null) {
+          return Events.actions.set({
+            reordering: false
+          });
+        }
+
+        let {
+          events: { data, recent }
+        } = store.getState();
+
+        const calendar = makeEvents(data, true, true);
+
+        const listData = makeListData(calendar);
+
+        const list = [
+          {
+            title: "Up Next",
+            data: listData
+          }
+        ];
+
+        let markerData = [{ title: "Up Next", data }, ...calendar];
+
+        if (recent) {
+          markerData = [...recent, ...markerData];
+        }
+
+        const markers = makeMarkers(markerData);
+        data = recent
+          ? _([...data, ...recent[0].data])
+              .uniqBy("_id")
+              .value()
+          : data;
+
+        return Events.actions.set({
+          reordering: false,
+          data,
+          list,
+          calendar,
+          markers,
+          recent
+        });
+      } catch (error) {
+        console.log(error);
+        return Events.actions.set({
+          reordering: false
+        });
+      }
+    })
+  );
+
 const restore = action$ =>
   action$.ofType(Events.types.restore).switchMap(() =>
     Observable.defer(async () => {
@@ -457,8 +527,6 @@ const restore = action$ =>
           recent = value.recent;
         }
 
-        // const list = makeEvents(data, false, true);
-
         const calendar = makeEvents(data, true, true);
 
         const listData = makeListData(calendar);
@@ -469,8 +537,6 @@ const restore = action$ =>
             data: listData
           }
         ];
-
-        // const markers = makeMarkers([{ title: "Up Next", data }, ...calendar]);
 
         let markerData = [{ title: "Up Next", data }, ...calendar];
 
@@ -505,4 +571,4 @@ const restore = action$ =>
     })
   );
 
-export default combineEpics(events, restore, fetchSelected);
+export default combineEpics(events, restore, fetchSelected, reorder);

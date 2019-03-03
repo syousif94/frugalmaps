@@ -5,7 +5,7 @@ import { createActions } from "./lib";
 import _ from "lodash";
 import { makeYesterdayISO, timeRemaining } from "../Time";
 
-const mutations = ["set", "restore", "fetch", "merge"];
+const mutations = ["set", "restore", "fetch", "merge", "reorder"];
 
 export const { actions, types } = createActions(mutations, "events");
 
@@ -111,6 +111,20 @@ function day(state = "Up Next", { type, payload }) {
     case types.set:
       if (payload.day !== undefined) {
         return payload.day;
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
+function reordering(state = false, { type, payload }) {
+  switch (type) {
+    case types.reorder:
+      return true;
+    case types.set:
+      if (payload.reordering !== undefined) {
+        return payload.reordering;
       }
       return state;
     default:
@@ -258,5 +272,6 @@ export default combineReducers({
   selectedEvent,
   list,
   markers,
-  recent
+  recent,
+  reordering
 });

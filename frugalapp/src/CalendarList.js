@@ -17,7 +17,6 @@ class CalendarList extends PureComponent {
 
   state = {
     clipSubviews: true,
-    touchAd: true,
     position: new Animated.Value(0)
   };
 
@@ -71,7 +70,7 @@ class CalendarList extends PureComponent {
   };
 
   _refresh = () => {
-    this.props.fetch();
+    this.props.reorder();
   };
 
   _renderEmpty = () => {
@@ -106,21 +105,17 @@ class CalendarList extends PureComponent {
 
   _renderHeader = () => {
     const { initialized } = this.props;
-    return <Ad touchAd={this.state.touchAd} initialized={initialized} />;
+    return <Ad initialized={initialized} />;
   };
 
-  _onScrollEnd = e => {
-    const y = e.nativeEvent.contentOffset.y;
-    if (y > 50 && this.state.touchAd) {
-      this.setState({
-        touchAd: false
-      });
-    } else if (y < 50 && !this.state.touchAd) {
-      this.setState({
-        touchAd: true
-      });
-    }
-  };
+  // _onScrollEnd = e => {
+  //   const y = e.nativeEvent.contentOffset.y;
+  //   if (y > 50 && this._ad && this._ad.state.touchAd) {
+  //     emitter.emit("touch-ad", false);
+  //   } else if (y < 50 && this._ad && !this._ad.state.touchAd) {
+  //     emitter.emit("touch-ad", true);
+  //   }
+  // };
 
   _itemsChanged = ({ viewableItems }) => {
     CalendarList.emitter.emit("visible", viewableItems);
@@ -143,7 +138,7 @@ class CalendarList extends PureComponent {
   };
 
   render() {
-    const { data, day } = this.props;
+    const { data, day, refreshing } = this.props;
 
     const contentStyle = {
       paddingBottom: data.length ? 110 : 0
@@ -154,8 +149,8 @@ class CalendarList extends PureComponent {
           initialNumToRender: 0
         }
       : {
-          onScrollEndDrag: this._onScrollEnd,
-          onMomentumScrollEnd: this._onScrollEnd
+          // onScrollEndDrag: this._onScrollEnd,
+          // onMomentumScrollEnd: this._onScrollEnd
         };
 
     const listData = data && data[0] ? data[0].data : [];
@@ -177,6 +172,8 @@ class CalendarList extends PureComponent {
         <CalendarListHeader section={data && data[0]} />
         <FlatList
           key={day}
+          onRefresh={this._refresh}
+          refreshing={refreshing}
           ref={this._setRef}
           contentContainerStyle={contentStyle}
           style={styles.list}
@@ -197,17 +194,13 @@ class CalendarList extends PureComponent {
 
 const mapStateToProps = state => ({
   initialized: state.events.initialized,
-  refreshing: state.events.refreshing,
+  refreshing: state.events.reordering,
   data: Events.homeList(state),
   day: state.events.day
 });
 
 const mapDispatchToProps = {
-  fetch: Events.actions.set.bind(null, {
-    refreshing: true,
-    queryType: null,
-    day: "Up Next"
-  }),
+  reorder: Events.actions.reorder,
   restore: Events.actions.restore
 };
 

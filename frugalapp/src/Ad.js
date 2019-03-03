@@ -4,20 +4,8 @@ import { FacebookAds } from "expo";
 import { IOS, PLACEMENT_ID } from "./Constants";
 
 export default class Ad extends PureComponent {
-  state = {
-    failed: false
-  };
-
-  _hideAd = () => {
-    this.setState({
-      failed: true
-    });
-  };
-
   render() {
-    const { touchAd, initialized } = this.props;
-
-    const pointerEvents = touchAd ? "auto" : "none";
+    const { initialized } = this.props;
 
     if (IOS && initialized) {
       return (
@@ -28,9 +16,6 @@ export default class Ad extends PureComponent {
           </View>
           <View style={styles.adContainer} pointerEvents="box-none">
             <FacebookAds.BannerView
-              key={`ad${this.state.key}`}
-              style={styles.ad}
-              pointerEvents={pointerEvents}
               placementId={PLACEMENT_ID}
               type="standard"
               onError={this._hideAd}
@@ -48,7 +33,6 @@ const styles = StyleSheet.create({
   adView: {
     backgroundColor: "#fff",
     height: 50,
-    maxHeight: 50,
     overflow: "hidden"
   },
   adBanner: {
@@ -72,17 +56,7 @@ const styles = StyleSheet.create({
     fontWeight: "400"
   },
   adContainer: {
-    position: "absolute",
-    top: IOS ? -20 : 0,
-    left: 0,
-    right: 0,
-    height: IOS ? 70 : 50
-  },
-  ad: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 50
+    marginTop: -20,
+    height: 70
   }
 });

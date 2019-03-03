@@ -181,7 +181,7 @@ export async function toggleEvent(event) {
         })
       );
       await AsyncStorage.removeItem(id);
-      await CalendarManager.toggleEvent(event, false);
+      // await CalendarManager.toggleEvent(event, false);
       syncReminder(id, false);
       return false;
     }
@@ -195,7 +195,7 @@ export async function toggleEvent(event) {
     const notificationId = await createNotification(event);
 
     await AsyncStorage.setItem(id, notificationId);
-    await CalendarManager.toggleEvent(event, true);
+    // await CalendarManager.toggleEvent(event, true);
     syncReminder(id, true);
     return true;
   } catch (error) {

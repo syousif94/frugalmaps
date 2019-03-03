@@ -37,12 +37,14 @@ class CalendarMap extends PureComponent {
   componentDidMount() {
     emitter.on("fit-bounds", this._fitBounds);
     emitter.on("fit-marker", this._fitMarker);
+    emitter.on("reset-marker", this._resetMarker);
     emitter.on("toggle-map", this._toggleMap);
   }
 
   componentWillUnmount() {
     emitter.off("fit-bounds", this._fitBounds);
     emitter.off("fit-marker", this._fitMarker);
+    emitter.off("reset-marker", this._resetMarker);
     emitter.off("toggle-map", this._toggleMap);
   }
 
@@ -132,12 +134,14 @@ class CalendarMap extends PureComponent {
     });
   };
 
+  _resetMarker = () => {
+    this._fitBounds(this._lastBounds);
+  };
+
   _fitMarker = doc => {
     const {
       _source: { viewport }
     } = doc;
-
-    this._lastBounds = viewport;
 
     const coords = [
       {
@@ -150,16 +154,16 @@ class CalendarMap extends PureComponent {
       }
     ];
 
-    const bottom = ANDROID || this._expanded ? 0 : HEIGHT * 0.6;
+    const bottom = ANDROID || this._expanded ? 0 : HEIGHT * 0.6 + 110;
 
     requestAnimationFrame(() => {
       this._map.fitToCoordinates(coords, {
         animated: true,
         edgePadding: {
-          top: 0,
-          right: 0,
+          top: 110,
+          right: 110,
           bottom,
-          left: 0
+          left: 110
         }
       });
     });

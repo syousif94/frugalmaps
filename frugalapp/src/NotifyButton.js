@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   AsyncStorage,
   Alert,
-  Animated,
   Text
 } from "react-native";
 import Emitter from "tiny-emitter";
@@ -13,19 +12,11 @@ import { db } from "./Firebase";
 
 import { toggleEvent } from "./Notifications";
 
-import { Entypo } from "@expo/vector-icons";
-
-const switchHeight = 10;
-const ballHeight = switchHeight - 4;
-const switchWidth = 18;
-const ballTranslate = switchWidth - 4 - ballHeight;
+import { FontAwesome } from "@expo/vector-icons";
+import { BLUE } from "./Colors";
 
 function formatCount(count) {
-  if (count < 10) {
-    return `00${count}`;
-  } else if (count < 100) {
-    return `0${count}`;
-  } else if (count > 999) {
+  if (count > 999) {
     const scaledCount = $(count / 1000).toFixed(1);
     return `${scaledCount}k`;
   } else {
@@ -38,31 +29,16 @@ export default class NotifyButton extends Component {
 
   state = {
     notify: false,
-    toggle: new Animated.Value(0),
-    count: 1,
-    toggling: false
+    count: 1
   };
 
   componentDidMount() {
     NotifyButton.emitter.on("toggled", this._onToggled);
-    this._areNotificationsEnabled(true);
+    this._areNotificationsEnabled();
     this._getReminderCount();
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const shouldToggle = prevState.notify !== this.state.notify;
-    if (shouldToggle) {
-      const toValue = this.state.notify ? 1 : 0;
-      if (prevState.toggling) {
-        Animated.timing(
-          this.state.toggle,
-          { duration: 100, toValue },
-          { useNativeDriver: true }
-        ).start();
-      } else {
-        this.state.toggle.setValue(toValue);
-      }
-    }
     if (prevProps.event._id !== this.props.event._id) {
       this._getReminderCount();
     }
@@ -106,9 +82,9 @@ export default class NotifyButton extends Component {
     this._areNotificationsEnabled();
   };
 
-  _areNotificationsEnabled = async init => {
+  _areNotificationsEnabled = async () => {
     const {
-      event: { _id: id, _source: item }
+      event: { _id: id }
     } = this.props;
 
     try {
@@ -137,15 +113,6 @@ export default class NotifyButton extends Component {
   };
 
   _onPress = async () => {
-    await new Promise(resolve => {
-      this.setState(
-        {
-          toggling: true
-        },
-        resolve
-      );
-    });
-
     const { event } = this.props;
 
     const notify = await toggleEvent(event);
@@ -159,47 +126,27 @@ export default class NotifyButton extends Component {
 
       this.setState({
         count,
-        notify,
-        toggling: false
+        notify
       });
 
       NotifyButton.emitter.emit("toggled", event._id);
-    } else {
-      this.setState({
-        toggling: false
-      });
     }
   };
 
   render() {
-    const translateX = this.state.toggle.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, ballTranslate]
-    });
-    const transform = [{ translateX }];
-
-    const backgroundColor = this.state.toggle.interpolate({
-      inputRange: [0, 1],
-      outputRange: ["#ccc", "#13BE24"]
-    });
-
     const count = formatCount(this.state.count);
+    const color = this.state.notify ? "#FFA033" : "#999";
     return (
       <TouchableOpacity
         disabled={this.state.toggling}
         style={styles.action}
         onPress={this._onPress}
       >
-        <Entypo style={styles.icon} name="bell" size={16} color="#000" />
-        <Text style={styles.remindText}>Remind Me</Text>
-        <View style={{ flex: 1 }} />
-        <View>
+        <FontAwesome style={styles.icon} name="star" size={16} color={color} />
+        <Text style={styles.remindText}>Interested</Text>
+        <View style={styles.spacer} />
+        <View style={styles.count}>
           <Text style={styles.countText}>{count}</Text>
-          <View style={styles.switch}>
-            <Animated.View
-              style={[styles.switchBall, { transform, backgroundColor }]}
-            />
-          </View>
         </View>
       </TouchableOpacity>
     );
@@ -208,46 +155,42 @@ export default class NotifyButton extends Component {
 
 const styles = StyleSheet.create({
   action: {
-    backgroundColor: "#fafafa",
+    backgroundColor: "#efefef",
     borderRadius: 5,
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
     flexDirection: "row",
     alignItems: "center",
-    padding: 5,
+    paddingHorizontal: 5,
     marginLeft: 5,
     flexBasis: "48%",
-    minWidth: 140
+    minWidth: 140,
+    height: 30
   },
-  icon: { marginTop: 1, marginLeft: 3 },
-  switch: {
-    height: switchHeight,
-    borderRadius: switchHeight / 2,
-    width: switchWidth,
-    flexDirection: "row",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    marginTop: 1,
-    padding: 1,
-    backgroundColor: "#fff"
-  },
-  switchBall: {
-    height: ballHeight,
-    width: ballHeight,
-    borderRadius: ballHeight / 2
+  icon: {
+    marginLeft: 5
   },
   remindText: {
     fontSize: 14,
     color: "#000",
     fontWeight: "500",
-    marginLeft: 7
+    marginLeft: 8
+  },
+  spacer: {
+    flex: 1
+  },
+  count: {
+    height: 16,
+    minWidth: 16,
+    borderRadius: 8,
+    backgroundColor: "#6C7B80",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 6,
+    marginRight: 3
   },
   countText: {
-    fontSize: 7,
-    fontWeight: "500",
-    color: "#444",
+    fontSize: 10,
+    fontWeight: "700",
+    color: "#fff",
     textAlign: "center"
   }
 });

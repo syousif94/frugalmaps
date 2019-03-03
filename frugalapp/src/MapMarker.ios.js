@@ -150,8 +150,8 @@ class Callout extends PureComponent {
     }
 
     const calloutStyle = {
-      width: 250,
-      height: 230
+      width: 270,
+      height: 270
     };
 
     let streetText = data._source.address
@@ -174,8 +174,8 @@ class Callout extends PureComponent {
             scrollIndicatorInsets={Callout.scrollIndicatorInsets}
           >
             <ImageGallery doc={data} height={130} narrow />
-            <View style={styles.locationInfo}>
-              <View>
+            <View style={styles.locationInfo} pointerEvents="none">
+              <View style={styles.locationContent}>
                 <Text style={styles.locationText}>{data._source.location}</Text>
                 <Text style={styles.streetText}>{streetText}</Text>
               </View>
@@ -184,7 +184,11 @@ class Callout extends PureComponent {
                 <Text style={styles.ratingText}>{data._source.rating}</Text>
               </View>
             </View>
-            <EventList tick={this.state.tick} placeid={data._source.placeid} />
+            <EventList
+              tick={this.state.tick}
+              placeid={data._source.placeid}
+              narrow
+            />
           </ScrollView>
         </View>
       </MapView.Callout>
@@ -223,24 +227,32 @@ const styles = StyleSheet.create({
     fontWeight: "700"
   },
   locationInfo: {
-    marginTop: 5,
-    marginBottom: 2,
+    padding: 5,
+    position: "absolute",
+    top: 15,
+    left: 15,
+    right: 15,
+    backgroundColor: "rgba(0,0,0,0.5)",
     flexDirection: "row"
   },
+  locationContent: {
+    paddingRight: 35,
+    flex: 1
+  },
   locationText: {
-    marginTop: 1,
     fontSize: 14,
     fontWeight: "600",
-    color: "#000"
+    color: "#fff"
   },
   streetText: {
-    color: "#444",
+    color: "#e0e0e0",
+    fontWeight: "500",
     fontSize: 10
   },
   rating: {
     position: "absolute",
     top: 0,
-    right: 5,
+    right: 8,
     bottom: 0,
     flexDirection: "row",
     alignItems: "center"

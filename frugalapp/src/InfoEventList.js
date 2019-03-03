@@ -13,125 +13,6 @@ const mapStateToProps = (state, props) => ({
   events: Events.placeEvents(state, props)
 });
 
-const renderEvent = (event, index) => {
-  const { _source: item, _id: id } = event;
-  const iso = makeISO(item.days);
-
-  let remaining;
-  let ending;
-  let ended;
-
-  const { remaining: r, ending: e, ended: ed } = timeRemaining(
-    item.groupedHours[0],
-    iso
-  );
-
-  remaining = r;
-  ending = e;
-  ended = ed;
-
-  if (!ending) {
-    const yesterdayIso = makeYesterdayISO(item.days);
-    if (yesterdayIso !== undefined) {
-      const { remaining: r, ending: e, ended: ed } = timeRemaining(
-        item.groupedHours[item.groupedHours.length - 1],
-        yesterdayIso
-      );
-
-      if (e) {
-        remaining = r;
-        ending = e;
-        ended = ed;
-      }
-    }
-  }
-
-  const countdownStyle = [styles.countdownText];
-
-  let endingText = " minutes";
-
-  if (!remaining) {
-  } else if (remaining.length > 9) {
-    endingText = " days";
-  } else if (remaining.length > 6) {
-    endingText = " hours";
-  }
-
-  if (ending) {
-    countdownStyle.push(styles.ending);
-    endingText += " left";
-  } else {
-    endingText += " away";
-  }
-
-  const eventStyle = [styles.event];
-
-  if (!index) {
-    eventStyle.push(styles.firstEvent);
-  }
-
-  return (
-    <View style={eventStyle} key={id}>
-      <MonoText
-        characterWidth={7.5}
-        style={styles.countdown}
-        text={remaining}
-        suffix={endingText}
-        textStyle={countdownStyle}
-        suffixStyle={styles.suffix}
-        colonStyle={styles.colon}
-      />
-      <View style={styles.titleRow}>
-        <Text style={styles.boldText}>
-          {index + 1}. {item.title}
-        </Text>
-        {item.type === "Happy Hour" ? (
-          <View style={styles.twentyOne}>
-            <Text style={styles.twentyOneText}>21+</Text>
-          </View>
-        ) : null}
-      </View>
-      {item.groupedHours.map((hours, index) => {
-        return (
-          <View style={styles.hour} key={index}>
-            <View style={styles.time}>
-              <Text style={styles.hourText} numberOfLines={1}>
-                {hours.hours}{" "}
-                <Text style={styles.durationText}>{hours.duration}hr</Text>
-              </Text>
-            </View>
-            <View style={styles.days}>
-              {hours.days.map(day => {
-                const dayStyle = [styles.day];
-                if (day.daysAway === 0 && ended) {
-                  dayStyle.push(styles.ended);
-                }
-                return (
-                  <View style={dayStyle} key={day.text}>
-                    <Text style={styles.dayText}>{day.text}</Text>
-                    {day.daysAway === 0 ? null : (
-                      <View style={styles.daysAway}>
-                        <Text style={styles.dayText}>{day.daysAway}</Text>
-                      </View>
-                    )}
-                  </View>
-                );
-              })}
-            </View>
-          </View>
-        );
-      })}
-      <Text style={[styles.infoText, styles.descriptionText]}>
-        {item.description}
-      </Text>
-      <View style={styles.actions}>
-        <GoingButton event={event} />
-        <NotifyButton event={event} />
-      </View>
-    </View>
-  );
-};
-
 class InfoEventList extends Component {
   state = {
     time: Date.now()
@@ -174,9 +55,130 @@ class InfoEventList extends Component {
 
   render() {
     return (
-      <View style={styles.content}>{this.props.events.map(renderEvent)}</View>
+      <View style={styles.content}>
+        {this.props.events.map(this._renderEvent)}
+      </View>
     );
   }
+
+  _renderEvent = (event, index) => {
+    const { _source: item, _id: id } = event;
+    const iso = makeISO(item.days);
+
+    let remaining;
+    let ending;
+    let ended;
+
+    const { remaining: r, ending: e, ended: ed } = timeRemaining(
+      item.groupedHours[0],
+      iso
+    );
+
+    remaining = r;
+    ending = e;
+    ended = ed;
+
+    if (!ending) {
+      const yesterdayIso = makeYesterdayISO(item.days);
+      if (yesterdayIso !== undefined) {
+        const { remaining: r, ending: e, ended: ed } = timeRemaining(
+          item.groupedHours[item.groupedHours.length - 1],
+          yesterdayIso
+        );
+
+        if (e) {
+          remaining = r;
+          ending = e;
+          ended = ed;
+        }
+      }
+    }
+
+    const countdownStyle = [styles.countdownText];
+
+    let endingText = " minutes";
+
+    if (!remaining) {
+    } else if (remaining.length > 9) {
+      endingText = " days";
+    } else if (remaining.length > 6) {
+      endingText = " hours";
+    }
+
+    if (ending) {
+      countdownStyle.push(styles.ending);
+      endingText += " left";
+    } else {
+      endingText += " away";
+    }
+
+    const eventStyle = [styles.event];
+
+    if (!index) {
+      eventStyle.push(styles.firstEvent);
+    }
+
+    return (
+      <View style={eventStyle} key={id}>
+        <MonoText
+          characterWidth={7.5}
+          style={styles.countdown}
+          text={remaining}
+          suffix={endingText}
+          textStyle={countdownStyle}
+          suffixStyle={styles.suffix}
+          colonStyle={styles.colon}
+        />
+        <View style={styles.titleRow}>
+          <Text style={styles.boldText}>
+            {index + 1}. {item.title}
+          </Text>
+          {item.type === "Happy Hour" ? (
+            <View style={styles.twentyOne}>
+              <Text style={styles.twentyOneText}>21+</Text>
+            </View>
+          ) : null}
+        </View>
+        {item.groupedHours.map((hours, index) => {
+          return (
+            <View style={styles.hour} key={index}>
+              <View style={styles.time}>
+                <Text style={styles.hourText} numberOfLines={1}>
+                  {hours.hours}{" "}
+                  <Text style={styles.durationText}>{hours.duration}hr</Text>
+                </Text>
+              </View>
+              <View style={styles.days}>
+                {hours.days.map(day => {
+                  const dayStyle = [styles.day];
+                  if (day.daysAway === 0 && ended) {
+                    dayStyle.push(styles.ended);
+                  }
+                  return (
+                    <View style={dayStyle} key={day.text}>
+                      <Text style={styles.dayText}>{day.text}</Text>
+                      {day.daysAway === 0 ? null : (
+                        <View style={styles.daysAway}>
+                          <Text style={styles.dayText}>{day.daysAway}</Text>
+                        </View>
+                      )}
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
+          );
+        })}
+        <Text style={[styles.infoText, styles.descriptionText]}>
+          {item.description}
+        </Text>
+        <View style={styles.actions}>
+          <GoingButton event={event} narrow={this.props.narrow} />
+          <NotifyButton event={event} />
+        </View>
+      </View>
+    );
+  };
 }
 
 export default connect(mapStateToProps)(InfoEventList);
@@ -286,6 +288,5 @@ const styles = StyleSheet.create({
   colon: {
     paddingBottom: 1
   },
-  actions: { flexDirection: "row", marginBottom: 5, marginTop: 7 },
-  actionsDivider: { width: 10 }
+  actions: { flexDirection: "row", marginBottom: 5, marginTop: 7 }
 });
