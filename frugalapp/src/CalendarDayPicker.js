@@ -1,8 +1,15 @@
 import React, { PureComponent } from "react";
-import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
+import {
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  View,
+  ScrollView
+} from "react-native";
 import { connect } from "react-redux";
 import * as Events from "./store/events";
 import emitter from "tiny-emitter/instance";
+import moment from "moment";
 
 class DayPicker extends PureComponent {
   _selectDay = day => {
@@ -21,19 +28,48 @@ class DayPicker extends PureComponent {
 
   render() {
     const { calendar, day, recent, list } = this.props;
+    if (!list.length) {
+      return null;
+    }
     const days = [...list, ...recent, ...calendar];
     return (
-      <View style={styles.container}>
-        {days.map(data => {
+      <ScrollView
+        style={styles.scroll}
+        horizontal
+        alwaysBounceHorizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.content}
+      >
+        {days.map((data, index) => {
           const btnStyle = [styles.btnBg];
           if (day === data.title) {
             btnStyle.push(styles.selected);
           }
           const onPress = this._selectDay.bind(null, data.title);
+          let subText;
+
+          if (!index) {
+            subText = moment().format("ddd M/D");
+          } else if (data.away !== undefined) {
+            switch (data.away) {
+              case 0:
+                subText = "Today";
+                break;
+              case 1:
+                subText = "Tomorrow";
+                break;
+              default:
+                subText = `${data.away} days away`;
+            }
+          }
+
           return (
             <View key={data.title} style={btnStyle}>
               <TouchableOpacity style={styles.btn} onPress={onPress}>
-                <Text style={styles.btnText}>{data.title}</Text>
+                <View>
+                  <Text style={styles.btnText}>{data.title}</Text>
+                  <Text style={styles.subText}>{subText}</Text>
+                </View>
                 <View style={styles.count}>
                   <Text style={styles.btnText}>{data.data.length}</Text>
                 </View>
@@ -41,7 +77,7 @@ class DayPicker extends PureComponent {
             </View>
           );
         })}
-      </View>
+      </ScrollView>
     );
   }
 }
@@ -63,15 +99,24 @@ export default connect(
 )(DayPicker);
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+  scroll: {
+    position: "absolute",
+    bottom: 33,
+    left: 0,
+    right: 0,
+    height: 44
+  },
+  content: {
     padding: 3.5
+    // paddingRight: 95
   },
   btnBg: {
     margin: 3.5,
     height: 30,
-    borderRadius: 15,
+    borderTopRightRadius: 15,
+    borderBottomRightRadius: 15,
+    borderTopLeftRadius: 4,
+    borderBottomLeftRadius: 4,
     backgroundColor: "rgba(100,100,100,0.7)"
   },
   selected: {
@@ -82,12 +127,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    paddingLeft: 15
+    paddingLeft: 5
   },
   btnText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "600",
     color: "#fff"
+  },
+  subText: {
+    fontSize: 10,
+    color: "#e0e0e0"
   },
   count: {
     height: 20,

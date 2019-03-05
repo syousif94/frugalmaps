@@ -11,7 +11,7 @@ import {
 import { connect } from "react-redux";
 
 import { withNavigation } from "react-navigation";
-import { Entypo, FontAwesome } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 import { AWSCF } from "./Constants";
 
 import * as Events from "./store/events";
@@ -127,9 +127,9 @@ class ImageGallery extends Component {
             />
           </View>
         </View>
-        <View style={styles.actions}>
+        {/* <View style={styles.actions}>
           <Icon onPress={this._onPress} disabled={disabled} narrow={narrow} />
-        </View>
+        </View> */}
       </View>
     );
   }
@@ -150,16 +150,6 @@ const Icon = ({ disabled, narrow, onPress = null }) => {
           size={18}
           color="#fff"
         />
-      </TouchableOpacity>
-    </View>
-  );
-};
-
-const MapIcon = ({ onPress }) => {
-  return (
-    <View style={styles.action}>
-      <TouchableOpacity style={styles.mapBtn} onPress={onPress}>
-        <FontAwesome name="map-marker" size={16} color="#fff" />
       </TouchableOpacity>
     </View>
   );
@@ -198,13 +188,6 @@ const styles = StyleSheet.create({
     paddingLeft: 7,
     paddingRight: 4,
     paddingVertical: 4
-  },
-  mapBtn: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    width: 30,
-    paddingBottom: 2
   },
   chevron: {
     marginLeft: -1

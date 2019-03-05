@@ -11,6 +11,7 @@ import CalendarEmpty from "./CalendarEmpty";
 import { Entypo } from "@expo/vector-icons";
 import Header from "./CalendarListHeader";
 import CalendarListHeader from "./CalendarListHeader";
+import DayPicker from "./CalendarDayPicker";
 
 class CalendarList extends PureComponent {
   static emitter = new Emitter();
@@ -48,7 +49,13 @@ class CalendarList extends PureComponent {
       this.state.position,
       { toValue, duration: 350 },
       { useNativeDriver: true }
-    ).start();
+    ).start(() => {
+      if (!this._expanded) {
+        requestAnimationFrame(() => {
+          this._reclip();
+        });
+      }
+    });
   };
 
   _reclip = () => {
@@ -157,7 +164,7 @@ class CalendarList extends PureComponent {
 
     const translateY = this.state.position.interpolate({
       inputRange: [0, 1],
-      outputRange: [0, HEIGHT * 0.69]
+      outputRange: [0, HEIGHT * 0.72]
     });
 
     const containerStyle = [
@@ -182,11 +189,12 @@ class CalendarList extends PureComponent {
           keyExtractor={this._keyExtractor}
           ListEmptyComponent={this._renderEmpty}
           {...androidProps}
-          ListHeaderComponent={this._renderHeader}
+          // ListHeaderComponent={this._renderHeader}
           ListFooterComponent={this._renderFooter}
           removeClippedSubviews={this.state.clipSubviews}
           onViewableItemsChanged={this._itemsChanged}
         />
+        <DayPicker />
       </Animated.View>
     );
   }
@@ -211,7 +219,7 @@ export default connect(
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: IOS ? HEIGHT * 0.31 : 0,
+    marginTop: IOS ? HEIGHT * 0.28 : 0,
     flex: 1
   },
   list: {

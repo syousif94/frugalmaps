@@ -27,8 +27,8 @@ class CalendarScreen extends Component {
         <CalendarMap />
         <CalendarList />
         <CalendarInitial />
-        <MenuButton />
-        <Menu />
+        {/* <MenuButton />
+        <Menu /> */}
       </View>
     );
   }

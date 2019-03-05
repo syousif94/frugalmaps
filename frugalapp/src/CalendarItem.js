@@ -8,6 +8,7 @@ import GoingButton from "./GoingButton";
 import MonoText from "./MonoText";
 import { FontAwesome } from "@expo/vector-icons";
 import emitter from "tiny-emitter/instance";
+import EventList from "./InfoEventList";
 
 class CalendarItem extends Component {
   state = {
@@ -54,28 +55,28 @@ class CalendarItem extends Component {
     return shouldTick;
   };
 
-  // _onMap = () => {
-  //   const { item } = this.props;
-
-  //   emitter.emit("fit-marker", item);
-  // };
-
-  _resetOnRelease = false;
-
-  _onPressIn = () => {
+  _onPress = () => {
     const { item } = this.props;
 
-    this._resetOnRelease = true;
     emitter.emit("fit-marker", item);
   };
 
-  _onPressOut = () => {
-    if (this._resetOnRelease) {
-      this._resetOnRelease = false;
-      emitter.emit("reset-marker");
-      emitter.emit("hide-callouts");
-    }
-  };
+  _resetOnRelease = false;
+
+  // _onPressIn = () => {
+  //   const { item } = this.props;
+
+  //   this._resetOnRelease = true;
+  //   emitter.emit("fit-marker", item);
+  // };
+
+  // _onPressOut = () => {
+  //   if (this._resetOnRelease) {
+  //     this._resetOnRelease = false;
+  //     emitter.emit("reset-marker");
+  //     emitter.emit("hide-callouts");
+  //   }
+  // };
 
   render() {
     const {
@@ -153,12 +154,10 @@ class CalendarItem extends Component {
     return (
       <View style={containerStyle}>
         <ImageGallery width={WIDTH - 20} doc={this.props.item} height={150} />
-        <TouchableOpacity
-          delayLongPress={250}
-          onLongPress={this._onPressIn}
-          onPressOut={this._onPressOut}
-          style={styles.info}
-        >
+        <View style={styles.index} pointerEvents="none">
+          <Text style={styles.indexText}>{index + 1}</Text>
+        </View>
+        <TouchableOpacity style={styles.info} onPress={this._onPress}>
           <View style={styles.location}>
             <View style={styles.locationInfo}>
               <Text numberOfLines={1} style={styles.locationText}>
@@ -175,9 +174,9 @@ class CalendarItem extends Component {
               </Text>
             </View>
           </View>
-        </TouchableOpacity>
-        <View style={styles.event}>
-          <View pointerEvents="none">
+          {/* <EventList time={this.state.time} placeid={item.placeid} /> */}
+
+          <View style={styles.event}>
             <MonoText
               text={remaining}
               suffix={endingText}
@@ -188,15 +187,14 @@ class CalendarItem extends Component {
               colonStyle={styles.colon}
             />
             <View style={styles.titleRow}>
-              <Text style={styles.titleText}>
-                {index + 1}. {item.title}
-              </Text>
+              <Text style={styles.titleText}>{item.title}</Text>
               {item.type === "Happy Hour" ? (
                 <View style={styles.twentyOne}>
                   <Text style={styles.twentyOneText}>21+</Text>
                 </View>
               ) : null}
             </View>
+            <Text style={styles.descriptionText}>{item.description}</Text>
             {item.groupedHours.map((hours, index) => {
               return (
                 <View style={styles.hour} key={index}>
@@ -229,13 +227,12 @@ class CalendarItem extends Component {
                 </View>
               );
             })}
-            <Text style={styles.descriptionText}>{item.description}</Text>
+            <View style={styles.actions}>
+              <GoingButton event={this.props.item} />
+              <NotifyButton event={this.props.item} />
+            </View>
           </View>
-          <View style={styles.actions}>
-            <GoingButton event={this.props.item} />
-            <NotifyButton event={this.props.item} />
-          </View>
-        </View>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -255,12 +252,25 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 15
   },
+  index: {
+    position: "absolute",
+    top: 5,
+    left: 5,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+    borderRadius: 4,
+    backgroundColor: "rgba(0,0,0,0.5)"
+  },
+  indexText: {
+    fontSize: 10,
+    fontWeight: "700",
+    color: "#fff"
+  },
   event: {
-    paddingHorizontal: 15,
-    paddingBottom: 10
+    // paddingHorizontal: 15,
+    // paddingBottom: 10
   },
   titleText: {
-    marginTop: 2,
     fontSize: 14,
     fontWeight: "600",
     color: "#000"
@@ -273,6 +283,7 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     marginTop: 2,
+    marginBottom: 4,
     color: "#444",
     fontSize: 14,
     lineHeight: 19,
@@ -280,7 +291,8 @@ const styles = StyleSheet.create({
   },
   location: {
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "center",
+    marginBottom: 7
   },
   locationInfo: { flex: 1 },
   time: {

@@ -109,7 +109,7 @@ class CalendarMap extends PureComponent {
     }
     this._lastBounds = bounds;
 
-    const bottom = ANDROID || this._expanded ? 0 : HEIGHT * 0.65;
+    const bottom = ANDROID || this._expanded ? 0 : HEIGHT * 0.69;
 
     const coords = [
       {
@@ -154,16 +154,16 @@ class CalendarMap extends PureComponent {
       }
     ];
 
-    const bottom = ANDROID || this._expanded ? 0 : HEIGHT * 0.6 + 110;
+    const bottom = ANDROID || this._expanded ? 0 : HEIGHT * 0.64 + 100;
 
     requestAnimationFrame(() => {
       this._map.fitToCoordinates(coords, {
         animated: true,
         edgePadding: {
-          top: 110,
-          right: 110,
+          top: 100,
+          right: 100,
           bottom,
-          left: 110
+          left: 100
         }
       });
     });
@@ -207,7 +207,7 @@ class CalendarMap extends PureComponent {
       edgePadding: {
         top: -20,
         right: 0,
-        bottom: HEIGHT * 0.65,
+        bottom: HEIGHT * 0.69,
         left: 0
       }
     });
@@ -225,7 +225,7 @@ class CalendarMap extends PureComponent {
       : {
           height: this.state.position.interpolate({
             inputRange: [0, 1],
-            outputRange: [HEIGHT * 0.31, HEIGHT]
+            outputRange: [HEIGHT * 0.28, HEIGHT]
           })
         };
 

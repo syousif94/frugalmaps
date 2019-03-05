@@ -3,6 +3,7 @@ import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
 import { connect } from "react-redux";
 import * as Going from "./store/going";
 import { Ionicons } from "@expo/vector-icons";
+import { makeISO, timeRemaining } from "./Time";
 
 class GoingButton extends PureComponent {
   _onPress = () => {
@@ -11,12 +12,34 @@ class GoingButton extends PureComponent {
     });
   };
   render() {
-    const { narrow } = this.props;
+    const { narrow, event } = this.props;
+
+    const days = event._source.groupedHours
+      .reduce((days, hours) => {
+        return [...hours.days, ...days];
+      }, [])
+      .sort((a, b) => a.daysAway - b.daysAway);
+
+    let nextDay = days[0];
+    if (!nextDay.daysAway) {
+      const iso = makeISO(event._source.days);
+      const { ended } = timeRemaining(event._source.groupedHours[0], iso);
+      if (ended) {
+        if (days.length > 1) {
+          nextDay = days[1];
+        } else {
+          nextDay = { ...nextDay, daysAway: 7 };
+        }
+      }
+    }
+
+    const day = nextDay.text;
+    const dom = nextDay.daysAway;
     return (
       <TouchableOpacity style={styles.btn} onPress={this._onPress}>
         <View style={styles.cal}>
-          <Text style={styles.day}>Thu</Text>
-          <Text style={styles.date}>14</Text>
+          <Text style={styles.day}>{day}</Text>
+          <Text style={styles.date}>{dom}</Text>
         </View>
         <Text style={styles.btnText}>Make Plans</Text>
         <View style={styles.spacer} />

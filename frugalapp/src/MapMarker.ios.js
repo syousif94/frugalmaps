@@ -49,7 +49,7 @@ export default class MapMarker extends Component {
       setTimeout(() => {
         this._visibleCallout = true;
         this._marker.showCallout();
-      }, 500);
+      }, 800);
     }
   };
 

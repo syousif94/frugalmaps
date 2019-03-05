@@ -29,7 +29,7 @@ export default connect(mapStateToProps)(CalendarInitial);
 const styles = StyleSheet.create({
   initialLoad: {
     position: "absolute",
-    top: HEIGHT * 0.31,
+    top: HEIGHT * 0.28,
     backgroundColor: "#fff",
     bottom: 0,
     left: 0,

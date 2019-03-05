@@ -61,7 +61,7 @@ class CityPicker extends PureComponent {
         })
       : position.interpolate({
           inputRange: [0, 1],
-          outputRange: [-HEIGHT * 0.69, -90]
+          outputRange: [-HEIGHT * 0.72, -90]
         });
 
     const containerStyle = [
@@ -153,9 +153,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 15,
     borderBottomRightRadius: 15,
     backgroundColor: "rgba(100,100,100,0.7)"
-  },
-  selected: {
-    backgroundColor: "rgba(0,0,0,0.65)"
   },
   btn: {
     flex: 1,
