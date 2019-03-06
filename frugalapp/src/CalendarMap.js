@@ -178,9 +178,7 @@ class CalendarMap extends PureComponent {
   };
 
   _onToggle = () => {
-    requestAnimationFrame(() => {
-      emitter.emit("toggle-map");
-    });
+    emitter.emit("toggle-map");
   };
 
   _initialRegion = false;

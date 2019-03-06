@@ -12,6 +12,7 @@ import emitter from "tiny-emitter/instance";
 import moment from "moment";
 import SearchButton from "./SearchButton";
 import SubmitButton from "./SubmitButton";
+import { SafeArea, IOS } from "./Constants";
 
 class DayPicker extends PureComponent {
   _selectDay = day => {
@@ -34,54 +35,57 @@ class DayPicker extends PureComponent {
       return null;
     }
     const days = [...list, ...recent, ...calendar];
+    const insets = IOS ? { forceInset: { bottom: "always" } } : {};
     return (
-      <ScrollView
-        style={styles.scroll}
-        horizontal
-        alwaysBounceHorizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.content}
-      >
-        <SearchButton />
-        <SubmitButton />
-        {days.map((data, index) => {
-          const btnStyle = [styles.btnBg];
-          if (day === data.title) {
-            btnStyle.push(styles.selected);
-          }
-          const onPress = this._selectDay.bind(null, data.title);
-          let subText;
-
-          if (!index) {
-            subText = moment().format("ddd M/D");
-          } else if (data.away !== undefined) {
-            switch (data.away) {
-              case 0:
-                subText = "Today";
-                break;
-              case 1:
-                subText = "Tomorrow";
-                break;
-              default:
-                subText = `${data.away} days away`;
+      <SafeArea style={styles.container} {...insets}>
+        <ScrollView
+          style={styles.scroll}
+          horizontal
+          alwaysBounceHorizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.content}
+        >
+          <SearchButton />
+          <SubmitButton />
+          {days.map((data, index) => {
+            const btnStyle = [styles.btnBg];
+            if (day === data.title) {
+              btnStyle.push(styles.selected);
             }
-          }
+            const onPress = this._selectDay.bind(null, data.title);
+            let subText;
 
-          return (
-            <View key={data.title} style={btnStyle}>
-              <TouchableOpacity style={styles.btn} onPress={onPress}>
-                <View>
-                  <Text style={styles.btnText}>{data.title}</Text>
-                  <Text style={styles.subText}>{subText}</Text>
-                </View>
-                <View style={styles.count}>
-                  <Text style={styles.btnText}>{data.data.length}</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          );
-        })}
-      </ScrollView>
+            if (!index) {
+              subText = moment().format("ddd M/D");
+            } else if (data.away !== undefined) {
+              switch (data.away) {
+                case 0:
+                  subText = "Today";
+                  break;
+                case 1:
+                  subText = "Tomorrow";
+                  break;
+                default:
+                  subText = `${data.away} days away`;
+              }
+            }
+
+            return (
+              <View key={data.title} style={btnStyle}>
+                <TouchableOpacity style={styles.btn} onPress={onPress}>
+                  <View>
+                    <Text style={styles.btnText}>{data.title}</Text>
+                    <Text style={styles.subText}>{subText}</Text>
+                  </View>
+                  <View style={styles.count}>
+                    <Text style={styles.btnText}>{data.data.length}</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            );
+          })}
+        </ScrollView>
+      </SafeArea>
     );
   }
 }
@@ -103,11 +107,13 @@ export default connect(
 )(DayPicker);
 
 const styles = StyleSheet.create({
-  scroll: {
+  container: {
     position: "absolute",
-    bottom: 33,
+    bottom: 0,
     left: 0,
-    right: 0,
+    right: 0
+  },
+  scroll: {
     height: 44
   },
   content: {

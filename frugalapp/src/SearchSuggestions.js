@@ -42,9 +42,9 @@ class SearchSuggestions extends PureComponent {
     this.setState({
       keyboardHeight: 0
     });
-    // if (this.props.focused) {
-    //   TextInput.State.blurTextInput(TextInput.State.currentlyFocusedField());
-    // }
+    if (ANDROID) {
+      TextInput.State.blurTextInput(TextInput.State.currentlyFocusedField());
+    }
   };
 
   _renderItem = data => <EventSuggestion {...data} />;
@@ -89,7 +89,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    elevation: 8,
     borderTopWidth: 1,
     borderColor: "#e0e0e0"
   },

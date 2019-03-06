@@ -3,12 +3,15 @@ import {
   Animated,
   StyleSheet,
   View,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  Keyboard,
+  TextInput
 } from "react-native";
 import emitter from "tiny-emitter/instance";
 import { HEIGHT } from "./Constants";
 import SearchBar from "./SearchBar";
 import SearchSuggestions from "./SearchSuggestions";
+import { ANDROID } from "./Constants";
 
 export default class Menu extends PureComponent {
   state = {
@@ -19,11 +22,27 @@ export default class Menu extends PureComponent {
   componentDidMount() {
     emitter.on("toggle-search", this._toggleSearch);
     emitter.on("info-pop", this._onInfoPop);
+    if (ANDROID) {
+      this.keyboardWillHideListener = Keyboard.addListener(
+        "keyboardDidHide",
+        this._keyboardWillHide
+      );
+    }
   }
+
+  _keyboardWillHide = () => {
+    if (ANDROID) {
+      TextInput.State.blurTextInput(TextInput.State.currentlyFocusedField());
+      this._dismiss();
+    }
+  };
 
   componentWillUnmount() {
     emitter.off("toggle-search", this._toggleSearch);
     emitter.off("info-pop", this._onInfoPop);
+    if (ANDROID) {
+      this.keyboardWillHideListener.remove();
+    }
   }
 
   componentDidUpdate(prev) {
