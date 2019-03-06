@@ -6,7 +6,6 @@ import CalendarList from "./CalendarList";
 import * as Events from "./store/events";
 import CalendarInitial from "./CalendarInitial";
 import CalendarMap from "./CalendarMap";
-import MenuButton from "./MenuButton";
 import Menu from "./Menu";
 import { ANDROID } from "./Constants";
 
@@ -27,8 +26,7 @@ class CalendarScreen extends Component {
         <CalendarMap />
         <CalendarList />
         <CalendarInitial />
-        {/* <MenuButton />
-        <Menu /> */}
+        <Menu />
       </View>
     );
   }

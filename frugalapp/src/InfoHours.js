@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { GREEN } from "./Colors";
 import moment from "moment";
 
 export default class InfoHours extends Component {
@@ -18,7 +17,7 @@ export default class InfoHours extends Component {
           }
           return (
             <Text key={index} style={style}>
-              {hours}
+              {hours.replace("���", "–")}
             </Text>
           );
         })}

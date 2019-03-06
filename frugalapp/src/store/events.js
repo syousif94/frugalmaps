@@ -32,7 +32,8 @@ export const homeList = createSelector(
 export const placeEvents = createSelector(
   (state, props) => props.placeid,
   state => state.events.data,
-  (placeid, data) => {
+  state => state.events.selectedEvent,
+  (placeid, data, selected) => {
     if (!data || !placeid) {
       return [];
     }
@@ -81,6 +82,13 @@ export const placeEvents = createSelector(
 
       return a - b;
     });
+
+    if (sorted.length > 1 && selected.data) {
+      sorted = [
+        selected.data,
+        ...sorted.filter(event => event._id !== selected.data._id)
+      ];
+    }
 
     return sorted;
   }

@@ -46,10 +46,8 @@ export default class MapMarker extends Component {
     } = doc;
 
     if (placeid === this.props.data._source.placeid) {
-      setTimeout(() => {
-        this._visibleCallout = true;
-        this._marker.showCallout();
-      }, 800);
+      this._visibleCallout = true;
+      this._marker.showCallout();
     }
   };
 

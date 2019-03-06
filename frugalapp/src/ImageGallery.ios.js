@@ -127,9 +127,9 @@ class ImageGallery extends Component {
             />
           </View>
         </View>
-        {/* <View style={styles.actions}>
+        <View style={styles.actions}>
           <Icon onPress={this._onPress} disabled={disabled} narrow={narrow} />
-        </View> */}
+        </View>
       </View>
     );
   }

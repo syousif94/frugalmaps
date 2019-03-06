@@ -5,7 +5,8 @@ import {
   StyleSheet,
   Text,
   View,
-  Animated
+  Animated,
+  ActivityIndicator
 } from "react-native";
 import { connect } from "react-redux";
 import * as Events from "./store/events";
@@ -53,6 +54,19 @@ class CityPicker extends PureComponent {
   };
   render() {
     const { data, position } = this.props;
+
+    if (!data || !data.length) {
+      return (
+        <View style={styles.loading}>
+          <Text style={styles.btnText}>Locating</Text>
+          <ActivityIndicator
+            style={styles.loadingIndicator}
+            size="small"
+            color="#fff"
+          />
+        </View>
+      );
+    }
 
     const translateY = ANDROID
       ? position.interpolate({
@@ -132,6 +146,26 @@ export default connect(
 )(CityPicker);
 
 const styles = StyleSheet.create({
+  loading: {
+    position: "absolute",
+    bottom: HEIGHT * 0.72 + 7,
+    left: 7,
+    paddingRight: 4,
+    paddingLeft: 8,
+    paddingVertical: 2,
+    backgroundColor: "rgba(100,100,100,0.7)",
+    borderTopLeftRadius: 4,
+    borderBottomLeftRadius: 4,
+    borderTopRightRadius: 15,
+    borderBottomRightRadius: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  loadingIndicator: {
+    marginLeft: 6,
+    transform: [{ scale: 0.8 }]
+  },
   container: {
     position: "absolute",
     bottom: 0,

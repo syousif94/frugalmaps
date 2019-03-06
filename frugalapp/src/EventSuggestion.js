@@ -97,7 +97,6 @@ export default connect(
 
 const styles = StyleSheet.create({
   item: {
-    backgroundColor: "#fff",
     flexDirection: "row",
     alignItems: "center"
   },

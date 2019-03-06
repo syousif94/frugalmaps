@@ -10,6 +10,8 @@ import { connect } from "react-redux";
 import * as Events from "./store/events";
 import emitter from "tiny-emitter/instance";
 import moment from "moment";
+import SearchButton from "./SearchButton";
+import SubmitButton from "./SubmitButton";
 
 class DayPicker extends PureComponent {
   _selectDay = day => {
@@ -40,6 +42,8 @@ class DayPicker extends PureComponent {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.content}
       >
+        <SearchButton />
+        <SubmitButton />
         {days.map((data, index) => {
           const btnStyle = [styles.btnBg];
           if (day === data.title) {

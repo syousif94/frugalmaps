@@ -1,8 +1,7 @@
 import React, { Component } from "react";
-import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import { withNavigation } from "react-navigation";
-import { HEIGHT } from "./Constants";
 
 class SubmitButton extends Component {
   _onPress = () => {
@@ -14,8 +13,7 @@ class SubmitButton extends Component {
     return (
       <View style={styles.container}>
         <TouchableOpacity style={styles.btn} onPress={this._onPress}>
-          <Entypo size={24} name="plus" color="#fff" />
-          <Text style={styles.btnText}>Submit</Text>
+          <Entypo size={18} name="plus" color="#fff" />
         </TouchableOpacity>
       </View>
     );
@@ -26,32 +24,16 @@ export default withNavigation(SubmitButton);
 
 const styles = StyleSheet.create({
   container: {
-    position: "absolute",
-    bottom: HEIGHT * 0.4 + 35,
-    height: 50,
-    borderRadius: 25,
-    right: 20,
-    backgroundColor: "#2FE56E",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5
+    backgroundColor: "rgba(26, 173, 77, 0.9)",
+    margin: 3.5,
+    height: 30,
+    width: 50,
+    borderRadius: 15
   },
   btn: {
     flex: 1,
     flexDirection: "row",
     justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 15
-  },
-  btnText: {
-    marginHorizontal: 10,
-    fontSize: 18,
-    color: "#fff",
-    fontWeight: "600"
+    alignItems: "center"
   }
 });

@@ -41,7 +41,7 @@ class SearchBar extends PureComponent {
             returnKeyType="done"
             onChangeText={this._onChangeText}
             value={value}
-            onFocus={this._onFocus}
+            // onFocus={this._onFocus}
             onBlur={this._onBlur}
             autoCapitalize="none"
             clearButtonMode="always"

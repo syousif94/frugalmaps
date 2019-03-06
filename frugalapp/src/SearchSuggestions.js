@@ -1,11 +1,5 @@
 import React, { PureComponent } from "react";
-import {
-  FlatList,
-  Animated,
-  StyleSheet,
-  Keyboard,
-  TextInput
-} from "react-native";
+import { FlatList, View, StyleSheet, Keyboard, TextInput } from "react-native";
 import { connect } from "react-redux";
 import { IOS, ANDROID } from "./Constants";
 import EventSuggestion from "./EventSuggestion";
@@ -48,9 +42,9 @@ class SearchSuggestions extends PureComponent {
     this.setState({
       keyboardHeight: 0
     });
-    if (this.props.focused) {
-      TextInput.State.blurTextInput(TextInput.State.currentlyFocusedField());
-    }
+    // if (this.props.focused) {
+    //   TextInput.State.blurTextInput(TextInput.State.currentlyFocusedField());
+    // }
   };
 
   _renderItem = data => <EventSuggestion {...data} />;
@@ -61,19 +55,12 @@ class SearchSuggestions extends PureComponent {
     const containerStyle = [
       styles.container,
       {
-        paddingBottom: this.state.keyboardHeight,
-        opacity: this.props.opacity.interpolate({
-          inputRange: [1, 2],
-          outputRange: [0, 1],
-          extrapolate: "clamp"
-        })
+        paddingBottom: this.state.keyboardHeight
       }
     ];
 
-    const pointerEvents = this.props.searching ? "auto" : "none";
-
     return (
-      <Animated.View style={containerStyle} pointerEvents={pointerEvents}>
+      <View style={containerStyle}>
         <FlatList
           data={this.props.results}
           style={styles.list}
@@ -82,8 +69,9 @@ class SearchSuggestions extends PureComponent {
           keyboardDismissMode="none"
           keyboardShouldPersistTaps="handled"
           alwaysBounceVertical={true}
+          ItemSeparatorComponent={() => <View style={styles.divider} />}
         />
-      </Animated.View>
+      </View>
     );
   }
 }
@@ -101,10 +89,15 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "#efefef",
-    elevation: 8
+    elevation: 8,
+    borderTopWidth: 1,
+    borderColor: "#e0e0e0"
   },
   list: {
     flex: 1
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#e0e0e0"
   }
 });
