@@ -27,11 +27,11 @@ class CityPicker extends PureComponent {
       queryType: "City"
     });
 
-    setLocation({
-      lastQuery: text,
-      text,
-      bounds: null
-    });
+    // setLocation({
+    //   lastQuery: text,
+    //   text,
+    //   bounds: null
+    // });
 
     emitter.emit("fit-bounds", bounds);
     emitter.emit("hide-callouts", bounds);

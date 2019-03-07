@@ -30,11 +30,16 @@ class DayPicker extends PureComponent {
   };
 
   render() {
-    const { calendar, day, recent, list } = this.props;
+    const { calendar, day, recent, list, closest, location } = this.props;
     if (!list.length) {
       return null;
     }
-    const days = [...list, ...recent, ...calendar];
+    let days;
+    if (closest[0].data.length) {
+      days = [...list, ...closest, ...recent, ...calendar];
+    } else {
+      days = [...list, ...recent, ...calendar];
+    }
     const insets = IOS ? { forceInset: { bottom: "always" } } : {};
     return (
       <SafeArea style={styles.container} {...insets}>
@@ -68,6 +73,8 @@ class DayPicker extends PureComponent {
                 default:
                   subText = `${data.away} days away`;
               }
+            } else if (data.title === "Closest") {
+              subText = location;
             }
 
             return (
@@ -94,7 +101,9 @@ const mapStateToProps = state => ({
   day: state.events.day,
   calendar: state.events.calendar,
   recent: state.events.recent,
-  list: state.events.list
+  list: state.events.list,
+  closest: state.events.closest,
+  location: state.location.text
 });
 
 const mapDispatchToProps = {

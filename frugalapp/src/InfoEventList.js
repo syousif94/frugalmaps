@@ -54,11 +54,7 @@ class InfoEventList extends Component {
   }
 
   render() {
-    return (
-      <View style={styles.content}>
-        {this.props.events.map(this._renderEvent)}
-      </View>
-    );
+    return <View>{this.props.events.map(this._renderEvent)}</View>;
   }
 
   _renderEvent = (event, index) => {
@@ -139,6 +135,9 @@ class InfoEventList extends Component {
             </View>
           ) : null}
         </View>
+        <Text style={[styles.infoText, styles.descriptionText]}>
+          {item.description}
+        </Text>
         {item.groupedHours.map((hours, index) => {
           return (
             <View style={styles.hour} key={index}>
@@ -169,9 +168,6 @@ class InfoEventList extends Component {
             </View>
           );
         })}
-        <Text style={[styles.infoText, styles.descriptionText]}>
-          {item.description}
-        </Text>
         <View style={styles.actions}>
           <GoingButton event={event} narrow={this.props.narrow} />
           <NotifyButton event={event} />
@@ -184,15 +180,11 @@ class InfoEventList extends Component {
 export default connect(mapStateToProps)(InfoEventList);
 
 const styles = StyleSheet.create({
-  content: {
-    // paddingHorizontal: 10,
-    // paddingVertical: 5
-  },
   event: {
-    marginVertical: 6
+    marginTop: 8
   },
   firstEvent: {
-    marginTop: 3
+    marginTop: 0
   },
   boldText: {
     fontSize: 14,
@@ -206,6 +198,7 @@ const styles = StyleSheet.create({
     lineHeight: 19
   },
   descriptionText: {
+    marginBottom: 4,
     paddingRight: 50
   },
   time: {

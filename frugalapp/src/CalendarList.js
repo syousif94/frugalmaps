@@ -132,9 +132,16 @@ class CalendarList extends PureComponent {
 
   _renderItem = data => {
     const iso = this.props.data[0].iso;
+    const title = this.props.data[0].title;
     const key = `${data.item._id}${data.index}`;
     return (
-      <Item {...data} itemKey={key} emitter={CalendarList.emitter} iso={iso} />
+      <Item
+        {...data}
+        itemKey={key}
+        emitter={CalendarList.emitter}
+        iso={iso}
+        title={title}
+      />
     );
   };
 

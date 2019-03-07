@@ -14,12 +14,16 @@ export const homeList = createSelector(
   state => state.events.list,
   state => state.events.calendar,
   state => state.events.recent,
-  (day, list, calendar, recent) => {
+  state => state.events.closest,
+  (day, list, calendar, recent, closest) => {
     if (day === "Up Next") {
       return list;
     }
     if (day === "Newest") {
       return recent;
+    }
+    if (day === "Closest") {
+      return closest;
     }
     const events = calendar.find(datum => {
       return datum.title === day;
@@ -83,10 +87,19 @@ export const placeEvents = createSelector(
       return a - b;
     });
 
-    if (sorted.length > 1 && selected.data) {
+    if (
+      sorted.length > 1 &&
+      selected.data &&
+      placeid === selected.data._source.placeid
+    ) {
       sorted = [
         selected.data,
-        ...sorted.filter(event => event._id !== selected.data._id)
+        ...sorted.filter(event => {
+          return (
+            event._source.title !== selected.data._source.title &&
+            event._id !== selected.id
+          );
+        })
       ];
     }
 
@@ -245,6 +258,18 @@ function recent(state = [{ title: "Newest", data: [] }], { type, payload }) {
   }
 }
 
+function closest(state = [{ title: "Closest", data: [] }], { type, payload }) {
+  switch (type) {
+    case types.set:
+      if (payload.closest !== undefined) {
+        return payload.closest;
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
 function selectedEvent(state = { id: null, data: null }, { type, payload }) {
   switch (type) {
     case types.set:
@@ -281,5 +306,6 @@ export default combineReducers({
   list,
   markers,
   recent,
-  reordering
+  reordering,
+  closest
 });

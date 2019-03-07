@@ -81,7 +81,8 @@ class CalendarItem extends Component {
   render() {
     const {
       item: { _source: item, sort },
-      index
+      index,
+      title
     } = this.props;
 
     const containerStyle = [
@@ -174,64 +175,68 @@ class CalendarItem extends Component {
               </Text>
             </View>
           </View>
-          {/* <EventList time={this.state.time} placeid={item.placeid} /> */}
-
-          <View style={styles.event}>
-            <MonoText
-              text={remaining}
-              suffix={endingText}
-              textStyle={countdownStyle}
-              characterWidth={7.5}
-              style={styles.countdown}
-              suffixStyle={styles.suffix}
-              colonStyle={styles.colon}
-            />
-            <View style={styles.titleRow}>
-              <Text style={styles.titleText}>{item.title}</Text>
-              {item.type === "Happy Hour" ? (
-                <View style={styles.twentyOne}>
-                  <Text style={styles.twentyOneText}>21+</Text>
-                </View>
-              ) : null}
-            </View>
-            <Text style={styles.descriptionText}>{item.description}</Text>
-            {item.groupedHours.map((hours, index) => {
-              return (
-                <View style={styles.hour} key={index}>
-                  <View style={styles.time}>
-                    <Text style={styles.hourText} numberOfLines={1}>
-                      {hours.hours}{" "}
-                      <Text style={styles.durationText}>
-                        {hours.duration}hr
+          {title === "Closest" ? (
+            <EventList time={this.state.time} placeid={item.placeid} />
+          ) : (
+            <View style={styles.event}>
+              <MonoText
+                text={remaining}
+                suffix={endingText}
+                textStyle={countdownStyle}
+                characterWidth={7.5}
+                style={styles.countdown}
+                suffixStyle={styles.suffix}
+                colonStyle={styles.colon}
+              />
+              <View style={styles.titleRow}>
+                <Text style={styles.titleText}>{item.title}</Text>
+                {item.type === "Happy Hour" ? (
+                  <View style={styles.twentyOne}>
+                    <Text style={styles.twentyOneText}>21+</Text>
+                  </View>
+                ) : null}
+              </View>
+              <Text style={styles.descriptionText}>{item.description}</Text>
+              {item.groupedHours.map((hours, index) => {
+                return (
+                  <View style={styles.hour} key={index}>
+                    <View style={styles.time}>
+                      <Text style={styles.hourText} numberOfLines={1}>
+                        {hours.hours}{" "}
+                        <Text style={styles.durationText}>
+                          {hours.duration}hr
+                        </Text>
                       </Text>
-                    </Text>
+                    </View>
+                    <View style={styles.days}>
+                      {hours.days.map(day => {
+                        const dayStyle = [styles.day];
+                        if (day.daysAway === 0 && ended) {
+                          dayStyle.push(styles.ended);
+                        }
+                        return (
+                          <View style={dayStyle} key={day.text}>
+                            <Text style={styles.dayText}>{day.text}</Text>
+                            {day.daysAway === 0 ? null : (
+                              <View style={styles.daysAway}>
+                                <Text style={styles.dayText}>
+                                  {day.daysAway}
+                                </Text>
+                              </View>
+                            )}
+                          </View>
+                        );
+                      })}
+                    </View>
                   </View>
-                  <View style={styles.days}>
-                    {hours.days.map(day => {
-                      const dayStyle = [styles.day];
-                      if (day.daysAway === 0 && ended) {
-                        dayStyle.push(styles.ended);
-                      }
-                      return (
-                        <View style={dayStyle} key={day.text}>
-                          <Text style={styles.dayText}>{day.text}</Text>
-                          {day.daysAway === 0 ? null : (
-                            <View style={styles.daysAway}>
-                              <Text style={styles.dayText}>{day.daysAway}</Text>
-                            </View>
-                          )}
-                        </View>
-                      );
-                    })}
-                  </View>
-                </View>
-              );
-            })}
-            <View style={styles.actions}>
-              <GoingButton event={this.props.item} />
-              <NotifyButton event={this.props.item} />
+                );
+              })}
+              <View style={styles.actions}>
+                <GoingButton event={this.props.item} />
+                <NotifyButton event={this.props.item} />
+              </View>
             </View>
-          </View>
+          )}
         </TouchableOpacity>
       </View>
     );

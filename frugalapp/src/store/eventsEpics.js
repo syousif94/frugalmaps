@@ -54,6 +54,17 @@ const sortDays = (now, away) => (a, b) => {
   return diff;
 };
 
+const makeClosest = hits => {
+  const closest = {
+    title: "Closest",
+    data: _(hits)
+      .filter(doc => !doc.sort || doc.sort < 45)
+      .uniqBy("_source.placeid")
+      .value()
+  };
+  return [closest];
+};
+
 const makeEvents = (hits, week = false, nearest = false) => {
   const initial = [
     { title: "Monday", data: [], iso: 1, away: 0 },
@@ -334,10 +345,19 @@ const events = (action$, store) =>
             }
           ];
 
+          let closest;
+
+          if (coordinates) {
+            closest = makeClosest(hits);
+          }
+
           let markerData = [{ title: "Up Next", data: hits }, ...calendar];
 
           if (recent) {
             markerData = [...recent, ...markerData];
+          }
+          if (closest) {
+            markerData = [...closest, ...markerData];
           }
 
           const markers = makeMarkers(markerData, bounds);
@@ -391,7 +411,8 @@ const events = (action$, store) =>
               day,
               initialized: true,
               markers,
-              recent
+              recent,
+              closest
             })
           );
         })

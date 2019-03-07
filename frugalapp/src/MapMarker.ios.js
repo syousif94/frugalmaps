@@ -182,6 +182,7 @@ class Callout extends PureComponent {
                 <Text style={styles.ratingText}>{data._source.rating}</Text>
               </View>
             </View>
+            <View style={styles.spacer} />
             <EventList
               tick={this.state.tick}
               placeid={data._source.placeid}
@@ -203,9 +204,12 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: -15
   },
+  spacer: {
+    height: 3
+  },
   scrollContent: {
     padding: 15,
-    paddingBottom: 5
+    paddingBottom: 9
   },
   spot: {
     position: "absolute",
