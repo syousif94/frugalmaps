@@ -252,7 +252,7 @@ class CalendarMap extends PureComponent {
               group.days.find(day => day.iso === iso)
             );
 
-            let { ending } = timeRemaining(hours, iso);
+            let { ending, ended } = timeRemaining(hours, iso);
 
             if (!ending && item.groupedHours.length > 1) {
               const yesterdayISO = makeYesterdayISO(item.days);
@@ -268,8 +268,11 @@ class CalendarMap extends PureComponent {
               }
             }
 
+            const upcoming = hours.today && !ended && !ending;
+
             return (
               <MapMarker
+                upcoming={upcoming}
                 ending={ending}
                 data={data}
                 key={`${_id}${this.state.expanded}`}

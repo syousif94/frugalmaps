@@ -106,6 +106,9 @@ class InfoEventList extends Component {
       endingText += " left";
     } else {
       endingText += " away";
+      if (!ended && !ending && item.groupedHours[0].today) {
+        countdownStyle.push(styles.upcoming);
+      }
     }
 
     const eventStyle = [styles.event];
@@ -253,6 +256,9 @@ const styles = StyleSheet.create({
   },
   ending: {
     color: GREEN
+  },
+  upcoming: {
+    color: "#E9730C"
   },
   ended: {
     backgroundColor: "#999"

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { StyleSheet } from "react-native";
-import { ANDROID, SafeArea } from "./Constants";
+import { ANDROID, SafeArea, IOS } from "./Constants";
 
 export default class EditSpecial extends Component {
   scrollToTop = () => {
@@ -9,6 +9,7 @@ export default class EditSpecial extends Component {
   };
 
   render() {
+    const insets = IOS ? { forceInset: { top: "always" } } : {};
     return (
       <KeyboardAwareScrollView
         innerRef={ref => (this._scrollView = ref)}
@@ -16,6 +17,7 @@ export default class EditSpecial extends Component {
         keyboardShouldPersistTaps="handled"
         enableOnAndroid
         extraScrollHeight={ANDROID ? 120 : -80}
+        {...insets}
       >
         <SafeArea style={styles.container}>{this.props.children}</SafeArea>
       </KeyboardAwareScrollView>

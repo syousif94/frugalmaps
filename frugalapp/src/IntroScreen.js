@@ -11,10 +11,8 @@ class IntroScreen extends Component {
       await grantLocation();
       await grantNotifications();
     } catch (error) {}
-    requestAnimationFrame(() => {
-      this.props.navigation.navigate({
-        routeName: "Home"
-      });
+    this.props.navigation.navigate({
+      routeName: "Home"
     });
   };
 

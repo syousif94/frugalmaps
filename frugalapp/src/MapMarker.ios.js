@@ -10,6 +10,7 @@ import emitter from "tiny-emitter/instance";
 
 const redPin = require("../assets/pin.png");
 const greenPin = require("../assets/pin-now.png");
+const orangePin = require("../assets/pin-upcoming.png");
 
 export default class MapMarker extends Component {
   static imageHeight = 150;
@@ -71,7 +72,8 @@ export default class MapMarker extends Component {
     const {
       data: { _source: item, _id },
       ending,
-      expanded
+      expanded,
+      upcoming
     } = this.props;
 
     const coordinate = {
@@ -86,7 +88,7 @@ export default class MapMarker extends Component {
 
     const spot = `${location.slice(0, 2)}\n${location.slice(2, 4)}`;
 
-    const pinSource = ending ? greenPin : redPin;
+    const pinSource = ending ? greenPin : upcoming ? orangePin : redPin;
 
     let markerProps;
 

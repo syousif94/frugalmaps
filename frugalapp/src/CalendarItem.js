@@ -142,6 +142,9 @@ class CalendarItem extends Component {
       endingText += " left";
     } else {
       endingText += " away";
+      if (!ended && !ending && hours.today) {
+        countdownStyle.push(styles.upcoming);
+      }
     }
 
     const locationText = item.location;
@@ -332,6 +335,9 @@ const styles = StyleSheet.create({
   },
   ending: {
     color: "#18AB2E"
+  },
+  upcoming: {
+    color: "#E9730C"
   },
   days: {
     flexDirection: "row"

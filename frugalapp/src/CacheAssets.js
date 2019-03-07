@@ -13,6 +13,7 @@ const fonts = [Entypo, FontAwesome, MaterialIcons, Ionicons].map(
 const images = [
   require("../assets/pin.png"),
   require("../assets/pin-now.png"),
+  require("../assets/pin-upcoming.png"),
   require("../assets/intro.png"),
   require("../assets/sadCalendar.png"),
   require("../assets/sadCalendarLarge.png")

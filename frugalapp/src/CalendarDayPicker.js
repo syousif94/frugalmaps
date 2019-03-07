@@ -75,6 +75,8 @@ class DayPicker extends PureComponent {
               }
             } else if (data.title === "Closest") {
               subText = location;
+            } else if (data.title === "Newest") {
+              subText = "Events";
             }
 
             return (
@@ -136,10 +138,10 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 15,
     borderTopLeftRadius: 4,
     borderBottomLeftRadius: 4,
-    backgroundColor: "rgba(100,100,100,0.7)"
+    backgroundColor: "rgba(100,100,100,0.85)"
   },
   selected: {
-    backgroundColor: "rgba(0,0,0,0.65)"
+    backgroundColor: "rgba(0,0,0,0.75)"
   },
   btn: {
     flex: 1,
@@ -155,7 +157,7 @@ const styles = StyleSheet.create({
   },
   subText: {
     fontSize: 10,
-    color: "#e0e0e0"
+    color: "#f2f2f2"
   },
   count: {
     height: 20,
