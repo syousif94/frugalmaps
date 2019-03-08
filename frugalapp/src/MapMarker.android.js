@@ -1,5 +1,5 @@
 import React, { PureComponent, Component } from "react";
-import { StyleSheet, View, Text, WebView } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { withNavigation } from "react-navigation";
 import { connect } from "react-redux";
 import { MapView } from "expo";
@@ -10,9 +10,10 @@ import emitter from "tiny-emitter/instance";
 
 const redPin = require("../assets/pin.png");
 const greenPin = require("../assets/pin-now.png");
+const orangePin = require("../assets/pin-upcoming.png");
 
 export default class MapMarker extends PureComponent {
-  static imageHeight = 120;
+  static imageHeight = 60;
   static offset = { x: 0, y: -14 };
 
   componentDidMount() {
@@ -40,10 +41,8 @@ export default class MapMarker extends PureComponent {
     } = doc;
 
     if (placeid === this.props.data._source.placeid) {
-      setTimeout(() => {
-        this._visibleCallout = true;
-        this._marker.showCallout();
-      }, 500);
+      this._visibleCallout = true;
+      this._marker.showCallout();
     }
   };
   _setRef = ref => {
@@ -53,7 +52,9 @@ export default class MapMarker extends PureComponent {
   render() {
     const {
       data: { _source: item },
-      ending
+      ending,
+      upcoming,
+      expanded
     } = this.props;
 
     const coordinate = {
@@ -68,27 +69,36 @@ export default class MapMarker extends PureComponent {
 
     const spot = `${location.slice(0, 2)}\n${location.slice(2, 4)}`;
 
-    const pinSource = ending ? greenPin : redPin;
+    const pinSource = ending ? greenPin : upcoming ? orangePin : redPin;
 
-    const streetText = item.address
-      .split(",")
-      .find(val => val.length > 5)
-      .trim();
+    let markerProps;
+
+    if (expanded) {
+      markerProps = {};
+    } else {
+      const streetText = item.address
+        .split(",")
+        .find(val => val.length > 5)
+        .trim();
+      markerProps = {
+        title: item.location,
+        description: streetText
+      };
+    }
 
     return (
       <MapView.Marker
         coordinate={coordinate}
         image={pinSource}
-        title={item.location}
-        description={streetText}
         ref={this._setRef}
+        {...markerProps}
       >
         <View style={styles.marker}>
           <View style={styles.spot}>
             <Text style={styles.spotText}>{spot}</Text>
           </View>
         </View>
-        {/* <ConnectedCallout {...this.props} /> */}
+        {expanded ? <ConnectedCallout {...this.props} /> : null}
       </MapView.Marker>
     );
   }
@@ -96,7 +106,7 @@ export default class MapMarker extends PureComponent {
 
 class Callout extends Component {
   state = {
-    height: MapMarker.imageHeight
+    height: 0 // MapMarker.imageHeight
   };
 
   _updateHeight = e => {
@@ -107,7 +117,7 @@ class Callout extends Component {
     } = e;
 
     this.setState({
-      height: height + MapMarker.imageHeight
+      height: height // + MapMarker.imageHeight
     });
   };
 
@@ -116,34 +126,49 @@ class Callout extends Component {
 
     const { _source: item } = data;
 
+    const streetText = item.address
+      .split(",")
+      .find(val => val.length > 5)
+      .trim();
+
     if (data.type && data.type === "group") {
       return (
-        <View style={styles.info} onLayout={this._updateHeight}>
+        <View style={styles.info}>
           <Text style={styles.locationText}>{item.location}</Text>
-          {data.events.map(event => {
+          <Text style={styles.infoText}>{streetText}</Text>
+          {data.events.map((event, index) => {
             const { _source: item } = event;
             return (
               <View style={styles.event} key={event._id}>
-                <Text style={styles.titleText}>{item.title}</Text>
+                <Text style={styles.titleText}>
+                  {index + 1}. {item.title}
+                </Text>
+                <Text style={styles.infoText}>{item.description}</Text>
                 <View style={styles.hours}>
                   {item.groupedHours.map((hours, index) => {
                     return (
                       <View style={styles.hour} key={index}>
+                        <Text style={styles.hourText}>{hours.hours}</Text>
                         <View style={styles.days}>
                           {hours.days.map(day => {
                             return (
                               <View style={styles.day} key={day.text}>
                                 <Text style={styles.dayText}>{day.text}</Text>
+                                {day.daysAway ? (
+                                  <View style={styles.daysAway}>
+                                    <Text style={styles.dayText}>
+                                      {day.daysAway}
+                                    </Text>
+                                  </View>
+                                ) : null}
                               </View>
                             );
                           })}
                         </View>
-                        <Text style={styles.hourText}>{hours.hours}</Text>
                       </View>
                     );
                   })}
                 </View>
-                <Text style={styles.infoText}>{item.description}</Text>
               </View>
             );
           })}
@@ -153,7 +178,7 @@ class Callout extends Component {
       const hours = makeHours(item);
 
       return (
-        <View style={styles.info} onLayout={this._updateHeight}>
+        <View style={styles.info}>
           <Text style={styles.titleText}>{item.title}</Text>
           <Text style={styles.locationText}>{item.location}</Text>
           <Text style={styles.infoText}>{hours}</Text>
@@ -185,19 +210,18 @@ class Callout extends Component {
     const { _source: item } = this.props.data;
 
     const calloutStyle = {
-      width: 250,
-      height: this.state.height
+      width: 250
     };
 
-    const source =
-      this.state.height === MapMarker.imageHeight
-        ? null
-        : { html: calloutHTML(item) };
+    // const source =
+    //   this.state.height === MapMarker.imageHeight
+    //     ? null
+    //     : { html: calloutHTML(item) };
 
     return (
       <MapView.Callout onPress={this._onPress}>
-        <View style={calloutStyle} key={`${this.state.height}`}>
-          <WebView style={{ height: MapMarker.imageHeight }} source={source} />
+        <View style={calloutStyle}>
+          {/* <WebView style={{ height: MapMarker.imageHeight }} source={source} /> */}
           {this._renderInfo()}
         </View>
       </MapView.Callout>
@@ -261,11 +285,9 @@ const styles = StyleSheet.create({
     fontSize: 6,
     fontWeight: "700"
   },
-  info: {
-    paddingTop: 4
-  },
+  info: {},
   event: {
-    marginTop: 5
+    marginTop: 3
   },
   titleText: {
     fontSize: 12,
@@ -285,8 +307,7 @@ const styles = StyleSheet.create({
     marginTop: 2
   },
   hour: {
-    flexDirection: "row",
-    alignItems: "center"
+    marginBottom: 3
   },
   hourText: {
     color: "#444",
@@ -294,14 +315,23 @@ const styles = StyleSheet.create({
   },
   days: {
     flexDirection: "row",
-    marginRight: 3
+    marginTop: 3
   },
   day: {
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 2,
     paddingVertical: 1,
     borderRadius: 2,
     backgroundColor: "#18AB2E",
     marginRight: 2
+  },
+  daysAway: {
+    marginLeft: 2,
+    marginRight: -1,
+    paddingHorizontal: 2,
+    borderRadius: 2.5,
+    backgroundColor: "rgba(0,0,0,0.2)"
   },
   dayText: {
     fontSize: 10,
