@@ -1,5 +1,12 @@
 import React, { Component, PureComponent } from "react";
-import { StyleSheet, Image, View, Text, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  Image,
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity
+} from "react-native";
 
 import { MapView } from "expo";
 import { FontAwesome } from "@expo/vector-icons";
@@ -7,6 +14,9 @@ import { FontAwesome } from "@expo/vector-icons";
 import ImageGallery from "./ImageGallery";
 import EventList from "./InfoEventList";
 import emitter from "tiny-emitter/instance";
+import { connect } from "react-redux";
+import * as Events from "./store/events";
+import { withNavigation } from "react-navigation";
 
 const redPin = require("../assets/pin.png");
 const greenPin = require("../assets/pin-now.png");
@@ -53,11 +63,11 @@ export default class MapMarker extends Component {
   };
 
   _onSelect = () => {
-    this._callout.toggleTick(true);
+    this._callout.getWrappedInstance().toggleTick(true);
   };
 
   _onDeselect = () => {
-    this._callout.toggleTick(false);
+    this._callout.getWrappedInstance().toggleTick(false);
   };
 
   _setCalloutRef = ref => {
@@ -122,7 +132,11 @@ export default class MapMarker extends Component {
           </View>
         </View>
         {expanded ? (
-          <Callout ref={this._setCalloutRef} key={_id} {...this.props} />
+          <ConnectedCallout
+            onRef={this._setCalloutRef}
+            key={_id}
+            {...this.props}
+          />
         ) : null}
       </MapView.Marker>
     );
@@ -140,6 +154,18 @@ class Callout extends PureComponent {
     this.setState({
       tick
     });
+  };
+
+  _onPress = () => {
+    const { data, navigation, set } = this.props;
+
+    set({
+      selectedEvent: {
+        data
+      }
+    });
+
+    navigation.navigate("Info");
   };
 
   render() {
@@ -184,18 +210,30 @@ class Callout extends PureComponent {
                 <Text style={styles.ratingText}>{data._source.rating}</Text>
               </View>
             </View>
-            <View style={styles.spacer} />
-            <EventList
-              tick={this.state.tick}
-              placeid={data._source.placeid}
-              narrow
-            />
+            <TouchableOpacity style={styles.btn} onPress={this._onPress}>
+              <EventList
+                tick={this.state.tick}
+                placeid={data._source.placeid}
+                narrow
+              />
+            </TouchableOpacity>
           </ScrollView>
         </View>
       </MapView.Callout>
     );
   }
 }
+
+const ConnectedCallout = withNavigation(
+  connect(
+    null,
+    {
+      set: Events.actions.set
+    },
+    null,
+    { withRef: true }
+  )(Callout)
+);
 
 const styles = StyleSheet.create({
   marker: {
@@ -206,8 +244,8 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: -15
   },
-  spacer: {
-    height: 3
+  btn: {
+    marginTop: 3
   },
   scrollContent: {
     padding: 15,

@@ -8,13 +8,10 @@ import {
   ActivityIndicator,
   TouchableOpacity
 } from "react-native";
-import { connect } from "react-redux";
 
-import { withNavigation } from "react-navigation";
-import { Entypo } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import { AWSCF } from "./Constants";
-
-import * as Events from "./store/events";
+import emitter from "tiny-emitter/instance";
 
 class ImageGallery extends Component {
   shouldComponentUpdate(next) {
@@ -25,14 +22,9 @@ class ImageGallery extends Component {
   }
 
   _onPress = () => {
-    const { set, navigation, doc } = this.props;
+    const { doc } = this.props;
 
-    set({
-      selectedEvent: {
-        data: doc
-      }
-    });
-    navigation.navigate("Info");
+    emitter.emit("fit-marker", doc);
   };
 
   _renderItem = ({ item }) => {
@@ -136,31 +128,20 @@ class ImageGallery extends Component {
 }
 
 const Icon = ({ disabled, narrow, onPress = null }) => {
-  if (disabled) {
+  if (narrow || disabled) {
     return null;
   }
   return (
     <View style={styles.action}>
       <TouchableOpacity style={styles.actionBtn} onPress={onPress}>
-        <Entypo name="info-with-circle" size={16} color="#fff" />
-        {narrow ? null : <Text style={styles.actionText}>More Info</Text>}
-        <Entypo
-          style={styles.chevron}
-          name="chevron-right"
-          size={18}
-          color="#fff"
-        />
+        <FontAwesome name="map-marker" size={14} color="#fff" />
+        <Text style={styles.actionText}>Zoom In</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
-export default connect(
-  null,
-  {
-    set: Events.actions.set
-  }
-)(withNavigation(ImageGallery));
+export default ImageGallery;
 
 const styles = StyleSheet.create({
   photo: {
@@ -185,15 +166,11 @@ const styles = StyleSheet.create({
   actionBtn: {
     flexDirection: "row",
     alignItems: "center",
-    paddingLeft: 7,
-    paddingRight: 4,
+    paddingHorizontal: 7,
     paddingVertical: 4
   },
-  chevron: {
-    marginLeft: -1
-  },
   actionText: {
-    marginRight: -1,
+    fontSize: 14,
     marginLeft: 5,
     fontWeight: "600",
     color: "#fff"

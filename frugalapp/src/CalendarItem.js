@@ -7,8 +7,11 @@ import NotifyButton from "./NotifyButton";
 import GoingButton from "./GoingButton";
 import MonoText from "./MonoText";
 import { FontAwesome } from "@expo/vector-icons";
-import emitter from "tiny-emitter/instance";
+
 import EventList from "./InfoEventList";
+import { withNavigation } from "react-navigation";
+import { connect } from "react-redux";
+import * as Events from "./store/events";
 
 class CalendarItem extends Component {
   state = {
@@ -56,9 +59,13 @@ class CalendarItem extends Component {
   };
 
   _onPress = () => {
-    const { item } = this.props;
-
-    emitter.emit("fit-marker", item);
+    const { set, navigation, item } = this.props;
+    set({
+      selectedEvent: {
+        data: item
+      }
+    });
+    navigation.navigate("Info");
   };
 
   _resetOnRelease = false;
@@ -246,7 +253,12 @@ class CalendarItem extends Component {
   }
 }
 
-export default CalendarItem;
+export default connect(
+  null,
+  {
+    set: Events.actions.set
+  }
+)(withNavigation(CalendarItem));
 
 const styles = StyleSheet.create({
   container: {

@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { MapView } from "expo";
 import * as Events from "./store/events";
 import { makeHours } from "./Time";
-import { AWSCF } from "./Constants";
+// import { AWSCF } from "./Constants";
 import emitter from "tiny-emitter/instance";
 
 const redPin = require("../assets/pin.png");
@@ -236,32 +236,32 @@ const ConnectedCallout = connect(
   }
 )(withNavigation(Callout));
 
-const calloutHTML = item => {
-  const url = `${AWSCF}${item.photos[0].thumb.key}`;
-  return `
-    <html>
-      <head>
-      <style>
-        html, body {
-          margin: 0;
-          padding: 0;
-        }
+// const calloutHTML = item => {
+//   const url = `${AWSCF}${item.photos[0].thumb.key}`;
+//   return `
+//     <html>
+//       <head>
+//       <style>
+//         html, body {
+//           margin: 0;
+//           padding: 0;
+//         }
 
-        #img {
-          height: 100%;
-          width: 100%;
-          background-repeat: no-repeat;
-          background-position: center;
-          background-size: cover;
-        }
-      </style>
-      </head>
-      <body>
-      <div id="img" style="background-image: url('${url}')"></div>
-      </body>
-    </html>
-  `;
-};
+//         #img {
+//           height: 100%;
+//           width: 100%;
+//           background-repeat: no-repeat;
+//           background-position: center;
+//           background-size: cover;
+//         }
+//       </style>
+//       </head>
+//       <body>
+//       <div id="img" style="background-image: url('${url}')"></div>
+//       </body>
+//     </html>
+//   `;
+// };
 
 const styles = StyleSheet.create({
   marker: {

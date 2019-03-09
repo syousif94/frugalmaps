@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 import { RED, BLUE } from "./Colors";
 import * as Going from "./store/going";
 import { AWSCF } from "./Constants";
+import GoingDates from "./GoingDates";
 
 const mapState = state => ({
   visible: state.going.visible,
@@ -63,12 +64,15 @@ class GoingModal extends PureComponent {
       width: image.thumb.width
     };
     return (
-      <View style={styles.header}>
-        <Image source={imageSource} style={styles.image} />
-        <View style={styles.headerContent}>
-          <Text style={styles.nameText}>{item.title}</Text>
-          <Text style={styles.locationText}>{item.location}</Text>
+      <View>
+        <View style={styles.header}>
+          <Image source={imageSource} style={styles.image} />
+          <View style={styles.headerContent}>
+            <Text style={styles.nameText}>{item.title}</Text>
+            <Text style={styles.locationText}>{item.location}</Text>
+          </View>
         </View>
+        <GoingDates event={this.props.selected} />
       </View>
     );
   };
