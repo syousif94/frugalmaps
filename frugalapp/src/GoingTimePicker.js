@@ -6,9 +6,8 @@ import {
   TouchableOpacity,
   Text
 } from "react-native";
-import moment from "moment";
 
-export default class GoingDates extends PureComponent {
+export default class TimePicker extends PureComponent {
   state = {
     data: []
   };
@@ -32,24 +31,24 @@ export default class GoingDates extends PureComponent {
       return;
     }
 
-    const days = event._source.groupedHours
-      .reduce((days, hours) => {
-        return [...hours.days, ...days];
-      }, [])
-      .sort((a, b) => a.daysAway - b.daysAway);
+    const { start, end } = event._source.groupedHours[0];
+
+    const startInt = parseInt(start, 10);
+
+    const endInt = parseInt(end, 10);
+
+    // let duration
+
+    // if (startInt < endInt) {
+    //   duration =
+    // } else {
+
+    // }
 
     const data = [];
 
     for (let i = 0; i < 40; i++) {
-      const index = i % days.length;
-
-      const day = days[index];
-
-      const daysAway = day.daysAway + Math.floor(i / days.length) * 7;
-
-      const date = moment().add(daysAway, "d");
-
-      data.push({ ...day, date, daysAway });
+      data.push({ time: "6:15pm" });
     }
 
     this.setState({
@@ -59,11 +58,9 @@ export default class GoingDates extends PureComponent {
 
   _renderItem = data => {
     return (
-      <View style={styles.date}>
+      <View style={styles.time}>
         <TouchableOpacity style={styles.btn}>
-          <Text style={styles.day}>{data.item.text}</Text>
-          <Text style={styles.day}>{data.item.date.format("M/D")}</Text>
-          <Text style={styles.day}>{data.item.daysAway}</Text>
+          <Text style={styles.day}>{data.item.time}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -97,27 +94,27 @@ export default class GoingDates extends PureComponent {
 const styles = StyleSheet.create({
   list: {
     backgroundColor: "#fff",
-    height: 90
+    height: 48
   },
   content: {
-    padding: 10,
-    paddingBottom: 0
+    paddingHorizontal: 10
   },
-  date: {
-    height: 60,
-    width: 60,
-    borderRadius: 30,
+  time: {
+    height: 28,
+    borderRadius: 5,
     margin: 10,
-    backgroundColor: "#999"
+    backgroundColor: "#999",
+    justifyContent: "center"
   },
   btn: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    paddingHorizontal: 10
   },
   day: {
-    fontSize: 12,
+    fontSize: 14,
     color: "#fff",
-    fontWeight: "600"
+    fontWeight: "500"
   }
 });

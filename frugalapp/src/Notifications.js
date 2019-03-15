@@ -75,7 +75,10 @@ export async function createNotification({ _source: item, _id: id }) {
         {
           title,
           body,
-          data: { id }
+          data: { id },
+          ios: {
+            sound: true
+          }
         },
         { time: time.valueOf(), repeat: "week" }
       );
@@ -151,7 +154,7 @@ export async function updateNotifications(events) {
 
       if (!event.found) {
         AsyncStorage.removeItem(id);
-        CalendarManager.toggleEvent(event, false);
+        // CalendarManager.toggleEvent(event, false);
         syncReminder(id, false);
         return;
       }

@@ -336,6 +336,22 @@ const events = (action$, store) =>
 
           const calendar = makeEvents(hits, true, nearestQuery);
 
+          if (!calendar.length) {
+            return Observable.of(
+              Location.actions.set({
+                coordinates,
+                lastQuery: text,
+                text,
+                bounds: action.payload.bounds ? undefined : null
+              }),
+              Events.actions.set({
+                refreshing: false,
+                day,
+                initialized: true
+              })
+            );
+          }
+
           const listData = makeListData(calendar);
 
           const list = [
@@ -549,6 +565,12 @@ const restore = action$ =>
         }
 
         const calendar = makeEvents(data, true, true);
+
+        if (!calendar.length) {
+          return Events.actions.set({
+            refreshing: true
+          });
+        }
 
         const listData = makeListData(calendar);
 

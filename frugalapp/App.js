@@ -9,7 +9,7 @@ import { DEV, IOS } from "./src/Constants";
 import { AppLoading } from "expo";
 import cache from "./src/CacheAssets";
 import "./src/Firebase";
-import "./src/CalendarManager";
+// import "./src/CalendarManager";
 import "./src/NotificationUpdater";
 
 if (DEV) {

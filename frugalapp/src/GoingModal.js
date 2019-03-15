@@ -8,10 +8,11 @@ import {
   Image
 } from "react-native";
 import { connect } from "react-redux";
-import { RED, BLUE } from "./Colors";
+import { BLUE } from "./Colors";
 import * as Going from "./store/going";
 import { AWSCF } from "./Constants";
 import GoingDates from "./GoingDates";
+import GoingTimePicker from "./GoingTimePicker";
 
 const mapState = state => ({
   visible: state.going.visible,
@@ -73,6 +74,7 @@ class GoingModal extends PureComponent {
           </View>
         </View>
         <GoingDates event={this.props.selected} />
+        <GoingTimePicker event={this.props.selected} />
       </View>
     );
   };
