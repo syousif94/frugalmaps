@@ -139,11 +139,6 @@ function timeRemaining(hours, iso, today) {
   let remaining = null;
   const start = createDate(now, hours.start, iso);
   const end = createDate(now, hours.end, iso, hours.start);
-  console.log({
-    now: now.format("h:mm a MMM D, Y"),
-    start: start.format("h: mm a MMM D, Y"),
-    end: end.format("h:mm a MMM D, Y")
-  });
   if (now.isBefore(end) && end.isBefore(start)) {
     ending = true;
     diff = end.valueOf() - time;
@@ -457,7 +452,6 @@ function makeMarkers(today, days) {
 }
 
 function makeListData(calendar, time) {
-  console.log({ makeList: time.format("h:mm a"), utc: time.utcOffset() });
   return _.uniqBy(
     [
       // events started yesterday ending today
