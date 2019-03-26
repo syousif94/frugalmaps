@@ -127,11 +127,48 @@ module.exports = async function getEvents(req, res) {
     }
   ];
 
+  const newest = [
+    {
+      title: "Newest",
+      data: data.sort((a, b) => {
+        return b._source.updatedAt - a._source.updatedAt;
+      })
+    }
+  ];
+
+  let closest;
+
+  if (lat && lng) {
+    closest = [
+      {
+        title: "Closest",
+        data: _(data)
+          .uniqBy("_source.placeid")
+          .filter(doc => doc.sort[0] <= 45)
+          .sort((a, b) => {
+            return a.sort[0] - b.sort[0];
+          })
+          .value()
+      }
+    ];
+  }
+
+  const places = _(data)
+    .groupBy(hit => hit._source.placeid)
+    .mapValues(group => group.map(doc => doc._id))
+    .value();
+
+  const keyedData = _(data)
+    .keyBy("_id")
+    .value();
+
   const response = {
     calendar,
     markers,
-    data,
-    list
+    data: keyedData,
+    list,
+    places,
+    newest
   };
 
   if (bounds) {
@@ -140,6 +177,10 @@ module.exports = async function getEvents(req, res) {
 
   if (city) {
     response.city = city;
+  }
+
+  if (closest && closest[0].data.length) {
+    response.closest = closest;
   }
 
   res.send(response);

@@ -49,7 +49,17 @@ const events = (action$, store) =>
         return { res, coordinates };
       })
         .switchMap(({ res, coordinates }) => {
-          const { bounds, city, markers, calendar, data, list } = res;
+          const {
+            bounds,
+            city,
+            markers,
+            calendar,
+            data,
+            list,
+            places,
+            closest,
+            newest: recent
+          } = res;
 
           if (bounds !== undefined) {
             emitter.emit("fit-bounds", bounds);
@@ -87,11 +97,14 @@ const events = (action$, store) =>
             Events.actions.set({
               list,
               data,
+              places,
               refreshing: false,
               calendar,
               day,
               initialized: true,
-              markers
+              markers,
+              closest,
+              recent
             })
           );
         })

@@ -12,6 +12,7 @@
     "@valdio/react-native-scrollable-tabview": "^0.8.10",
     "expo": "^30.0.1",
     "firebase": "^5.7.3",
+    "immutable": "^4.0.0-rc.12",
     "moment": "^2.22.2",
     "react": "16.3.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-30.0.0.tar.gz",

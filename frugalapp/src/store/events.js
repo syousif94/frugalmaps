@@ -3,6 +3,7 @@ import moment from "moment";
 import { createSelector } from "reselect";
 import { createActions } from "./lib";
 import _ from "lodash";
+import Immutable from "immutable";
 import { makeYesterdayISO, timeRemaining } from "../Time";
 
 const mutations = ["set", "restore", "fetch", "merge", "reorder"];
@@ -35,31 +36,35 @@ export const homeList = createSelector(
 
 export const placeEvents = createSelector(
   (state, props) => props.placeid,
+  state => state.events.places,
   state => state.events.data,
   state => state.events.selectedEvent,
-  (placeid, data, selected) => {
-    if (!data || !placeid) {
+  (placeid, places, data, selected) => {
+    if (!data.size || !places.size || !placeid) {
       return [];
     }
-    const groups = _(data)
-      .groupBy(hit => hit._source.placeid)
-      .value();
 
-    const group = groups[placeid];
+    const group = places.get(placeid);
+
+    if (!group) {
+      return [];
+    }
 
     const today = moment().weekday();
 
-    let sorted = group.sort((_a, _b) => {
-      let a = _a._source.groupedHours[0].iso - today;
-      if (a < 0) {
-        a += 7;
-      }
-      let b = _b._source.groupedHours[0].iso - today;
-      if (b < 0) {
-        b += 7;
-      }
-      return a - b;
-    });
+    let sorted = group
+      .map(id => data.get(id))
+      .sort((_a, _b) => {
+        let a = _a._source.groupedHours[0].iso - today;
+        if (a < 0) {
+          a += 7;
+        }
+        let b = _b._source.groupedHours[0].iso - today;
+        if (b < 0) {
+          b += 7;
+        }
+        return a - b;
+      });
 
     sorted = sorted.sort((_a, _b) => {
       let a = 0;
@@ -111,17 +116,14 @@ export const markerList = createSelector(
   state => state.events.day,
   state => state.events.markers,
   (day, data) => {
-    if (!day) {
+    if (!day || !data.length) {
       return [];
     }
 
-    const dayEvents = data.find(datum => {
-      return datum.title === day;
-    });
-
-    if (!dayEvents) {
-      return [];
-    }
+    const dayEvents =
+      data.find(datum => {
+        return datum.title === day;
+      }) || data[0];
 
     return dayEvents.data;
   }
@@ -177,20 +179,44 @@ function refreshing(state = true, { type, payload }) {
   }
 }
 
-function data(state = [], { type, payload }) {
+function places(state = Immutable.Map(), { type, payload }) {
   switch (type) {
     case types.set:
-      if (payload.data !== undefined) {
-        return payload.data;
+      if (payload.places !== undefined) {
+        return Immutable.Map(payload.places);
       }
       return state;
     case types.merge:
       if (payload.data !== undefined) {
-        const newIDs = payload.data.map(doc => doc._id);
-        const newState = state.filter(doc => {
-          return newIDs.indexOf(doc._id) === -1;
+        let newState = state;
+        payload.data.forEach(doc => {
+          const place = state.get(doc._source.placeid);
+          if (place && place.indexOf(doc._id) === -1) {
+            newState = newState.set(doc._source.placeid, [doc._id, ...place]);
+          } else if (!place) {
+            newState = newState.set(doc._source.placeid, [doc._id]);
+          }
         });
-        return [...newState, ...payload.data];
+        return newState;
+      }
+      return state;
+    default:
+      return state;
+  }
+}
+
+function data(state = Immutable.Map(), { type, payload }) {
+  switch (type) {
+    case types.set:
+      if (payload.data !== undefined) {
+        return Immutable.Map(payload.data);
+      }
+      return state;
+    case types.merge:
+      if (payload.data !== undefined) {
+        return state.merge(
+          Immutable.Map(payload.data.map(doc => [doc._id, doc]))
+        );
       }
       return state;
     default:
@@ -307,5 +333,6 @@ export default combineReducers({
   markers,
   recent,
   reordering,
-  closest
+  closest,
+  places
 });
