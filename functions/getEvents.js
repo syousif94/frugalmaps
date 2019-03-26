@@ -4,12 +4,7 @@ const servicesApi = require("./google");
 const turf = require("@turf/turf");
 const _ = require("lodash");
 const moment = require("moment");
-const {
-  groupHours,
-  makeEvents,
-  makeMarkers
-  // makeListData
-} = require("./time");
+const { groupHours, makeEvents, makeMarkers, makeListData } = require("./time");
 
 module.exports = async function getEvents(req, res) {
   const { lat, lng, now /** text, tags */ } = req.body;
@@ -123,10 +118,20 @@ module.exports = async function getEvents(req, res) {
 
   const markers = makeMarkers(currentTime, markerData);
 
+  const listData = makeListData(calendar, currentTime);
+
+  const list = [
+    {
+      title: "Up Next",
+      data: listData
+    }
+  ];
+
   const response = {
     calendar,
     markers,
-    data
+    data,
+    list
   };
 
   if (bounds) {

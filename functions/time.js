@@ -391,7 +391,7 @@ function makeMarkers(today, days) {
             const hours = event._source.groupedHours.find(group =>
               group.days.find(day => day.iso === iso)
             );
-            const { ending } = timeRemaining(hours, iso);
+            const { ending } = timeRemaining(hours, iso, today);
             if (ending || event._source.groupedHours.length === 1) {
               return ending;
             }
@@ -402,7 +402,8 @@ function makeMarkers(today, days) {
             if (yHours) {
               const { ending: endingYesterday } = timeRemaining(
                 yHours,
-                yesterdayISO
+                yesterdayISO,
+                today
               );
               return endingYesterday;
             }
@@ -442,7 +443,7 @@ function makeMarkers(today, days) {
     .value();
 }
 
-function makeListData(calendar) {
+function makeListData(calendar, time) {
   return _.uniqBy(
     [
       // events started yesterday ending today
@@ -451,7 +452,7 @@ function makeListData(calendar) {
         const hours = event._source.groupedHours.find(group =>
           group.days.find(day => day.iso === iso)
         );
-        const { ending } = timeRemaining(hours, iso);
+        const { ending } = timeRemaining(hours, iso, time);
         return ending;
       }),
       // events today that haven't ended
@@ -459,7 +460,7 @@ function makeListData(calendar) {
         const hours = event._source.groupedHours.find(group =>
           group.days.find(day => day.iso === calendar[0].iso)
         );
-        const { ended } = timeRemaining(hours, calendar[0].iso);
+        const { ended } = timeRemaining(hours, calendar[0].iso, time);
         return !ended;
       }),
       // remaining events
@@ -471,7 +472,7 @@ function makeListData(calendar) {
               const hours = event._source.groupedHours.find(group =>
                 group.days.find(groupDay => groupDay.iso === day.iso)
               );
-              const { ended } = timeRemaining(hours, day.iso);
+              const { ended } = timeRemaining(hours, day.iso, time);
               return ended;
             });
           }
@@ -484,7 +485,7 @@ function makeListData(calendar) {
           group.days.find(day => day.iso === calendar[0].iso)
         );
         if (hours.days.length === 1) {
-          const { ended } = timeRemaining(hours, calendar[0].iso);
+          const { ended } = timeRemaining(hours, calendar[0].iso, time);
           return ended;
         }
         return false;

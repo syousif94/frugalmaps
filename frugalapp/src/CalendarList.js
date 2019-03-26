@@ -77,7 +77,7 @@ class CalendarList extends PureComponent {
   };
 
   _refresh = () => {
-    this.props.reorder();
+    this.props.fetch();
   };
 
   _renderEmpty = () => {
@@ -215,8 +215,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  reorder: Events.actions.reorder,
-  restore: Events.actions.restore
+  fetch: Events.actions.set.bind(null, { refreshing: true })
 };
 
 export default connect(

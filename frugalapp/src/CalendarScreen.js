@@ -34,8 +34,7 @@ class CalendarScreen extends Component {
 }
 
 const mapDispatchToProps = {
-  fetch: Events.actions.set.bind(null, { refreshing: true }),
-  restore: Events.actions.restore
+  fetch: Events.actions.set.bind(null, { refreshing: true })
 };
 
 export default connect(
