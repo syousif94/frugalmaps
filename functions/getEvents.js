@@ -7,9 +7,9 @@ const moment = require("moment");
 const { groupHours, makeEvents, makeMarkers, makeListData } = require("./time");
 
 module.exports = async function getEvents(req, res) {
-  const { lat, lng, now /** text, tags */ } = req.body;
+  const { lat, lng, now /** text, tags */, utc } = req.body;
 
-  const currentTime = moment(now);
+  const currentTime = moment(now).utcOffset(utc);
 
   let { bounds } = req.body;
 
@@ -106,9 +106,11 @@ module.exports = async function getEvents(req, res) {
           .shuffle()
           .value();
 
-        doc._source.groupedHours = groupHours(doc._source, currentTime);
+        const hit = _.cloneDeep(doc);
 
-        return doc;
+        hit._source.groupedHours = groupHours(hit._source, currentTime);
+
+        return hit;
       });
     });
 

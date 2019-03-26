@@ -3,6 +3,7 @@ import { combineEpics } from "redux-observable";
 import { Observable } from "rxjs/Observable";
 import emitter from "tiny-emitter/instance";
 import _ from "lodash";
+import moment from "moment";
 
 import api from "../API";
 import * as Events from "./events";
@@ -16,8 +17,10 @@ const events = (action$, store) =>
     .filter(action => action.payload.refreshing)
     .switchMap(action =>
       Observable.defer(async () => {
+        const time = moment();
         const body = {
-          now: Date.now()
+          now: time.valueOf(),
+          utc: time.utcOffset()
         };
 
         let coordinates;

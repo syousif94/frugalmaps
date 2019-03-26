@@ -55,9 +55,15 @@ function closingPeriod(item, iso) {
   return period;
 }
 
-function createDate(time, iso, start) {
-  let date = moment(time, ["h:ma", "H:m"]).isoWeekday(iso);
-  const now = moment();
+function createDate(now, time, iso, start) {
+  const hours = parseInt(time.substring(0, 2), 10);
+  const minutes = parseInt(time.substring(2), 10);
+  let date = now
+    .clone()
+    .utcOffset(now.utcOffset())
+    .hour(hours)
+    .minute(minutes)
+    .isoWeekday(iso);
 
   const startInt = start && parseInt(start, 10);
   const endInt = start && parseInt(time, 10);
@@ -80,8 +86,8 @@ function dayToISO(day) {
   return ISO_DAYS[day];
 }
 
-function makeISO(days) {
-  const today = moment().weekday();
+function makeISO(days, now) {
+  const today = now.weekday();
 
   const closestDay = days.sort((_a, _b) => {
     let a = dayToISO(_a) - today;
@@ -98,8 +104,8 @@ function makeISO(days) {
   return dayToISO(closestDay);
 }
 
-function makeYesterdayISO(days) {
-  let today = moment().weekday();
+function makeYesterdayISO(days, now) {
+  let today = now.weekday();
 
   if (today === 0) {
     today = 7;
@@ -124,13 +130,20 @@ function makeDuration(hours) {
   return end.diff(start, "hours");
 }
 
-function timeRemaining(hours, iso, time) {
+function timeRemaining(hours, iso, today) {
   let ending = false;
-  let now = moment();
+  const now = today.clone().utcOffset(today.utcOffset());
+  // let now = moment();
+  const time = today.valueOf();
   let diff;
   let remaining = null;
-  const start = createDate(hours.start, iso);
-  const end = createDate(hours.end, iso, hours.start);
+  const start = createDate(now, hours.start, iso);
+  const end = createDate(now, hours.end, iso, hours.start);
+  console.log({
+    now: now.format("h:mm a MMM D, Y"),
+    start: start.format("h: mm a MMM D, Y"),
+    end: end.format("h:mm a MMM D, Y")
+  });
   if (now.isBefore(end) && end.isBefore(start)) {
     ending = true;
     diff = end.valueOf() - time;
@@ -387,7 +400,7 @@ function makeMarkers(today, days) {
           let firstEvent;
 
           const endingEvents = events.filter(event => {
-            const iso = makeISO(event._source.days);
+            const iso = makeISO(event._source.days, today);
             const hours = event._source.groupedHours.find(group =>
               group.days.find(day => day.iso === iso)
             );
@@ -395,7 +408,7 @@ function makeMarkers(today, days) {
             if (ending || event._source.groupedHours.length === 1) {
               return ending;
             }
-            const yesterdayISO = makeYesterdayISO(event._source.days);
+            const yesterdayISO = makeYesterdayISO(event._source.days, today);
             const yHours = event._source.groupedHours.find(group =>
               group.days.find(day => day.iso === yesterdayISO)
             );
@@ -444,6 +457,7 @@ function makeMarkers(today, days) {
 }
 
 function makeListData(calendar, time) {
+  console.log({ makeList: time.format("h:mm a"), utc: time.utcOffset() });
   return _.uniqBy(
     [
       // events started yesterday ending today

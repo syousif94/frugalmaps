@@ -1,5 +1,7 @@
 export const url = "https://us-central1-frugalmaps.cloudfunctions.net/api/";
 
+// export const url = "http://localhost:5000/frugalmaps/us-central1/api/";
+
 function api(endpoint, payload) {
   return new Promise(async (resolve, reject) => {
     const timeout = setTimeout(() => {
