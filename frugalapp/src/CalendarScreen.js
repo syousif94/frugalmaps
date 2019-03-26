@@ -7,17 +7,18 @@ import * as Events from "./store/events";
 import CalendarInitial from "./CalendarInitial";
 import CalendarMap from "./CalendarMap";
 import Menu from "./Menu";
-import { ANDROID } from "./Constants";
+// import { ANDROID } from "./Constants";
 
 class CalendarScreen extends Component {
   static id = "cal";
 
   componentDidMount() {
-    if (ANDROID) {
-      this.props.fetch();
-    } else {
-      this.props.restore();
-    }
+    this.props.fetch();
+    // if (ANDROID) {
+    //   this.props.fetch();
+    // } else {
+    //   this.props.restore();
+    // }
   }
 
   render() {

@@ -76,13 +76,6 @@ const makeEvents = (hits, week = false, nearest = false) => {
     { title: "Sunday", data: [], iso: 0, away: 0 }
   ];
 
-  // const closest = {
-  //   title: "Closest",
-  //   data: _.uniqBy(hits, "_source.placeid"),
-  //   iso: 0,
-  //   away: 0
-  // };
-
   if (!hits) {
     return initial;
   }
@@ -295,7 +288,6 @@ const events = (action$, store) =>
 
         return { res, coordinates };
       })
-        .retry(2)
         .switchMap(({ res, coordinates }) => {
           const { text, hits: docs, bounds } = res;
 
@@ -441,6 +433,7 @@ const events = (action$, store) =>
             })
           );
         })
+        .retry(2)
     );
 
 const fetchSelected = action$ =>
