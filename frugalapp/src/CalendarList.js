@@ -209,7 +209,7 @@ class CalendarList extends PureComponent {
 
 const mapStateToProps = state => ({
   initialized: state.events.initialized,
-  refreshing: state.events.reordering,
+  refreshing: state.events.refreshing,
   data: Events.homeList(state),
   day: state.events.day
 });
