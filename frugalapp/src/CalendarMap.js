@@ -1,19 +1,17 @@
 import React, { PureComponent } from "react";
-import { StyleSheet, TouchableOpacity, Animated, Text } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { MapView } from "expo";
 import { connect } from "react-redux";
-import { Entypo } from "@expo/vector-icons";
 
 import emitter from "tiny-emitter/instance";
 import { makeISO, timeRemaining, makeYesterdayISO } from "./Time";
-import { INITIAL_REGION, HEIGHT, IOS, ANDROID } from "./Constants";
+import { INITIAL_REGION, ANDROID } from "./Constants";
 
 import * as Location from "./store/location";
 import * as Events from "./store/events";
 import MapMarker from "./MapMarker";
 import locate from "./Locate";
-import CityPicker from "./CalendarCityPicker";
-import MapLoading from "./MapLoading";
+import CalendarItem from "./CalendarItem";
 
 const mapStateToProps = state => ({
   markers: Events.markerList(state),
@@ -30,49 +28,20 @@ class CalendarMap extends PureComponent {
   static searchId = "mapScreen";
 
   state = {
-    now: Date.now(),
-    position: new Animated.Value(0)
+    now: Date.now()
   };
 
   componentDidMount() {
     emitter.on("fit-bounds", this._fitBounds);
-    emitter.on("fit-marker", this._fitMarker);
-    emitter.on("reset-marker", this._resetMarker);
-    emitter.on("toggle-map", this._toggleMap);
+    // emitter.on("fit-marker", this._fitMarker);
+    // emitter.on("reset-marker", this._resetMarker);
   }
 
   componentWillUnmount() {
     emitter.off("fit-bounds", this._fitBounds);
-    emitter.off("fit-marker", this._fitMarker);
-    emitter.off("reset-marker", this._resetMarker);
-    emitter.off("toggle-map", this._toggleMap);
+    // emitter.off("fit-marker", this._fitMarker);
+    // emitter.off("reset-marker", this._resetMarker);
   }
-
-  _expanded = false;
-
-  _toggleMap = () => {
-    const toValue = this._expanded ? 0 : 1;
-    this._expanded = !this._expanded;
-
-    if (IOS) {
-      this._fitBounds(this._lastBounds);
-    }
-
-    Animated.timing(
-      this.state.position,
-      { toValue, duration: 350 },
-      { useNativeDriver: true }
-    ).start(() => {
-      if (ANDROID) {
-        this._fitBounds(this._lastBounds);
-      }
-      setTimeout(() => {
-        this.setState({
-          expanded: this._expanded
-        });
-      }, 40);
-    });
-  };
 
   _showLocation = async () => {
     const coords = this.props.markers.map(marker => {
@@ -109,7 +78,7 @@ class CalendarMap extends PureComponent {
     }
     this._lastBounds = bounds;
 
-    const bottom = ANDROID || this._expanded ? 0 : HEIGHT * 0.69;
+    const bottom = CalendarItem.height;
 
     const coords = [
       {
@@ -154,16 +123,16 @@ class CalendarMap extends PureComponent {
       }
     ];
 
-    const bottom = ANDROID || this._expanded ? 0 : HEIGHT * 0.64 + 100;
+    const bottom = CalendarItem.height;
 
     requestAnimationFrame(() => {
       this._map.fitToCoordinates(coords, {
         animated: true,
         edgePadding: {
-          top: 100,
-          right: 100,
+          top: 0,
+          right: 0,
           bottom,
-          left: 100
+          left: 0
         }
       });
     });
@@ -175,10 +144,6 @@ class CalendarMap extends PureComponent {
 
   _hideCallouts = () => {
     emitter.emit("hide-callouts");
-  };
-
-  _onToggle = () => {
-    emitter.emit("toggle-map");
   };
 
   _initialRegion = false;
@@ -203,9 +168,9 @@ class CalendarMap extends PureComponent {
     this._map.fitToCoordinates(coords, {
       animated: false,
       edgePadding: {
-        top: -20,
+        top: 0,
         right: 0,
-        bottom: HEIGHT * 0.69,
+        bottom: CalendarItem.height,
         left: 0
       }
     });
@@ -214,21 +179,8 @@ class CalendarMap extends PureComponent {
   render() {
     const { markers, authorized } = this.props;
 
-    const toggleStyle = [styles.toggle, { opacity: this.state.position }];
-
-    const togglePointerEvents = this.state.expanded ? "auto" : "none";
-
-    const containerStyle = IOS
-      ? { ...StyleSheet.absoluteFillObject }
-      : {
-          height: this.state.position.interpolate({
-            inputRange: [0, 1],
-            outputRange: [HEIGHT * 0.28, HEIGHT]
-          })
-        };
-
     return (
-      <Animated.View style={containerStyle}>
+      <View style={styles.container}>
         <MapView
           onLayout={this._setFrame}
           ref={this._setMapRef}
@@ -242,6 +194,7 @@ class CalendarMap extends PureComponent {
           showsMyLocationButton={false}
           pitchEnabled={false}
           onPress={this._hideCallouts}
+          paddingAdjustmentBehavior="always"
         >
           {markers.map(data => {
             const { _id, _source: item } = data;
@@ -281,20 +234,7 @@ class CalendarMap extends PureComponent {
             );
           })}
         </MapView>
-        <CityPicker tabLabel="Closest" position={this.state.position} />
-        <MapLoading />
-        <Animated.View style={toggleStyle} pointerEvents={togglePointerEvents}>
-          <TouchableOpacity onPress={this._onToggle} style={styles.toggleBtn}>
-            <Entypo
-              style={styles.icon}
-              name="chevron-up"
-              size={16}
-              color="#fff"
-            />
-            <Text style={styles.btnText}>List</Text>
-          </TouchableOpacity>
-        </Animated.View>
-      </Animated.View>
+      </View>
     );
   }
 }
@@ -305,30 +245,10 @@ export default connect(
 )(CalendarMap);
 
 const styles = StyleSheet.create({
-  map: {
+  container: {
     flex: 1
   },
-  toggle: {
-    position: "absolute",
-    bottom: 45,
-    left: 25
-  },
-  toggleBtn: {
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: "rgba(90,90,90,0.6)",
-    flexDirection: "row",
-    alignItems: "center",
-    paddingRight: 10,
-    paddingLeft: 8
-  },
-  btnText: {
-    fontSize: 14,
-    color: "#fff",
-    fontWeight: "600",
-    marginLeft: 6
-  },
-  icon: {
-    marginTop: 2
+  map: {
+    flex: 1
   }
 });

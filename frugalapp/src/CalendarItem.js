@@ -1,10 +1,8 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import ImageGallery from "./ImageGallery";
+import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import { timeRemaining, makeISO, makeYesterdayISO } from "./Time";
-import { WIDTH } from "./Constants";
+import { WIDTH, AWSCF } from "./Constants";
 import NotifyButton from "./NotifyButton";
-import GoingButton from "./GoingButton";
 import MonoText from "./MonoText";
 import { FontAwesome } from "@expo/vector-icons";
 
@@ -14,6 +12,9 @@ import { connect } from "react-redux";
 import * as Events from "./store/events";
 
 class CalendarItem extends Component {
+  static height = 240;
+  static width = WIDTH - 50;
+
   state = {
     time: Date.now()
   };
@@ -92,11 +93,6 @@ class CalendarItem extends Component {
       title
     } = this.props;
 
-    const containerStyle = [
-      styles.container,
-      { marginTop: index === 0 ? 10 : 5 }
-    ];
-
     let iso = this.props.iso;
     let yesterdayIso;
 
@@ -162,62 +158,37 @@ class CalendarItem extends Component {
       cityText = `${sort[sort.length - 1].toFixed(1)} mi · ${cityText}`;
     }
 
+    const images = [];
+    let imagesWidth = 0;
+
+    while (imagesWidth < CalendarItem.width - 10) {
+      const index = images.length;
+      const photo = item.photos[index];
+      let uri = `${AWSCF}${photo.thumb.key}`;
+      let imageHeight = photo.thumb.height;
+      let width = photo.thumb.width;
+
+      const source = {
+        uri
+      };
+
+      const imageWidth = (150 / imageHeight) * width;
+      images.push({
+        source,
+        width: imageWidth
+      });
+      imagesWidth += imageWidth;
+    }
+
     return (
-      <View style={containerStyle}>
-        <ImageGallery width={WIDTH - 20} doc={this.props.item} height={150} />
-        <View style={styles.index} pointerEvents="none">
-          <Text style={styles.indexText}>{index + 1}</Text>
-        </View>
-        <TouchableOpacity style={styles.info} onPress={this._onPress}>
-          <View style={styles.location}>
-            <View style={styles.locationInfo}>
-              <Text numberOfLines={1} style={styles.locationText}>
-                {locationText}
-              </Text>
-              <Text numberOfLines={1} style={styles.subText}>
-                {cityText}
-              </Text>
-            </View>
-            <View style={styles.rating}>
-              <FontAwesome name="star" size={16} color="#FFA033" />
-              <Text style={styles.ratingText}>
-                {parseFloat(item.rating, 10).toFixed(1)}
-              </Text>
-            </View>
-          </View>
-          {title === "Closest" ? (
-            <EventList time={this.state.time} placeid={item.placeid} />
-          ) : (
-            <View style={styles.event}>
-              <MonoText
-                text={remaining}
-                suffix={endingText}
-                textStyle={countdownStyle}
-                characterWidth={7.5}
-                style={styles.countdown}
-                suffixStyle={styles.suffix}
-                colonStyle={styles.colon}
-              />
-              <View style={styles.titleRow}>
-                <Text style={styles.titleText}>{item.title}</Text>
-                {item.type === "Happy Hour" ? (
-                  <View style={styles.twentyOne}>
-                    <Text style={styles.twentyOneText}>21+</Text>
-                  </View>
-                ) : null}
-              </View>
-              <Text style={styles.descriptionText}>{item.description}</Text>
+      <View style={styles.container}>
+        <View style={styles.content}>
+          <View style={styles.marker} pointerEvents="none" />
+          <TouchableOpacity style={styles.info} onPress={this._onPress}>
+            <View style={styles.hours}>
               {item.groupedHours.map((hours, index) => {
                 return (
                   <View style={styles.hour} key={index}>
-                    <View style={styles.time}>
-                      <Text style={styles.hourText} numberOfLines={1}>
-                        {hours.hours}{" "}
-                        <Text style={styles.durationText}>
-                          {hours.duration}hr
-                        </Text>
-                      </Text>
-                    </View>
                     <View style={styles.days}>
                       {hours.days.map(day => {
                         const dayStyle = [styles.day];
@@ -238,16 +209,80 @@ class CalendarItem extends Component {
                         );
                       })}
                     </View>
+                    <View style={styles.time}>
+                      <Text style={styles.hourText} numberOfLines={1}>
+                        {hours.hours}{" "}
+                        <Text style={styles.durationText}>
+                          {hours.duration}hr
+                        </Text>
+                      </Text>
+                    </View>
                   </View>
                 );
               })}
-              <View style={styles.actions}>
-                <GoingButton event={this.props.item} />
-                <NotifyButton event={this.props.item} />
+            </View>
+            <View style={styles.location}>
+              <View style={styles.locationInfo}>
+                <Text numberOfLines={1} style={styles.locationText}>
+                  {index + 1}. {locationText}
+                </Text>
+                <Text numberOfLines={1} style={styles.subText}>
+                  {cityText}
+                </Text>
+              </View>
+              <View style={styles.rating}>
+                <FontAwesome name="star" size={16} color="#FFA033" />
+                <Text style={styles.ratingText}>
+                  {parseFloat(item.rating, 10).toFixed(1)}
+                </Text>
               </View>
             </View>
-          )}
-        </TouchableOpacity>
+            {title === "Closest" ? (
+              <EventList time={this.state.time} placeid={item.placeid} />
+            ) : (
+              <View style={styles.event}>
+                <MonoText
+                  text={remaining}
+                  suffix={endingText}
+                  textStyle={countdownStyle}
+                  characterWidth={7.5}
+                  style={styles.countdown}
+                  suffixStyle={styles.suffix}
+                  colonStyle={styles.colon}
+                />
+                <View style={styles.titleRow}>
+                  <Text style={styles.titleText}>{item.title}</Text>
+                  {item.type === "Happy Hour" ? (
+                    <View style={styles.twentyOne}>
+                      <Text style={styles.twentyOneText}>21+</Text>
+                    </View>
+                  ) : null}
+                </View>
+                <Text style={styles.descriptionText}>{item.description}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+          <View style={styles.preview}>
+            {images.map(image => {
+              const imageStyle = {
+                height: 150,
+                width: image.width,
+                marginRight: 2
+              };
+              return (
+                <Image
+                  source={image.source}
+                  style={imageStyle}
+                  key={image.source.uri}
+                />
+              );
+            })}
+          </View>
+          <View style={styles.actions}>
+            {/* <GoingButton event={this.props.item} /> */}
+            <NotifyButton event={this.props.item} />
+          </View>
+        </View>
       </View>
     );
   }
@@ -262,29 +297,40 @@ export default connect(
 
 const styles = StyleSheet.create({
   container: {
+    height: CalendarItem.height,
+    width: CalendarItem.width
+  },
+  content: {
+    height: CalendarItem.height - 10,
     backgroundColor: "#fff",
-    marginVertical: 5,
-    marginHorizontal: 10,
-    borderRadius: 8,
-    overflow: "hidden"
+    width: CalendarItem.width - 10,
+    marginHorizontal: 5,
+    marginTop: 10,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    overflow: "visible",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5
   },
   info: {
     paddingVertical: 10,
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
+    overflow: "hidden"
   },
-  index: {
+  marker: {
     position: "absolute",
     top: 5,
-    left: 5,
-    paddingHorizontal: 5,
-    paddingVertical: 2,
-    borderRadius: 4,
-    backgroundColor: "rgba(0,0,0,0.5)"
-  },
-  indexText: {
-    fontSize: 10,
-    fontWeight: "700",
-    color: "#fff"
+    width: 20,
+    left: (WIDTH - 60) / 2 - 10,
+    height: 2,
+    borderRadius: 1,
+    backgroundColor: "rgba(0,0,0,0.2)"
   },
   event: {
     // paddingHorizontal: 15,
@@ -303,7 +349,7 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     marginTop: 2,
-    marginBottom: 4,
+    // marginBottom: 4,
     color: "#444",
     fontSize: 14,
     lineHeight: 19,
@@ -312,17 +358,22 @@ const styles = StyleSheet.create({
   location: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 7
+    marginBottom: 5
   },
   locationInfo: { flex: 1 },
   time: {
-    marginBottom: 3,
+    marginTop: 3,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between"
   },
+  hours: {
+    flexDirection: "row",
+    marginTop: 2,
+    marginBottom: 5
+  },
   hour: {
-    marginVertical: 3
+    marginRight: 15
   },
   hourText: {
     color: "#444",
@@ -411,5 +462,15 @@ const styles = StyleSheet.create({
   colon: {
     paddingBottom: 1
   },
-  actions: { flexDirection: "row", marginBottom: 3, marginTop: 9 }
+  preview: {
+    height: 150,
+    flexDirection: "row",
+    backgroundColor: "#e0e0e0",
+    overflow: "hidden"
+  },
+  actions: {
+    position: "absolute",
+    bottom: 20,
+    right: 10
+  }
 });

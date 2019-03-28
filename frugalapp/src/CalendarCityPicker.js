@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Text,
   View,
-  Animated,
   ActivityIndicator
 } from "react-native";
 import { connect } from "react-redux";
@@ -13,6 +12,7 @@ import * as Events from "./store/events";
 import * as Location from "./store/location";
 import emitter from "tiny-emitter/instance";
 import { ANDROID, HEIGHT } from "./Constants";
+import CalendarItem from "./CalendarItem";
 
 class CityPicker extends PureComponent {
   _onPress = item => {
@@ -53,40 +53,24 @@ class CityPicker extends PureComponent {
     this._list = ref;
   };
   render() {
-    const { data, position } = this.props;
+    const { data } = this.props;
 
     if (!data || !data.length) {
-      return (
-        <View style={styles.loading}>
-          <Text style={styles.btnText}>Locating</Text>
-          <ActivityIndicator
-            style={styles.loadingIndicator}
-            size="small"
-            color="#fff"
-          />
-        </View>
-      );
+      return null;
+      // return (
+      //   <View style={styles.loading}>
+      //     <Text style={styles.btnText}>Locating</Text>
+      //     <ActivityIndicator
+      //       style={styles.loadingIndicator}
+      //       size="small"
+      //       color="#fff"
+      //     />
+      //   </View>
+      // );
     }
 
-    const translateY = ANDROID
-      ? position.interpolate({
-          inputRange: [0, 1],
-          outputRange: [0, -90]
-        })
-      : position.interpolate({
-          inputRange: [0, 1],
-          outputRange: [-HEIGHT * 0.72, -90]
-        });
-
-    const containerStyle = [
-      styles.container,
-      {
-        transform: [{ translateY }]
-      }
-    ];
-
     return (
-      <Animated.View style={containerStyle}>
+      <View style={styles.container}>
         <ScrollView
           ref={this._setRef}
           style={styles.scroll}
@@ -126,7 +110,7 @@ class CityPicker extends PureComponent {
             );
           })}
         </ScrollView>
-      </Animated.View>
+      </View>
     );
   }
 }
@@ -148,7 +132,7 @@ export default connect(
 const styles = StyleSheet.create({
   loading: {
     position: "absolute",
-    bottom: HEIGHT * 0.72 + 7,
+    bottom: CalendarItem.height,
     left: 7,
     paddingRight: 4,
     paddingLeft: 8,
@@ -168,7 +152,7 @@ const styles = StyleSheet.create({
   },
   container: {
     position: "absolute",
-    bottom: 0,
+    bottom: CalendarItem.height,
     left: 0,
     right: 0
   },

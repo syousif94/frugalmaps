@@ -240,6 +240,9 @@ const styles = StyleSheet.create({
     width: 20,
     height: 28
   },
+  selectedMarker: {
+    zIndex: 2
+  },
   scroller: {
     flex: 1,
     margin: -15

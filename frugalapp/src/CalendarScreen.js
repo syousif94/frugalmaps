@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import CalendarList from "./CalendarList";
 
 import * as Events from "./store/events";
+import CityPicker from "./CalendarCityPicker";
 import CalendarInitial from "./CalendarInitial";
 import CalendarMap from "./CalendarMap";
 import Menu from "./Menu";
@@ -26,8 +27,9 @@ class CalendarScreen extends Component {
       <View style={styles.container}>
         <CalendarMap />
         <CalendarList />
-        <CalendarInitial />
-        <Menu />
+        <CityPicker tabLabel="Closest" />
+        {/* <CalendarInitial />
+        <Menu /> */}
       </View>
     );
   }

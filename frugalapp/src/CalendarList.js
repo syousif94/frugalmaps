@@ -1,33 +1,36 @@
 import React, { PureComponent } from "react";
-import { Animated, StyleSheet, View, FlatList, Text } from "react-native";
+import { StyleSheet, View, FlatList, Text } from "react-native";
 import { connect } from "react-redux";
 import emitter from "tiny-emitter/instance";
 import Emitter from "tiny-emitter";
 import Item from "./CalendarItem";
 import * as Events from "./store/events";
 import Ad from "./Ad";
-import { ANDROID, IOS, HEIGHT } from "./Constants";
+import { ANDROID, IOS } from "./Constants";
 import CalendarEmpty from "./CalendarEmpty";
 import { Entypo } from "@expo/vector-icons";
 import Header from "./CalendarListHeader";
 import CalendarListHeader from "./CalendarListHeader";
 import DayPicker from "./CalendarDayPicker";
+import CalendarItem from "./CalendarItem";
+import _ from "lodash";
 
 class CalendarList extends PureComponent {
   static emitter = new Emitter();
 
-  state = {
-    clipSubviews: true,
-    position: new Animated.Value(0)
-  };
+  constructor(props) {
+    super(props);
+    this._handleScroll = _.debounce(this._handleScroll, 60);
+  }
 
-  _expanded = false;
+  state = {
+    clipSubviews: true
+  };
 
   componentDidMount() {
     emitter.on("calendar-top", this._scrollToTop);
 
     if (IOS) {
-      emitter.on("toggle-map", this._toggleMap);
       emitter.on("reclip-calendar", this._reclip);
     }
   }
@@ -36,27 +39,22 @@ class CalendarList extends PureComponent {
     emitter.off("calendar-top", this._scrollToTop);
 
     if (IOS) {
-      emitter.off("toggle-map", this._toggleMap);
       emitter.off("reclip-calendar", this._reclip);
     }
   }
 
-  _toggleMap = () => {
-    const toValue = this._expanded ? 0 : 1;
-    this._expanded = !this._expanded;
-
-    Animated.timing(
-      this.state.position,
-      { toValue, duration: 350 },
-      { useNativeDriver: true }
-    ).start(() => {
-      if (!this._expanded) {
-        requestAnimationFrame(() => {
-          this._reclip();
-        });
-      }
-    });
-  };
+  componentDidUpdate(_, prev) {
+    // if (
+    //   prev.data !== this.props.data &&
+    //   this.props.data &&
+    //   this.props.data[0] &&
+    //   this.props.data[0].data.length
+    // ) {
+    //   setTimeout(() => {
+    //     emitter.emit("fit-marker", this.props.data[0].data[0]);
+    //   }, 600);
+    // }
+  }
 
   _reclip = () => {
     this.setState(
@@ -151,12 +149,25 @@ class CalendarList extends PureComponent {
     this._list = ref;
   };
 
+  _currentIndex = 0;
+
+  _handleScroll = x => {
+    const scrollProgress = (x + 20) / CalendarItem.width;
+    if (
+      scrollProgress > this._currentIndex + 0.35 ||
+      scrollProgress < this._currentIndex - 0.65
+    ) {
+      this._currentIndex = Math.ceil(scrollProgress - 0.35);
+      emitter.emit("fit-marker", this.props.data[0].data[this._currentIndex]);
+    }
+  };
+
+  _onScroll = e => {
+    this._handleScroll(e.nativeEvent.contentOffset.x);
+  };
+
   render() {
     const { data, day, refreshing } = this.props;
-
-    const contentStyle = {
-      paddingBottom: data.length ? 110 : 0
-    };
 
     const androidProps = ANDROID
       ? {
@@ -169,40 +180,40 @@ class CalendarList extends PureComponent {
 
     const listData = data && data[0] ? data[0].data : [];
 
-    const translateY = this.state.position.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, HEIGHT * 0.72]
-    });
-
-    const containerStyle = [
-      styles.container,
-      {
-        transform: [{ translateY }]
-      }
-    ];
-
     return (
-      <Animated.View style={containerStyle}>
-        <CalendarListHeader section={data && data[0]} />
+      <View style={styles.container}>
+        {/* <CityPicker tabLabel="Closest" /> */}
         <FlatList
+          horizontal
           key={day}
           onRefresh={this._refresh}
           refreshing={refreshing}
           ref={this._setRef}
-          contentContainerStyle={contentStyle}
           style={styles.list}
           renderItem={this._renderItem}
+          getItemLayout={(data, index) => {
+            return {
+              length: CalendarItem.width,
+              offset: 20 + CalendarItem.width * index,
+              index
+            };
+          }}
+          onScroll={this._onScroll}
+          scrollEventThrottle={32}
           data={listData}
           keyExtractor={this._keyExtractor}
-          ListEmptyComponent={this._renderEmpty}
+          contentContainerStyle={styles.content}
+          // ListEmptyComponent={this._renderEmpty}
           {...androidProps}
           // ListHeaderComponent={this._renderHeader}
-          ListFooterComponent={this._renderFooter}
+          // ListFooterComponent={this._renderFooter}
           removeClippedSubviews={this.state.clipSubviews}
           onViewableItemsChanged={this._itemsChanged}
+          showsHorizontalScrollIndicator={false}
+          nestedScrollEnabled
         />
-        <DayPicker />
-      </Animated.View>
+        {/* <DayPicker /> */}
+      </View>
     );
   }
 }
@@ -225,12 +236,17 @@ export default connect(
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: IOS ? HEIGHT * 0.28 : 0,
-    flex: 1
+    height: CalendarItem.height,
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0
   },
   list: {
-    flex: 1,
-    backgroundColor: "#efefef"
+    height: CalendarItem.height
+  },
+  content: {
+    paddingHorizontal: 20
   },
   footer: {
     paddingTop: 20,
