@@ -10,8 +10,8 @@ import { ANDROID, IOS } from "./Constants";
 import CalendarEmpty from "./CalendarEmpty";
 import { Entypo } from "@expo/vector-icons";
 import Header from "./CalendarListHeader";
-import CalendarListHeader from "./CalendarListHeader";
-import DayPicker from "./CalendarDayPicker";
+// import CalendarListHeader from "./CalendarListHeader";
+// import DayPicker from "./CalendarDayPicker";
 import CalendarItem from "./CalendarItem";
 import _ from "lodash";
 
@@ -29,6 +29,7 @@ class CalendarList extends PureComponent {
 
   componentDidMount() {
     emitter.on("calendar-top", this._scrollToTop);
+    emitter.on("scroll-to-item", this._scrollToItem);
 
     if (IOS) {
       emitter.on("reclip-calendar", this._reclip);
@@ -37,6 +38,7 @@ class CalendarList extends PureComponent {
 
   componentWillUnmount() {
     emitter.off("calendar-top", this._scrollToTop);
+    emitter.off("scroll-to-item", this._scrollToItem);
 
     if (IOS) {
       emitter.off("reclip-calendar", this._reclip);
@@ -44,16 +46,22 @@ class CalendarList extends PureComponent {
   }
 
   componentDidUpdate(_, prev) {
-    // if (
-    //   prev.data !== this.props.data &&
-    //   this.props.data &&
-    //   this.props.data[0] &&
-    //   this.props.data[0].data.length
-    // ) {
-    //   setTimeout(() => {
-    //     emitter.emit("fit-marker", this.props.data[0].data[0]);
-    //   }, 600);
-    // }
+    if (
+      prev.data !== this.props.data &&
+      this.props.data &&
+      this.props.data[0] &&
+      this.props.data[0].data.length
+    ) {
+      setTimeout(() => {
+        if (
+          this.props.data &&
+          this.props.data[0] &&
+          this.props.data[0].data.length
+        ) {
+          emitter.emit("fit-marker", this.props.data[0].data[0]);
+        }
+      }, 600);
+    }
   }
 
   _reclip = () => {
@@ -153,17 +161,26 @@ class CalendarList extends PureComponent {
 
   _handleScroll = x => {
     const scrollProgress = (x + 20) / CalendarItem.width;
-    if (
-      scrollProgress > this._currentIndex + 0.35 ||
-      scrollProgress < this._currentIndex - 0.65
-    ) {
-      this._currentIndex = Math.ceil(scrollProgress - 0.35);
+    const index = Math.ceil(scrollProgress - 0.35);
+    if (index !== this._currentIndex) {
+      this._currentIndex = index;
       emitter.emit("fit-marker", this.props.data[0].data[this._currentIndex]);
     }
   };
 
   _onScroll = e => {
     this._handleScroll(e.nativeEvent.contentOffset.x);
+  };
+
+  _scrollToItem = placeid => {
+    const index = this.props.data[0].data.findIndex(val => {
+      return val._source.placeid === placeid;
+    });
+
+    if (index > -1) {
+      const x = index * CalendarItem.width - 5;
+      this._list.getScrollResponder().scrollTo({ x, y: 0, animated: true });
+    }
   };
 
   render() {
@@ -210,7 +227,6 @@ class CalendarList extends PureComponent {
           removeClippedSubviews={this.state.clipSubviews}
           onViewableItemsChanged={this._itemsChanged}
           showsHorizontalScrollIndicator={false}
-          nestedScrollEnabled
         />
         {/* <DayPicker /> */}
       </View>

@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, PixelRatio } from "react-native";
 import { MapView } from "expo";
 import { connect } from "react-redux";
 
@@ -78,7 +78,9 @@ class CalendarMap extends PureComponent {
     }
     this._lastBounds = bounds;
 
-    const bottom = CalendarItem.height;
+    const bottom = ANDROID
+      ? PixelRatio.getPixelSizeForLayoutSize(CalendarItem.height)
+      : CalendarItem.height;
 
     const coords = [
       {
@@ -123,7 +125,9 @@ class CalendarMap extends PureComponent {
       }
     ];
 
-    const bottom = CalendarItem.height;
+    const bottom = ANDROID
+      ? PixelRatio.getPixelSizeForLayoutSize(CalendarItem.height)
+      : CalendarItem.height;
 
     requestAnimationFrame(() => {
       this._map.fitToCoordinates(coords, {
@@ -165,15 +169,23 @@ class CalendarMap extends PureComponent {
       }
     ];
 
+    const bottom = ANDROID
+      ? PixelRatio.getPixelSizeForLayoutSize(CalendarItem.height)
+      : CalendarItem.height;
+
     this._map.fitToCoordinates(coords, {
       animated: false,
       edgePadding: {
         top: 0,
         right: 0,
-        bottom: CalendarItem.height,
+        bottom,
         left: 0
       }
     });
+  };
+
+  _onMarkerPress = e => {
+    emitter.emit("scroll-to-item", e.nativeEvent.id);
   };
 
   render() {
@@ -195,6 +207,8 @@ class CalendarMap extends PureComponent {
           pitchEnabled={false}
           onPress={this._hideCallouts}
           paddingAdjustmentBehavior="always"
+          onMarkerPress={this._onMarkerPress}
+          moveOnMarkerPress={false}
         >
           {markers.map(data => {
             const { _id, _source: item } = data;
@@ -228,8 +242,7 @@ class CalendarMap extends PureComponent {
                 upcoming={upcoming}
                 ending={ending}
                 data={data}
-                key={`${_id}${this.state.expanded}`}
-                expanded={this.state.expanded}
+                key={_id}
               />
             );
           })}

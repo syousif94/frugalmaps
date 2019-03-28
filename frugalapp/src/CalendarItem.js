@@ -278,10 +278,10 @@ class CalendarItem extends Component {
               );
             })}
           </View>
-          <View style={styles.actions}>
-            {/* <GoingButton event={this.props.item} /> */}
+          {/* <View style={styles.actions}>
+            <GoingButton event={this.props.item} />
             <NotifyButton event={this.props.item} />
-          </View>
+          </View> */}
         </View>
       </View>
     );
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
     marginBottom: 5
   },
   hour: {
-    marginRight: 15
+    marginRight: 10
   },
   hourText: {
     color: "#444",
@@ -470,7 +470,7 @@ const styles = StyleSheet.create({
   },
   actions: {
     position: "absolute",
-    bottom: 20,
-    right: 10
+    bottom: 30,
+    right: 15
   }
 });
