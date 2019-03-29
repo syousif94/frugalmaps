@@ -130,54 +130,22 @@ export default connect(
 )(CityPicker);
 
 const styles = StyleSheet.create({
-  loading: {
-    position: "absolute",
-    bottom: CalendarItem.height,
-    left: 7,
-    paddingRight: 4,
-    paddingLeft: 8,
-    paddingVertical: 2,
-    backgroundColor: "rgba(100,100,100,0.7)",
-    borderTopLeftRadius: 4,
-    borderBottomLeftRadius: 4,
-    borderTopRightRadius: 15,
-    borderBottomRightRadius: 15,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  loadingIndicator: {
-    marginLeft: 6,
-    transform: [{ scale: 0.8 }]
-  },
-  container: {
-    position: "absolute",
-    bottom: CalendarItem.height,
-    left: 0,
-    right: 0
-  },
+  container: {},
   scroll: {
     height: 44
   },
   content: {
-    padding: 3.5
     // paddingRight: 90
   },
   btnBg: {
-    margin: 3.5,
-    height: 30,
-    borderTopLeftRadius: 4,
-    borderBottomLeftRadius: 4,
-    borderTopRightRadius: 15,
-    borderBottomRightRadius: 15,
-    backgroundColor: "rgba(100,100,100,0.7)"
+    height: 44
   },
   btn: {
     flex: 1,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    paddingLeft: 5
+    paddingLeft: 10
   },
   btnText: {
     fontSize: 14,
@@ -187,11 +155,11 @@ const styles = StyleSheet.create({
   cityText: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#fff"
+    color: "#000"
   },
   addressText: {
     fontSize: 10,
-    color: "#e0e0e0"
+    color: "#444"
   },
   count: {
     height: 20,
@@ -200,7 +168,7 @@ const styles = StyleSheet.create({
     minWidth: 20,
     marginLeft: 10,
     marginRight: 5,
-    backgroundColor: "rgba(255,255,255,0.25)",
+    backgroundColor: "#6C7B80",
     justifyContent: "center",
     alignItems: "center"
   }

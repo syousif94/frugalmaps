@@ -4,6 +4,7 @@ import { SafeArea, HEIGHT, WIDTH } from "./Constants";
 import { withNavigation } from "react-navigation";
 import { grantLocation, grantNotifications } from "./Permissions";
 import { Entypo } from "@expo/vector-icons";
+import { getInset } from "./SafeAreaInsets";
 
 class IntroScreen extends Component {
   _onPress = async () => {
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
   },
   btnBg: {
     backgroundColor: "#2FE56E",
-    marginBottom: 10,
+    marginBottom: getInset("bottom") > 0 ? 10 : 25,
     marginHorizontal: 25,
     borderRadius: 8
   },

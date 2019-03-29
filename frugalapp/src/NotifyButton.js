@@ -13,7 +13,6 @@ import { db } from "./Firebase";
 import { toggleEvent } from "./Notifications";
 
 import { FontAwesome } from "@expo/vector-icons";
-import { BLUE } from "./Colors";
 
 function formatCount(count) {
   if (count > 999) {
@@ -136,14 +135,22 @@ export default class NotifyButton extends Component {
   render() {
     const count = formatCount(this.state.count);
     const color = this.state.notify ? "#FFA033" : "#999";
+
+    const actionStyle = [styles.action];
+    const textStyle = [styles.remindText];
+    if (this.props.card) {
+      actionStyle.push(styles.cardAction);
+      textStyle.push(styles.cardText);
+    }
+
     return (
       <TouchableOpacity
         disabled={this.state.toggling}
-        style={styles.action}
+        style={actionStyle}
         onPress={this._onPress}
       >
         <FontAwesome style={styles.icon} name="star" size={16} color={color} />
-        <Text style={styles.remindText}>Interested</Text>
+        <Text style={textStyle}>Interested</Text>
         <View style={styles.spacer} />
         <View style={styles.count}>
           <Text style={styles.countText}>{count}</Text>
@@ -165,6 +172,11 @@ const styles = StyleSheet.create({
     minWidth: 140,
     height: 30
   },
+  cardAction: {
+    backgroundColor: "rgba(0,0,0,0.75)",
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0
+  },
   icon: {
     marginLeft: 5
   },
@@ -173,6 +185,9 @@ const styles = StyleSheet.create({
     color: "#000",
     fontWeight: "500",
     marginLeft: 8
+  },
+  cardText: {
+    color: "#fff"
   },
   spacer: {
     flex: 1

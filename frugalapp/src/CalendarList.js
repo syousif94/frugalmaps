@@ -14,13 +14,14 @@ import Header from "./CalendarListHeader";
 // import DayPicker from "./CalendarDayPicker";
 import CalendarItem from "./CalendarItem";
 import _ from "lodash";
+import { getInset } from "./SafeAreaInsets";
 
 class CalendarList extends PureComponent {
   static emitter = new Emitter();
 
   constructor(props) {
     super(props);
-    this._handleScroll = _.debounce(this._handleScroll, 60);
+    this._handleScroll = _.debounce(this._handleScroll, 40);
   }
 
   state = {
@@ -160,8 +161,8 @@ class CalendarList extends PureComponent {
   _currentIndex = 0;
 
   _handleScroll = x => {
-    const scrollProgress = (x + 20) / CalendarItem.width;
-    const index = Math.ceil(scrollProgress - 0.35);
+    const scrollProgress = (x + 25) / CalendarItem.width;
+    const index = Math.ceil(scrollProgress - 0.2);
     if (index !== this._currentIndex) {
       this._currentIndex = index;
       emitter.emit("fit-marker", this.props.data[0].data[this._currentIndex]);
@@ -178,7 +179,7 @@ class CalendarList extends PureComponent {
     });
 
     if (index > -1) {
-      const x = index * CalendarItem.width - 5;
+      const x = index * CalendarItem.width;
       this._list.getScrollResponder().scrollTo({ x, y: 0, animated: true });
     }
   };
@@ -211,7 +212,7 @@ class CalendarList extends PureComponent {
           getItemLayout={(data, index) => {
             return {
               length: CalendarItem.width,
-              offset: 20 + CalendarItem.width * index,
+              offset: 25 + CalendarItem.width * index,
               index
             };
           }}
@@ -250,11 +251,13 @@ export default connect(
   mapDispatchToProps
 )(CalendarList);
 
+const bottomInset = getInset("bottom");
+
 const styles = StyleSheet.create({
   container: {
     height: CalendarItem.height,
     position: "absolute",
-    bottom: 0,
+    bottom: bottomInset > 0 ? bottomInset + 38 + 10 - 7 : 44 + 10 - 7,
     left: 0,
     right: 0
   },
@@ -262,7 +265,7 @@ const styles = StyleSheet.create({
     height: CalendarItem.height
   },
   content: {
-    paddingHorizontal: 20
+    paddingHorizontal: 25
   },
   footer: {
     paddingTop: 20,

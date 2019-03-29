@@ -10,6 +10,15 @@ const mutations = ["set", "restore", "fetch", "merge", "reorder"];
 
 export const { actions, types } = createActions(mutations, "events");
 
+const getPlaceid = (state, props) => props.item._source.placeid;
+const getPlaces = state => state.events.places;
+
+export const makeEventCount = () =>
+  createSelector(
+    [getPlaceid, getPlaces],
+    (placeid, places) => places.get(placeid).length
+  );
+
 export const homeList = createSelector(
   state => state.events.day,
   state => state.events.list,

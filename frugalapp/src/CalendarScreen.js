@@ -8,6 +8,7 @@ import CityPicker from "./CalendarCityPicker";
 import CalendarInitial from "./CalendarInitial";
 import CalendarMap from "./CalendarMap";
 import Menu from "./Menu";
+import SortBar from "./SortBar";
 // import { ANDROID } from "./Constants";
 
 class CalendarScreen extends Component {
@@ -27,7 +28,8 @@ class CalendarScreen extends Component {
       <View style={styles.container}>
         <CalendarMap />
         <CalendarList />
-        <CityPicker tabLabel="Closest" />
+        <SortBar />
+        {/* <CityPicker tabLabel="Closest" /> */}
         {/* <CalendarInitial />
         <Menu /> */}
       </View>

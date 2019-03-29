@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import { timeRemaining, makeISO, makeYesterdayISO } from "./Time";
 import { WIDTH, AWSCF } from "./Constants";
@@ -8,11 +9,14 @@ import { FontAwesome } from "@expo/vector-icons";
 
 import EventList from "./InfoEventList";
 import { withNavigation } from "react-navigation";
-import { connect } from "react-redux";
 import * as Events from "./store/events";
 
+const makeState = () => (state, props) => ({
+  eventCount: Events.makeEventCount()(state, props)
+});
+
 class CalendarItem extends Component {
-  static height = 240;
+  static height = 280;
   static width = WIDTH - 50;
 
   state = {
@@ -90,7 +94,8 @@ class CalendarItem extends Component {
     const {
       item: { _source: item, sort },
       index,
-      title
+      title,
+      eventCount
     } = this.props;
 
     let iso = this.props.iso;
@@ -180,6 +185,8 @@ class CalendarItem extends Component {
       imagesWidth += imageWidth;
     }
 
+    const eventCountText = eventCount > 1 ? `+${eventCount - 1} more` : null;
+
     return (
       <View style={styles.container}>
         <View style={styles.content}>
@@ -237,51 +244,56 @@ class CalendarItem extends Component {
                 </Text>
               </View>
             </View>
-            {title === "Closest" ? (
-              <EventList time={this.state.time} placeid={item.placeid} />
-            ) : (
-              <View style={styles.event}>
-                <MonoText
-                  text={remaining}
-                  suffix={endingText}
-                  textStyle={countdownStyle}
-                  characterWidth={7.5}
-                  style={styles.countdown}
-                  suffixStyle={styles.suffix}
-                  colonStyle={styles.colon}
-                />
-                <View style={styles.titleRow}>
-                  <Text style={styles.titleText}>{item.title}</Text>
-                  {item.type === "Happy Hour" ? (
-                    <View style={styles.twentyOne}>
-                      <Text style={styles.twentyOneText}>21+</Text>
-                    </View>
-                  ) : null}
-                </View>
-                <Text style={styles.descriptionText}>{item.description}</Text>
+            <View style={styles.event}>
+              <MonoText
+                text={remaining}
+                suffix={endingText}
+                textStyle={countdownStyle}
+                characterWidth={7.5}
+                style={styles.countdown}
+                suffixStyle={styles.suffix}
+                colonStyle={styles.colon}
+              />
+              <View style={styles.titleRow}>
+                <Text style={styles.titleText}>{item.title}</Text>
+                {item.type === "Happy Hour" ? (
+                  <View style={styles.twentyOne}>
+                    <Text style={styles.twentyOneText}>21+</Text>
+                  </View>
+                ) : null}
+                {eventCount > 1 ? (
+                  <View style={styles.eventCount}>
+                    <Text style={styles.countText}>{eventCountText}</Text>
+                  </View>
+                ) : null}
               </View>
-            )}
+              <Text style={styles.descriptionText} numberOfLines={2}>
+                {item.description}
+              </Text>
+            </View>
           </TouchableOpacity>
-          <View style={styles.preview}>
-            {images.map(image => {
-              const imageStyle = {
-                height: 150,
-                width: image.width,
-                marginRight: 2
-              };
-              return (
-                <Image
-                  source={image.source}
-                  style={imageStyle}
-                  key={image.source.uri}
-                />
-              );
-            })}
+          <View style={styles.previewWrap}>
+            <View style={styles.preview}>
+              {images.map(image => {
+                const imageStyle = {
+                  height: 150,
+                  width: image.width,
+                  marginRight: 2
+                };
+                return (
+                  <Image
+                    source={image.source}
+                    style={imageStyle}
+                    key={image.source.uri}
+                  />
+                );
+              })}
+              <View style={styles.actions}>
+                {/* <GoingButton event={this.props.item} /> */}
+                <NotifyButton card event={this.props.item} />
+              </View>
+            </View>
           </View>
-          {/* <View style={styles.actions}>
-            <GoingButton event={this.props.item} />
-            <NotifyButton event={this.props.item} />
-          </View> */}
         </View>
       </View>
     );
@@ -289,7 +301,7 @@ class CalendarItem extends Component {
 }
 
 export default connect(
-  null,
+  makeState,
   {
     set: Events.actions.set
   }
@@ -301,14 +313,14 @@ const styles = StyleSheet.create({
     width: CalendarItem.width
   },
   content: {
-    height: CalendarItem.height - 10,
+    height: CalendarItem.height - 14,
     backgroundColor: "#fff",
     width: CalendarItem.width - 10,
     marginHorizontal: 5,
-    marginTop: 10,
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
-    overflow: "visible",
+    marginTop: 7,
+    borderRadius: 8,
+    // borderTopLeftRadius: 8,
+    // borderTopRightRadius: 8,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -342,18 +354,18 @@ const styles = StyleSheet.create({
     color: "#000"
   },
   locationText: {
-    marginBottom: 2,
     fontSize: 14,
     fontWeight: "600",
-    color: "#000"
+    color: "#000",
+    marginBottom: 3
   },
   descriptionText: {
     marginTop: 2,
     // marginBottom: 4,
     color: "#444",
     fontSize: 14,
-    lineHeight: 19,
-    paddingRight: 50
+    lineHeight: 19
+    // paddingRight: 50
   },
   location: {
     flexDirection: "row",
@@ -370,7 +382,7 @@ const styles = StyleSheet.create({
   hours: {
     flexDirection: "row",
     marginTop: 2,
-    marginBottom: 5
+    marginBottom: 3
   },
   hour: {
     marginRight: 10
@@ -462,15 +474,37 @@ const styles = StyleSheet.create({
   colon: {
     paddingBottom: 1
   },
+  previewWrap: {
+    flex: 1,
+    overflow: "hidden",
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 8
+  },
   preview: {
     height: 150,
     flexDirection: "row",
     backgroundColor: "#e0e0e0",
     overflow: "hidden"
   },
+  eventCount: {
+    marginLeft: 4,
+    backgroundColor: "#999",
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 3,
+    alignItems: "center"
+  },
+  countText: {
+    fontSize: 10,
+    color: "#fff",
+    fontWeight: "700"
+  },
   actions: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
     position: "absolute",
-    bottom: 30,
-    right: 15
+    top: 5,
+    left: 0,
+    right: 0
   }
 });

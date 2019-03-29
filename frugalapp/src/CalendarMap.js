@@ -78,9 +78,11 @@ class CalendarMap extends PureComponent {
     }
     this._lastBounds = bounds;
 
+    const top = ANDROID ? PixelRatio.getPixelSizeForLayoutSize(20) : 20;
+
     const bottom = ANDROID
-      ? PixelRatio.getPixelSizeForLayoutSize(CalendarItem.height)
-      : CalendarItem.height;
+      ? PixelRatio.getPixelSizeForLayoutSize(CalendarItem.height + 40)
+      : CalendarItem.height + 40;
 
     const coords = [
       {
@@ -96,7 +98,7 @@ class CalendarMap extends PureComponent {
       this._map.fitToCoordinates(coords, {
         animated,
         edgePadding: {
-          top: 0,
+          top,
           right: 0,
           bottom,
           left: 0
@@ -125,15 +127,17 @@ class CalendarMap extends PureComponent {
       }
     ];
 
+    const top = ANDROID ? PixelRatio.getPixelSizeForLayoutSize(20) : 20;
+
     const bottom = ANDROID
-      ? PixelRatio.getPixelSizeForLayoutSize(CalendarItem.height)
-      : CalendarItem.height;
+      ? PixelRatio.getPixelSizeForLayoutSize(CalendarItem.height + 40)
+      : CalendarItem.height + 40;
 
     requestAnimationFrame(() => {
       this._map.fitToCoordinates(coords, {
         animated: true,
         edgePadding: {
-          top: 0,
+          top,
           right: 0,
           bottom,
           left: 0
@@ -169,14 +173,16 @@ class CalendarMap extends PureComponent {
       }
     ];
 
+    const top = ANDROID ? PixelRatio.getPixelSizeForLayoutSize(20) : 20;
+
     const bottom = ANDROID
-      ? PixelRatio.getPixelSizeForLayoutSize(CalendarItem.height)
-      : CalendarItem.height;
+      ? PixelRatio.getPixelSizeForLayoutSize(CalendarItem.height + 40)
+      : CalendarItem.height + 40;
 
     this._map.fitToCoordinates(coords, {
       animated: false,
       edgePadding: {
-        top: 0,
+        top,
         right: 0,
         bottom,
         left: 0

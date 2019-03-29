@@ -10,8 +10,6 @@ import { connect } from "react-redux";
 import * as Events from "./store/events";
 import emitter from "tiny-emitter/instance";
 import moment from "moment";
-import SearchButton from "./SearchButton";
-import SubmitButton from "./SubmitButton";
 import { SafeArea, IOS } from "./Constants";
 
 class DayPicker extends PureComponent {
@@ -50,13 +48,11 @@ class DayPicker extends PureComponent {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.content}
         >
-          <SearchButton />
-          <SubmitButton />
           {days.map((data, index) => {
             const btnStyle = [styles.btnBg];
-            if (day === data.title) {
-              btnStyle.push(styles.selected);
-            }
+            // if (day === data.title) {
+            //   btnStyle.push(styles.selected);
+            // }
             const onPress = this._selectDay.bind(null, data.title);
             let subText;
 
@@ -87,7 +83,7 @@ class DayPicker extends PureComponent {
                     <Text style={styles.subText}>{subText}</Text>
                   </View>
                   <View style={styles.count}>
-                    <Text style={styles.btnText}>{data.data.length}</Text>
+                    <Text style={styles.countText}>{data.data.length}</Text>
                   </View>
                 </TouchableOpacity>
               </View>
@@ -118,46 +114,37 @@ export default connect(
 )(DayPicker);
 
 const styles = StyleSheet.create({
-  container: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0
-  },
+  container: {},
   scroll: {
     height: 44
   },
-  content: {
-    padding: 3.5
-    // paddingRight: 95
-  },
+  content: {},
   btnBg: {
-    margin: 3.5,
-    height: 30,
-    borderTopRightRadius: 15,
-    borderBottomRightRadius: 15,
-    borderTopLeftRadius: 4,
-    borderBottomLeftRadius: 4,
-    backgroundColor: "rgba(100,100,100,0.85)"
+    height: 44
   },
-  selected: {
-    backgroundColor: "rgba(0,0,0,0.75)"
-  },
+  // selected: {
+  //   backgroundColor: "rgba(0,0,0,0.75)"
+  // },
   btn: {
     flex: 1,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    paddingLeft: 5
+    paddingLeft: 10
   },
   btnText: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#fff"
+    color: "#000"
   },
   subText: {
     fontSize: 10,
-    color: "#f2f2f2"
+    color: "#444"
+  },
+  countText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#fff"
   },
   count: {
     height: 20,
@@ -166,7 +153,7 @@ const styles = StyleSheet.create({
     minWidth: 20,
     marginLeft: 10,
     marginRight: 5,
-    backgroundColor: "rgba(255,255,255,0.25)",
+    backgroundColor: "#6C7B80",
     justifyContent: "center",
     alignItems: "center"
   }
