@@ -423,15 +423,22 @@ function makeMarkers(today, days) {
           }
 
           const sortedEvents = events.sort((_a, _b) => {
-            let a = _a._source.groupedHours[0].iso - today;
+            let a = _a._source.groupedHours[0].iso - today.weekday();
             if (a < 0) {
               a += 7;
             }
-            let b = _b._source.groupedHours[0].iso - today;
+            let b = _b._source.groupedHours[0].iso - today.weekday();
             if (b < 0) {
               b += 7;
             }
-            return a - b;
+            if (a !== b) {
+              return a - b;
+            }
+
+            const aStart = parseInt(_a._source.groupedHours[0].start, 10);
+            const bStart = parseInt(_b._source.groupedHours[0].start, 10);
+
+            return aStart - bStart;
           });
 
           if (!firstEvent) {
