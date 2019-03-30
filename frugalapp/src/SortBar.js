@@ -98,6 +98,10 @@ class SortBar extends PureComponent {
               <Text style={styles.subText}>Sort</Text>
               <Text style={styles.btnText}>{order}</Text>
             </View>
+            <View style={styles.category}>
+              <Text style={styles.subText}>Type</Text>
+              <Text style={styles.btnText}>All</Text>
+            </View>
             <View style={styles.icon}>
               <Animated.View style={iconStyle}>
                 <Entypo name="chevron-up" size={14} color="#999" />

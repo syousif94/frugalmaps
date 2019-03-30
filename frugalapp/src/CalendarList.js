@@ -127,7 +127,10 @@ class CalendarList extends PureComponent {
     const index = Math.ceil(scrollProgress - 0.2);
     if (index !== this._currentIndex) {
       this._currentIndex = index;
-      emitter.emit("fit-marker", this.props.data[0].data[this._currentIndex]);
+      const list = this.props.data[0];
+      if (list && list.data && this._currentIndex < list.data.length) {
+        emitter.emit("fit-marker", this.props.data[0].data[this._currentIndex]);
+      }
     }
   };
 
