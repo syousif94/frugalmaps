@@ -4,24 +4,21 @@ import { connect } from "react-redux";
 import CalendarList from "./CalendarList";
 
 import * as Events from "./store/events";
-import CityPicker from "./CalendarCityPicker";
-import CalendarInitial from "./CalendarInitial";
 import CalendarMap from "./CalendarMap";
-import Menu from "./Menu";
 import SortBar from "./SortBar";
-// import { ANDROID } from "./Constants";
 
 class CalendarScreen extends Component {
   static id = "cal";
 
   componentDidMount() {
     this.props.fetch();
-    // if (ANDROID) {
-    //   this.props.fetch();
-    // } else {
-    //   this.props.restore();
-    // }
   }
+
+  _hideSortBar = () => {
+    this._sort.getWrappedInstance().hide();
+  };
+
+  _setSortRef = ref => (this._sort = ref);
 
   render() {
     return (
@@ -29,9 +26,6 @@ class CalendarScreen extends Component {
         <CalendarMap />
         <CalendarList />
         <SortBar />
-        {/* <CityPicker tabLabel="Closest" /> */}
-        {/* <CalendarInitial />
-        <Menu /> */}
       </View>
     );
   }
@@ -49,6 +43,6 @@ export default connect(
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#efefef"
+    backgroundColor: "#fff"
   }
 });

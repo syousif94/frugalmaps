@@ -10,7 +10,6 @@ import { connect } from "react-redux";
 import * as Events from "./store/events";
 import emitter from "tiny-emitter/instance";
 import moment from "moment";
-import { SafeArea, IOS } from "./Constants";
 
 class DayPicker extends PureComponent {
   _selectDay = day => {
@@ -20,6 +19,7 @@ class DayPicker extends PureComponent {
       });
       return;
     }
+    emitter.emit("hide-sort");
     requestAnimationFrame(() => {
       this.props.set({
         day
@@ -28,69 +28,63 @@ class DayPicker extends PureComponent {
   };
 
   render() {
-    const { calendar, day, recent, list, closest, location } = this.props;
+    const { calendar, recent, list, closest, location } = this.props;
     if (!list.length) {
       return null;
     }
     let days;
     if (closest[0].data.length) {
-      days = [...list, ...closest, ...recent, ...calendar];
+      days = [...list, ...calendar, ...closest, ...recent];
     } else {
-      days = [...list, ...recent, ...calendar];
+      days = [...list, ...calendar, ...recent];
     }
-    const insets = IOS ? { forceInset: { bottom: "always" } } : {};
     return (
-      <SafeArea style={styles.container} {...insets}>
-        <ScrollView
-          style={styles.scroll}
-          horizontal
-          alwaysBounceHorizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.content}
-        >
-          {days.map((data, index) => {
-            const btnStyle = [styles.btnBg];
-            // if (day === data.title) {
-            //   btnStyle.push(styles.selected);
-            // }
-            const onPress = this._selectDay.bind(null, data.title);
-            let subText;
+      <ScrollView
+        style={styles.scroll}
+        horizontal
+        alwaysBounceHorizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.content}
+      >
+        {days.map((data, index) => {
+          const btnStyle = [styles.btnBg];
+          const onPress = this._selectDay.bind(null, data.title);
+          let subText;
 
-            if (!index) {
-              subText = moment().format("ddd M/D");
-            } else if (data.away !== undefined) {
-              switch (data.away) {
-                case 0:
-                  subText = "Today";
-                  break;
-                case 1:
-                  subText = "Tomorrow";
-                  break;
-                default:
-                  subText = `${data.away} days away`;
-              }
-            } else if (data.title === "Closest") {
-              subText = location;
-            } else if (data.title === "Newest") {
-              subText = "Events";
+          if (!index) {
+            subText = moment().format("ddd M/D");
+          } else if (data.away !== undefined) {
+            switch (data.away) {
+              case 0:
+                subText = "Today";
+                break;
+              case 1:
+                subText = "Tomorrow";
+                break;
+              default:
+                subText = `${data.away} days away`;
             }
+          } else if (data.title === "Closest") {
+            subText = location;
+          } else if (data.title === "Newest") {
+            subText = "Events";
+          }
 
-            return (
-              <View key={data.title} style={btnStyle}>
-                <TouchableOpacity style={styles.btn} onPress={onPress}>
-                  <View>
-                    <Text style={styles.btnText}>{data.title}</Text>
-                    <Text style={styles.subText}>{subText}</Text>
-                  </View>
-                  <View style={styles.count}>
-                    <Text style={styles.countText}>{data.data.length}</Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            );
-          })}
-        </ScrollView>
-      </SafeArea>
+          return (
+            <View key={data.title} style={btnStyle}>
+              <TouchableOpacity style={styles.btn} onPress={onPress}>
+                <View>
+                  <Text style={styles.btnText}>{data.title}</Text>
+                  <Text style={styles.subText}>{subText}</Text>
+                </View>
+                <View style={styles.count}>
+                  <Text style={styles.countText}>{data.data.length}</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          );
+        })}
+      </ScrollView>
     );
   }
 }
@@ -114,17 +108,15 @@ export default connect(
 )(DayPicker);
 
 const styles = StyleSheet.create({
-  container: {},
   scroll: {
-    height: 44
+    maxHeight: 44
   },
-  content: {},
+  content: {
+    paddingRight: 10
+  },
   btnBg: {
     height: 44
   },
-  // selected: {
-  //   backgroundColor: "rgba(0,0,0,0.75)"
-  // },
   btn: {
     flex: 1,
     flexDirection: "row",

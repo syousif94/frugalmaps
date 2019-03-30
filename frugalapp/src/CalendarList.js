@@ -1,23 +1,21 @@
 import React, { PureComponent } from "react";
-import { StyleSheet, View, FlatList, Text } from "react-native";
+import { StyleSheet, View, FlatList } from "react-native";
 import { connect } from "react-redux";
 import emitter from "tiny-emitter/instance";
 import Emitter from "tiny-emitter";
 import Item from "./CalendarItem";
 import * as Events from "./store/events";
-import Ad from "./Ad";
 import { ANDROID, IOS } from "./Constants";
 import CalendarEmpty from "./CalendarEmpty";
-import { Entypo } from "@expo/vector-icons";
-import Header from "./CalendarListHeader";
-// import CalendarListHeader from "./CalendarListHeader";
-// import DayPicker from "./CalendarDayPicker";
 import CalendarItem from "./CalendarItem";
 import _ from "lodash";
 import { getInset } from "./SafeAreaInsets";
 
+const bottomInset = getInset("bottom");
+
 class CalendarList extends PureComponent {
   static emitter = new Emitter();
+  static bottom = (bottomInset > 0 ? bottomInset + 38 : 40) + 10 - 17;
 
   constructor(props) {
     super(props);
@@ -97,40 +95,6 @@ class CalendarList extends PureComponent {
     return <CalendarEmpty />;
   };
 
-  _renderFooter = () => {
-    const { initialized, data } = this.props;
-
-    if (!initialized || !data.filter(datum => datum.data.length).length) {
-      return null;
-    }
-
-    return (
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>
-          Buncha gets all of its data from user submissions.
-        </Text>
-        <Text style={[styles.footerText, { marginTop: 6 }]}>
-          If you know of something fun you'd like to share,{"\n"}just tap on{" "}
-          <Entypo name="circle-with-plus" size={12} color="#444" /> below
-        </Text>
-      </View>
-    );
-  };
-
-  _renderHeader = () => {
-    const { initialized } = this.props;
-    return <Ad initialized={initialized} />;
-  };
-
-  // _onScrollEnd = e => {
-  //   const y = e.nativeEvent.contentOffset.y;
-  //   if (y > 50 && this._ad && this._ad.state.touchAd) {
-  //     emitter.emit("touch-ad", false);
-  //   } else if (y < 50 && this._ad && !this._ad.state.touchAd) {
-  //     emitter.emit("touch-ad", true);
-  //   }
-  // };
-
   _itemsChanged = ({ viewableItems }) => {
     CalendarList.emitter.emit("visible", viewableItems);
   };
@@ -151,8 +115,6 @@ class CalendarList extends PureComponent {
       />
     );
   };
-
-  _renderSectionHeader = data => <Header {...data} />;
 
   _setRef = ref => {
     this._list = ref;
@@ -184,6 +146,14 @@ class CalendarList extends PureComponent {
     }
   };
 
+  _getItemLayout = (data, index) => {
+    return {
+      length: CalendarItem.width,
+      offset: 25 + CalendarItem.width * index,
+      index
+    };
+  };
+
   render() {
     const { data, day, refreshing } = this.props;
 
@@ -200,7 +170,6 @@ class CalendarList extends PureComponent {
 
     return (
       <View style={styles.container}>
-        {/* <CityPicker tabLabel="Closest" /> */}
         <FlatList
           horizontal
           key={day}
@@ -209,13 +178,7 @@ class CalendarList extends PureComponent {
           ref={this._setRef}
           style={styles.list}
           renderItem={this._renderItem}
-          getItemLayout={(data, index) => {
-            return {
-              length: CalendarItem.width,
-              offset: 25 + CalendarItem.width * index,
-              index
-            };
-          }}
+          getItemLayout={this._getItemLayout}
           onScroll={this._onScroll}
           scrollEventThrottle={32}
           data={listData}
@@ -223,13 +186,10 @@ class CalendarList extends PureComponent {
           contentContainerStyle={styles.content}
           // ListEmptyComponent={this._renderEmpty}
           {...androidProps}
-          // ListHeaderComponent={this._renderHeader}
-          // ListFooterComponent={this._renderFooter}
           removeClippedSubviews={this.state.clipSubviews}
           onViewableItemsChanged={this._itemsChanged}
           showsHorizontalScrollIndicator={false}
         />
-        {/* <DayPicker /> */}
       </View>
     );
   }
@@ -251,13 +211,11 @@ export default connect(
   mapDispatchToProps
 )(CalendarList);
 
-const bottomInset = getInset("bottom");
-
 const styles = StyleSheet.create({
   container: {
     height: CalendarItem.height,
     position: "absolute",
-    bottom: bottomInset > 0 ? bottomInset + 38 + 10 - 7 : 44 + 10 - 7,
+    bottom: CalendarList.bottom,
     left: 0,
     right: 0
   },
@@ -266,15 +224,5 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 25
-  },
-  footer: {
-    paddingTop: 20,
-    paddingHorizontal: 25
-  },
-  footerText: {
-    textAlign: "center",
-    fontSize: 12,
-    lineHeight: 18,
-    color: "#444"
   }
 });

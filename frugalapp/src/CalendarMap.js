@@ -26,6 +26,14 @@ const mapDispatchToProps = {
 class CalendarMap extends PureComponent {
   static mapId = "mapScreen";
   static searchId = "mapScreen";
+  static edgePadding = {
+    top: ANDROID ? PixelRatio.getPixelSizeForLayoutSize(40) : 20,
+    bottom: ANDROID
+      ? PixelRatio.getPixelSizeForLayoutSize(CalendarItem.height + 10)
+      : CalendarItem.height + 10,
+    left: 0,
+    right: 0
+  };
 
   state = {
     now: Date.now()
@@ -78,12 +86,6 @@ class CalendarMap extends PureComponent {
     }
     this._lastBounds = bounds;
 
-    const top = ANDROID ? PixelRatio.getPixelSizeForLayoutSize(20) : 20;
-
-    const bottom = ANDROID
-      ? PixelRatio.getPixelSizeForLayoutSize(CalendarItem.height + 40)
-      : CalendarItem.height + 40;
-
     const coords = [
       {
         latitude: bounds.northeast.lat,
@@ -97,12 +99,7 @@ class CalendarMap extends PureComponent {
     requestAnimationFrame(() => {
       this._map.fitToCoordinates(coords, {
         animated,
-        edgePadding: {
-          top,
-          right: 0,
-          bottom,
-          left: 0
-        }
+        edgePadding: CalendarMap.edgePadding
       });
     });
   };
@@ -127,21 +124,10 @@ class CalendarMap extends PureComponent {
       }
     ];
 
-    const top = ANDROID ? PixelRatio.getPixelSizeForLayoutSize(20) : 20;
-
-    const bottom = ANDROID
-      ? PixelRatio.getPixelSizeForLayoutSize(CalendarItem.height + 40)
-      : CalendarItem.height + 40;
-
     requestAnimationFrame(() => {
       this._map.fitToCoordinates(coords, {
         animated: true,
-        edgePadding: {
-          top,
-          right: 0,
-          bottom,
-          left: 0
-        }
+        edgePadding: CalendarMap.edgePadding
       });
     });
   };
@@ -173,20 +159,9 @@ class CalendarMap extends PureComponent {
       }
     ];
 
-    const top = ANDROID ? PixelRatio.getPixelSizeForLayoutSize(20) : 20;
-
-    const bottom = ANDROID
-      ? PixelRatio.getPixelSizeForLayoutSize(CalendarItem.height + 40)
-      : CalendarItem.height + 40;
-
     this._map.fitToCoordinates(coords, {
       animated: false,
-      edgePadding: {
-        top,
-        right: 0,
-        bottom,
-        left: 0
-      }
+      edgePadding: CalendarMap.edgePadding
     });
   };
 

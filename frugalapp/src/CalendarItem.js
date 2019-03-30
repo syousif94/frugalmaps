@@ -2,12 +2,12 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import { timeRemaining, makeISO, makeYesterdayISO } from "./Time";
+// import emitter from "tiny-emitter/instance";
 import { WIDTH, AWSCF } from "./Constants";
 import NotifyButton from "./NotifyButton";
 import MonoText from "./MonoText";
 import { FontAwesome } from "@expo/vector-icons";
 
-import EventList from "./InfoEventList";
 import { withNavigation } from "react-navigation";
 import * as Events from "./store/events";
 
@@ -76,10 +76,7 @@ class CalendarItem extends Component {
   _resetOnRelease = false;
 
   // _onPressIn = () => {
-  //   const { item } = this.props;
-
-  //   this._resetOnRelease = true;
-  //   emitter.emit("fit-marker", item);
+  //   emitter.emit("hide-sort");
   // };
 
   // _onPressOut = () => {
@@ -94,7 +91,6 @@ class CalendarItem extends Component {
     const {
       item: { _source: item, sort },
       index,
-      title,
       eventCount
     } = this.props;
 
@@ -191,7 +187,12 @@ class CalendarItem extends Component {
       <View style={styles.container}>
         <View style={styles.content}>
           <View style={styles.marker} pointerEvents="none" />
-          <TouchableOpacity style={styles.info} onPress={this._onPress}>
+          <TouchableOpacity
+            style={styles.info}
+            onPress={this._onPress}
+            // delayPressIn={0}
+            // onPressIn={this._onPressIn}
+          >
             <View style={styles.hours}>
               {item.groupedHours.map((hours, index) => {
                 return (
@@ -313,7 +314,7 @@ const styles = StyleSheet.create({
     width: CalendarItem.width
   },
   content: {
-    height: CalendarItem.height - 14,
+    height: CalendarItem.height - 24,
     backgroundColor: "#fff",
     width: CalendarItem.width - 10,
     marginHorizontal: 5,

@@ -6,17 +6,26 @@ import {
   StyleSheet,
   TouchableOpacity
 } from "react-native";
+import emitter from "tiny-emitter/instance";
+import { Entypo } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import { getInset } from "./SafeAreaInsets";
 import CityPicker from "./CalendarCityPicker";
 import DayPicker from "./CalendarDayPicker";
-import SearchButton from "./SearchButton";
 import SubmitButton from "./SubmitButton";
 
 class SortBar extends PureComponent {
   state = {
     expanded: new Animated.Value(0)
   };
+
+  componentDidMount() {
+    emitter.on("hide-sort", this._hide);
+  }
+
+  componentWillUnmount() {
+    emitter.off("hide-sort", this._hide);
+  }
 
   _expanded = false;
 
@@ -30,47 +39,74 @@ class SortBar extends PureComponent {
     ).start();
   };
 
+  _hide = () => {
+    if (this._expanded) {
+      this._toggleExpanded();
+    }
+  };
+
   render() {
     const { location, day: order } = this.props;
-    const locationText = location.length
-      ? location.replace(", USA", "")
-      : "Locating";
+    const locationText = location.length ? location.split(",")[0] : "Locating";
 
     const translateY = this.state.expanded.interpolate({
       inputRange: [0, 1],
       outputRange: [88, 0]
     });
 
-    const containerStyle = [
-      styles.container,
+    const panelStyle = [
+      styles.panel,
       {
         transform: [{ translateY }]
       }
     ];
+
+    const opacity = this.state.expanded.interpolate({
+      inputRange: [0, 0.5, 1],
+      outputRange: [0, 0, 1]
+    });
+
+    const fadeStyle = { opacity };
+
+    const rotate = this.state.expanded.interpolate({
+      inputRange: [0, 1],
+      outputRange: ["0deg", "180deg"]
+    });
+
+    const iconStyle = {
+      transform: [{ rotate }]
+    };
+
     return (
-      <Animated.View style={containerStyle}>
+      <View style={styles.container} pointerEvents="box-none">
+        <Animated.View style={panelStyle}>
+          <Animated.View style={fadeStyle}>
+            <CityPicker tabLabel="Closest" />
+            <DayPicker />
+          </Animated.View>
+        </Animated.View>
         <View style={styles.btns}>
           <TouchableOpacity
             style={styles.sortBtn}
             onPress={this._toggleExpanded}
           >
-            <Text style={styles.subText}>City</Text>
-            <Text style={styles.btnText}>{locationText}</Text>
+            <View style={styles.category}>
+              <Text style={styles.subText}>City</Text>
+              <Text style={styles.btnText}>{locationText}</Text>
+            </View>
+            <View style={styles.category}>
+              <Text style={styles.subText}>Sort</Text>
+              <Text style={styles.btnText}>{order}</Text>
+            </View>
+            <View style={styles.icon}>
+              <Animated.View style={iconStyle}>
+                <Entypo name="chevron-up" size={14} color="#999" />
+              </Animated.View>
+            </View>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.sortBtn}
-            onPress={this._toggleExpanded}
-          >
-            <Text style={styles.subText}>List</Text>
-            <Text style={styles.btnText}>{order}</Text>
-          </TouchableOpacity>
-          <View style={{ flex: 1 }} />
-          <SearchButton />
           <SubmitButton />
         </View>
-        <CityPicker tabLabel="Closest" />
-        <DayPicker />
-      </Animated.View>
+      </View>
     );
   }
 }
@@ -88,9 +124,14 @@ const styles = StyleSheet.create({
   container: {
     position: "absolute",
     bottom: 0,
+    height: (bottomInset > 0 ? bottomInset + 38 : 40) + 88,
+    paddingBottom: bottomInset,
     right: 5,
     left: 5,
-    height: (bottomInset > 0 ? bottomInset + 38 : 44) + 88,
+    justifyContent: "flex-end"
+  },
+  panel: {
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: "#fff",
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
@@ -104,12 +145,18 @@ const styles = StyleSheet.create({
     elevation: 5
   },
   btns: {
-    height: bottomInset > 0 ? 38 : 44,
-    flexDirection: "row"
+    height: bottomInset > 0 ? 38 : 40,
+    flexDirection: "row",
+    alignItems: "center",
+    elevation: 6
   },
   sortBtn: {
-    justifyContent: "center",
-    paddingHorizontal: 10
+    flexDirection: "row",
+    flex: 1
+  },
+  category: {
+    marginHorizontal: 10,
+    justifyContent: "center"
   },
   btnText: {
     marginTop: 1,
@@ -121,5 +168,13 @@ const styles = StyleSheet.create({
     marginTop: bottomInset > 0 ? 2 : 0,
     fontSize: 10,
     color: "#444"
+  },
+  icon: {
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    right: 20,
+    top: 0,
+    bottom: 0
   }
 });

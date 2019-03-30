@@ -4,15 +4,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   Text,
-  View,
-  ActivityIndicator
+  View
 } from "react-native";
 import { connect } from "react-redux";
 import * as Events from "./store/events";
 import * as Location from "./store/location";
 import emitter from "tiny-emitter/instance";
-import { ANDROID, HEIGHT } from "./Constants";
-import CalendarItem from "./CalendarItem";
 
 class CityPicker extends PureComponent {
   _onPress = item => {
@@ -27,15 +24,14 @@ class CityPicker extends PureComponent {
       queryType: "City"
     });
 
-    // setLocation({
-    //   lastQuery: text,
-    //   text,
-    //   bounds: null
-    // });
+    setLocation({
+      lastQuery: text
+    });
 
     emitter.emit("fit-bounds", bounds);
     emitter.emit("hide-callouts", bounds);
     emitter.emit("calendar-top", 0, true);
+    emitter.emit("hide-sort");
   };
 
   _scrollTo = (offset, animated = false) => {
@@ -57,60 +53,48 @@ class CityPicker extends PureComponent {
 
     if (!data || !data.length) {
       return null;
-      // return (
-      //   <View style={styles.loading}>
-      //     <Text style={styles.btnText}>Locating</Text>
-      //     <ActivityIndicator
-      //       style={styles.loadingIndicator}
-      //       size="small"
-      //       color="#fff"
-      //     />
-      //   </View>
-      // );
     }
 
     return (
-      <View style={styles.container}>
-        <ScrollView
-          ref={this._setRef}
-          style={styles.scroll}
-          onScrollEndDrag={this._onScrollEnd}
-          onMomentumScrollEnd={this._onScrollEnd}
-          horizontal
-          alwaysBounceHorizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.content}
-        >
-          {data.map((item, index) => {
-            let name = `${index + 1}. `;
-            let addressText = "";
-            const [city, state] = item._source.name.split(", ");
-            name += city;
-            addressText = state;
-            const btnStyle = [styles.btnBg];
+      <ScrollView
+        ref={this._setRef}
+        style={styles.scroll}
+        onScrollEndDrag={this._onScrollEnd}
+        onMomentumScrollEnd={this._onScrollEnd}
+        horizontal
+        alwaysBounceHorizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.content}
+      >
+        {data.map((item, index) => {
+          let name = `${index + 1}. `;
+          let addressText = "";
+          const [city, state] = item._source.name.split(", ");
+          name += city;
+          addressText = state;
+          const btnStyle = [styles.btnBg];
 
-            if (item.sort && item.sort[item.sort.length - 1]) {
-              const miles = `${item.sort[item.sort.length - 1].toFixed(2)} mi`;
-              addressText = `${addressText} · ${miles}`;
-            }
+          if (item.sort && item.sort[item.sort.length - 1]) {
+            const miles = `${item.sort[item.sort.length - 1].toFixed(2)} mi`;
+            addressText = `${addressText} · ${miles}`;
+          }
 
-            const onPress = this._onPress.bind(null, item);
-            return (
-              <View style={btnStyle} key={name}>
-                <TouchableOpacity style={styles.btn} onPress={onPress}>
-                  <View>
-                    <Text style={styles.cityText}>{name}</Text>
-                    <Text style={styles.addressText}>{addressText}</Text>
-                  </View>
-                  <View style={styles.count}>
-                    <Text style={styles.btnText}>{item._source.count}</Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            );
-          })}
-        </ScrollView>
-      </View>
+          const onPress = this._onPress.bind(null, item);
+          return (
+            <View style={btnStyle} key={name}>
+              <TouchableOpacity style={styles.btn} onPress={onPress}>
+                <View>
+                  <Text style={styles.cityText}>{name}</Text>
+                  <Text style={styles.addressText}>{addressText}</Text>
+                </View>
+                <View style={styles.count}>
+                  <Text style={styles.btnText}>{item._source.count}</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          );
+        })}
+      </ScrollView>
     );
   }
 }
@@ -130,12 +114,11 @@ export default connect(
 )(CityPicker);
 
 const styles = StyleSheet.create({
-  container: {},
   scroll: {
-    height: 44
+    maxHeight: 44
   },
   content: {
-    // paddingRight: 90
+    paddingRight: 10
   },
   btnBg: {
     height: 44

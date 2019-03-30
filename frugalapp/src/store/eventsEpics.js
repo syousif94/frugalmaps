@@ -60,7 +60,7 @@ const events = (action$, store) =>
             data,
             list,
             places,
-            closest,
+            closest = [{ title: "Closest", data: [] }],
             newest: recent
           } = res;
 
@@ -68,27 +68,27 @@ const events = (action$, store) =>
             emitter.emit("fit-bounds", bounds);
           }
 
-          let day = "Up Next";
+          const day = "Up Next";
 
-          const {
-            events: { day: storeDay }
-          } = store.getState();
+          // const {
+          //   events: { day: storeDay }
+          // } = store.getState();
 
-          if (calendar.length) {
-            if (storeDay) {
-              const storeDayData = calendar.find(
-                data => data.title === storeDay
-              );
+          // if (calendar.length) {
+          //   if (storeDay) {
+          //     const storeDayData = calendar.find(
+          //       data => data.title === storeDay
+          //     );
 
-              if (storeDayData) {
-                day = storeDay;
-              }
-            }
+          //     if (storeDayData) {
+          //       day = storeDay;
+          //     }
+          //   }
 
-            if (!day) {
-              day = "Up Next";
-            }
-          }
+          //   if (!day) {
+          //     day = "Up Next";
+          //   }
+          // }
 
           return Observable.of(
             Location.actions.set({
