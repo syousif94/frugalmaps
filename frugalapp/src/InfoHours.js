@@ -28,7 +28,7 @@ export default class InfoHours extends Component {
 
 const styles = StyleSheet.create({
   hours: {
-    paddingTop: 10
+    paddingVertical: 5
   },
   hoursTitle: {
     marginTop: 3,
@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
     color: "#666"
   },
   today: {
+    fontWeight: "600",
     color: "#000"
   }
 });

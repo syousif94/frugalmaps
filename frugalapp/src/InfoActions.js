@@ -56,25 +56,19 @@ async function share(doc) {
 export default ({ doc }) => {
   return (
     <View style={styles.actions}>
-      {["Call", "Web", "Share", "Go"].map(text => {
-        // let icon = null;
-        let emoji = "";
+      {["Call", "Web", "Go"].map(text => {
         let onPress;
         switch (text) {
           case "Call":
-            emoji = "📞";
             onPress = call.bind(null, doc._source);
             break;
           case "Web":
-            emoji = "🔗";
             onPress = web.bind(null, doc._source);
             break;
           case "Go":
-            emoji = "🚕";
             onPress = go.bind(null, doc._source);
             break;
           case "Share":
-            emoji = "💬";
             onPress = share.bind(null, doc);
             break;
           default:
@@ -83,7 +77,6 @@ export default ({ doc }) => {
         return (
           <View key={text} style={styles.action}>
             <TouchableOpacity onPress={onPress} style={styles.btn}>
-              <Text style={styles.icon}>{emoji}</Text>
               <Text style={styles.actionText}>{text}</Text>
             </TouchableOpacity>
           </View>
@@ -97,26 +90,21 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 5,
     marginBottom: 10
   },
   action: {
-    width: (WIDTH - 25) / 4 - 8,
+    width: (WIDTH - 25) / 3 - 8,
     backgroundColor: "#ededed",
     borderRadius: 5
   },
   btn: {
     flex: 1,
-    paddingTop: 9,
+    paddingTop: 6,
     paddingBottom: 6,
     alignItems: "center"
   },
-  icon: {
-    fontSize: 18
-  },
   actionText: {
-    marginTop: 5,
-    fontSize: 10,
+    fontSize: 14,
     fontWeight: "500",
     color: "#000"
   }

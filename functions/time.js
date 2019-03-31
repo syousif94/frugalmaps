@@ -386,6 +386,8 @@ function makeEvents(now, hits) {
 }
 
 function makeMarkers(today, days) {
+  const todayIso = today.weekday();
+  const todayHours = parseInt(today.format("HHmm"), 10);
   return _(days)
     .map(day => {
       const clone = _.cloneDeep(day);
@@ -423,11 +425,11 @@ function makeMarkers(today, days) {
           }
 
           const sortedEvents = events.sort((_a, _b) => {
-            let a = _a._source.groupedHours[0].iso - today.weekday();
+            let a = _a._source.groupedHours[0].iso - todayIso;
             if (a < 0) {
               a += 7;
             }
-            let b = _b._source.groupedHours[0].iso - today.weekday();
+            let b = _b._source.groupedHours[0].iso - todayIso;
             if (b < 0) {
               b += 7;
             }
@@ -435,8 +437,31 @@ function makeMarkers(today, days) {
               return a - b;
             }
 
-            const aStart = parseInt(_a._source.groupedHours[0].start, 10);
-            const bStart = parseInt(_b._source.groupedHours[0].start, 10);
+            const bothToday = _a._source.groupedHours[0].iso === todayIso;
+
+            let aStart = parseInt(_a._source.groupedHours[0].start, 10);
+            let aEnd = parseInt(_a._source.groupedHours[0].end, 10);
+
+            if (aEnd < aStart) {
+              aEnd += 2400;
+            }
+
+            if (bothToday && aEnd < todayHours) {
+              aStart += 2400;
+              aEnd += 2400;
+            }
+
+            let bStart = parseInt(_b._source.groupedHours[0].start, 10);
+            let bEnd = parseInt(_b._source.groupedHours[0].end, 10);
+
+            if (bEnd < bStart) {
+              bEnd += 2400;
+            }
+
+            if (bothToday && bEnd < todayHours) {
+              bStart += 2400;
+              bEnd += 2400;
+            }
 
             return aStart - bStart;
           });

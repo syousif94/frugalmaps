@@ -22,13 +22,13 @@ import InfoActions from "./InfoActions";
 import * as Events from "./store/events";
 import InfoHours from "./InfoHours";
 import InfoBackButton from "./InfoBackButton";
+import { getInset } from "./SafeAreaInsets";
 
 class InfoScreen extends Component {
   static mapId = "infoScreen";
 
   state = {
-    loading: true,
-    listTop: null
+    loading: true
   };
 
   componentDidMount() {
@@ -48,9 +48,9 @@ class InfoScreen extends Component {
       });
     }, 150);
 
-    if (IOS) {
-      StatusBar.setBarStyle("light-content");
-    }
+    // if (IOS) {
+    //   StatusBar.setBarStyle("light-content");
+    // }
 
     emitter.on(InfoScreen.mapId, this._showLocation);
   }
@@ -70,9 +70,9 @@ class InfoScreen extends Component {
 
     emitter.off(InfoScreen.mapId, this._showLocation);
 
-    if (IOS) {
-      StatusBar.setBarStyle("dark-content");
-    }
+    // if (IOS) {
+    //   StatusBar.setBarStyle("dark-content");
+    // }
 
     emitter.emit("info-pop");
   }
@@ -159,20 +159,6 @@ class InfoScreen extends Component {
 
   _focusedAnnotation = false;
 
-  _onHeaderLayout = e => {
-    const {
-      nativeEvent: {
-        layout: { y, height }
-      }
-    } = e;
-
-    const listTop = y + height;
-
-    this.setState({
-      listTop
-    });
-  };
-
   render() {
     const {
       event: { data }
@@ -198,54 +184,47 @@ class InfoScreen extends Component {
 
     const streetAddress = item.address.split(",")[0];
 
-    const paddingStyle = {
-      height: this.state.listTop * 3,
-      backgroundColor: "#000",
-      marginTop: this.state.listTop * -2
+    const contentStyle = {
+      paddingTop: IOS ? getInset("top") : 0
     };
 
     return (
       <View style={styles.container}>
-        <View style={styles.info}>
-          {this.state.loading || (IOS && !this.state.listTop) ? null : (
-            <ScrollView
-              contentContainerStyle={styles.scrollContent}
-              style={styles.container}
-            >
-              <View style={paddingStyle} />
-              <ImageGallery
-                backgroundColor="#000"
-                height={HEIGHT * 0.24}
-                disabled
-                doc={data}
-              />
-              <View style={styles.events}>
-                <InfoActions doc={data} />
-                <InfoEventList placeid={data._source.placeid} tick />
-                <InfoHours hours={data._source.hours} />
-              </View>
-            </ScrollView>
-          )}
-        </View>
-        {this._renderMap()}
-        <SafeArea style={styles.headerContainer}>
-          <View style={styles.header} onLayout={this._onHeaderLayout}>
-            <View style={styles.headerInfo}>
-              <Text style={styles.locationText}>
-                {item.location}{" "}
-                <Text style={styles.distanceText}>{distanceText}</Text>
-              </Text>
-              <Text style={styles.subText}>
-                {item.neighborhood || item.city}
-              </Text>
-              <Text style={styles.subText}>{streetAddress}</Text>
-              <View style={styles.rating}>
-                <FontAwesome name="star" size={16} color="#FFA033" />
-                <Text style={styles.ratingText}>{item.rating}</Text>
+        {this.state.loading ? null : (
+          <ScrollView
+            style={styles.container}
+            contentContainerStyle={contentStyle}
+          >
+            <ImageGallery
+              backgroundColor="#fff"
+              height={HEIGHT * 0.3}
+              disabled
+              doc={data}
+            />
+            <View style={styles.header}>
+              <View style={styles.headerInfo}>
+                <Text style={styles.locationText}>
+                  {item.location}{" "}
+                  <Text style={styles.distanceText}>{distanceText}</Text>
+                </Text>
+                <Text style={styles.subText}>{streetAddress}</Text>
+                <Text style={styles.subText}>
+                  {item.neighborhood || item.city}
+                </Text>
+                <View style={styles.rating}>
+                  <FontAwesome name="star" size={16} color="#FFA033" />
+                  <Text style={styles.ratingText}>{item.rating}</Text>
+                </View>
               </View>
             </View>
-          </View>
-        </SafeArea>
+            <View style={styles.events}>
+              <InfoActions doc={data} />
+              <InfoEventList placeid={data._source.placeid} tick />
+              <InfoHours hours={data._source.hours} />
+            </View>
+            {this._renderMap()}
+          </ScrollView>
+        )}
       </View>
     );
   }
@@ -270,52 +249,38 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff"
   },
-  headerContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "rgba(0,0,0,0.6)"
-  },
   header: {
     paddingHorizontal: 15,
-    paddingBottom: 10,
-    paddingTop: ANDROID ? 5 : 0
+    paddingTop: 10
   },
-  scrollContent: {
-    paddingBottom: 20
+  headerInfo: {
+    paddingRight: 60
   },
-  headerInfo: { paddingRight: 60 },
   locationText: {
-    color: "#fff",
-    fontSize: 16,
+    color: "#000",
+    fontSize: 28,
     fontWeight: "600"
   },
   subText: {
-    color: "#e0e0e0",
+    marginTop: 1,
+    color: "#444",
     fontSize: 12
   },
   distanceText: {
-    color: "#e0e0e0",
+    color: "#444",
     fontSize: 12
   },
   map: {
-    height: HEIGHT * 0.22
+    height: HEIGHT * 0.45
   },
   events: {
-    marginTop: 1,
     backgroundColor: "#fff",
     paddingHorizontal: 15,
     paddingVertical: 10
   },
-  info: {
-    flex: 1,
-    borderBottomWidth: 1,
-    borderColor: "#000"
-  },
   rating: {
     position: "absolute",
-    top: 2,
+    top: 5,
     right: 0,
     flexDirection: "row"
   },
