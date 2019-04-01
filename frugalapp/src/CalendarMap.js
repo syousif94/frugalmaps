@@ -218,12 +218,14 @@ class CalendarMap extends PureComponent {
 
             const upcoming = hours.today && !ended && !ending;
 
+            const key = `${upcoming}${ending}${_id}`;
+
             return (
               <MapMarker
                 upcoming={upcoming}
                 ending={ending}
                 data={data}
-                key={_id}
+                key={key}
               />
             );
           })}
