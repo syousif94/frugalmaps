@@ -16,7 +16,7 @@ const makeState = () => (state, props) => ({
 });
 
 class CalendarItem extends Component {
-  static height = 280;
+  static height = 266;
   static width = WIDTH - 50;
 
   state = {
