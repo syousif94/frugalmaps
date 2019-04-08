@@ -47,7 +47,7 @@ export async function createNotification({ _source: item, _id: id }) {
 
   const duration = makeDuration(item.groupedHours[0]);
 
-  const title = `${item.title} starts in 30 minutes!`;
+  const title = `${item.title} starts in 1 hour!`;
   const body = `${item.location} · ${hours.hours} (${duration}hr)\n${
     item.description
   }`;
@@ -57,7 +57,7 @@ export async function createNotification({ _source: item, _id: id }) {
       const isoDays = group.days.map(day => {
         const start = group.start;
         const iso = dayToISO(ABBREVIATED_DAYS.indexOf(day.text));
-        let date = createDate(start, iso).subtract(30, "m");
+        let date = createDate(start, iso).subtract(1, "h");
         if (date.isBefore(now)) {
           date = date.add(7, "d");
         }

@@ -3,7 +3,6 @@ import { StyleSheet, TouchableOpacity, View, Text } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 
 import { withNavigation } from "react-navigation";
-import { BLUE } from "./Colors";
 
 class BackButton extends Component {
   _back = () => {
@@ -18,7 +17,7 @@ class BackButton extends Component {
             style={styles.icon}
             name="chevron-left"
             size={18}
-            color={BLUE}
+            color="#fff"
           />
           <Text style={styles.text}>Back</Text>
         </TouchableOpacity>
@@ -30,9 +29,7 @@ class BackButton extends Component {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(0,0,0,0.75)",
     top: 8,
     left: 8,
     height: 32,
@@ -51,7 +48,7 @@ const styles = StyleSheet.create({
   text: {
     marginLeft: 4,
     marginRight: 12,
-    color: BLUE,
+    color: "#fff",
     fontSize: 12,
     fontWeight: "600"
   }

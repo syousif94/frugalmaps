@@ -192,6 +192,8 @@ class CalendarList extends PureComponent {
           removeClippedSubviews={this.state.clipSubviews}
           onViewableItemsChanged={this._itemsChanged}
           showsHorizontalScrollIndicator={false}
+          snapToInterval={CalendarItem.width}
+          decelerationRate="fast"
         />
       </View>
     );

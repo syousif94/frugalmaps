@@ -3,7 +3,6 @@ import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
 
 import { FontAwesome } from "@expo/vector-icons";
-import { BLUE } from "./Colors";
 import emitter from "tiny-emitter/instance";
 import { grantLocation } from "./Permissions";
 import * as Events from "./store/events";
@@ -55,7 +54,7 @@ class LocateMe extends Component {
           onPress={this._onPress}
           onLongPress={this._onLongPress}
         >
-          <FontAwesome name="location-arrow" size={iconSize} color={BLUE} />
+          <FontAwesome name="location-arrow" size={iconSize} color={"#fff"} />
         </TouchableOpacity>
       </View>
     );
@@ -70,9 +69,7 @@ export default connect(
 const styles = StyleSheet.create({
   locate: {
     position: "absolute",
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
-    backgroundColor: "#fff"
+    backgroundColor: "rgba(0,0,0,0.75)"
   },
   locateSmall: {
     top: 8,

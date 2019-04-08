@@ -13,6 +13,33 @@ const mapDispatchToProps = {
   set: Submission.actions.set
 };
 
+const TYPES = [
+  "21+",
+  "happy hour",
+  "food",
+  "brunch",
+  "burgers",
+  "tacos",
+  "games",
+  "bowling",
+  "ping pong",
+  "pool",
+  "karaoke",
+  "trivia",
+  "beer",
+  "wine",
+  "sangria",
+  "wells",
+  "mimosas",
+  "margs",
+  "shots",
+  "martinis",
+  "alcohol",
+  "stand up",
+  "open mic",
+  "live music"
+].sort();
+
 class EventTypePicker extends Component {
   static types = ["Brunch", "Happy Hour", "Food", "Game"];
 
@@ -32,57 +59,57 @@ class EventTypePicker extends Component {
     const { eventType } = this.props;
     return (
       <View style={styles.container}>
-        {EventTypePicker.types.map((text, index) => {
+        {TYPES.map((text, index) => {
           const typeStyle = [styles.type];
           const textStyle = [styles.btnText];
 
-          if (eventType === text) {
-            typeStyle.push(styles.selected);
-            textStyle.push(styles.selectedText);
-          }
+          // if (eventType === text) {
+          //   typeStyle.push(styles.selected);
+          //   textStyle.push(styles.selectedText);
+          // }
 
-          let emoji = "";
+          // let emoji = "";
 
-          switch (text) {
-            case "Brunch":
-              emoji = "🍑🥞";
-              break;
-            case "Happy Hour":
-              emoji = "🍷🍻";
-              break;
-            case "Food":
-              emoji = "🍕🌮";
-              break;
-            case "Game":
-              emoji = "🎳🎯";
-              break;
-            default:
-              break;
-          }
+          // switch (text) {
+          //   case "Brunch":
+          //     emoji = "🍑🥞";
+          //     break;
+          //   case "Happy Hour":
+          //     emoji = "🍷🍻";
+          //     break;
+          //   case "Food":
+          //     emoji = "🍕🌮";
+          //     break;
+          //   case "Game":
+          //     emoji = "🎳🎯";
+          //     break;
+          //   default:
+          //     break;
+          // }
 
-          if (index % 2 === 0) {
-            typeStyle.push({ marginRight: 5 });
-          } else {
-            typeStyle.push({ marginLeft: 5 });
-          }
+          // if (index % 2 === 0) {
+          //   typeStyle.push({ marginRight: 5 });
+          // } else {
+          //   typeStyle.push({ marginLeft: 5 });
+          // }
 
-          if (index < 2) {
-            typeStyle.push({ marginBottom: 6 });
-          }
+          // if (index < 2) {
+          //   typeStyle.push({ marginBottom: 6 });
+          // }
 
           const onPress = this._select.bind(null, text);
 
           return (
             <View style={typeStyle} key={index}>
               <TouchableOpacity style={styles.btn} onPress={onPress}>
-                <View style={styles.emojiRow}>
+                {/* <View style={styles.emojiRow}>
                   <Text style={styles.emojiText}>{emoji}</Text>
                   {text === "Happy Hour" ? (
                     <View style={styles.twentyOne}>
                       <Text style={styles.twentyOneText}>21+</Text>
                     </View>
                   ) : null}
-                </View>
+                </View> */}
                 <Text style={textStyle}>{text}</Text>
               </TouchableOpacity>
             </View>
@@ -100,14 +127,15 @@ export default connect(
 
 const styles = StyleSheet.create({
   container: {
-    padding: 1,
+    padding: 2,
     flexDirection: "row",
     flexWrap: "wrap"
   },
   type: {
-    width: (WIDTH - 10 * 3) / 2,
-    margin: 4,
-    paddingVertical: 10,
+    // width: (WIDTH - 10 * 3) / 2,
+    margin: 3,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
     backgroundColor: "#ededed",
     borderRadius: 8
   },
@@ -124,7 +152,7 @@ const styles = StyleSheet.create({
     marginBottom: 4
   },
   btnText: {
-    fontSize: 16
+    fontSize: 14
   },
   selectedText: {
     color: "#fff",

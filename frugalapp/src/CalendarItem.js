@@ -229,22 +229,6 @@ class CalendarItem extends Component {
                 );
               })}
             </View>
-            <View style={styles.location}>
-              <View style={styles.locationInfo}>
-                <Text numberOfLines={1} style={styles.locationText}>
-                  {index + 1}. {locationText}
-                </Text>
-                <Text numberOfLines={1} style={styles.subText}>
-                  {cityText}
-                </Text>
-              </View>
-              <View style={styles.rating}>
-                <FontAwesome name="star" size={16} color="#FFA033" />
-                <Text style={styles.ratingText}>
-                  {parseFloat(item.rating, 10).toFixed(1)}
-                </Text>
-              </View>
-            </View>
             <View style={styles.event}>
               <MonoText
                 text={remaining}
@@ -256,7 +240,9 @@ class CalendarItem extends Component {
                 colonStyle={styles.colon}
               />
               <View style={styles.titleRow}>
-                <Text style={styles.titleText}>{item.title}</Text>
+                <Text style={styles.titleText}>
+                  {index + 1}. {item.title}
+                </Text>
                 {item.type === "Happy Hour" ? (
                   <View style={styles.twentyOne}>
                     <Text style={styles.twentyOneText}>21+</Text>
@@ -271,6 +257,22 @@ class CalendarItem extends Component {
               <Text style={styles.descriptionText} numberOfLines={2}>
                 {item.description}
               </Text>
+            </View>
+            <View style={styles.location}>
+              <View style={styles.locationInfo}>
+                <Text numberOfLines={1} style={styles.locationText}>
+                  {locationText}
+                </Text>
+                <Text numberOfLines={1} style={styles.subText}>
+                  {cityText}
+                </Text>
+              </View>
+              <View style={styles.rating}>
+                <FontAwesome name="star" size={16} color="#FFA033" />
+                <Text style={styles.ratingText}>
+                  {parseFloat(item.rating, 10).toFixed(1)}
+                </Text>
+              </View>
             </View>
           </TouchableOpacity>
           <View style={styles.previewWrap}>
@@ -371,7 +373,7 @@ const styles = StyleSheet.create({
   location: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 5
+    marginTop: 5
   },
   locationInfo: { flex: 1 },
   time: {

@@ -254,7 +254,7 @@ class SubmitScreen extends Component {
               blurOnSubmit
               underlineColorAndroid="transparent"
             />
-            <Text style={styles.instruction}>What kind of special?</Text>
+            <Text style={styles.instruction}>Tags</Text>
             <EventTypePicker />
             <Text style={styles.instruction}>
               Leave blank unless you have one.
