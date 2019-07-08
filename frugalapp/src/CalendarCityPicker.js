@@ -13,6 +13,8 @@ import emitter from "tiny-emitter/instance";
 
 class CityPicker extends PureComponent {
   _onPress = item => {
+    emitter.emit("calendar-top", -1);
+
     const { setLocation, setEvents } = this.props;
 
     const bounds = item._source.bounds;
@@ -30,7 +32,6 @@ class CityPicker extends PureComponent {
 
     // emitter.emit("fit-bounds", bounds);
     // emitter.emit("hide-callouts", bounds);
-    emitter.emit("calendar-top", 0, true);
     emitter.emit("toggle-menu", false);
   };
 
