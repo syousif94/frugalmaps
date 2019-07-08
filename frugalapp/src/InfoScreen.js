@@ -219,7 +219,6 @@ class InfoScreen extends Component {
             </View>
             <View style={styles.events}>
               <InfoActions doc={data} />
-              <InfoEventList placeid={data._source.placeid} tick />
               <InfoHours hours={data._source.hours} />
             </View>
             {this._renderMap()}

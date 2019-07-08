@@ -10,6 +10,7 @@ import CalendarEmpty from "./CalendarEmpty";
 import CalendarItem from "./CalendarItem";
 import _ from "lodash";
 import { getInset } from "./SafeAreaInsets";
+import CalendarView from "./Calendar";
 
 const bottomInset = getInset("bottom");
 
@@ -149,13 +150,13 @@ class CalendarList extends PureComponent {
     }
   };
 
-  _getItemLayout = (data, index) => {
-    return {
-      length: CalendarItem.width,
-      offset: 25 + CalendarItem.width * index,
-      index
-    };
-  };
+  // _getItemLayout = (data, index) => {
+  //   return {
+  //     length: CalendarItem.height,
+  //     offset: (CalendarItem.height + 1) * index,
+  //     index
+  //   };
+  // };
 
   render() {
     const { data, day, refreshing } = this.props;
@@ -174,14 +175,13 @@ class CalendarList extends PureComponent {
     return (
       <View style={styles.container}>
         <FlatList
-          horizontal
           key={day}
           onRefresh={this._refresh}
           refreshing={refreshing}
           ref={this._setRef}
           style={styles.list}
           renderItem={this._renderItem}
-          getItemLayout={this._getItemLayout}
+          // getItemLayout={this._getItemLayout}
           onScroll={this._onScroll}
           scrollEventThrottle={32}
           data={listData}
@@ -192,8 +192,16 @@ class CalendarList extends PureComponent {
           removeClippedSubviews={this.state.clipSubviews}
           onViewableItemsChanged={this._itemsChanged}
           showsHorizontalScrollIndicator={false}
-          snapToInterval={CalendarItem.width}
-          decelerationRate="fast"
+          contentInsetAdjustmentBehavior="never"
+          ItemSeparatorComponent={() => (
+            <View
+              style={{
+                height: 1,
+                backgroundColor: "#e0e0e0",
+                marginHorizontal: 20
+              }}
+            />
+          )}
         />
       </View>
     );
@@ -218,16 +226,14 @@ export default connect(
 
 const styles = StyleSheet.create({
   container: {
-    height: CalendarItem.height,
-    position: "absolute",
-    bottom: CalendarList.bottom,
-    left: 0,
-    right: 0
+    flex: 1,
+    borderTopWidth: 1,
+    borderColor: "#e0e0e0"
   },
   list: {
-    height: CalendarItem.height
+    flex: 1
   },
   content: {
-    paddingHorizontal: 25
+    paddingBottom: 85
   }
 });

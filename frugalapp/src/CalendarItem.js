@@ -16,8 +16,8 @@ const makeState = () => (state, props) => ({
 });
 
 class CalendarItem extends Component {
-  static height = 266;
-  static width = WIDTH - 50;
+  static height = 120;
+  static width = WIDTH;
 
   state = {
     time: Date.now()
@@ -50,7 +50,7 @@ class CalendarItem extends Component {
       this.setState({
         time: Date.now()
       });
-    }, 500);
+    }, 6000);
   };
 
   _shouldTick = props => {
@@ -132,20 +132,13 @@ class CalendarItem extends Component {
 
     const countdownStyle = [styles.countdownText];
 
-    let endingText = " minutes";
-
-    if (!remaining) {
-    } else if (remaining.length > 9) {
-      endingText = " days";
-    } else if (remaining.length > 6) {
-      endingText = " hours";
-    }
+    let endingText = remaining;
 
     if (ending) {
       countdownStyle.push(styles.ending);
-      endingText += " left";
+      endingText = `Ends in ${endingText}`;
     } else {
-      endingText += " away";
+      endingText = `in ${endingText}`;
       if (!ended && !ending && hours.today) {
         countdownStyle.push(styles.upcoming);
       }
@@ -183,122 +176,66 @@ class CalendarItem extends Component {
 
     const eventCountText = eventCount > 1 ? `+${eventCount - 1} more` : null;
 
+    const groupedHours = item.groupedHours[0];
+
+    const [startingHour, minutesAndMeridian] = groupedHours.hours
+      .split(" ")[0]
+      .split(":");
+
+    let hour = startingHour;
+
+    const minutes = minutesAndMeridian.substring(0, 2);
+
+    const duration = groupedHours.duration;
+
+    if (minutes !== "00") {
+      hour = `${hour}:${minutesAndMeridian}`;
+    } else {
+      const meridian = minutesAndMeridian.substring(2);
+      hour = `${hour}${meridian}`;
+    }
+
+    const day = `${groupedHours.days[0].text} ${hour} (${duration}hr)`;
+
     return (
-      <View style={styles.container}>
-        <View style={styles.content}>
-          <View style={styles.marker} pointerEvents="none" />
-          <TouchableOpacity
-            style={styles.info}
-            onPress={this._onPress}
-            // delayPressIn={0}
-            // onPressIn={this._onPressIn}
-          >
-            <View style={styles.hours}>
-              {item.groupedHours.map((hours, index) => {
-                return (
-                  <View style={styles.hour} key={index}>
-                    <View style={styles.days}>
-                      {hours.days.map(day => {
-                        const dayStyle = [styles.day];
-                        if (day.daysAway === 0 && ended) {
-                          dayStyle.push(styles.ended);
-                        }
-                        return (
-                          <View style={dayStyle} key={day.text}>
-                            <Text style={styles.dayText}>{day.text}</Text>
-                            {day.daysAway === 0 ? null : (
-                              <View style={styles.daysAway}>
-                                <Text style={styles.dayText}>
-                                  {day.daysAway}
-                                </Text>
-                              </View>
-                            )}
-                          </View>
-                        );
-                      })}
-                    </View>
-                    <View style={styles.time}>
-                      <Text style={styles.hourText} numberOfLines={1}>
-                        {hours.hours}{" "}
-                        <Text style={styles.durationText}>
-                          {hours.duration}hr
-                        </Text>
-                      </Text>
-                    </View>
-                  </View>
-                );
-              })}
+      <TouchableOpacity style={styles.container} onPress={this._onPress}>
+        <Text style={[styles.countdownText, countdownStyle]}>{endingText}</Text>
+        <Text>{day}</Text>
+        <View style={styles.titleRow}>
+          <Text style={styles.titleText}>
+            {index + 1}. {item.title}
+          </Text>
+          {item.type === "Happy Hour" ? (
+            <View style={styles.twentyOne}>
+              <Text style={styles.twentyOneText}>21+</Text>
             </View>
-            <View style={styles.event}>
-              <MonoText
-                text={remaining}
-                suffix={endingText}
-                textStyle={countdownStyle}
-                characterWidth={7.5}
-                style={styles.countdown}
-                suffixStyle={styles.suffix}
-                colonStyle={styles.colon}
-              />
-              <View style={styles.titleRow}>
-                <Text style={styles.titleText}>
-                  {index + 1}. {item.title}
-                </Text>
-                {item.type === "Happy Hour" ? (
-                  <View style={styles.twentyOne}>
-                    <Text style={styles.twentyOneText}>21+</Text>
-                  </View>
-                ) : null}
-                {eventCount > 1 ? (
-                  <View style={styles.eventCount}>
-                    <Text style={styles.countText}>{eventCountText}</Text>
-                  </View>
-                ) : null}
-              </View>
-              <Text style={styles.descriptionText} numberOfLines={2}>
-                {item.description}
-              </Text>
+          ) : null}
+          {eventCount > 1 ? (
+            <View style={styles.eventCount}>
+              <Text style={styles.countText}>{eventCountText}</Text>
             </View>
-            <View style={styles.location}>
-              <View style={styles.locationInfo}>
-                <Text numberOfLines={1} style={styles.locationText}>
-                  {locationText}
-                </Text>
-                <Text numberOfLines={1} style={styles.subText}>
-                  {cityText}
-                </Text>
-              </View>
-              <View style={styles.rating}>
-                <FontAwesome name="star" size={16} color="#FFA033" />
-                <Text style={styles.ratingText}>
-                  {parseFloat(item.rating, 10).toFixed(1)}
-                </Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-          <View style={styles.previewWrap}>
-            <View style={styles.preview}>
-              {images.map(image => {
-                const imageStyle = {
-                  height: 150,
-                  width: image.width,
-                  marginRight: 2
-                };
-                return (
-                  <Image
-                    source={image.source}
-                    style={imageStyle}
-                    key={image.source.uri}
-                  />
-                );
-              })}
-              <View style={styles.actions}>
-                {/* <GoingButton event={this.props.item} /> */}
-                <NotifyButton card event={this.props.item} />
-              </View>
-            </View>
+          ) : null}
+        </View>
+        <Text style={styles.descriptionText} numberOfLines={2}>
+          {item.description}
+        </Text>
+        <View style={styles.location}>
+          <View style={styles.locationInfo}>
+            <Text numberOfLines={1} style={styles.locationText}>
+              {locationText}
+            </Text>
+            <Text numberOfLines={1} style={styles.subText}>
+              {cityText}
+            </Text>
+          </View>
+          <View style={styles.rating}>
+            <FontAwesome name="star" size={16} color="#FFA033" />
+            <Text style={styles.ratingText}>
+              {parseFloat(item.rating, 10).toFixed(1)}
+            </Text>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   }
 }
@@ -312,44 +249,9 @@ export default connect(
 
 const styles = StyleSheet.create({
   container: {
-    height: CalendarItem.height,
-    width: CalendarItem.width
-  },
-  content: {
-    height: CalendarItem.height - 24,
-    backgroundColor: "#fff",
-    width: CalendarItem.width - 10,
-    marginHorizontal: 5,
-    marginTop: 7,
-    borderRadius: 8,
-    // borderTopLeftRadius: 8,
-    // borderTopRightRadius: 8,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5
-  },
-  info: {
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    overflow: "hidden"
-  },
-  marker: {
-    position: "absolute",
-    top: 5,
-    width: 20,
-    left: (WIDTH - 60) / 2 - 10,
-    height: 2,
-    borderRadius: 1,
-    backgroundColor: "rgba(0,0,0,0.2)"
-  },
-  event: {
-    // paddingHorizontal: 15,
-    // paddingBottom: 10
+    width: CalendarItem.width,
+    paddingHorizontal: 20,
+    paddingVertical: 10
   },
   titleText: {
     fontSize: 14,
@@ -376,35 +278,9 @@ const styles = StyleSheet.create({
     marginTop: 5
   },
   locationInfo: { flex: 1 },
-  time: {
-    marginTop: 3,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
-  },
-  hours: {
-    flexDirection: "row",
-    marginTop: 2,
-    marginBottom: 3
-  },
-  hour: {
-    marginRight: 10
-  },
-  hourText: {
-    color: "#444",
-    fontSize: 14
-  },
-  durationText: {
-    fontSize: 9
-  },
   subText: {
     color: "#444",
     fontSize: 12
-  },
-  countdown: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    marginBottom: 2
   },
   countdownText: {
     color: "#E3210B", // "#EA841A",
@@ -416,33 +292,6 @@ const styles = StyleSheet.create({
   },
   upcoming: {
     color: "#E9730C"
-  },
-  days: {
-    flexDirection: "row"
-  },
-  day: {
-    flexDirection: "row",
-    paddingHorizontal: 4,
-    paddingVertical: 2,
-    borderRadius: 3,
-    backgroundColor: "#18AB2E",
-    alignItems: "center",
-    marginRight: 2
-  },
-  ended: {
-    backgroundColor: "#999"
-  },
-  daysAway: {
-    marginLeft: 2,
-    marginRight: -1,
-    paddingHorizontal: 2,
-    borderRadius: 2.5,
-    backgroundColor: "rgba(0,0,0,0.2)"
-  },
-  dayText: {
-    fontSize: 10,
-    color: "#fff",
-    fontWeight: "700"
   },
   rating: {
     flexDirection: "row"
@@ -501,13 +350,5 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: "#fff",
     fontWeight: "700"
-  },
-  actions: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    position: "absolute",
-    top: 5,
-    left: 0,
-    right: 0
   }
 });

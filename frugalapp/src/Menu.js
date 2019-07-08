@@ -9,9 +9,8 @@ import {
 } from "react-native";
 import emitter from "tiny-emitter/instance";
 import { HEIGHT } from "./Constants";
-import SearchBar from "./SearchBar";
-import SearchSuggestions from "./SearchSuggestions";
 import { ANDROID } from "./Constants";
+import CityPicker from "./CalendarCityPicker";
 
 export default class Menu extends PureComponent {
   state = {
@@ -20,6 +19,7 @@ export default class Menu extends PureComponent {
   };
 
   componentDidMount() {
+    emitter.on("toggle-menu", this._toggleMenu);
     emitter.on("toggle-search", this._toggleSearch);
     emitter.on("info-pop", this._onInfoPop);
     if (ANDROID) {
@@ -55,6 +55,12 @@ export default class Menu extends PureComponent {
       ).start();
     }
   }
+
+  _toggleMenu = visible => {
+    this.setState({
+      visible
+    });
+  };
 
   _toggleSearch = visible => {
     this.setState({
@@ -95,19 +101,6 @@ export default class Menu extends PureComponent {
       }
     ];
 
-    const translateY = this.state.opacity.interpolate({
-      inputRange: [0, 1],
-      outputRange: [HEIGHT * 0.4, 0],
-      extrapolate: "clamp"
-    });
-
-    const menuStyle = [
-      styles.menu,
-      {
-        transform: [{ translateY }]
-      }
-    ];
-
     const pointerEvents = this.state.visible ? "auto" : "none";
 
     return (
@@ -115,13 +108,7 @@ export default class Menu extends PureComponent {
         <TouchableWithoutFeedback onPress={this._dismiss}>
           <View style={styles.bg} />
         </TouchableWithoutFeedback>
-        <Animated.View style={menuStyle}>
-          <SearchBar ref={this._setSearchRef} />
-          <SearchSuggestions
-            opacity={this.state.opacity}
-            searching={this.state.searching}
-          />
-        </Animated.View>
+        <CityPicker />
       </Animated.View>
     );
   }
@@ -135,12 +122,6 @@ const styles = StyleSheet.create({
   },
   bg: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.4)"
-  },
-  menu: {
-    height: HEIGHT * 0.9,
-    backgroundColor: "rgba(255,255,255,0.9)",
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10
+    backgroundColor: "rgba(0,0,0,0.96)"
   }
 });

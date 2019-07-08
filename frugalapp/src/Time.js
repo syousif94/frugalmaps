@@ -173,35 +173,15 @@ export function timeRemaining(hours, iso) {
 
     const minutes = Math.floor(minFloat);
 
-    const seconds = Math.floor((minFloat - minutes) * 60);
-
     remaining = "";
 
     if (days > 0) {
-      remaining += `${days}:`;
-    }
-
-    if (hour > 0 || days > 0) {
-      if (hour < 10 && days > 0) {
-        remaining += `0${hour}:`;
-      } else {
-        remaining += `${hour}:`;
-      }
-    }
-
-    if (minutes < 10) {
-      remaining += `0${minutes}:`;
+      remaining = `${days} days`;
+    } else if (hour > 0) {
+      remaining = `${hour} hours`;
     } else {
-      remaining += `${minutes}:`;
+      remaining = `${minutes} minutes`;
     }
-
-    if (seconds < 10) {
-      remaining += `0${seconds}`;
-    } else {
-      remaining += `${seconds}`;
-    }
-
-    remaining = remaining.trim();
   }
 
   const ended =

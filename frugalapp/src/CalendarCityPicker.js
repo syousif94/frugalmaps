@@ -28,10 +28,10 @@ class CityPicker extends PureComponent {
       lastQuery: text
     });
 
-    emitter.emit("fit-bounds", bounds);
-    emitter.emit("hide-callouts", bounds);
+    // emitter.emit("fit-bounds", bounds);
+    // emitter.emit("hide-callouts", bounds);
     emitter.emit("calendar-top", 0, true);
-    emitter.emit("hide-sort");
+    emitter.emit("toggle-menu", false);
   };
 
   _scrollTo = (offset, animated = false) => {
@@ -61,9 +61,6 @@ class CityPicker extends PureComponent {
         style={styles.scroll}
         onScrollEndDrag={this._onScrollEnd}
         onMomentumScrollEnd={this._onScrollEnd}
-        horizontal
-        alwaysBounceHorizontal
-        showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.content}
       >
         {data.map((item, index) => {
@@ -115,20 +112,24 @@ export default connect(
 
 const styles = StyleSheet.create({
   scroll: {
-    maxHeight: 44
+    flex: 1
   },
   content: {
-    paddingRight: 10
+    paddingTop: 150,
+    paddingHorizontal: 20
   },
   btnBg: {
-    height: 44
+    height: 44,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    borderRadius: 4,
+    marginBottom: 10
   },
   btn: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignItems: "center",
-    paddingLeft: 10
+    paddingHorizontal: 10
   },
   btnText: {
     fontSize: 14,
@@ -138,11 +139,11 @@ const styles = StyleSheet.create({
   cityText: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#000"
+    color: "#fff"
   },
   addressText: {
     fontSize: 10,
-    color: "#444"
+    color: "#e0e0e0"
   },
   count: {
     height: 20,

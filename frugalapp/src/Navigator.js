@@ -46,11 +46,11 @@ const MainScreen = createStackNavigator(
 
 const SwitchScreen = createSwitchNavigator(
   {
-    Intro: IntroScreen,
-    Main: MainScreen
+    Main: MainScreen,
+    Intro: IntroScreen
   },
   {
-    initialRoute: "Intro",
+    initialRoute: "Main",
     headerMode: "none"
   }
 );

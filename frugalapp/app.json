@@ -4,9 +4,9 @@
     "description": "Buncha is a calendar of fun and affordable stuff to do, both every where and nearby.",
     "slug": "litcal",
     "privacy": "public",
-    "sdkVersion": "30.0.0",
+    "sdkVersion": "32.0.0",
     "platforms": ["ios", "android"],
-    "version": "1.0.12",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -40,7 +40,7 @@
         "backgroundColor": "#FF94CD",
         "foregroundImage": "./assets/foreground.png"
       },
-      "versionCode": 2,
+      "versionCode": 3,
       "permissions": [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
