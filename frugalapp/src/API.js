@@ -1,4 +1,4 @@
-export const url = "https://us-central1-frugalmaps.cloudfunctions.net/api/";
+export const url = "https://frugal.ideakeg.xyz/api/";
 
 // export const url = "http://localhost:5000/frugalmaps/us-central1/api/";
 

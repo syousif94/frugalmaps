@@ -1,7 +1,11 @@
 const admin = require("firebase-admin");
-const functions = require("firebase-functions");
 
-admin.initializeApp(functions.config().firebase);
+const serviceAccount = require("./firebase.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://frugalmaps.firebaseio.com"
+});
 
 const db = admin.firestore();
 

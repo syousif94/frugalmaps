@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  server:
+    build: .
+    image: frugal-server-prod
+    command: sh /home/app/prod.sh
+    expose:
+      - 2000
+    ports:
+      - "2000:2000"
+    volumes:
+      - .:/home/app

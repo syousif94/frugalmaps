@@ -6,3 +6,6 @@ aws.json
 .firebase
 firebase-debug.log
 *.paw
+firebase.json
+scripts/deploy.sh
+.pm2

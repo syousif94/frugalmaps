@@ -1,4 +1,3 @@
-const functions = require("firebase-functions");
 const fetch = require("isomorphic-fetch");
 const fs = require("fs");
 const Handlebars = require("handlebars");
@@ -43,12 +42,8 @@ function parse(response) {
   };
 }
 
-module.exports = functions.https.onRequest(async (req, res) => {
-  let id = req.path.split("e/")[1];
-
-  if (!id) {
-    id = req.path.split("/")[1];
-  }
+module.exports = async (req, res) => {
+  let id = req.params.id;
 
   if (!id) {
     res.sendStatus(404);
@@ -69,7 +64,7 @@ module.exports = functions.https.onRequest(async (req, res) => {
   const data = parse(response);
 
   res.send(eventTemplate(data));
-});
+};
 
 const DAYS = ["M", "T", "W", "Th", "F", "Sa", "S"];
 

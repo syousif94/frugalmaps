@@ -6,7 +6,7 @@
     "ios": "cd frugalapp && expo build:ios",
     "android": "cd frugalapp && expo build:android",
     "start": "cd frugalapp && expo start",
-    "deploy": "cd functions && npm run deploy",
+    "deploy": "chmod a+x ./scripts/deploy.sh && ./scripts/deploy.sh",
     "server": "cd functions && npm run serve",
     "logs": "cd functions && npm run logs",
     "web": "firebase deploy --only hosting",
