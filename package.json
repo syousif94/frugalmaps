@@ -6,10 +6,10 @@
     "ios": "cd frugalapp && expo build:ios",
     "android": "cd frugalapp && expo build:android",
     "start": "cd frugalapp && expo start",
-    "deploy": "chmod a+x ./scripts/deploy.sh && ./scripts/deploy.sh",
+    "deploy:api": "chmod a+x ./scripts/deploy-api.sh && ./scripts/deploy-api.sh",
     "server": "cd functions && npm run serve",
     "logs": "cd functions && npm run logs",
-    "web": "firebase deploy --only hosting",
+    "web": "chmod a+x ./scripts/deploy-web.sh && ./scripts/deploy-web.sh",
     "elastic": "cd functions && npm run elastic"
   },
   "private": true

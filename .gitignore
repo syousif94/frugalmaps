@@ -9,3 +9,4 @@ firebase-debug.log
 firebase.json
 scripts/deploy.sh
 .pm2
+public/

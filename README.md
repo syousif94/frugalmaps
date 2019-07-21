@@ -2,8 +2,6 @@
 
 Buncha is crowdsourced calendar of local specials and game nights (happy hours, trvia, karaoke, etc.). It is available on the [App Store](https://itunes.apple.com/us/app/buncha-local-calendar/id1440536868?ls=1&mt=8) and the [Play Store](https://play.google.com/store/apps/details?id=me.syousif.LitCal)
 
-<a href="https://buncha.app" target="_blank"><img src="https://i.imgur.com/3GvqGkL.jpg" height="300px" /></a>
-
 #### Requirements
 
 [Yarn](https://yarnpkg.com/)

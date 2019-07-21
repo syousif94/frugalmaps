@@ -1,0 +1,121 @@
+import React, { useCallback, useState, useEffect } from "react";
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Animated
+} from "react-native";
+import moment from "moment";
+import { useSelector } from "react-redux";
+import { getInset } from "../utils/SafeAreaInsets";
+import { WEB, IOS } from "../utils/Constants";
+import { navigate } from "../screens";
+import { Entypo } from "@expo/vector-icons";
+import { BLUE, RED } from "../utils/Colors";
+import SortBar from "./SortBar";
+
+export default ({ toggle }) => {
+  const city = useSelector(state => state.events.city);
+  const locationEnabled = useSelector(state => state.permissions.location);
+  const count = useSelector(state => state.events.upNext);
+
+  const today = moment();
+  const day = today.format("dddd, MMMM D, Y");
+
+  const locationText =
+    city && city.text.length
+      ? city.text
+      : locationEnabled
+      ? "Locating"
+      : "Everywhere";
+
+  const onPress = useCallback(() => {
+    if (WEB) {
+      navigate("Menu");
+    } else {
+      toggle();
+    }
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity style={styles.button} onPress={onPress}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.subtitleText}>{day}</Text>
+          <View style={[styles.row, { marginTop: 5 }]}>
+            <Text style={styles.titleText}>{locationText}</Text>
+            {count.length ? (
+              <View style={styles.count}>
+                <Text style={styles.countText}>{count.length}</Text>
+              </View>
+            ) : null}
+          </View>
+        </View>
+        {WEB ? (
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text
+              style={{
+                color: BLUE,
+                fontSize: 12,
+                fontWeight: "600"
+              }}
+            >
+              MENU
+            </Text>
+            <Entypo name="chevron-right" size={22} color={BLUE} />
+          </View>
+        ) : (
+          <View style={{ marginRight: 6, marginTop: 3 }}>
+            <Entypo name="chevron-small-down" size={22} color={BLUE} />
+          </View>
+        )}
+      </TouchableOpacity>
+      {WEB ? <SortBar /> : null}
+    </View>
+  );
+};
+
+const topInset = getInset("top");
+
+const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+    maxWidth: WEB ? 500 : null,
+    alignSelf: WEB ? "center" : "stretch",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e0e0e0"
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  button: {
+    paddingTop: IOS ? topInset : 10,
+    paddingBottom: WEB ? 0 : 7,
+    paddingLeft: 10,
+    paddingRight: 4,
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  titleText: {
+    fontSize: 18
+  },
+  subtitleText: {
+    fontSize: 14,
+    fontWeight: "600"
+  },
+  count: {
+    height: 16,
+    justifyContent: "center",
+    paddingHorizontal: 5,
+    borderRadius: 8,
+    backgroundColor: RED,
+    marginLeft: 7
+  },
+  countText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#fff"
+  }
+});

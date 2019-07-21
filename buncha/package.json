@@ -1,0 +1,38 @@
+{
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "eject": "expo eject",
+    "publish": "expo publish"
+  },
+  "dependencies": {
+    "expo": "^33.0.0",
+    "expo-asset": "^5.0.1",
+    "expo-constants": "~5.0.1",
+    "expo-font": "~5.0.1",
+    "expo-location": "~5.0.1",
+    "expo-permissions": "~5.0.1",
+    "google-maps": "3.2.1",
+    "lodash": "^4.17.15",
+    "moment": "^2.24.0",
+    "react": "16.8.3",
+    "react-dom": "^16.8.6",
+    "react-helmet": "^5.2.1",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz",
+    "react-native-web": "^0.11.4",
+    "react-navigation": "^3.11.1",
+    "react-redux": "^7.1.0",
+    "react-router-dom": "^5.0.1",
+    "redux": "^4.0.4",
+    "redux-logger": "^3.0.6",
+    "redux-thunk": "^2.3.0"
+  },
+  "devDependencies": {
+    "@expo/webpack-config": "^0.6.0",
+    "babel-preset-expo": "^5.1.1"
+  },
+  "private": true
+}
