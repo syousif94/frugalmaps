@@ -1,12 +1,14 @@
 import React, { Component } from "react";
 import { StyleSheet, Image, View, Text } from "react-native";
+import { connect } from "react-redux";
 import MapView from "react-native-maps";
+import { selectEvent, deselectEvent } from "../store/events";
 
 const redSelectedPin = require("../assets/pin-selected.png");
 const greenSelectedPin = require("../assets/pin-now-selected.png");
 const orangeSelectedPin = require("../assets/pin-upcoming-selected.png");
 
-export default class MapMarker extends Component {
+class MapMarker extends Component {
   static imageHeight = 150;
   static offset = { x: 0, y: -14 };
 
@@ -26,9 +28,11 @@ export default class MapMarker extends Component {
     this.setState({
       selected: true
     });
+    this.props.selectEvent(this.props.data._id);
   };
 
   _onDeselect = () => {
+    this.props.deselectEvent(this.props.data._id);
     this.setState({
       selected: false
     });
@@ -92,6 +96,14 @@ export default class MapMarker extends Component {
     );
   }
 }
+
+export default connect(
+  null,
+  {
+    selectEvent,
+    deselectEvent
+  }
+)(MapMarker);
 
 const styles = StyleSheet.create({
   marker: {

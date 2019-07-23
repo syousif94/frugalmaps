@@ -54,7 +54,7 @@ export default class SubmissionInput extends Component {
             {...props}
             style={{
               border: "none",
-              ...style,
+              ...StyleSheet.flatten(style),
               outline: "none",
               textDecoration: "none",
               appearance: "none",
@@ -81,6 +81,7 @@ export default class SubmissionInput extends Component {
             {...props}
             style={style}
             onBlur={this._onBlur}
+            placeholderTextColor="rgba(0,0,0,0.5)"
           />
         </TouchableOpacity>
         {this._renderClear()}

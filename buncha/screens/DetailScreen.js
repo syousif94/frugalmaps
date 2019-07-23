@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { View, StyleSheet, Text, ScrollView, Dimensions } from "react-native";
 import { makeYesterdayISO, timeRemaining } from "../utils/Time";
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, Entypo } from "@expo/vector-icons";
 import { getEvent } from "../store/events";
 import moment from "moment";
 import ImageGallery from "../components/ImageGallery";
@@ -12,6 +12,8 @@ import BackButton from "../components/BackButton";
 import EventMapView from "../components/EventMapView";
 import { Helmet } from "react-helmet";
 import EventView from "../components/EventView";
+import Link from "../components/Link";
+import { RED, GREEN, BLUE } from "../utils/Colors";
 
 export default ({ navigation }) => {
   const dispatch = useDispatch();
@@ -179,9 +181,35 @@ export default ({ navigation }) => {
         </View>
         <ImageGallery photos={item._source.photos} />
         <View style={styles.info}>
-          <Text style={styles.titleText}>
-            {events.length} event{events.length !== 1 ? "s" : ""}
-          </Text>
+          <View style={styles.row}>
+            <Text style={styles.titleText}>
+              {events.length} event{events.length !== 1 ? "s" : ""}
+            </Text>
+            <Link style={[styles.link, { marginLeft: 10 }]} onPress={() => {}}>
+              <FontAwesome
+                style={{ marginTop: 1 }}
+                name="phone"
+                size={14}
+                color={GREEN}
+              />
+              <Text style={[styles.titleText, { marginLeft: 6 }]}>Call</Text>
+            </Link>
+            <Link style={styles.link} onPress={() => {}}>
+              <Entypo
+                style={{ marginTop: 1.5 }}
+                name="link"
+                size={14}
+                color={BLUE}
+              />
+              <Text style={[styles.titleText, { marginLeft: 6 }]}>Website</Text>
+            </Link>
+            <Link style={styles.link} onPress={() => {}}>
+              <FontAwesome name="map-marker" size={14} color={RED} />
+              <Text style={[styles.titleText, { marginLeft: 6 }]}>
+                Google Maps
+              </Text>
+            </Link>
+          </View>
           {events.map((item, index) => {
             return (
               <EventView
@@ -261,5 +289,15 @@ const styles = StyleSheet.create({
     marginTop: 5,
     color: "#000",
     fontSize: 14
+  },
+  link: {
+    marginHorizontal: 5,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    backgroundColor: "#f4f4f4",
+    paddingVertical: 4,
+    borderRadius: 6,
+    flexDirection: "row",
+    alignItems: "center"
   }
 });

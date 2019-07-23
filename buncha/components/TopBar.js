@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback } from "react";
 import {
   View,
   StyleSheet,
@@ -15,7 +15,7 @@ import { Entypo } from "@expo/vector-icons";
 import { BLUE, RED } from "../utils/Colors";
 import SortBar from "./SortBar";
 
-export default ({ toggle }) => {
+export default ({ toggle, rotate }) => {
   const city = useSelector(state => state.events.city);
   const locationEnabled = useSelector(state => state.permissions.location);
   const count = useSelector(state => state.events.upNext);
@@ -66,9 +66,22 @@ export default ({ toggle }) => {
             <Entypo name="chevron-right" size={22} color={BLUE} />
           </View>
         ) : (
-          <View style={{ marginRight: 6, marginTop: 3 }}>
+          <Animated.View
+            style={{
+              marginRight: 6,
+              marginTop: 3,
+              transform: [
+                {
+                  rotate: rotate.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: ["0deg", "180deg"]
+                  })
+                }
+              ]
+            }}
+          >
             <Entypo name="chevron-small-down" size={22} color={BLUE} />
-          </View>
+          </Animated.View>
         )}
       </TouchableOpacity>
       {WEB ? <SortBar /> : null}

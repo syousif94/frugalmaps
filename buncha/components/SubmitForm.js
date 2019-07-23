@@ -4,18 +4,16 @@ import {
   View,
   ScrollView,
   Text,
-  TextInput,
   TouchableOpacity
 } from "react-native";
 import { Helmet } from "react-helmet";
 import SubmissionInput from "./SubmissionInput";
-import { EVENT_TYPES } from "../utils/Constants";
-
-const inputStyle = {
-  height: 44,
-  paddingLeft: 10,
-  flex: 1
-};
+import { Entypo } from "@expo/vector-icons";
+import { EVENT_TYPES, IOS, WEB } from "../utils/Constants";
+import { getInset } from "../utils/SafeAreaInsets";
+import Link from "./Link";
+import { BLUE } from "../utils/Colors";
+import { navigate, getHistory } from "../screens";
 
 export default () => {
   return (
@@ -23,19 +21,57 @@ export default () => {
       <Helmet>
         <title>Submit - Buncha</title>
       </Helmet>
-      <ScrollView style={styles.list} contentContainerStyle={styles.content}>
-        <Text style={styles.headerText}>Submit Event</Text>
+      <ScrollView
+        style={styles.list}
+        contentContainerStyle={styles.content}
+        contentInsetAdjustmentBehavior="never"
+      >
+        <View style={[styles.row, { justifyContent: WEB ? "center" : null }]}>
+          <Text style={styles.headerText}>Submit Event</Text>
+          {WEB ? (
+            <View
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                bottom: 0,
+                justifyContent: "center"
+              }}
+            >
+              <Link
+                to="/"
+                onPress={() => {
+                  const history = getHistory();
+                  if (history) {
+                    if (history.length > 2) {
+                      history.goBack();
+                    } else {
+                      navigate("UpNext");
+                    }
+                  }
+                }}
+                style={{
+                  paddingTop: 2,
+                  paddingRight: 8
+                }}
+              >
+                <Entypo name="chevron-left" size={22} color={BLUE} />
+              </Link>
+            </View>
+          ) : null}
+        </View>
+
         <Text style={styles.instructionText}>1. Location</Text>
         <SubmissionInput
           placeholder="Type to search"
           containerStyle={styles.inputContainer}
-          style={inputStyle}
+          style={styles.input}
         />
         <Text style={styles.instructionText}>2. Title</Text>
         <SubmissionInput
           placeholder="What's the event?"
           containerStyle={styles.inputContainer}
-          style={inputStyle}
+          style={styles.input}
         />
         <View style={styles.row}>
           <View style={styles.time}>
@@ -43,7 +79,7 @@ export default () => {
             <SubmissionInput
               placeholder="Open"
               containerStyle={styles.inputContainer}
-              style={inputStyle}
+              style={styles.input}
             />
           </View>
           <View style={{ width: 10 }} />
@@ -52,7 +88,7 @@ export default () => {
             <SubmissionInput
               placeholder="Close"
               containerStyle={styles.inputContainer}
-              style={inputStyle}
+              style={styles.input}
             />
           </View>
         </View>
@@ -60,7 +96,7 @@ export default () => {
         <SubmissionInput
           placeholder="Optional"
           containerStyle={styles.inputContainer}
-          style={inputStyle}
+          style={styles.input}
         />
         <Text style={styles.instructionText}>6. Tags</Text>
         <View style={styles.tags}>
@@ -83,13 +119,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff"
   },
   headerText: {
-    marginTop: "10%",
-    marginBottom: "2%",
     fontSize: 28,
     fontWeight: "700"
   },
   row: {
-    flexDirection: "row"
+    flexDirection: "row",
+    alignItems: "center"
   },
   time: {
     flex: 1
@@ -101,7 +136,8 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 500,
     padding: 10,
-    alignSelf: "center"
+    alignSelf: "center",
+    marginTop: IOS ? getInset("top") : 10
   },
   instructionText: {
     fontSize: 14,
@@ -112,8 +148,13 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flexDirection: "row",
-    backgroundColor: "#fafafa",
+    backgroundColor: "#f4f4f4",
     borderRadius: 5
+  },
+  input: {
+    height: 44,
+    paddingLeft: 10,
+    flex: 1
   },
   tags: {
     paddingVertical: 2.5,
@@ -122,10 +163,9 @@ const styles = StyleSheet.create({
   },
   tag: {
     height: 28,
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
+    backgroundColor: "#f4f4f4",
     borderRadius: 5,
-    paddingHorizontal: 6,
+    paddingHorizontal: 8,
     alignItems: "center",
     flexDirection: "row",
     marginRight: 5,

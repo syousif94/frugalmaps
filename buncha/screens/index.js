@@ -12,6 +12,7 @@ import UpNextScreen from "./UpNextScreen";
 import DetailScreen from "./DetailScreen";
 import IntroScreen from "./IntroScreen";
 import AccountScreen from "./AccountScreen";
+import SubmitScreen from "./SubmitScreen";
 
 const TabScreen = createBottomTabNavigator(
   {
@@ -26,6 +27,10 @@ const TabScreen = createBottomTabNavigator(
     Account: {
       screen: AccountScreen,
       path: "account"
+    },
+    Submit: {
+      screen: SubmitScreen,
+      path: "submit"
     }
   },
   {

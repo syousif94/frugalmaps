@@ -1,18 +1,11 @@
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  useLayoutEffect,
-  useState
-} from "react";
+import React, { useCallback, useEffect, useRef, useLayoutEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   View,
   StyleSheet,
   FlatList,
   ActivityIndicator,
-  ScrollView,
-  Animated
+  ScrollView
 } from "react-native";
 import { get } from "../store/events";
 import * as Cities from "../store/cities";
@@ -24,6 +17,7 @@ import { getHistory } from ".";
 import { Helmet } from "react-helmet";
 import SortBar from "../components/SortBar";
 import CityList from "../components/CityList";
+import { useCitiesToggle } from "../utils/Hooks";
 
 export default () => {
   const data = useSelector(state => state.events.upNext);
@@ -60,18 +54,7 @@ export default () => {
     }
   }, []);
 
-  const citiesTranslate = useRef(new Animated.Value(0));
-  const citiesVisible = useRef(false);
-
-  const toggleCities = useCallback(() => {
-    citiesVisible.current = !citiesVisible.current;
-    const toValue = citiesVisible.current ? 1 : 0;
-    Animated.timing(
-      citiesTranslate.current,
-      { toValue, duration: 350 },
-      { useNativeDriver: true }
-    ).start();
-  }, []);
+  const [citiesTranslate, toggleCities] = useCitiesToggle();
 
   return (
     <View style={styles.container}>

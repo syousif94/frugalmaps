@@ -5,7 +5,6 @@ import { navigate } from "../screens";
 import { FontAwesome } from "@expo/vector-icons";
 import Link from "./Link";
 import EventView from "./EventView";
-import { selectEvent } from "../store/events";
 
 export default ({ item: i, index, demo, section }) => {
   let item = i;
@@ -16,7 +15,8 @@ export default ({ item: i, index, demo, section }) => {
         title: "Trivia",
         description: "7 round trivia, Prizes for winners",
         location: "Mutt Lynch's",
-        rating: 4.6
+        rating: 4.6,
+        neighborhood: "Balboa Peninsula, Newport Beach"
       },
       sort: []
     };
@@ -27,17 +27,12 @@ export default ({ item: i, index, demo, section }) => {
   );
   const additionalEvents = demo ? 3 : placeEvents && placeEvents.length - 1;
 
-  let cityText = demo
-    ? "Balboa Peninsula, Newport Beach"
-    : item._source.neighborhood || item._source.city;
+  let cityText = item._source.neighborhood || item._source.city;
   if (item.sort && item.sort[item.sort.length - 1]) {
-    cityText = `${item.sort[item.sort.length - 1].toFixed(1)} mi · ${cityText}`;
+    cityText = `${cityText} · ${item.sort[item.sort.length - 1].toFixed(1)} mi`;
   }
 
-  const dispatch = useDispatch();
-
   const onPress = () => {
-    dispatch(selectEvent(item._id));
     navigate("Detail", { id: item._id });
   };
   return (

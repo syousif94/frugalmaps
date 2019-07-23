@@ -13,7 +13,7 @@ import { BLUE } from "../utils/Colors";
 import { navigate, getHistory } from ".";
 import CityOrderPicker from "../components/CityOrderPicker";
 import Link from "../components/Link";
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, Entypo } from "@expo/vector-icons";
 import { enableLocation } from "../store/permissions";
 import * as Cities from "../store/cities";
 import CityItem from "../components/CityItem";
@@ -50,11 +50,25 @@ const MenuScreen = () => {
               }
             }
           }}
-          style={[styles.navButton]}
+          style={{ paddingHorizontal: 8 }}
         >
-          <Text style={styles.navButtonText}>Home</Text>
+          <Entypo name="chevron-left" size={22} color={BLUE} />
         </Link>
         <View style={{ flexDirection: "row" }}>
+          <TouchableOpacity
+            onPress={() => {
+              dispatch(Events.get());
+              if (WEB) {
+                navigate("UpNext");
+              }
+            }}
+            style={[styles.navButton, { marginRight: 10 }]}
+          >
+            <FontAwesome name="location-arrow" size={18} color="#fff" />
+            <Text style={[styles.navButtonText, { marginLeft: 8 }]}>
+              Current Location
+            </Text>
+          </TouchableOpacity>
           <Link
             to="/submit"
             onPress={() => {
@@ -64,20 +78,6 @@ const MenuScreen = () => {
           >
             <Text style={styles.navButtonText}>Add Events</Text>
           </Link>
-          <TouchableOpacity
-            onPress={() => {
-              dispatch(Events.get());
-              if (WEB) {
-                navigate("UpNext");
-              }
-            }}
-            style={[styles.navButton, { marginLeft: 10 }]}
-          >
-            <FontAwesome name="location-arrow" size={18} color="#fff" />
-            <Text style={[styles.navButtonText, { marginLeft: 8 }]}>
-              Current Location
-            </Text>
-          </TouchableOpacity>
         </View>
       </View>
       <View style={styles.header}>
@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
   },
   nav: {
     paddingTop: 10,
+    paddingRight: 10,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center"

@@ -60,6 +60,23 @@ export function selectEvent(id) {
   };
 }
 
+export function deselectEvent(id) {
+  return (dispatch, getState) => {
+    const {
+      events: { selected }
+    } = getState();
+
+    if (selected === id) {
+      dispatch({
+        type: "events/set",
+        payload: {
+          selected: null
+        }
+      });
+    }
+  };
+}
+
 export function getCity(city) {
   return async dispatch => {
     try {
