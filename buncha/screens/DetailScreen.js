@@ -191,7 +191,11 @@ export default ({ navigation }) => {
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ alignItems: "center", padding: 10 }}
+            contentContainerStyle={{
+              alignItems: "center",
+              padding: 10,
+              paddingRight: 5
+            }}
           >
             <Text style={styles.titleText}>
               {events.length} event{events.length !== 1 ? "s" : ""}

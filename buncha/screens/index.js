@@ -6,6 +6,7 @@ import {
   createBottomTabNavigator,
   createSwitchNavigator
 } from "react-navigation";
+import { View, StyleSheet } from "react-native";
 
 import TabBar from "../components/TabBar";
 import UpNextScreen from "./UpNextScreen";
@@ -13,6 +14,7 @@ import DetailScreen from "./DetailScreen";
 import IntroScreen from "./IntroScreen";
 import AccountScreen from "./AccountScreen";
 import SubmitScreen from "./SubmitScreen";
+import Updater from "../components/Updater";
 
 const TabScreen = createBottomTabNavigator(
   {
@@ -71,8 +73,20 @@ const RootScreen = createStackNavigator(
 const AppContainer = createAppContainer(RootScreen);
 
 export default () => {
-  return <AppContainer ref={setTopLevelNavigator} />;
+  return (
+    <View style={styles.container}>
+      <AppContainer ref={setTopLevelNavigator} />
+      <Updater />
+    </View>
+  );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff"
+  }
+});
 
 let _navigator;
 

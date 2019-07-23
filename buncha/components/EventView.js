@@ -47,9 +47,9 @@ export default ({ item, index = 0, style, demo }) => {
           </TouchableOpacity>
         </View>
       </View>
-      <View style={{ marginTop: 5, maxWidth: "100%" }}>
-        {/* <EventFriends /> */}
-      </View>
+      {/* <View style={{ marginTop: 5, maxWidth: "100%" }}>
+        <EventFriends />
+      </View> */}
     </View>
   );
 };

@@ -8,8 +8,8 @@ import {
   AppState
 } from "react-native";
 import { Updates } from "expo";
-import { BLUE } from "./Colors";
-import { DEV } from "./Constants";
+import { BLUE } from "../utils/Colors";
+import { DEV } from "../utils/Constants";
 
 export default class Updater extends Component {
   state = {
