@@ -5,9 +5,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   Text,
-  Animated
+  Animated,
+  Image
 } from "react-native";
 import { navigate } from "../screens";
+import { Entypo } from "@expo/vector-icons";
+import { AWSCF } from "../utils/Constants";
 
 const height = 60;
 
@@ -54,6 +57,10 @@ export default () => {
     }
   }, [selectedEvent, event]);
 
+  const eventCount = useSelector(state =>
+    event ? state.events.places[event._source.placeid].length : null
+  );
+
   return (
     <View style={styles.container} pointerEvents="box-none">
       <Animated.View
@@ -81,9 +88,34 @@ export default () => {
           }}
         >
           {!event ? null : (
-            <React.Fragment>
-              <Text>{event._source.title}</Text>
-            </React.Fragment>
+            <View style={styles.row}>
+              <Image
+                source={{ uri: `${AWSCF}${event._source.photos[0].thumb.key}` }}
+                style={styles.image}
+                resizeMode="cover"
+              />
+              <View
+                style={{ flex: 1, justifyContent: "center", paddingLeft: 8 }}
+              >
+                <Text
+                  numberOfLines={1}
+                  style={{ fontSize: 14, fontWeight: "600", color: "#000" }}
+                >
+                  {event._source.location}{" "}
+                  <Text
+                    style={{ fontSize: 12, fontWeight: "600", color: "#888" }}
+                  >
+                    {event._source.city}
+                  </Text>
+                </Text>
+                <Text style={{ fontSize: 12, marginTop: 2, color: "#000" }}>
+                  {eventCount} event{eventCount !== 1 ? "s" : ""}
+                </Text>
+              </View>
+              <View style={{ paddingHorizontal: 8, justifyContent: "center" }}>
+                <Entypo name="chevron-right" size={22} color="#ccc" />
+              </View>
+            </View>
           )}
         </TouchableOpacity>
       </Animated.View>
@@ -107,5 +139,17 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1
+  },
+  row: {
+    flexDirection: "row",
+    flex: 1
+  },
+  image: {
+    height: 50,
+    width: 50,
+    backgroundColor: "#f2f2f2",
+    marginLeft: 5,
+    borderRadius: 2,
+    alignSelf: "center"
   }
 });
