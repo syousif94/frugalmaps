@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { navigate } from "../screens";
 import { Entypo } from "@expo/vector-icons";
-import { AWSCF } from "../utils/Constants";
+import { AWSCF, ANDROID } from "../utils/Constants";
 
 const height = 60;
 
@@ -53,6 +53,8 @@ export default () => {
             }
           });
         });
+      } else if (ANDROID && selectedEvent) {
+        setEvent(selectedEvent);
       }
     }
   }, [selectedEvent, event]);

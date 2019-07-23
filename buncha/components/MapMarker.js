@@ -3,6 +3,8 @@ import { StyleSheet, Image, View, Text } from "react-native";
 import { connect } from "react-redux";
 import MapView from "react-native-maps";
 import { selectEvent, deselectEvent } from "../store/events";
+import { ANDROID } from "../utils/Constants";
+import emitter from "tiny-emitter/instance";
 
 const redSelectedPin = require("../assets/pin-selected.png");
 const greenSelectedPin = require("../assets/pin-now-selected.png");
@@ -16,6 +18,10 @@ class MapMarker extends Component {
     selected: false
   };
 
+  componentWillUnmount() {
+    emitter.off("deselect-marker", this._onDeselect);
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
     return (
       this.state.selected !== nextState.selected ||
@@ -25,6 +31,10 @@ class MapMarker extends Component {
   }
 
   _onSelect = () => {
+    if (ANDROID) {
+      emitter.emit("deselect-marker");
+      emitter.on("deselect-marker", this._onDeselect);
+    }
     this.setState({
       selected: true
     });
@@ -36,6 +46,9 @@ class MapMarker extends Component {
     this.setState({
       selected: false
     });
+    if (ANDROID) {
+      emitter.off("deselect-marker", this._onDeselect);
+    }
   };
 
   _setRef = ref => {
@@ -77,6 +90,13 @@ class MapMarker extends Component {
       offset = { x: 0, y: -28 };
     }
 
+    const androidProps = ANDROID
+      ? {
+          onPress: this._onSelect,
+          tracksViewChanges: true
+        }
+      : {};
+
     return (
       <MapView.Marker
         coordinate={coordinate}
@@ -85,6 +105,7 @@ class MapMarker extends Component {
         onSelect={this._onSelect}
         onDeselect={this._onDeselect}
         identifier={item.placeid}
+        {...androidProps}
       >
         <View style={markerStyle}>
           <Image source={pinSource} style={imageStyle} />

@@ -96,8 +96,7 @@ export function getCity(city) {
       dispatch({
         type: "events/set",
         payload: {
-          refreshing: false,
-          bounds: city._source.bounds
+          refreshing: false
         }
       });
     } catch (error) {}

@@ -9,6 +9,8 @@ import SortBar from "../components/SortBar";
 import { useCitiesToggle } from "../utils/Hooks";
 import CityList from "../components/CityList";
 import MapEventButton from "../components/MapEventButton";
+import { ANDROID } from "../utils/Constants";
+import emitter from "tiny-emitter/instance";
 
 export default () => {
   const mapView = useRef(null);
@@ -47,6 +49,15 @@ export default () => {
 
   const [citiesTranslate, toggleCities] = useCitiesToggle();
 
+  const androidMapProps = ANDROID
+    ? {
+        moveOnMarkerPress: false,
+        onPress: () => {
+          emitter.emit("deselect-marker");
+        }
+      }
+    : {};
+
   return (
     <View style={styles.container}>
       <TopBar rotate={citiesTranslate.current} toggle={toggleCities} />
@@ -56,6 +67,7 @@ export default () => {
             ref={mapView}
             style={{ flex: 1 }}
             showsUserLocation={locationEnabled}
+            {...androidMapProps}
           >
             {markers.map(data => {
               const { _id, _source: item } = data;
