@@ -1,6 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { View, StyleSheet, Text, ScrollView, Dimensions } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  ScrollView,
+  Dimensions,
+  Linking
+} from "react-native";
 import { makeYesterdayISO, timeRemaining } from "../utils/Time";
 import { FontAwesome, Entypo } from "@expo/vector-icons";
 import { getEvent } from "../store/events";
@@ -13,7 +20,7 @@ import EventMapView from "../components/EventMapView";
 import { Helmet } from "react-helmet";
 import EventView from "../components/EventView";
 import Link from "../components/Link";
-import { RED, GREEN, BLUE } from "../utils/Colors";
+import { RED, GREEN, BLUE, NOW } from "../utils/Colors";
 
 export default ({ navigation }) => {
   const dispatch = useDispatch();
@@ -165,7 +172,7 @@ export default ({ navigation }) => {
         contentInsetAdjustmentBehavior="never"
         contentContainerStyle={styles.content}
       >
-        <View style={styles.info}>
+        <View style={[styles.info, { padding: 10 }]}>
           <View style={[styles.row]}>
             <View style={{ flex: 1 }}>
               <Text style={styles.locationText}>{item._source.location}</Text>
@@ -181,20 +188,39 @@ export default ({ navigation }) => {
         </View>
         <ImageGallery photos={item._source.photos} />
         <View style={styles.info}>
-          <View style={styles.row}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ alignItems: "center", padding: 10 }}
+          >
             <Text style={styles.titleText}>
               {events.length} event{events.length !== 1 ? "s" : ""}
             </Text>
-            <Link style={[styles.link, { marginLeft: 10 }]} onPress={() => {}}>
+            <Link
+              style={[styles.link, { marginLeft: 15 }]}
+              onPress={() => {
+                Linking.openURL(`tel:${item._source.phone}`);
+              }}
+            >
               <FontAwesome
                 style={{ marginTop: 1 }}
                 name="phone"
                 size={14}
-                color={GREEN}
+                color={NOW}
               />
               <Text style={[styles.titleText, { marginLeft: 6 }]}>Call</Text>
             </Link>
-            <Link style={styles.link} onPress={() => {}}>
+            <Link
+              to={item._source.website}
+              style={styles.link}
+              onPress={() => {
+                if (WEB) {
+                  window.open(item._source.website, "_blank");
+                } else {
+                  Linking.openURL(item._source.website);
+                }
+              }}
+            >
               <Entypo
                 style={{ marginTop: 1.5 }}
                 name="link"
@@ -203,21 +229,30 @@ export default ({ navigation }) => {
               />
               <Text style={[styles.titleText, { marginLeft: 6 }]}>Website</Text>
             </Link>
-            <Link style={styles.link} onPress={() => {}}>
+            <Link
+              style={styles.link}
+              onPress={() => {
+                if (WEB) {
+                  window.open(item._source.url, "_blank");
+                } else {
+                  Linking.openURL(item._source.url);
+                }
+              }}
+            >
               <FontAwesome name="map-marker" size={14} color={RED} />
               <Text style={[styles.titleText, { marginLeft: 6 }]}>
                 Google Maps
               </Text>
             </Link>
-          </View>
+          </ScrollView>
           {events.map((item, index) => {
             return (
               <EventView
                 style={{
-                  marginTop: 10,
                   borderTopWidth: 1,
                   borderTopColor: "#e0e0e0",
-                  paddingTop: 10
+                  paddingVertical: 10,
+                  marginHorizontal: 10
                 }}
                 item={item}
                 index={index}
@@ -242,7 +277,6 @@ const styles = StyleSheet.create({
     paddingBottom: 10
   },
   info: {
-    padding: 10,
     width: "100%",
     maxWidth: 500,
     alignSelf: "center"
