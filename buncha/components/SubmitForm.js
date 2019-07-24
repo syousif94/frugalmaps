@@ -9,11 +9,12 @@ import {
 import { Helmet } from "react-helmet";
 import SubmissionInput from "./SubmissionInput";
 import { Entypo } from "@expo/vector-icons";
-import { EVENT_TYPES, IOS, WEB } from "../utils/Constants";
+import { IOS, WEB } from "../utils/Constants";
 import { getInset } from "../utils/SafeAreaInsets";
 import Link from "./Link";
 import { BLUE } from "../utils/Colors";
 import { navigate, getHistory } from "../screens";
+import SubmitTags from "./SubmitTags";
 
 export default () => {
   return (
@@ -67,6 +68,10 @@ export default () => {
           containerStyle={styles.inputContainer}
           style={styles.input}
         />
+        <Text style={styles.subtext}>
+          Try including the city and state if you can't find what you're looking
+          for
+        </Text>
         <Text style={styles.instructionText}>2. Title</Text>
         <SubmissionInput
           placeholder="What's the event?"
@@ -99,15 +104,16 @@ export default () => {
           style={styles.input}
         />
         <Text style={styles.instructionText}>6. Tags</Text>
-        <View style={styles.tags}>
-          {EVENT_TYPES.map((tag, index) => {
-            return (
-              <TouchableOpacity key={`${index}`} style={styles.tag}>
-                <Text style={styles.tagText}>{tag}</Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+        <SubmitTags />
+        <Text style={styles.instructionText}>7. Admin Code</Text>
+        <SubmissionInput
+          placeholder="Leave this blank"
+          containerStyle={styles.inputContainer}
+          style={styles.input}
+        />
+        <TouchableOpacity style={styles.submitButton}>
+          <Text style={styles.submitText}>Submit</Text>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );
@@ -146,6 +152,11 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     marginTop: 25
   },
+  subtext: {
+    marginTop: 4,
+    fontSize: 12,
+    color: "#aaa"
+  },
   inputContainer: {
     flexDirection: "row",
     backgroundColor: "#f4f4f4",
@@ -156,23 +167,19 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     flex: 1
   },
-  tags: {
-    paddingVertical: 2.5,
-    flexDirection: "row",
-    flexWrap: "wrap"
-  },
-  tag: {
-    height: 28,
-    backgroundColor: "#f4f4f4",
-    borderRadius: 5,
-    paddingHorizontal: 8,
+  submitButton: {
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: BLUE,
+    alignSelf: "center",
+    justifyContent: "center",
     alignItems: "center",
-    flexDirection: "row",
-    marginRight: 5,
-    marginVertical: 2.5
+    marginVertical: 40,
+    width: 180
   },
-  tagText: {
-    fontSize: 14,
-    color: "#000"
+  submitText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "700"
   }
 });
