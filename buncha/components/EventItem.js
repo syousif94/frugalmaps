@@ -1,6 +1,6 @@
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
+import { View, Text, StyleSheet } from "react-native";
+import { useSelector } from "react-redux";
 import { navigate } from "../screens";
 import { FontAwesome } from "@expo/vector-icons";
 import Link from "./Link";

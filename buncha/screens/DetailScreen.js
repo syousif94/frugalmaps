@@ -8,10 +8,8 @@ import {
   Dimensions,
   Linking
 } from "react-native";
-import { makeYesterdayISO, timeRemaining } from "../utils/Time";
 import { FontAwesome, Entypo } from "@expo/vector-icons";
-import { getEvent } from "../store/events";
-import moment from "moment";
+import { getEvent, selectPlaceEvents } from "../store/events";
 import ImageGallery from "../components/ImageGallery";
 import { WEB, IOS } from "../utils/Constants";
 import { getInset } from "../utils/SafeAreaInsets";
@@ -20,7 +18,7 @@ import EventMapView from "../components/EventMapView";
 import { Helmet } from "react-helmet";
 import EventView from "../components/EventView";
 import Link from "../components/Link";
-import { RED, GREEN, BLUE, NOW } from "../utils/Colors";
+import { RED, BLUE, NOW } from "../utils/Colors";
 
 export default ({ navigation }) => {
   const dispatch = useDispatch();
@@ -29,49 +27,7 @@ export default ({ navigation }) => {
   const id = navigation.getParam("id", null);
 
   const item = useSelector(state => (id ? state.events.data[id] : null));
-  const today = moment().weekday();
-  const events = useSelector(state =>
-    item && item._source.placeid
-      ? state.events.places[item._source.placeid]
-          .map(id => state.events.data[id])
-          .sort((_a, _b) => {
-            let a = _a._source.groupedHours[0].iso - today;
-            if (a < 0) {
-              a += 7;
-            }
-            let b = _b._source.groupedHours[0].iso - today;
-            if (b < 0) {
-              b += 7;
-            }
-            return a - b;
-          })
-          .sort((_a, _b) => {
-            let a = 0;
-            const aISO = makeYesterdayISO(_a._source.days);
-            if (aISO) {
-              const { ending: aEnding } = timeRemaining(
-                _a._source.groupedHours[_a._source.groupedHours.length - 1],
-                aISO
-              );
-
-              a = aEnding ? 1 : 0;
-            }
-
-            let b = 0;
-            const bISO = makeYesterdayISO(_b._source.days);
-            if (bISO) {
-              const { ending: bEnding } = timeRemaining(
-                _b._source.groupedHours[_b._source.groupedHours.length - 1],
-                bISO
-              );
-
-              b = bEnding ? 1 : 0;
-            }
-
-            return a - b;
-          })
-      : []
-  );
+  const events = useSelector(selectPlaceEvents(item));
 
   useEffect(() => {
     if (!item) {

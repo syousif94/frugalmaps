@@ -11,6 +11,8 @@ import {
 import { navigate } from "../screens";
 import { Entypo } from "@expo/vector-icons";
 import { AWSCF, ANDROID } from "../utils/Constants";
+import { selectPlaceEvents } from "../store/events";
+import { itemRemaining } from "../utils/Time";
 
 const height = 60;
 
@@ -59,9 +61,9 @@ export default () => {
     }
   }, [selectedEvent, event]);
 
-  const eventCount = useSelector(state =>
-    event ? state.events.places[event._source.placeid].length : null
-  );
+  const events = useSelector(selectPlaceEvents(event));
+
+  const eventCount = events.length;
 
   return (
     <View style={styles.container} pointerEvents="box-none">
@@ -112,6 +114,19 @@ export default () => {
                 </Text>
                 <Text style={{ fontSize: 12, marginTop: 2, color: "#000" }}>
                   {eventCount} event{eventCount !== 1 ? "s" : ""}
+                  {events.map((e, index) => {
+                    const time = itemRemaining(e);
+                    let nameText = ` · ${e._source.title} `;
+                    return (
+                      <React.Fragment>
+                        <Text>{nameText}</Text>
+                        <Text style={{ color: time.color, fontWeight: "600" }}>
+                          {time.remaining.value}
+                          {time.remaining.unit.substring(0, 1)}
+                        </Text>
+                      </React.Fragment>
+                    );
+                  })}
                 </Text>
               </View>
               <View style={{ paddingHorizontal: 8, justifyContent: "center" }}>

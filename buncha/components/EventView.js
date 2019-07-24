@@ -21,7 +21,7 @@ export default ({ item, index = 0, style, demo }) => {
     <View style={{ overflow: "hidden" }}>
       <View style={[styles.row, { alignItems: "flex-start" }, style]}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.detailText}>{time.span}</Text>
+          <Text style={styles.timeText}>{time.span}</Text>
           <Text style={styles.titleText}>
             {index + 1}. {item._source.title}
             <Text style={{ color: time.color }}> {time.text}</Text>
@@ -84,5 +84,10 @@ const styles = StyleSheet.create({
     marginTop: 7,
     color: "#000",
     fontSize: 14
+  },
+  timeText: {
+    color: "#000",
+    fontSize: 12,
+    fontWeight: "600"
   }
 });

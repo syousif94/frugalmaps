@@ -182,9 +182,9 @@ export function timeRemaining(hours, iso) {
     remaining = "";
 
     if (hour > 0) {
-      remaining = `${hour} hour${pluralize(hour)}`;
+      remaining = { value: hour, unit: `hour${pluralize(hour)}` };
     } else {
-      remaining = `${minutes} minute${pluralize(minutes)}`;
+      remaining = { unit: `minute${pluralize(minutes)}`, value: minutes };
     }
   }
 
@@ -324,10 +324,10 @@ export function itemRemaining(item) {
     if (!away) {
       away = 7;
     }
-    remaining = `${away} day${pluralize(away)}`;
+    remaining = { unit: `day${pluralize(away)}`, value: away };
   }
 
-  let text = remaining;
+  let text = `${remaining.value} ${remaining.unit}`;
   let color = "#E3210B";
 
   if (ending) {
@@ -345,7 +345,7 @@ export function itemRemaining(item) {
 
   const span = itemTime(day, spanHours);
 
-  return { text, color, span };
+  return { text, color, span, remaining };
 }
 
 export function itemTime(day, groupedHours) {
@@ -365,7 +365,5 @@ export function itemTime(day, groupedHours) {
     })
     .join(" to ");
 
-  const duration = groupedHours.duration;
-
-  return `${day} ${span} (${duration}hr)`;
+  return `${day} ${span}`;
 }

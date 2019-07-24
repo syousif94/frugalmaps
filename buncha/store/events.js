@@ -3,7 +3,7 @@ import api from "../utils/API";
 import moment from "moment";
 import { makeState } from "./reducers";
 import locate from "../utils/Locate";
-import { groupHours } from "../utils/Time";
+import { groupHours, makeYesterdayISO, timeRemaining } from "../utils/Time";
 import { WEB } from "../utils/Constants";
 
 const makeReducer = makeState("events");
@@ -190,5 +190,51 @@ export function getEvent(id) {
       type: "events/append",
       payload
     });
+  };
+}
+
+export function selectPlaceEvents(item) {
+  const today = moment().weekday();
+  return state => {
+    return item && item._source.placeid
+      ? state.events.places[item._source.placeid]
+          .map(id => state.events.data[id])
+          .sort((_a, _b) => {
+            let a = _a._source.groupedHours[0].iso - today;
+            if (a < 0) {
+              a += 7;
+            }
+            let b = _b._source.groupedHours[0].iso - today;
+            if (b < 0) {
+              b += 7;
+            }
+            return a - b;
+          })
+          .sort((_a, _b) => {
+            let a = 0;
+            const aISO = makeYesterdayISO(_a._source.days);
+            if (aISO) {
+              const { ending: aEnding } = timeRemaining(
+                _a._source.groupedHours[_a._source.groupedHours.length - 1],
+                aISO
+              );
+
+              a = aEnding ? 1 : 0;
+            }
+
+            let b = 0;
+            const bISO = makeYesterdayISO(_b._source.days);
+            if (bISO) {
+              const { ending: bEnding } = timeRemaining(
+                _b._source.groupedHours[_b._source.groupedHours.length - 1],
+                bISO
+              );
+
+              b = bEnding ? 1 : 0;
+            }
+
+            return a - b;
+          })
+      : [];
   };
 }
