@@ -43,7 +43,13 @@ export default class SubmissionInput extends Component {
   };
 
   render() {
-    const { containerStyle = {}, style, render, ...props } = this.props;
+    const {
+      containerStyle = {},
+      style,
+      render,
+      onChangeText,
+      ...props
+    } = this.props;
     const pointerEvents = this.state.focused ? "auto" : "none";
 
     if (WEB) {
@@ -60,6 +66,9 @@ export default class SubmissionInput extends Component {
               appearance: "none",
               background: "transparent",
               fontSize: 14
+            }}
+            onChange={e => {
+              onChangeText(e.target.value);
             }}
           />
           {this._renderClear()}
@@ -79,6 +88,7 @@ export default class SubmissionInput extends Component {
             pointerEvents={pointerEvents}
             ref={ref => (this._input = ref)}
             {...props}
+            onChangeText={onChangeText || null}
             style={style}
             onBlur={this._onBlur}
             placeholderTextColor="rgba(0,0,0,0.5)"

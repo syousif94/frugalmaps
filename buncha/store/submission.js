@@ -13,6 +13,7 @@ const startTime = makeReducer("startTime", "");
 const endTime = makeReducer("endTime", "");
 const postCode = makeReducer("postCode", "");
 const place = makeReducer("place", null);
+const fetchingPlace = makeReducer("place", false);
 const days = makeReducer("days", [], {
   toggle: (state, payload) => {
     if (state.indexOf(payload) > -1) {
@@ -41,11 +42,36 @@ export default combineReducers({
   endTime,
   postCode,
   place,
+  fetchingPlace,
   days,
   tags,
   saving,
   deleting
 });
+
+export function restore(event) {
+  return async dispatch => {};
+}
+
+export function getPlace(placeid) {
+  return async dispatch => {
+    dispatch({
+      type: "submission/set",
+      payload: {
+        fetchingPlace: true
+      }
+    });
+    const res = await api("places/id", { placeid });
+    const place = res.restaurant;
+    dispatch({
+      type: "submission/set",
+      payload: {
+        place,
+        fetchingPlace: true
+      }
+    });
+  };
+}
 
 export function set(key) {
   return function(val) {

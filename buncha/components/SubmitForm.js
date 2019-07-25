@@ -15,6 +15,8 @@ import Link from "./Link";
 import { BLUE } from "../utils/Colors";
 import { navigate, getHistory } from "../screens";
 import SubmitTags from "./SubmitTags";
+import SubmitDayPicker from "./SubmitDayPicker";
+import SubmitPlacePicker from "./SubmitPlacePicker";
 
 export default () => {
   return (
@@ -63,11 +65,7 @@ export default () => {
         </View>
 
         <Text style={styles.instructionText}>1. Location</Text>
-        <SubmissionInput
-          placeholder="Type to search"
-          containerStyle={styles.inputContainer}
-          style={styles.input}
-        />
+        <SubmitPlacePicker />
         <Text style={styles.subtext}>
           Try including the city and state if you can't find what you're looking
           for
@@ -78,9 +76,11 @@ export default () => {
           containerStyle={styles.inputContainer}
           style={styles.input}
         />
+        <Text style={styles.instructionText}>3. Days</Text>
+        <SubmitDayPicker />
         <View style={styles.row}>
           <View style={styles.time}>
-            <Text style={styles.instructionText}>3. Starts at</Text>
+            <Text style={styles.instructionText}>4. Starts at</Text>
             <SubmissionInput
               placeholder="Open"
               containerStyle={styles.inputContainer}
@@ -89,7 +89,7 @@ export default () => {
           </View>
           <View style={{ width: 10 }} />
           <View style={styles.time}>
-            <Text style={styles.instructionText}>4. Ends at</Text>
+            <Text style={styles.instructionText}>5. Ends at</Text>
             <SubmissionInput
               placeholder="Close"
               containerStyle={styles.inputContainer}
@@ -97,15 +97,16 @@ export default () => {
             />
           </View>
         </View>
-        <Text style={styles.instructionText}>5. Description</Text>
+        <Text style={styles.subtext}>Format like 6am or 6:30pm</Text>
+        <Text style={styles.instructionText}>6. Description</Text>
         <SubmissionInput
           placeholder="Optional"
           containerStyle={styles.inputContainer}
           style={styles.input}
         />
-        <Text style={styles.instructionText}>6. Tags</Text>
+        <Text style={styles.instructionText}>7. Tags</Text>
         <SubmitTags />
-        <Text style={styles.instructionText}>7. Admin Code</Text>
+        <Text style={styles.instructionText}>8. Admin Code</Text>
         <SubmissionInput
           placeholder="Leave this blank"
           containerStyle={styles.inputContainer}
