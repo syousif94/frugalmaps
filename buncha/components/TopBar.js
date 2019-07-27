@@ -53,17 +53,25 @@ export default ({ toggle, rotate }) => {
           </View>
         </View>
         {WEB ? (
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginRight: 6
+            }}
+          >
+            <Entypo name="menu" size={18} color={BLUE} />
             <Text
               style={{
                 color: BLUE,
                 fontSize: 12,
-                fontWeight: "600"
+                fontWeight: "600",
+                marginLeft: 3,
+                marginBottom: 1
               }}
             >
               MENU
             </Text>
-            <Entypo name="chevron-right" size={22} color={BLUE} />
           </View>
         ) : (
           <Animated.View
@@ -84,7 +92,6 @@ export default ({ toggle, rotate }) => {
           </Animated.View>
         )}
       </TouchableOpacity>
-      {WEB ? <SortBar /> : null}
     </View>
   );
 };
@@ -105,7 +112,7 @@ const styles = StyleSheet.create({
   },
   button: {
     paddingTop: IOS ? topInset : 10,
-    paddingBottom: WEB ? 0 : 7,
+    paddingBottom: 7,
     paddingLeft: 10,
     paddingRight: 4,
     flexDirection: "row",

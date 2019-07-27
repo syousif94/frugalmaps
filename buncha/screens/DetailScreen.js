@@ -208,11 +208,12 @@ export default ({ navigation }) => {
           {events.map((item, index) => {
             return (
               <EventView
+                description
                 style={{
                   borderTopWidth: 1,
-                  borderTopColor: "#e0e0e0",
-                  paddingVertical: 10,
-                  marginHorizontal: 10
+                  borderTopColor: "#f2f2f2",
+                  paddingHorizontal: 5,
+                  paddingTop: 8
                 }}
                 item={item}
                 index={index}

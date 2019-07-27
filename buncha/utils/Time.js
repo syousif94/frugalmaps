@@ -1,5 +1,6 @@
 import moment from "moment";
 import { ISO_DAYS, ABBREVIATED_DAYS as DAYS } from "./Constants";
+import { NOW, UPCOMING, NOT_TODAY } from "./Colors";
 
 export function validateTime(str) {
   const date = moment(str, ["h:ma", "H:m"]);
@@ -179,13 +180,7 @@ export function timeRemaining(hours, iso) {
 
     const minutes = Math.floor(minFloat);
 
-    remaining = "";
-
-    if (hour > 0) {
-      remaining = { value: hour, unit: `hour${pluralize(hour)}` };
-    } else {
-      remaining = { unit: `minute${pluralize(minutes)}`, value: minutes };
-    }
+    remaining = { value: `${hour}h ${minutes}m`, unit: "" };
   }
 
   const ended =
@@ -327,29 +322,38 @@ export function itemRemaining(item) {
     remaining = { unit: `day${pluralize(away)}`, value: away };
   }
 
-  let text = `${remaining.value} ${remaining.unit}`;
-  let color = "#E3210B";
+  const upcoming = !ended && !ending && spanHours.today;
+
+  const text = `${remaining.value} ${remaining.unit}`;
+  let color = NOT_TODAY;
 
   if (ending) {
-    color = "#18AB2E";
-    text = `ends in ${text}`;
+    color = NOW;
   } else {
-    text = `in ${text}`;
-    const happening = !ended && !ending && spanHours.today;
-    if (happening) {
-      color = "#E9730C";
+    if (upcoming) {
+      color = UPCOMING;
     }
   }
 
   const day = (tomorrow && tomorrow.text) || spanHours.days[0].text;
 
-  const span = itemTime(day, spanHours);
+  const span = itemTime(day, spanHours, ending, upcoming);
 
   return { text, color, span, remaining };
 }
 
-export function itemTime(day, groupedHours) {
-  const span = groupedHours.hours
+const LONG_DAYS = {
+  Mon: "Monday",
+  Tue: "Tuesday",
+  Wed: "Wednesday",
+  Thu: "Thursday",
+  Fri: "Friday",
+  Sat: "Saturday",
+  Sun: "Sunday"
+};
+
+export function itemTime(day, groupedHours, ending, upcoming) {
+  const [start, end] = groupedHours.hours
     .split(" ")
     .filter(str => str.length > 5)
     .map(str => {
@@ -362,8 +366,13 @@ export function itemTime(day, groupedHours) {
         hour = `${hour}${meridian}`;
       }
       return hour;
-    })
-    .join(" to ");
+    });
 
-  return `${day} ${span}`;
+  if (ending) {
+    return `Ends at ${end}`;
+  } else if (upcoming) {
+    return `${start} to ${end}`;
+  } else {
+    return `${LONG_DAYS[day]} ${start} to ${end}`;
+  }
 }

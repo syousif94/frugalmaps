@@ -50,7 +50,24 @@ export default combineReducers({
 });
 
 export function restore(event) {
-  return async dispatch => {};
+  return async dispatch => {
+    dispatch({
+      type: "submission/set",
+      payload: {
+        fetchingPlace: true
+      }
+    });
+    const res = await api("places/id", { placeid });
+    const place = res.restaurant;
+    dispatch({
+      type: "submission/set",
+      payload: {
+        place,
+        fetchingPlace: false,
+        ...event
+      }
+    });
+  };
 }
 
 export function getPlace(placeid) {
@@ -67,7 +84,7 @@ export function getPlace(placeid) {
       type: "submission/set",
       payload: {
         place,
-        fetchingPlace: true
+        fetchingPlace: false
       }
     });
   };

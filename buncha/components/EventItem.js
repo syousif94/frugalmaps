@@ -13,7 +13,7 @@ export default ({ item: i, index, demo, section }) => {
       ...item,
       _source: {
         title: "Trivia",
-        description: "7 round trivia, Prizes for winners",
+        description: "7 round trivia, Gift cards for 1st, 2nd, & 3rd",
         location: "Mutt Lynch's",
         rating: 4.6,
         neighborhood: "Balboa Peninsula, Newport Beach"
@@ -22,39 +22,25 @@ export default ({ item: i, index, demo, section }) => {
     };
   }
 
-  const placeEvents = useSelector(
-    state => state.events.places[item._source.placeid]
-  );
-  const additionalEvents = demo ? 3 : placeEvents && placeEvents.length - 1;
-
-  let cityText = item._source.neighborhood || item._source.city;
-  if (item.sort && item.sort[item.sort.length - 1]) {
-    cityText = `${cityText} · ${item.sort[item.sort.length - 1].toFixed(1)} mi`;
-  }
+  const streetText = item._source.address.split(",")[0];
+  const cityText = item._source.neighborhood || item._source.city;
 
   const onPress = () => {
     navigate("Detail", { id: item._id });
   };
+
   return (
     <View style={[styles.container]}>
       <Link to={`e/${item._id}`} style={styles.infoButton} onPress={onPress}>
-        <View style={[styles.row, { marginBottom: 7 }]}>
+        <View style={[styles.row, { marginBottom: 5, paddingHorizontal: 5 }]}>
           <View style={{ flex: 1 }}>
             <View style={styles.row}>
-              <Text style={styles.subtitleText}>{item._source.location}</Text>
-              {additionalEvents === 0 ? null : (
-                <View style={styles.additional}>
-                  <Text style={styles.additionalText}>+{additionalEvents}</Text>
-                </View>
-              )}
+              <Text style={[styles.subtitleText, { marginRight: 6 }]}>
+                {item._source.location}
+              </Text>
             </View>
+            <Text style={styles.detailText}>{streetText}</Text>
             <Text style={styles.detailText}>{cityText}</Text>
-          </View>
-          <View style={styles.rating}>
-            <FontAwesome name="star" size={14} color="#FFA033" />
-            <Text style={styles.ratingText}>
-              {parseFloat(item._source.rating, 10).toFixed(1)}
-            </Text>
           </View>
         </View>
         <EventView demo={demo} index={index} item={item} section={section} />
@@ -68,8 +54,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff"
   },
   infoButton: {
-    paddingHorizontal: 10,
-    paddingVertical: 8
+    paddingHorizontal: 5,
+    paddingTop: 8
   },
   row: {
     flexDirection: "row",
@@ -81,11 +67,7 @@ const styles = StyleSheet.create({
   },
   detailText: {
     fontSize: 12,
-    color: "#444"
-  },
-  rating: {
-    flexDirection: "row",
-    alignItems: "center"
+    color: "#000"
   },
   ratingText: {
     color: "#000",

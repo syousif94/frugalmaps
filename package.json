@@ -2,7 +2,7 @@
   "name": "Buncha",
   "description": "A calendar of fun and affordable things to do nearby",
   "scripts": {
-    "release": "cd frugalapp && expo publish",
+    "release": "cd buncha && expo publish",
     "ios": "cd frugalapp && expo build:ios",
     "android": "cd frugalapp && expo build:android",
     "start": "cd frugalapp && expo start",

@@ -2,10 +2,10 @@ import React, { useMemo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { itemRemaining } from "../utils/Time";
 import { RED, BLUE, UPCOMING } from "../utils/Colors";
-import { Entypo, EvilIcons } from "@expo/vector-icons";
+import { Entypo, FontAwesome, Feather } from "@expo/vector-icons";
 import EventFriends from "./EventFriends";
 
-export default ({ item, index = 0, style, demo }) => {
+export default ({ item, index = 0, style, description, demo }) => {
   let time;
   if (demo) {
     time = {
@@ -18,34 +18,46 @@ export default ({ item, index = 0, style, demo }) => {
   }
 
   return (
-    <View style={{ overflow: "hidden" }}>
-      <View style={[styles.row, { alignItems: "flex-start" }, style]}>
+    <View style={[{ overflow: "hidden" }, style]}>
+      <View
+        style={[styles.row, { alignItems: "flex-start", paddingHorizontal: 5 }]}
+      >
         <View style={{ flex: 1 }}>
-          <Text style={styles.timeText}>{time.span}</Text>
-          <Text style={styles.titleText}>
-            {index + 1}. {item._source.title}
-            <Text style={{ color: time.color }}> {time.text}</Text>
+          <Text style={styles.titleText}>{item._source.title}</Text>
+          <Text style={styles.subtitleText}>
+            {time.span}
+            <Text
+              style={{ color: time.color, fontSize: 10, fontWeight: "700" }}
+            >
+              {" "}
+              {time.text}
+            </Text>
           </Text>
-
-          <Text style={[styles.descriptionText]}>
-            {item._source.description}
-          </Text>
+          {description ? (
+            <Text style={styles.descriptionText}>
+              {item._source.description}
+            </Text>
+          ) : null}
         </View>
-        <View style={{ marginLeft: 15 }}>
-          <TouchableOpacity style={styles.actionButton}>
-            <Entypo name="calendar" size={16} color={RED} />
-            <Text style={styles.actionText}>Plan</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.actionButton, { marginTop: 8 }]}>
-            <EvilIcons
-              style={{ marginRight: -7 }}
-              name="like"
-              size={25}
-              color={BLUE}
-            />
-            <Text style={styles.actionText}>Down</Text>
-          </TouchableOpacity>
-        </View>
+      </View>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center"
+        }}
+      >
+        <TouchableOpacity style={styles.actionButton}>
+          <Entypo name="calendar" size={16} color={RED} />
+          <Text style={styles.actionText}>Plan</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.actionButton]}>
+          <FontAwesome name="star" size={16} color={"#FFA033"} />
+          <Text style={styles.actionText}>Interested</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.actionButton]}>
+          <Feather name="share" size={16} color={BLUE} />
+          <Text style={styles.actionText}>Share</Text>
+        </TouchableOpacity>
       </View>
       {/* <View style={{ marginTop: 5, maxWidth: "100%" }}>
         <EventFriends />
@@ -57,9 +69,10 @@ export default ({ item, index = 0, style, demo }) => {
 const styles = StyleSheet.create({
   actionButton: {
     flexDirection: "row",
-    justifyContent: "flex-end",
     alignItems: "center",
-    height: 24
+    height: 38,
+    marginHorizontal: 5,
+    paddingRight: 10
   },
   actionText: {
     marginLeft: 8,
@@ -74,6 +87,12 @@ const styles = StyleSheet.create({
   titleText: {
     marginTop: 2,
     fontSize: 14,
+    fontWeight: "600"
+  },
+  subtitleText: {
+    marginTop: 2,
+    fontSize: 12,
+    color: "#666",
     fontWeight: "600"
   },
   detailText: {

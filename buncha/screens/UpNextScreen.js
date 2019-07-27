@@ -98,7 +98,6 @@ export default () => {
             onRefresh={refresh}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
           />
-          <SortBar style={{ borderTopWidth: 1, borderTopColor: "#e0e0e0" }} />
           <CityList
             translateY={citiesTranslate.current}
             toggle={toggleCities}
@@ -134,6 +133,7 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 1,
-    backgroundColor: "#e0e0e0"
+    marginLeft: 5,
+    backgroundColor: "#f2f2f2"
   }
 });

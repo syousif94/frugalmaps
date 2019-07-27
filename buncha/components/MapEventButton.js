@@ -112,7 +112,10 @@ export default () => {
                     {event._source.city}
                   </Text>
                 </Text>
-                <Text style={{ fontSize: 12, marginTop: 2, color: "#000" }}>
+                <Text
+                  numberOfLines={2}
+                  style={{ fontSize: 12, marginTop: 2, color: "#000" }}
+                >
                   {eventCount} event{eventCount !== 1 ? "s" : ""}
                   {events.map((e, index) => {
                     const time = itemRemaining(e);

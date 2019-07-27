@@ -5,12 +5,18 @@ import {
   FontAwesome,
   MaterialIcons,
   Ionicons,
-  EvilIcons
+  EvilIcons,
+  Feather
 } from "@expo/vector-icons";
 
-const fonts = [Entypo, FontAwesome, MaterialIcons, Ionicons, EvilIcons].map(
-  font => font.font
-);
+const fonts = [
+  Entypo,
+  FontAwesome,
+  MaterialIcons,
+  Ionicons,
+  EvilIcons,
+  Feather
+].map(font => font.font);
 
 const images = [
   require("../assets/pin.png"),
