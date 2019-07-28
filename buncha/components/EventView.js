@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   subtitleText: {
     marginTop: 2,
     fontSize: 12,
-    color: "#666",
+    color: "#000",
     fontWeight: "600"
   },
   detailText: {

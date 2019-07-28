@@ -5,6 +5,7 @@ import { navigate } from "../screens";
 import { FontAwesome } from "@expo/vector-icons";
 import Link from "./Link";
 import EventView from "./EventView";
+import ImageGallery from "./ImageGallery";
 
 export default ({ item: i, index, demo, section }) => {
   let item = i;
@@ -31,6 +32,7 @@ export default ({ item: i, index, demo, section }) => {
 
   return (
     <View style={[styles.container]}>
+      <ImageGallery height={90} photos={item._source.photos} />
       <Link to={`e/${item._id}`} style={styles.infoButton} onPress={onPress}>
         <View style={[styles.row, { marginBottom: 5, paddingHorizontal: 5 }]}>
           <View style={{ flex: 1 }}>
@@ -51,6 +53,7 @@ export default ({ item: i, index, demo, section }) => {
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 10,
     backgroundColor: "#fff"
   },
   infoButton: {

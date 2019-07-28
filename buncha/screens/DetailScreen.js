@@ -223,7 +223,6 @@ export default ({ navigation }) => {
           })}
         </View>
       </ScrollView>
-      <EventMapView item={item} />
     </View>
   );
 };
