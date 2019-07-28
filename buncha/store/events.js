@@ -3,7 +3,12 @@ import api from "../utils/API";
 import moment from "moment";
 import { makeState } from "./reducers";
 import locate from "../utils/Locate";
-import { groupHours, makeYesterdayISO, timeRemaining } from "../utils/Time";
+import {
+  groupHours,
+  makeYesterdayISO,
+  timeRemaining,
+  makeISO
+} from "../utils/Time";
 import { WEB } from "../utils/Constants";
 
 const makeReducer = makeState("events");
@@ -200,15 +205,33 @@ export function selectPlaceEvents(item) {
       ? state.events.places[item._source.placeid]
           .map(id => state.events.data[id])
           .sort((_a, _b) => {
-            let a = _a._source.groupedHours[0].iso - today;
-            if (a < 0) {
-              a += 7;
+            let aAway = _a._source.groupedHours[0].days.sort((a, b) => {
+              return b.daysAway - a.daysAway;
+            })[0].daysAway;
+
+            const aRemaining = timeRemaining(
+              _a._source.groupedHours[0],
+              _a._source.groupedHours[0].iso
+            );
+
+            if (aRemaining.ended) {
+              aAway += 7;
             }
-            let b = _b._source.groupedHours[0].iso - today;
-            if (b < 0) {
-              b += 7;
+
+            let bAway = _b._source.groupedHours[0].days.sort((a, b) => {
+              return b.daysAway - a.daysAway;
+            })[0].daysAway;
+
+            const bRemaining = timeRemaining(
+              _b._source.groupedHours[0],
+              _b._source.groupedHours[0].iso
+            );
+
+            if (bRemaining.ended) {
+              bAway += 7;
             }
-            return a - b;
+
+            return aAway - bAway;
           })
           .sort((_a, _b) => {
             let a = 0;

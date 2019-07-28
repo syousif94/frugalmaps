@@ -119,10 +119,11 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   titleText: {
-    fontSize: 18
+    fontSize: 14,
+    fontWeight: "600"
   },
   subtitleText: {
-    fontSize: 14,
+    fontSize: 10,
     fontWeight: "600"
   },
   count: {

@@ -213,7 +213,8 @@ export default ({ navigation }) => {
                   borderTopWidth: 1,
                   borderTopColor: "#f2f2f2",
                   paddingHorizontal: 5,
-                  paddingTop: 8
+                  paddingTop: 8,
+                  backgroundColor: item._id === id ? "#f2f2f2" : "#fff"
                 }}
                 item={item}
                 index={index}
