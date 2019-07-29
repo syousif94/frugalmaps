@@ -54,9 +54,9 @@ const routeMap = {
     component: DetailScreen,
     path: "/e/:id"
   },
-  Menu: {
+  Search: {
     component: MenuScreen,
-    path: "/menu",
+    path: "/search",
     exact: true
   },
   Map: {
@@ -69,9 +69,9 @@ const routeMap = {
     path: "/account",
     exact: true
   },
-  Submit: {
+  Add: {
     component: SubmitScreen,
-    path: "/submit",
+    path: "/add",
     exact: true
   }
 };

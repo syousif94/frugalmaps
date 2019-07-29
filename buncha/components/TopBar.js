@@ -14,6 +14,7 @@ import { navigate } from "../screens";
 import { Entypo, Ionicons, FontAwesome } from "@expo/vector-icons";
 import { BLUE, RED, NOW } from "../utils/Colors";
 import SortBar from "./SortBar";
+import Link from "./Link";
 
 export default ({ toggle, rotate }) => {
   const city = useSelector(state => state.events.city);
@@ -31,16 +32,12 @@ export default ({ toggle, rotate }) => {
       : "Everywhere";
 
   const onPress = useCallback(() => {
-    if (WEB) {
-      navigate("Menu");
-    } else {
-      toggle();
-    }
+    toggle();
   }, []);
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={onPress}>
+      <TouchableOpacity onPress={onPress} disabled={WEB} style={styles.button}>
         <View style={{ flex: 1 }}>
           <Text style={styles.subtitleText}>{day}</Text>
           <View style={[styles.row, { marginTop: 5 }]}>
@@ -55,13 +52,12 @@ export default ({ toggle, rotate }) => {
               flexDirection: "row"
             }}
           >
-            <View
-              style={{
-                justifyContent: "center",
-                paddingHorizontal: 5,
-                alignItems: "center",
-                flexDirection: "row"
+            <NavLink
+              to="/add"
+              onPress={() => {
+                navigate("Add");
               }}
+              text="Add"
             >
               <Ionicons
                 style={{ marginTop: 1 }}
@@ -69,25 +65,14 @@ export default ({ toggle, rotate }) => {
                 size={28}
                 color={NOW}
               />
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: "500",
-                  color: "#000",
-                  marginLeft: 6
-                }}
-              >
-                Add
-              </Text>
-            </View>
-            <View
-              style={{
-                justifyContent: "center",
-                paddingHorizontal: 5,
-                alignItems: "center",
-                flexDirection: "row",
-                marginHorizontal: 10
+            </NavLink>
+            <NavLink
+              to="/search"
+              onPress={() => {
+                navigate("Search");
               }}
+              text="Search"
+              style={{ marginHorizontal: 10 }}
             >
               <Ionicons
                 style={{ marginTop: 1 }}
@@ -95,38 +80,66 @@ export default ({ toggle, rotate }) => {
                 size={20}
                 color={BLUE}
               />
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: "500",
-                  color: "#000",
-                  marginLeft: 6
-                }}
-              >
-                Search
-              </Text>
-            </View>
+            </NavLink>
           </View>
         ) : (
-          <Animated.View
-            style={{
-              marginRight: 6,
-              marginTop: 3,
-              transform: [
-                {
-                  rotate: rotate.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: ["0deg", "180deg"]
-                  })
-                }
-              ]
-            }}
-          >
-            <Entypo name="chevron-small-down" size={22} color={BLUE} />
-          </Animated.View>
+          <View style={styles.row}>
+            <Ionicons
+              style={{ marginTop: 1 }}
+              name="ios-search"
+              size={20}
+              color={BLUE}
+            />
+            <Animated.View
+              style={{
+                marginRight: 10,
+                marginTop: 3,
+                transform: [
+                  {
+                    rotate: rotate.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ["0deg", "180deg"]
+                    })
+                  }
+                ]
+              }}
+            >
+              <Entypo name="chevron-small-down" size={22} color={BLUE} />
+            </Animated.View>
+          </View>
         )}
       </TouchableOpacity>
     </View>
+  );
+};
+
+const NavLink = ({ children, style = {}, text, ...props }) => {
+  return (
+    <Link
+      {...props}
+      style={[
+        {
+          justifyContent: "center",
+          paddingHorizontal: 5,
+          alignItems: "center",
+          flexDirection: "row",
+          height: 36
+        },
+        style
+      ]}
+    >
+      {children}
+      <Text
+        style={{
+          fontSize: 12,
+          fontWeight: "500",
+          color: "#000",
+          marginLeft: 6
+        }}
+      >
+        {text}
+      </Text>
+    </Link>
   );
 };
 
@@ -138,7 +151,7 @@ const styles = StyleSheet.create({
     maxWidth: WEB ? 500 : null,
     alignSelf: WEB ? "center" : "stretch",
     borderBottomWidth: 1,
-    borderBottomColor: "#f2f2f2"
+    borderBottomColor: WEB ? "#f2f2f2" : "#e0e0e0"
   },
   row: {
     flexDirection: "row",

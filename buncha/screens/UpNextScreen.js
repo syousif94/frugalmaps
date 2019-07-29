@@ -19,6 +19,7 @@ import { Helmet } from "react-helmet";
 import SortBar from "../components/SortBar";
 import CityList from "../components/CityList";
 import { useCitiesToggle } from "../utils/Hooks";
+import AppBanner from "../components/AppBanner";
 
 export default () => {
   const data = useSelector(state => state.events.upNext);
@@ -27,7 +28,7 @@ export default () => {
   const dispatch = useDispatch();
   const refresh = useCallback(() => dispatch(get()), []);
   const listRef = useRef(null);
-  const [opacity, setOpacity] = useState(0);
+  const [opacity, setOpacity] = useState(WEB ? 0 : 1);
 
   useEffect(() => {
     if (WEB) {
@@ -68,19 +69,6 @@ export default () => {
     dispatch(enableLocation());
   }, []);
 
-  // useLayoutEffect(() => {
-  //   if (WEB) {
-  //     const history = getHistory();
-  //     if (history) {
-  //       const key = history.location.key;
-  //       const yOffset = window.sessionStorage[key];
-  //       if (yOffset && listRef.current) {
-  //         listRef.current.scrollTo({ y: yOffset, animated: false });
-  //       }
-  //     }
-  //   }
-  // }, []);
-
   const [citiesTranslate, toggleCities] = useCitiesToggle();
 
   return (
@@ -98,12 +86,8 @@ export default () => {
           ref={listRef}
           style={styles.list}
           contentContainerStyle={styles.listContent}
-          // onScroll={e => {
-          //   const key = getHistory().location.key;
-          //   window.sessionStorage.setItem(key, e.nativeEvent.contentOffset.y);
-          // }}
-          // scrollEventThrottle={16}
         >
+          <AppBanner />
           <TopBar rotate={citiesTranslate.current} toggle={toggleCities} />
           {data.map((item, index) => (
             <React.Fragment key={item._id}>

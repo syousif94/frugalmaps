@@ -33,6 +33,11 @@ export const ANDROID = os === "android";
 export const IOS = os === "ios";
 export const WEB = os === "web";
 
+export const ANDROID_WEB = WEB && /Android/.test(navigator.userAgent);
+export const IOS_WEB =
+  WEB && /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+export const MOBILE_WEB = ANDROID_WEB || IOS_WEB;
+
 export const PLACEMENT_ID = IOS
   ? "1931177036970533_1956753154412921"
   : "1931177036970533_1991298450958391";
@@ -46,22 +51,20 @@ export const EVENT_TYPES = [
   "Trivia",
   "Tacos",
   "Pizza",
-  "Sports",
-  "Live Music",
-  "Comedy",
-  "Marg.",
-  "Mimos.",
-  "Bingo",
+  "Margs",
+  "Mimosas",
   "Burgers",
-  "Sangria",
+  "Bingo",
   "Bowling",
   "Ping Pong",
   "Pool",
   "Board Games",
-  "Card Games (non gambling)",
-  "Stand Up",
+  "Comedy",
   "Open Mic",
-  "21++",
+  "Sports",
+  "Live Music",
+
+  "Sangria",
   "Beer",
   "Wine",
   "Wells",

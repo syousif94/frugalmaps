@@ -8,8 +8,6 @@ import {
 } from "react-native";
 import { EVENT_TYPES } from "../utils/Constants";
 
-const buttons = ["Up Next", ...EVENT_TYPES];
-
 const Button = ({ text }) => {
   return (
     <TouchableOpacity
@@ -45,7 +43,7 @@ export default ({ style }) => {
         horizontal
         showsHorizontalScrollIndicator={false}
       >
-        {buttons.map((text, index) => {
+        {EVENT_TYPES.map((text, index) => {
           return <Button text={text} key={`${index}`} />;
         })}
       </ScrollView>
