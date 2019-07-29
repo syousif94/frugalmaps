@@ -37,60 +37,62 @@ const MenuScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.nav}>
-        <Link
-          to="/"
-          onPress={() => {
-            const history = getHistory();
-            if (history) {
-              if (history.length > 2) {
-                history.goBack();
-              } else {
-                navigate("UpNext");
-              }
-            }
-          }}
-          style={{ paddingHorizontal: 8 }}
-        >
-          <Entypo name="chevron-left" size={22} color={BLUE} />
-        </Link>
-        <View style={{ flexDirection: "row" }}>
-          <TouchableOpacity
-            onPress={() => {
-              dispatch(Events.get());
-              if (WEB) {
-                navigate("UpNext");
-              }
-            }}
-            style={[styles.navButton, { marginRight: 10 }]}
-          >
-            <FontAwesome name="location-arrow" size={18} color="#fff" />
-            <Text style={[styles.navButtonText, { marginLeft: 8 }]}>
-              Current Location
-            </Text>
-          </TouchableOpacity>
+      <View style={styles.content}>
+        <View style={styles.nav}>
           <Link
-            to="/submit"
+            to="/"
             onPress={() => {
-              navigate("Submit");
+              const history = getHistory();
+              if (history) {
+                if (history.length > 2) {
+                  history.goBack();
+                } else {
+                  navigate("UpNext");
+                }
+              }
             }}
-            style={[styles.navButton, { backgroundColor: "#13BE24" }]}
+            style={{ paddingHorizontal: 8 }}
           >
-            <Text style={styles.navButtonText}>Add Events</Text>
+            <Entypo name="chevron-left" size={22} color={BLUE} />
           </Link>
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity
+              onPress={() => {
+                dispatch(Events.get());
+                if (WEB) {
+                  navigate("UpNext");
+                }
+              }}
+              style={[styles.navButton, { marginRight: 10 }]}
+            >
+              <FontAwesome name="location-arrow" size={18} color="#fff" />
+              <Text style={[styles.navButtonText, { marginLeft: 8 }]}>
+                Current Location
+              </Text>
+            </TouchableOpacity>
+            <Link
+              to="/submit"
+              onPress={() => {
+                navigate("Submit");
+              }}
+              style={[styles.navButton, { backgroundColor: "#13BE24" }]}
+            >
+              <Text style={styles.navButtonText}>Add Events</Text>
+            </Link>
+          </View>
         </View>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Cities</Text>
+          <CityOrderPicker />
+        </View>
+        <FlatList
+          data={cities}
+          style={styles.list}
+          renderItem={data => <CityItem {...data} />}
+          keyExtractor={(item, index) => `${index}`}
+          ItemSeparatorComponent={() => <View style={styles.divider} />}
+        />
       </View>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Cities</Text>
-        <CityOrderPicker />
-      </View>
-      <FlatList
-        data={cities}
-        style={styles.list}
-        renderItem={data => <CityItem {...data} />}
-        keyExtractor={(item, index) => `${index}`}
-        ItemSeparatorComponent={() => <View style={styles.divider} />}
-      />
     </View>
   );
 };
@@ -99,6 +101,10 @@ export default MenuScreen;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: "#fff"
+  },
+  content: {
     flex: 1,
     backgroundColor: "#fff",
     width: "100%",
