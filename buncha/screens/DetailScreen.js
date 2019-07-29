@@ -14,7 +14,6 @@ import ImageGallery from "../components/ImageGallery";
 import { WEB, IOS } from "../utils/Constants";
 import { getInset } from "../utils/SafeAreaInsets";
 import BackButton from "../components/BackButton";
-import EventMapView from "../components/EventMapView";
 import { Helmet } from "react-helmet";
 import EventView from "../components/EventView";
 import Link from "../components/Link";
@@ -108,7 +107,7 @@ export default ({ navigation }) => {
         <View
           style={{
             flex: 1,
-            maxHeight: narrow ? 160 : null
+            visibility: narrow ? "hidden" : null
           }}
         >
           <iframe

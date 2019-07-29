@@ -4,6 +4,7 @@ import { itemRemaining } from "../utils/Time";
 import { RED, BLUE, UPCOMING } from "../utils/Colors";
 import { Entypo, FontAwesome, Feather } from "@expo/vector-icons";
 import EventFriends from "./EventFriends";
+import share from "../utils/Share";
 
 export default ({ item, index = 0, style, description, demo }) => {
   let time;
@@ -54,7 +55,10 @@ export default ({ item, index = 0, style, description, demo }) => {
           <FontAwesome name="star" size={16} color={"#FFA033"} />
           <Text style={styles.actionText}>Interested</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.actionButton]}>
+        <TouchableOpacity
+          style={[styles.actionButton]}
+          onPress={share.bind(null, item)}
+        >
           <Feather name="share" size={16} color={BLUE} />
           <Text style={styles.actionText}>Share</Text>
         </TouchableOpacity>

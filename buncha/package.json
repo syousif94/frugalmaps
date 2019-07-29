@@ -9,6 +9,7 @@
     "publish": "expo publish"
   },
   "dependencies": {
+    "clipboard-copy": "^3.0.0",
     "expo": "^33.0.0",
     "expo-asset": "^5.0.1",
     "expo-constants": "~5.0.1",
