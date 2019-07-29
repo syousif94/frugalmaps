@@ -199,7 +199,6 @@ export function getEvent(id) {
 }
 
 export function selectPlaceEvents(item) {
-  const today = moment().weekday();
   return state => {
     return item && item._source.placeid
       ? state.events.places[item._source.placeid]

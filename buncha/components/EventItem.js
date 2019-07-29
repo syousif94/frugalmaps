@@ -1,13 +1,14 @@
-import React from "react";
+import React, { memo, useMemo } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
 import { navigate } from "../screens";
-import { FontAwesome } from "@expo/vector-icons";
 import Link from "./Link";
 import EventView from "./EventView";
 import ImageGallery from "./ImageGallery";
+import { selectPlaceEvents } from "../store/events";
+import { useSelector } from "react-redux";
+import { WEB } from "../utils/Constants";
 
-export default ({ item: i, index, demo, section }) => {
+export default memo(({ item: i, index, demo, section }) => {
   let item = i;
   if (demo) {
     item = {
@@ -30,11 +31,26 @@ export default ({ item: i, index, demo, section }) => {
     navigate("Detail", { id: item._id });
   };
 
+  const placeEvents = useSelector(selectPlaceEvents(item));
+
+  const hasMoreEvents = placeEvents.length > 1;
+
+  const placeText = hasMoreEvents
+    ? `${placeEvents.findIndex(e => e._id === item._id) + 1} of ${
+        placeEvents.length
+      }`
+    : null;
+
   return (
     <View style={[styles.container]}>
       <ImageGallery height={90} photos={item._source.photos} />
       <Link to={`e/${item._id}`} style={styles.infoButton} onPress={onPress}>
-        <View style={[styles.row, { marginBottom: 5, paddingHorizontal: 5 }]}>
+        <View
+          style={[
+            styles.row,
+            { marginBottom: 5, paddingHorizontal: 5, alignItems: "flex-start" }
+          ]}
+        >
           <View style={{ flex: 1 }}>
             <View style={styles.row}>
               <Text style={[styles.subtitleText, { marginRight: 6 }]}>
@@ -44,12 +60,17 @@ export default ({ item: i, index, demo, section }) => {
             <Text style={styles.detailText}>{streetText}</Text>
             <Text style={styles.detailText}>{cityText}</Text>
           </View>
+          {placeText && (
+            <View style={styles.count}>
+              <Text style={styles.countText}>{placeText}</Text>
+            </View>
+          )}
         </View>
         <EventView demo={demo} index={index} item={item} section={section} />
       </Link>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -88,6 +109,19 @@ const styles = StyleSheet.create({
   additionalText: {
     fontSize: 10,
     color: "#fff",
+    fontWeight: "700"
+  },
+  count: {
+    marginTop: 4,
+    marginLeft: 6,
+    paddingHorizontal: 4,
+    paddingVertical: 1,
+    borderRadius: 3,
+    backgroundColor: "#fafafa"
+  },
+  countText: {
+    fontSize: 10,
+    color: "#777",
     fontWeight: "700"
   }
 });

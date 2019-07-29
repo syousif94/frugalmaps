@@ -1,8 +1,8 @@
-import React from "react";
+import React, { memo } from "react";
 import { View, FlatList, StyleSheet, Image } from "react-native";
 import { AWSCF } from "../utils/Constants";
 
-const ImageItem = ({ item, height }) => {
+const ImageItem = memo(({ item, height }) => {
   if (!item.thumb) {
     return null;
   }
@@ -27,7 +27,7 @@ const ImageItem = ({ item, height }) => {
       }}
     />
   );
-};
+});
 
 const ImageGallery = ({ photos, height = 170, scrollEnabled = true }) => {
   return (
@@ -44,6 +44,17 @@ const ImageGallery = ({ photos, height = 170, scrollEnabled = true }) => {
             return `${item.url}${index}`;
           }
         }}
+        getItemLayout={(data, index) => {
+          const image = data[index];
+          let imageHeight = image.thumb.height;
+          let width = image.thumb.width;
+          const imageWidth = (height / imageHeight) * width;
+          return {
+            length: imageWidth,
+            offset: (imageWidth + 2) * index,
+            index
+          };
+        }}
         scrollEnabled={scrollEnabled}
         ItemSeparatorComponent={() => <View style={styles.divider} />}
         showsHorizontalScrollIndicator={false}
@@ -52,7 +63,7 @@ const ImageGallery = ({ photos, height = 170, scrollEnabled = true }) => {
   );
 };
 
-export default React.memo(ImageGallery);
+export default memo(ImageGallery);
 
 const styles = StyleSheet.create({
   divider: {

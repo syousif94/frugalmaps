@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, memo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { itemRemaining } from "../utils/Time";
 import { RED, BLUE, UPCOMING } from "../utils/Colors";
@@ -6,7 +6,7 @@ import { Entypo, FontAwesome, Feather } from "@expo/vector-icons";
 import EventFriends from "./EventFriends";
 import share from "../utils/Share";
 
-export default ({ item, index = 0, style, description, demo }) => {
+export default memo(({ item, index = 0, style, description, demo }) => {
   let time;
   if (demo) {
     time = {
@@ -24,7 +24,10 @@ export default ({ item, index = 0, style, description, demo }) => {
         style={[styles.row, { alignItems: "flex-start", paddingHorizontal: 5 }]}
       >
         <View style={{ flex: 1 }}>
-          <Text style={styles.titleText}>{item._source.title}</Text>
+          <View style={styles.row}>
+            <Text style={styles.titleText}>{item._source.title}</Text>
+          </View>
+
           <Text style={styles.subtitleText}>
             {time.span}
             <Text
@@ -68,7 +71,7 @@ export default ({ item, index = 0, style, description, demo }) => {
       </View> */}
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   actionButton: {

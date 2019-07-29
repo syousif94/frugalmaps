@@ -46,7 +46,7 @@ const routeMap = {
     exact: true
   },
   UpNext: {
-    component: UpNextScreen,
+    component: () => <View pointerEvents="none" />,
     path: "/",
     exact: true
   },
@@ -93,19 +93,17 @@ const WebRoutesGenerator = ({ routeMap }) => {
   });
 };
 
-// const ScrollToTop = withRouter(({ children, location: { pathname } }) => {
-//   useEffect(() => {
-//     window.scrollTo(0, 0);
-//   }, [pathname]);
-
-//   return children;
-// });
-
 export default () => {
   return (
     <Router ref={setTopLevelNavigator}>
       <View style={{ flex: 1, backgroundColor: "#fff" }}>
-        {WebRoutesGenerator({ routeMap })}
+        <UpNextScreen />
+        <View
+          style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
+          pointerEvents="box-none"
+        >
+          {WebRoutesGenerator({ routeMap })}
+        </View>
       </View>
     </Router>
   );

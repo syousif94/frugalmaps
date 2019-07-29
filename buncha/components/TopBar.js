@@ -11,8 +11,8 @@ import { useSelector } from "react-redux";
 import { getInset } from "../utils/SafeAreaInsets";
 import { WEB, IOS } from "../utils/Constants";
 import { navigate } from "../screens";
-import { Entypo } from "@expo/vector-icons";
-import { BLUE, RED } from "../utils/Colors";
+import { Entypo, Ionicons, FontAwesome } from "@expo/vector-icons";
+import { BLUE, RED, NOW } from "../utils/Colors";
 import SortBar from "./SortBar";
 
 export default ({ toggle, rotate }) => {
@@ -21,7 +21,7 @@ export default ({ toggle, rotate }) => {
   const count = useSelector(state => state.events.upNext);
 
   const today = moment();
-  const day = today.format("dddd, MMMM D, Y");
+  const day = today.format("dddd h:mma, MMMM D, Y");
 
   const locationText =
     city && city.text.length
@@ -44,34 +44,68 @@ export default ({ toggle, rotate }) => {
         <View style={{ flex: 1 }}>
           <Text style={styles.subtitleText}>{day}</Text>
           <View style={[styles.row, { marginTop: 5 }]}>
-            <Text style={styles.titleText}>{locationText}</Text>
-            {count.length ? (
-              <View style={styles.count}>
-                <Text style={styles.countText}>{count.length}</Text>
-              </View>
-            ) : null}
+            <Text style={styles.titleText} numberOfLines={1}>
+              {locationText}
+            </Text>
           </View>
         </View>
         {WEB ? (
           <View
             style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginRight: 6
+              flexDirection: "row"
             }}
           >
-            <Entypo name="menu" size={18} color={BLUE} />
-            <Text
+            <View
               style={{
-                color: BLUE,
-                fontSize: 12,
-                fontWeight: "600",
-                marginLeft: 3,
-                marginBottom: 1
+                justifyContent: "center",
+                paddingHorizontal: 5,
+                alignItems: "center",
+                flexDirection: "row"
               }}
             >
-              MENU
-            </Text>
+              <Ionicons
+                style={{ marginTop: 1 }}
+                name="ios-add"
+                size={28}
+                color={NOW}
+              />
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontWeight: "500",
+                  color: "#000",
+                  marginLeft: 6
+                }}
+              >
+                Add
+              </Text>
+            </View>
+            <View
+              style={{
+                justifyContent: "center",
+                paddingHorizontal: 5,
+                alignItems: "center",
+                flexDirection: "row",
+                marginHorizontal: 10
+              }}
+            >
+              <Ionicons
+                style={{ marginTop: 1 }}
+                name="ios-search"
+                size={20}
+                color={BLUE}
+              />
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontWeight: "500",
+                  color: "#000",
+                  marginLeft: 6
+                }}
+              >
+                Search
+              </Text>
+            </View>
           </View>
         ) : (
           <Animated.View
@@ -104,7 +138,7 @@ const styles = StyleSheet.create({
     maxWidth: WEB ? 500 : null,
     alignSelf: WEB ? "center" : "stretch",
     borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0"
+    borderBottomColor: "#f2f2f2"
   },
   row: {
     flexDirection: "row",
@@ -114,7 +148,6 @@ const styles = StyleSheet.create({
     paddingTop: IOS ? topInset : 10,
     paddingBottom: 7,
     paddingLeft: 10,
-    paddingRight: 4,
     flexDirection: "row",
     alignItems: "center"
   },
