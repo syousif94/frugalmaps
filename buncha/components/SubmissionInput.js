@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { TouchableOpacity, TextInput, View, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { WEB } from "../utils/Constants";
+import { BLUE } from "../utils/Colors";
 
 export default class SubmissionInput extends Component {
   state = {
@@ -50,11 +51,21 @@ export default class SubmissionInput extends Component {
       onChangeText,
       ...props
     } = this.props;
-    const pointerEvents = this.state.focused ? "auto" : "none";
+    const { focused } = this.state;
+    const pointerEvents = focused ? "auto" : "none";
 
     if (WEB) {
       return (
-        <View style={containerStyle}>
+        <View
+          style={[
+            containerStyle,
+            {
+              backgroundColor: focused ? "#fff" : "#f4f4f4",
+              borderWidth: 1,
+              borderColor: focused ? BLUE : "#f4f4f4"
+            }
+          ]}
+        >
           {render ? render() : null}
           <input
             {...props}
@@ -67,6 +78,12 @@ export default class SubmissionInput extends Component {
               background: "transparent",
               fontSize: 14
             }}
+            onFocus={() => {
+              this.setState({
+                focused: true
+              });
+            }}
+            onBlur={this._onBlur}
             onChange={e => {
               onChangeText(e.target.value);
             }}

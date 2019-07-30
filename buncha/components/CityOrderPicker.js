@@ -13,19 +13,6 @@ export default () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        onPress={onPress.bind(null, "popular")}
-        style={styles.button}
-      >
-        <Text
-          style={[
-            styles.buttonText,
-            { color: currentList === "popular" ? BLUE : "#000" }
-          ]}
-        >
-          Popular
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
         onPress={onPress.bind(null, "closest")}
         style={styles.button}
       >
@@ -36,6 +23,19 @@ export default () => {
           ]}
         >
           Closest
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={onPress.bind(null, "popular")}
+        style={styles.button}
+      >
+        <Text
+          style={[
+            styles.buttonText,
+            { color: currentList === "popular" ? BLUE : "#000" }
+          ]}
+        >
+          Popular
         </Text>
       </TouchableOpacity>
     </View>

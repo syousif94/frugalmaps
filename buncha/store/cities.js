@@ -6,7 +6,7 @@ import locate from "../utils/Locate";
 const makeReducer = makeState("cities");
 const closest = makeReducer("closest", []);
 const popular = makeReducer("popular", []);
-const list = makeReducer("list", "popular");
+const list = makeReducer("list", "closest");
 
 export default combineReducers({
   closest,

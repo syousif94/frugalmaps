@@ -17,6 +17,9 @@ import { FontAwesome, Entypo } from "@expo/vector-icons";
 import { enableLocation } from "../store/permissions";
 import * as Cities from "../store/cities";
 import CityItem from "../components/CityItem";
+import SearchTime from "../components/SearchTime";
+import SearchCityList from "../components/SearchCityList";
+import SearchTags from "../components/SearchTags";
 
 const MenuScreen = () => {
   const dispatch = useDispatch();
@@ -70,28 +73,11 @@ const MenuScreen = () => {
                 Current Location
               </Text>
             </TouchableOpacity>
-            <Link
-              to="/submit"
-              onPress={() => {
-                navigate("Submit");
-              }}
-              style={[styles.navButton, { backgroundColor: "#13BE24" }]}
-            >
-              <Text style={styles.navButtonText}>Add Events</Text>
-            </Link>
           </View>
         </View>
-        <View style={styles.header}>
-          <Text style={styles.headerText}>Cities</Text>
-          <CityOrderPicker />
-        </View>
-        <FlatList
-          data={cities}
-          style={styles.list}
-          renderItem={data => <CityItem {...data} />}
-          keyExtractor={(item, index) => `${index}`}
-          ItemSeparatorComponent={() => <View style={styles.divider} />}
-        />
+        <SearchTime />
+        <SearchTags />
+        <SearchCityList />
       </View>
     </View>
   );
@@ -116,7 +102,6 @@ const styles = StyleSheet.create({
   },
   nav: {
     paddingTop: 10,
-    paddingRight: 10,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center"

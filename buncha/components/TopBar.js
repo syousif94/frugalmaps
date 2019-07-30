@@ -32,12 +32,16 @@ export default ({ toggle, rotate }) => {
       : "Everywhere";
 
   const onPress = useCallback(() => {
-    toggle();
+    if (WEB) {
+      navigate("Search");
+    } else {
+      toggle();
+    }
   }, []);
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={onPress} disabled={WEB} style={styles.button}>
+      <TouchableOpacity onPress={onPress} style={styles.button}>
         <View style={{ flex: 1 }}>
           <Text style={styles.subtitleText}>{day}</Text>
           <View style={[styles.row, { marginTop: 5 }]}>

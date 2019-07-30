@@ -17,7 +17,7 @@ import { WEB } from "../utils/Constants";
 import { getHistory } from ".";
 import { Helmet } from "react-helmet";
 import SortBar from "../components/SortBar";
-import CityList from "../components/CityList";
+import SearchPanel from "../components/SearchPanel";
 import { useCitiesToggle } from "../utils/Hooks";
 import AppBanner from "../components/AppBanner";
 
@@ -114,7 +114,7 @@ export default () => {
             ListFooterComponent={() => (data.length ? <ListFooter /> : null)}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
           />
-          <CityList
+          <SearchPanel
             translateY={citiesTranslate.current}
             toggle={toggleCities}
           />

@@ -28,11 +28,9 @@ export default memo(({ item, index = 0, style, description, demo }) => {
             <Text style={styles.titleText}>{item._source.title}</Text>
           </View>
 
-          <Text style={styles.subtitleText}>
+          <Text style={[styles.subtitleText, { color: time.color }]}>
             {time.span}
-            <Text
-              style={{ color: time.color, fontSize: 10, fontWeight: "700" }}
-            >
+            <Text style={{ color: "#000", fontWeight: "700" }}>
               {" "}
               {time.text}
             </Text>
@@ -47,7 +45,8 @@ export default memo(({ item, index = 0, style, description, demo }) => {
       <View
         style={{
           flexDirection: "row",
-          alignItems: "center"
+          alignItems: "center",
+          marginTop: 5
         }}
       >
         <TouchableOpacity style={styles.actionButton}>
@@ -83,7 +82,7 @@ const styles = StyleSheet.create({
   },
   actionText: {
     marginLeft: 8,
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: "600",
     color: "#000"
   },
@@ -93,12 +92,12 @@ const styles = StyleSheet.create({
   },
   titleText: {
     marginTop: 2,
-    fontSize: 14,
-    fontWeight: "600"
+    fontSize: 16,
+    fontWeight: "700"
   },
   subtitleText: {
     marginTop: 2,
-    fontSize: 12,
+    fontSize: 14,
     color: "#000",
     fontWeight: "600"
   },

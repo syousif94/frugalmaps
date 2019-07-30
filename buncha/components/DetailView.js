@@ -11,7 +11,7 @@ import {
 import { FontAwesome, Entypo } from "@expo/vector-icons";
 import { selectPlaceEvents } from "../store/events";
 import ImageGallery from "../components/ImageGallery";
-import { WEB, IOS } from "../utils/Constants";
+import { WEB, IOS, HEIGHT } from "../utils/Constants";
 import { getInset } from "../utils/SafeAreaInsets";
 import BackButton from "../components/BackButton";
 import EventView from "../components/EventView";
@@ -98,39 +98,49 @@ export default memo(({ item, id }) => {
           <BackButton style={{ position: "absolute", top: 10, left: 10 }} />
         </View>
       ) : null}
-      <ScrollView
-        style={scrollViewStyle}
-        contentInsetAdjustmentBehavior="never"
-        contentContainerStyle={styles.content}
-      >
-        <View style={[styles.info, { padding: 10 }]}>
-          <View style={[styles.row]}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.locationText}>{item._source.location}</Text>
-              <Text style={styles.detailText}>{cityText}</Text>
-            </View>
-            <View style={styles.rating}>
-              <FontAwesome name="star" size={14} color="#FFA033" />
-              <Text style={styles.ratingText}>
-                {parseFloat(item._source.rating, 10).toFixed(1)}
-              </Text>
+      <View style={scrollViewStyle}>
+        <ScrollView
+          style={scrollViewStyle}
+          contentInsetAdjustmentBehavior="never"
+          contentContainerStyle={styles.content}
+        >
+          <View style={[styles.info, { padding: 10 }]}>
+            <View style={[styles.row]}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.locationText}>{item._source.location}</Text>
+                <Text style={styles.detailText}>{cityText}</Text>
+              </View>
+              <View style={styles.rating}>
+                <FontAwesome name="star" size={14} color="#FFA033" />
+                <Text style={styles.ratingText}>
+                  {parseFloat(item._source.rating, 10).toFixed(1)}
+                </Text>
+              </View>
             </View>
           </View>
-        </View>
-        <ImageGallery photos={item._source.photos} />
-        <View style={styles.info}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{
-              alignItems: "center",
-              padding: 10,
-              paddingRight: 5
-            }}
-          >
-            <Text style={styles.titleText}>
-              {events.length} event{events.length !== 1 ? "s" : ""}
-            </Text>
+          <ImageGallery photos={item._source.photos} />
+          <View style={styles.info}>
+            {events.map((item, index) => {
+              return (
+                <EventView
+                  description
+                  style={{
+                    borderBottomWidth: 1,
+                    borderColor: "#f2f2f2",
+                    paddingHorizontal: 10,
+                    paddingTop: 8,
+                    backgroundColor: item._id === id ? "#fafafa" : "#fff"
+                  }}
+                  item={item}
+                  index={index}
+                  key={item._id}
+                />
+              );
+            })}
+          </View>
+        </ScrollView>
+        <View style={{ flexDirection: "row" }}>
+          <ScrollView horizontal>
             <Link
               style={[styles.link, { marginLeft: 15 }]}
               onPress={() => {
@@ -180,25 +190,8 @@ export default memo(({ item, id }) => {
               </Text>
             </Link>
           </ScrollView>
-          {events.map((item, index) => {
-            return (
-              <EventView
-                description
-                style={{
-                  borderBottomWidth: 1,
-                  borderColor: "#f2f2f2",
-                  paddingHorizontal: 5,
-                  paddingTop: 8,
-                  backgroundColor: item._id === id ? "#fff" : "#fafafa"
-                }}
-                item={item}
-                index={index}
-                key={item._id}
-              />
-            );
-          })}
         </View>
-      </ScrollView>
+      </View>
     </View>
   );
 });
@@ -257,12 +250,11 @@ const styles = StyleSheet.create({
     fontSize: 14
   },
   link: {
+    marginBottom: 10,
     marginHorizontal: 5,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
+    paddingHorizontal: 15,
     backgroundColor: "#f4f4f4",
-    paddingVertical: 4,
-    borderRadius: 6,
+    height: HEIGHT * 0.05,
     flexDirection: "row",
     alignItems: "center"
   }

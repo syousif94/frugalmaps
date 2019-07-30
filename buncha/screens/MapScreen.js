@@ -7,7 +7,7 @@ import Marker from "../components/MapMarker";
 import { timeRemaining, makeISO, makeYesterdayISO } from "../utils/Time";
 import SortBar from "../components/SortBar";
 import { useCitiesToggle } from "../utils/Hooks";
-import CityList from "../components/CityList";
+import SearchPanel from "../components/SearchPanel";
 import MapEventButton from "../components/MapEventButton";
 import { ANDROID } from "../utils/Constants";
 import emitter from "tiny-emitter/instance";
@@ -116,7 +116,10 @@ export default () => {
           ) : null}
         </View>
         <SortBar style={{ borderTopWidth: 1, borderTopColor: "#e0e0e0" }} />
-        <CityList translateY={citiesTranslate.current} toggle={toggleCities} />
+        <SearchPanel
+          translateY={citiesTranslate.current}
+          toggle={toggleCities}
+        />
       </View>
     </View>
   );

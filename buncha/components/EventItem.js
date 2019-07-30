@@ -48,7 +48,12 @@ export default memo(({ item: i, index, demo, section }) => {
         <View
           style={[
             styles.row,
-            { marginBottom: 5, paddingHorizontal: 5, alignItems: "flex-start" }
+            {
+              marginBottom: 10,
+              paddingHorizontal: 5,
+              alignItems: "flex-start",
+              marginTop: 10
+            }
           ]}
         >
           <View style={{ flex: 1 }}>
@@ -78,7 +83,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff"
   },
   infoButton: {
-    paddingHorizontal: 5,
+    paddingHorizontal: 10,
     paddingTop: 8
   },
   row: {
@@ -86,11 +91,11 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   subtitleText: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: "600"
   },
   detailText: {
-    fontSize: 12,
+    fontSize: 14,
     color: "#000"
   },
   ratingText: {
@@ -112,7 +117,6 @@ const styles = StyleSheet.create({
     fontWeight: "700"
   },
   count: {
-    marginTop: 4,
     marginLeft: 6,
     paddingHorizontal: 4,
     paddingVertical: 1,
@@ -120,7 +124,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fafafa"
   },
   countText: {
-    fontSize: 10,
+    fontSize: 12,
     color: "#777",
     fontWeight: "700"
   }
