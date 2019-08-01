@@ -3,20 +3,30 @@ import { View, FlatList, StyleSheet, Text } from "react-native";
 import CityOrderPicker from "./CityOrderPicker";
 import CityItem from "./CityItem";
 import { useSelector } from "react-redux";
+import SearchTime from "./SearchTime";
+import SearchTags from "./SearchTags";
 
 export default ({ toggle = () => {} }) => {
   const cities = useSelector(state => state.cities[state.cities.list]);
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>Where</Text>
-      <CityOrderPicker />
-      <View style={styles.divider} />
       <FlatList
         data={cities}
         style={styles.list}
         renderItem={data => <CityItem {...data} toggle={toggle} />}
         keyExtractor={(item, index) => `${index}`}
         ItemSeparatorComponent={() => <View style={styles.divider} />}
+        ListHeaderComponent={() => {
+          return (
+            <View style={styles.header}>
+              <SearchTime />
+              <SearchTags />
+              <Text style={styles.headerText}>Where</Text>
+              <CityOrderPicker />
+              <View style={styles.divider} />
+            </View>
+          );
+        }}
       />
     </View>
   );
@@ -24,7 +34,7 @@ export default ({ toggle = () => {} }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: "70%",
+    flex: 1,
     backgroundColor: "#fff",
     paddingTop: 10
   },
@@ -39,6 +49,6 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: "#e0e0e0"
+    backgroundColor: "#f2f2f2"
   }
 });

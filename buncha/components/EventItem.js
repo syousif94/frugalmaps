@@ -7,6 +7,7 @@ import ImageGallery from "./ImageGallery";
 import { selectPlaceEvents } from "../store/events";
 import { useSelector } from "react-redux";
 import { WEB } from "../utils/Constants";
+import { distanceTo } from "../utils/Locate";
 
 export default memo(({ item: i, index, demo, section }) => {
   let item = i;
@@ -41,6 +42,8 @@ export default memo(({ item: i, index, demo, section }) => {
       }`
     : null;
 
+  const distance = distanceTo(item);
+
   return (
     <View style={[styles.container]}>
       <ImageGallery height={90} photos={item._source.photos} />
@@ -57,11 +60,15 @@ export default memo(({ item: i, index, demo, section }) => {
           ]}
         >
           <View style={{ flex: 1 }}>
-            <View style={styles.row}>
-              <Text style={[styles.subtitleText, { marginRight: 6 }]}>
-                {item._source.location}
-              </Text>
-            </View>
+            <Text style={styles.subtitleText}>
+              {item._source.location}
+              {distance ? (
+                <Text style={styles.distanceText}>
+                  {" "}
+                  {distance.toFixed(1)} mi
+                </Text>
+              ) : null}
+            </Text>
             <Text style={styles.detailText}>{streetText}</Text>
             <Text style={styles.detailText}>{cityText}</Text>
           </View>
@@ -93,6 +100,10 @@ const styles = StyleSheet.create({
   subtitleText: {
     fontSize: 14,
     fontWeight: "600"
+  },
+  distanceText: {
+    color: "#666",
+    fontSize: 10
   },
   detailText: {
     fontSize: 14,

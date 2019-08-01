@@ -3,12 +3,7 @@ import api from "../utils/API";
 import moment from "moment";
 import { makeState } from "./reducers";
 import locate from "../utils/Locate";
-import {
-  groupHours,
-  makeYesterdayISO,
-  timeRemaining,
-  makeISO
-} from "../utils/Time";
+import { groupHours, makeYesterdayISO, timeRemaining } from "../utils/Time";
 import { WEB } from "../utils/Constants";
 
 const makeReducer = makeState("events");
@@ -22,6 +17,8 @@ const city = makeReducer("city", null);
 const markers = makeReducer("markers", []);
 const bounds = makeReducer("bounds", null);
 const selected = makeReducer("selected", null);
+const day = makeReducer("day", null);
+const time = makeReducer("time", "");
 
 const data = makeReducer(
   "data",
@@ -53,7 +50,9 @@ export default combineReducers({
   calendar,
   closest,
   newest,
-  selected
+  selected,
+  day,
+  time
 });
 
 export function selectEvent(id) {

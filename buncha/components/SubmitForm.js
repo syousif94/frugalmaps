@@ -7,7 +7,7 @@ import {
   TouchableOpacity
 } from "react-native";
 import { Helmet } from "react-helmet";
-import SubmissionInput from "./SubmissionInput";
+import Input from "./Input";
 import { Entypo } from "@expo/vector-icons";
 import { IOS, WEB } from "../utils/Constants";
 import { getInset } from "../utils/SafeAreaInsets";
@@ -71,47 +71,27 @@ export default () => {
           for
         </Text>
         <Text style={styles.instructionText}>2. Title</Text>
-        <SubmissionInput
-          placeholder="What's the event?"
-          containerStyle={styles.inputContainer}
-          style={styles.input}
-        />
+        <Input placeholder="What's the event?" />
         <Text style={styles.instructionText}>3. Days</Text>
         <SubmitDayPicker />
         <View style={styles.row}>
           <View style={styles.time}>
             <Text style={styles.instructionText}>4. Starts at</Text>
-            <SubmissionInput
-              placeholder="Open"
-              containerStyle={styles.inputContainer}
-              style={styles.input}
-            />
+            <Input placeholder="Open" />
           </View>
           <View style={{ width: 10 }} />
           <View style={styles.time}>
             <Text style={styles.instructionText}>5. Ends at</Text>
-            <SubmissionInput
-              placeholder="Close"
-              containerStyle={styles.inputContainer}
-              style={styles.input}
-            />
+            <Input placeholder="Close" />
           </View>
         </View>
         <Text style={styles.subtext}>Format like 6am or 6:30pm</Text>
         <Text style={styles.instructionText}>6. Description</Text>
-        <SubmissionInput
-          placeholder="Optional"
-          containerStyle={styles.inputContainer}
-          style={styles.input}
-        />
+        <Input placeholder="Optional" />
         <Text style={styles.instructionText}>7. Tags</Text>
         <SubmitTags />
         <Text style={styles.instructionText}>8. Admin Code</Text>
-        <SubmissionInput
-          placeholder="Leave this blank"
-          containerStyle={styles.inputContainer}
-          style={styles.input}
-        />
+        <Input placeholder="Leave this blank" />
         <TouchableOpacity style={styles.submitButton}>
           <Text style={styles.submitText}>Submit</Text>
         </TouchableOpacity>
@@ -157,16 +137,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 12,
     color: "#aaa"
-  },
-  inputContainer: {
-    flexDirection: "row",
-    backgroundColor: "#f4f4f4",
-    borderRadius: 5
-  },
-  input: {
-    height: 44,
-    paddingLeft: 10,
-    flex: 1
   },
   submitButton: {
     height: 40,

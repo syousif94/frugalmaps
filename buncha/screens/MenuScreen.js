@@ -1,25 +1,15 @@
 import React, { useEffect } from "react";
-import {
-  View,
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity
-} from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { WEB } from "../utils/Constants";
 import * as Events from "../store/events";
 import { BLUE } from "../utils/Colors";
 import { navigate, getHistory } from ".";
-import CityOrderPicker from "../components/CityOrderPicker";
 import Link from "../components/Link";
 import { FontAwesome, Entypo } from "@expo/vector-icons";
 import { enableLocation } from "../store/permissions";
 import * as Cities from "../store/cities";
-import CityItem from "../components/CityItem";
-import SearchTime from "../components/SearchTime";
 import SearchCityList from "../components/SearchCityList";
-import SearchTags from "../components/SearchTags";
 
 const MenuScreen = () => {
   const dispatch = useDispatch();
@@ -75,8 +65,6 @@ const MenuScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
-        <SearchTime />
-        <SearchTags />
         <SearchCityList />
       </View>
     </View>

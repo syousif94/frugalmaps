@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { WEB } from "../utils/Constants";
 import { BLUE } from "../utils/Colors";
 
-export default class SubmissionInput extends Component {
+export default class Input extends Component {
   state = {
     focused: false
   };
@@ -45,32 +45,35 @@ export default class SubmissionInput extends Component {
 
   render() {
     const {
-      containerStyle = {},
-      style,
+      style = {},
       render,
       onChangeText,
+      autoCompleteType,
+      containerStyle = {},
       ...props
     } = this.props;
     const { focused } = this.state;
     const pointerEvents = focused ? "auto" : "none";
 
+    const container = [
+      styles.inputContainer,
+      containerStyle,
+      {
+        backgroundColor: focused ? "#fff" : "#f4f4f4",
+        borderWidth: 1,
+        borderColor: focused ? BLUE : "#f4f4f4"
+      }
+    ];
+
     if (WEB) {
       return (
-        <View
-          style={[
-            containerStyle,
-            {
-              backgroundColor: focused ? "#fff" : "#f4f4f4",
-              borderWidth: 1,
-              borderColor: focused ? BLUE : "#f4f4f4"
-            }
-          ]}
-        >
+        <View style={container}>
           {render ? render() : null}
           <input
             {...props}
             style={{
               border: "none",
+              ...StyleSheet.flatten(styles.input),
               ...StyleSheet.flatten(style),
               outline: "none",
               textDecoration: "none",
@@ -94,7 +97,7 @@ export default class SubmissionInput extends Component {
     }
 
     return (
-      <View style={containerStyle}>
+      <View style={container}>
         <TouchableOpacity
           style={styles.btn}
           activeOpacity={1}
@@ -106,9 +109,10 @@ export default class SubmissionInput extends Component {
             ref={ref => (this._input = ref)}
             {...props}
             onChangeText={onChangeText || null}
-            style={style}
+            style={[styles.input, style]}
             onBlur={this._onBlur}
             placeholderTextColor="rgba(0,0,0,0.5)"
+            autoCompleteType={autoCompleteType}
           />
         </TouchableOpacity>
         {this._renderClear()}
@@ -120,6 +124,16 @@ export default class SubmissionInput extends Component {
 const styles = StyleSheet.create({
   btn: {
     flex: 1
+  },
+  input: {
+    height: 44,
+    paddingLeft: 10,
+    flex: 1
+  },
+  inputContainer: {
+    flexDirection: "row",
+    backgroundColor: "#f4f4f4",
+    borderRadius: 5
   },
   clearWrap: {
     position: "absolute",

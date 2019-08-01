@@ -1,14 +1,20 @@
 import React from "react";
-import { View, StyleSheet, Text, TextInput, TouchableOpacity } from "react-native";
-import SubmissionInput from "./SubmissionInput";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import Input from "./Input";
 
 export default () => {
   return (
     <View style={styles.container}>
       <Text style={styles.headerText}>When</Text>
-      <TouchableOpacity style={styles.meridianButton} />
-      <TextInput style={styles.input} placeholder="Time" />
-      <TouchableOpacity style={styles.meridianButton} />
+      <View style={styles.time}>
+        <Input placeholder="Time" containerStyle={styles.inputContainer} />
+        <TouchableOpacity style={styles.meridianButton}>
+          <Text style={styles.buttonText}>AM</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.meridianButton}>
+          <Text style={styles.buttonText}>PM</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -17,12 +23,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingTop: 10
+    padding: 10
   },
   headerText: {
     fontSize: 18,
     color: "#000",
-    fontWeight: "700",
-    marginLeft: 10
+    fontWeight: "700"
+  },
+  time: {
+    flexDirection: "row",
+    marginTop: 10
+  },
+  meridianButton: {
+    flex: 1,
+    marginLeft: 10,
+    borderRadius: 5,
+    backgroundColor: "#f4f4f4",
+    justifyContent: "center",
+    alignItems: "center"
   }
 });

@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator
 } from "react-native";
-import SubmissionInput from "./SubmissionInput";
+import Input from "./Input";
 import store from "../store";
 import locate from "../utils/Locate";
 import api from "../utils/API";
@@ -38,12 +38,14 @@ export default () => {
 
   return (
     <View style={styles.container}>
-      <SubmissionInput
+      <Input
         value={query}
         onChangeText={getQuery}
         placeholder="Type to search"
-        containerStyle={styles.inputContainer}
-        style={styles.input}
+        autoCorrect="false"
+        autoCompleteType="off"
+        spellCheck="false"
+        autoCapitalize="words"
       />
       {results.map((result, index) => {
         const {
@@ -84,16 +86,6 @@ const styles = StyleSheet.create({
   subtext: {
     fontSize: 12,
     color: "#aaa"
-  },
-  inputContainer: {
-    flexDirection: "row",
-    backgroundColor: "#f4f4f4",
-    borderRadius: 5
-  },
-  input: {
-    height: 44,
-    paddingLeft: 10,
-    flex: 1
   }
 });
 

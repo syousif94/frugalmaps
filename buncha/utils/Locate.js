@@ -7,3 +7,7 @@ export default function locate() {
     maximumAge: 15 * 60 * 1000
   });
 }
+
+export function distanceTo(item) {
+  return item.sort && item.sort[item.sort.length - 1];
+}

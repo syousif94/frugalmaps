@@ -17,6 +17,7 @@ import BackButton from "../components/BackButton";
 import EventView from "../components/EventView";
 import Link from "../components/Link";
 import { RED, BLUE, NOW } from "../utils/Colors";
+import { distanceTo } from "../utils/Locate";
 
 export default memo(({ item, id }) => {
   const events = useSelector(selectPlaceEvents(item));
@@ -57,8 +58,9 @@ export default memo(({ item, id }) => {
   }, []);
 
   let cityText = item._source.neighborhood || item._source.city;
-  if (item.sort && item.sort[item.sort.length - 1]) {
-    cityText = `${item.sort[item.sort.length - 1].toFixed(1)} mi · ${cityText}`;
+  const distance = distanceTo(item);
+  if (distance) {
+    cityText = `${distance.toFixed(1)} mi · ${cityText}`;
   }
 
   const narrow = width < 800;

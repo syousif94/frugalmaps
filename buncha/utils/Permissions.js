@@ -30,7 +30,23 @@ export async function grantNotifications() {
   }
 }
 
+let currentLocationRequest;
+
 export async function grantLocation() {
+  if (!currentLocationRequest) {
+    currentLocationRequest = enableLocation()
+      .then(() => {
+        currentLocationRequest = null;
+      })
+      .catch(() => {
+        currentLocationRequest = null;
+      });
+  }
+
+  await currentLocationRequest;
+}
+
+async function enableLocation() {
   const { status: askStatus } = await Permissions.getAsync(
     Permissions.LOCATION
   );
