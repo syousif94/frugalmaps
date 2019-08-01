@@ -70,6 +70,7 @@ export default class Input extends Component {
         <View style={container}>
           {render ? render() : null}
           <input
+            ref={ref => (this._input = ref)}
             {...props}
             style={{
               border: "none",
@@ -100,10 +101,10 @@ export default class Input extends Component {
       <View style={container}>
         <TouchableOpacity
           style={styles.btn}
-          activeOpacity={1}
           onPress={this._focus}
           disabled={this.state.focused}
         >
+          {render ? render() : null}
           <TextInput
             pointerEvents={pointerEvents}
             ref={ref => (this._input = ref)}
@@ -123,7 +124,8 @@ export default class Input extends Component {
 
 const styles = StyleSheet.create({
   btn: {
-    flex: 1
+    flex: 1,
+    flexDirection: "row"
   },
   input: {
     height: 44,
@@ -150,8 +152,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.4)",
     justifyContent: "center",
     alignItems: "center",
-    paddingTop: 1,
-    paddingLeft: 1,
+    paddingTop: 1.5,
+    paddingLeft: 0.5,
     marginRight: 20
   }
 });

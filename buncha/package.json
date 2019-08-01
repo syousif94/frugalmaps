@@ -23,6 +23,7 @@
     "react-dom": "^16.8.6",
     "react-helmet": "^5.2.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz",
+    "react-native-keyboard-aware-scroll-view": "^0.8.0",
     "react-native-web": "^0.11.4",
     "react-navigation": "^3.11.1",
     "react-redux": "^7.1.0",

@@ -12,18 +12,43 @@ import store from "../store";
 import locate from "../utils/Locate";
 import api from "../utils/API";
 import { getPlace } from "../store/submission";
+import { Ionicons } from "@expo/vector-icons";
+import _ from "lodash";
+import SubmitMapView from "./SubmitMapView";
+import { WEB } from "../utils/Constants";
 
 export default () => {
-  const [query, results, getQuery] = useGetPlaces();
+  const [query, results, getQuery, searching] = useGetPlaces();
   const dispatch = useDispatch();
   const place = useSelector(state => state.submission.place);
   const fetchingPlace = useSelector(state => state.submission.fetchingPlace);
 
   if (place) {
-    console.log(place);
     return (
-      <View style={styles.container}>
-        <Text>place</Text>
+      <View style={{ marginTop: 5 }}>
+        <TouchableOpacity
+          style={styles.row}
+          onPress={() => {
+            dispatch({
+              type: "submission/set",
+              payload: {
+                place: null
+              }
+            });
+          }}
+        >
+          <View style={{ flex: 1 }}>
+            <Text style={styles.instructionText}>{place.name}</Text>
+            <Text style={[styles.subtext, { marginTop: 2 }]}>
+              {place.formatted_address}
+            </Text>
+          </View>
+          <View style={styles.clear}>
+            <Ionicons name="md-close" size={14} color="#fff" />
+          </View>
+        </TouchableOpacity>
+
+        <SubmitMapView style={styles.map} place={place} />
       </View>
     );
   }
@@ -37,15 +62,29 @@ export default () => {
   }
 
   return (
-    <View style={styles.container}>
+    <View>
       <Input
         value={query}
         onChangeText={getQuery}
         placeholder="Type to search"
-        autoCorrect="false"
+        autoCorrect={WEB ? "false" : false}
         autoCompleteType="off"
-        spellCheck="false"
+        spellCheck={WEB ? "false" : false}
         autoCapitalize="words"
+        style={{ paddingLeft: 0 }}
+        render={() => (
+          <View style={styles.icon}>
+            {searching ? (
+              <ActivityIndicator
+                style={{ transform: [{ scale: 0.7 }] }}
+                size="small"
+                color="#ccc"
+              />
+            ) : (
+              <Ionicons name="ios-search" size={18} color={"#666"} />
+            )}
+          </View>
+        )}
       />
       {results.map((result, index) => {
         const {
@@ -73,6 +112,10 @@ export default () => {
 };
 
 const styles = StyleSheet.create({
+  row: {
+    flexDirection: "row",
+    alignItems: "center"
+  },
   suggestion: {
     paddingVertical: 8,
     borderBottomWidth: 1,
@@ -86,15 +129,45 @@ const styles = StyleSheet.create({
   subtext: {
     fontSize: 12,
     color: "#aaa"
+  },
+  icon: {
+    justifyContent: "center",
+    width: 35,
+    paddingLeft: 5,
+    alignItems: "center"
+  },
+  map: {
+    marginTop: 10,
+    height: 200,
+    borderRadius: 5,
+    overflow: "hidden"
+  },
+  clear: {
+    height: 16,
+    width: 16,
+    borderRadius: 8,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: 1.5,
+    paddingLeft: 0.5,
+    marginRight: 5
   }
 });
 
 function useGetPlaces() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
+  const [searching, setSearching] = useState();
 
-  const getQuery = async text => {
-    setQuery(text);
+  let request = null;
+
+  const fetchResults = _.throttle(async text => {
+    const now = Date.now();
+    if (text.length) {
+      request = now;
+      setSearching(true);
+    }
 
     let query = `input=${text}&types=establishment`;
 
@@ -115,7 +188,17 @@ function useGetPlaces() {
     });
 
     setResults(res.values);
+
+    if (request === now) {
+      setSearching(false);
+    }
+  }, 100);
+
+  const getQuery = text => {
+    setQuery(text);
+
+    fetchResults(text);
   };
 
-  return [query, results, getQuery];
+  return [query, results, getQuery, searching];
 }

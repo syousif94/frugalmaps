@@ -57,7 +57,7 @@ class MapMarker extends Component {
 
   render() {
     const {
-      data: { _source: item, _id },
+      data: { _source: item },
       ending,
       upcoming
     } = this.props;

@@ -92,8 +92,7 @@ export default memo(({ item, id }) => {
               backgroundColor: "#fff",
               flex: 1,
               border: "none",
-              borderTop: narrow ? "1px solid #ddd" : "none",
-              transform: "translateZ(0)"
+              borderTop: narrow ? "1px solid #ddd" : "none"
             }}
             src="/map"
           />

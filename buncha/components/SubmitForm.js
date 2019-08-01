@@ -18,18 +18,33 @@ import SubmitTags from "./SubmitTags";
 import SubmitDayPicker from "./SubmitDayPicker";
 import SubmitPlacePicker from "./SubmitPlacePicker";
 
+let ScrollComponent = ScrollView;
+if (!WEB) {
+  ScrollComponent = require("react-native-keyboard-aware-scroll-view")
+    .KeyboardAwareScrollView;
+}
+
+const MOBILE_PROPS = WEB
+  ? {}
+  : {
+      extraHeight: 0,
+      extraScrollHeight: 0,
+      viewIsInsideTabBar: false
+    };
+
 export default () => {
   return (
     <View style={styles.container}>
       <Helmet>
         <title>Submit - Buncha</title>
       </Helmet>
-      <ScrollView
+      <ScrollComponent
         style={styles.list}
         contentContainerStyle={styles.content}
         contentInsetAdjustmentBehavior="never"
         keyboardDismissMode="none"
         keyboardShouldPersistTaps="handled"
+        {...MOBILE_PROPS}
       >
         <View style={[styles.row, { justifyContent: WEB ? "center" : null }]}>
           <Text style={styles.headerText}>Submit Event</Text>
@@ -97,7 +112,7 @@ export default () => {
         <TouchableOpacity style={styles.submitButton}>
           <Text style={styles.submitText}>Submit</Text>
         </TouchableOpacity>
-      </ScrollView>
+      </ScrollComponent>
     </View>
   );
 };
@@ -126,7 +141,8 @@ const styles = StyleSheet.create({
     maxWidth: 500,
     padding: 10,
     alignSelf: "center",
-    marginTop: IOS ? getInset("top") : 10
+    paddingTop: IOS ? getInset("top") : 10,
+    paddingBottom: 80
   },
   instructionText: {
     fontSize: 14,
@@ -147,7 +163,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     justifyContent: "center",
     alignItems: "center",
-    marginVertical: 40,
+    marginTop: 40,
     width: 180
   },
   submitText: {

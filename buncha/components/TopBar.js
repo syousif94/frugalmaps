@@ -11,9 +11,8 @@ import { useSelector } from "react-redux";
 import { getInset } from "../utils/SafeAreaInsets";
 import { WEB, IOS } from "../utils/Constants";
 import { navigate } from "../screens";
-import { Entypo, Ionicons, FontAwesome } from "@expo/vector-icons";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import { BLUE, RED, NOW } from "../utils/Colors";
-import SortBar from "./SortBar";
 import Link from "./Link";
 
 export default ({ toggle, rotate }) => {
