@@ -34,13 +34,9 @@ let currentLocationRequest;
 
 export async function grantLocation() {
   if (!currentLocationRequest) {
-    currentLocationRequest = enableLocation()
-      .then(() => {
-        currentLocationRequest = null;
-      })
-      .catch(() => {
-        currentLocationRequest = null;
-      });
+    currentLocationRequest = enableLocation().then(() => {
+      currentLocationRequest = null;
+    });
   }
 
   await currentLocationRequest;

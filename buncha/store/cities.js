@@ -37,11 +37,6 @@ export function get() {
           coords: { latitude: lat, longitude: lng }
         } = await locate();
 
-        console.log({
-          lat,
-          lng
-        });
-
         request = api("places/popular", { lat, lng });
       } else {
         request = api("places/popular");
@@ -70,6 +65,8 @@ export function get() {
           list: !closest.length ? "popular" : undefined
         }
       });
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 }

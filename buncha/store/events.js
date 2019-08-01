@@ -17,7 +17,14 @@ const city = makeReducer("city", null);
 const markers = makeReducer("markers", []);
 const bounds = makeReducer("bounds", null);
 const selected = makeReducer("selected", null);
-const day = makeReducer("day", null);
+const day = makeReducer("day", null, {
+  set: (state, payload) => {
+    if (state === payload) {
+      return null;
+    }
+    return payload;
+  }
+});
 const time = makeReducer("time", "");
 
 const data = makeReducer(
@@ -203,9 +210,11 @@ export function selectPlaceEvents(item) {
       ? state.events.places[item._source.placeid]
           .map(id => state.events.data[id])
           .sort((_a, _b) => {
-            let aAway = _a._source.groupedHours[0].days.sort((a, b) => {
-              return b.daysAway - a.daysAway;
-            })[0].daysAway;
+            const aDay = _a._source.groupedHours[0].days.sort((a, b) => {
+              return a.daysAway - b.daysAway;
+            })[0];
+
+            let aAway = aDay.daysAway;
 
             const aRemaining = timeRemaining(
               _a._source.groupedHours[0],
@@ -216,9 +225,11 @@ export function selectPlaceEvents(item) {
               aAway += 7;
             }
 
-            let bAway = _b._source.groupedHours[0].days.sort((a, b) => {
-              return b.daysAway - a.daysAway;
-            })[0].daysAway;
+            const bDay = _b._source.groupedHours[0].days.sort((a, b) => {
+              return a.daysAway - b.daysAway;
+            })[0];
+
+            let bAway = bDay.daysAway;
 
             const bRemaining = timeRemaining(
               _b._source.groupedHours[0],
@@ -229,7 +240,21 @@ export function selectPlaceEvents(item) {
               bAway += 7;
             }
 
-            return aAway - bAway;
+            if (aAway !== bAway) {
+              return aAway - bAway;
+            }
+
+            const aStart = parseInt(_a._source.groupedHours[0].start, 10);
+            const bStart = parseInt(_b._source.groupedHours[0].start, 10);
+
+            if (aStart !== bStart) {
+              return aStart - bStart;
+            }
+
+            return (
+              _a._source.groupedHours[0].duration -
+              _b._source.groupedHours[0].duration
+            );
           })
           .sort((_a, _b) => {
             let a = 0;

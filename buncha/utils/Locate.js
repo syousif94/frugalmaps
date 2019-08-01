@@ -1,9 +1,9 @@
 import * as Location from "expo-location";
-import { ANDROID } from "./Constants";
+import { ANDROID, WEB } from "./Constants";
 
 export default function locate() {
   return Location.getCurrentPositionAsync({
-    enableHighAccuracy: ANDROID,
+    enableHighAccuracy: ANDROID || WEB,
     maximumAge: 15 * 60 * 1000
   });
 }

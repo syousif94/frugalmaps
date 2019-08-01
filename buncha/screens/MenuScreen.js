@@ -30,43 +30,41 @@ const MenuScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.nav}>
-          <Link
-            to="/"
+      <View style={styles.nav}>
+        <Link
+          to="/"
+          onPress={() => {
+            const history = getHistory();
+            if (history) {
+              if (history.length > 2) {
+                history.goBack();
+              } else {
+                navigate("UpNext");
+              }
+            }
+          }}
+          style={{ paddingHorizontal: 8 }}
+        >
+          <Entypo name="chevron-left" size={22} color={BLUE} />
+        </Link>
+        <View style={{ flexDirection: "row" }}>
+          <TouchableOpacity
             onPress={() => {
-              const history = getHistory();
-              if (history) {
-                if (history.length > 2) {
-                  history.goBack();
-                } else {
-                  navigate("UpNext");
-                }
+              dispatch(Events.get());
+              if (WEB) {
+                navigate("UpNext");
               }
             }}
-            style={{ paddingHorizontal: 8 }}
+            style={[styles.navButton, { marginRight: 10 }]}
           >
-            <Entypo name="chevron-left" size={22} color={BLUE} />
-          </Link>
-          <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity
-              onPress={() => {
-                dispatch(Events.get());
-                if (WEB) {
-                  navigate("UpNext");
-                }
-              }}
-              style={[styles.navButton, { marginRight: 10 }]}
-            >
-              <FontAwesome name="location-arrow" size={18} color="#fff" />
-              <Text style={[styles.navButtonText, { marginLeft: 8 }]}>
-                Current Location
-              </Text>
-            </TouchableOpacity>
-          </View>
+            <FontAwesome name="location-arrow" size={18} color="#fff" />
+            <Text style={[styles.navButtonText, { marginLeft: 8 }]}>
+              Current Location
+            </Text>
+          </TouchableOpacity>
         </View>
-        <SearchCityList />
       </View>
+      <SearchCityList />
     </View>
   );
 };
@@ -78,21 +76,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff"
   },
-  content: {
-    flex: 1,
-    backgroundColor: "#fff",
-    width: "100%",
-    maxWidth: WEB ? 500 : null,
-    alignSelf: WEB ? "center" : "stretch"
-  },
-  list: {
-    flex: 1
-  },
   nav: {
     paddingTop: 10,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center"
+    alignItems: "center",
+    width: "100%",
+    maxWidth: WEB ? 500 : null,
+    alignSelf: WEB ? "center" : "stretch"
   },
   navButton: {
     flexDirection: "row",

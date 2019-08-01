@@ -28,6 +28,8 @@ export default () => {
         style={styles.list}
         contentContainerStyle={styles.content}
         contentInsetAdjustmentBehavior="never"
+        keyboardDismissMode="none"
+        keyboardShouldPersistTaps="handled"
       >
         <View style={[styles.row, { justifyContent: WEB ? "center" : null }]}>
           <Text style={styles.headerText}>Submit Event</Text>
