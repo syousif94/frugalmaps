@@ -27,9 +27,11 @@ if (!WEB) {
 const MOBILE_PROPS = WEB
   ? {}
   : {
-      extraHeight: 0,
+      extraHeight: 50,
       extraScrollHeight: 0,
-      viewIsInsideTabBar: false
+      enableResetScrollToCoords: false,
+      showsVerticalScrollIndicator: false,
+      viewIsInsideTabBar: true
     };
 
 export default () => {
