@@ -7,15 +7,15 @@ import {
   Text,
   FlatList
 } from "react-native";
-import { getSubmissions } from "../store/submissions";
+import { getPublished } from "../store/submissions";
 import { restore } from "../store/submission";
 
 export default () => {
   const dispatch = useDispatch();
-  const data = useSelector(state => state.submissions.list);
+  const data = useSelector(state => state.submissions.published);
 
   useEffect(() => {
-    dispatch(getSubmissions());
+    dispatch(getPublished());
   }, []);
 
   return (
@@ -23,20 +23,15 @@ export default () => {
       style={styles.list}
       data={data}
       renderItem={({ item, index }) => {
-        const { id: fid, ...event } = item;
-        event.fid = fid;
         return (
           <TouchableOpacity
             key={`${index}`}
             style={styles.item}
             onPress={() => {
-              console.log(event);
-              dispatch(restore(event));
+              console.log(item);
             }}
           >
-            <Text>{item.id}</Text>
-            <Text>{item.title}</Text>
-            <Text>{item.description}</Text>
+            <Text>{JSON.stringify(item)}</Text>
           </TouchableOpacity>
         );
       }}

@@ -46,6 +46,7 @@ export const EVENT_TYPES = [
   "Food",
   "Nonalcoholic",
   "Happy Hour",
+  "Club Meeting",
   "Brunch",
   "Karaoke",
   "Trivia",
@@ -63,7 +64,6 @@ export const EVENT_TYPES = [
   "Open Mic",
   "Sports",
   "Live Music",
-
   "Sangria",
   "Beer",
   "Wine",

@@ -5,7 +5,8 @@ import {
   View,
   Text,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
+  Linking
 } from "react-native";
 import Input from "./Input";
 import store from "../store";
@@ -16,6 +17,8 @@ import { Ionicons } from "@expo/vector-icons";
 import _ from "lodash";
 import SubmitMapView from "./SubmitMapView";
 import { WEB } from "../utils/Constants";
+import Link from "./Link";
+import { BLUE } from "../utils/Colors";
 
 export default () => {
   const [query, results, getQuery, searching] = useGetPlaces();
@@ -47,6 +50,27 @@ export default () => {
             <Ionicons name="md-close" size={14} color="#fff" />
           </View>
         </TouchableOpacity>
+        <Link
+          to={place.website}
+          onPress={() => {
+            if (WEB) {
+              window.open(place.website, "_blank");
+            } else {
+              Linking.openURL(place.website);
+            }
+          }}
+        >
+          <Text
+            style={{
+              marginTop: 5,
+              color: BLUE,
+              textDecorationLine: "underline",
+              textDecorationColor: BLUE
+            }}
+          >
+            {place.website}
+          </Text>
+        </Link>
 
         <SubmitMapView style={styles.map} place={place} />
       </View>

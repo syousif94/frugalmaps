@@ -18,7 +18,7 @@ app.post("/api/places/popular", require("./places/popular"));
 app.post("/api/places/reverse", require("./places/reverse"));
 app.post("/api/places/id", require("./places/id"));
 
-// app.post("/api/save-event", require("./saveEvent"));
+app.post("/api/save-event", require("./saveEvent"));
 app.post("/api/query-events", require("./queryEvents"));
 app.post("/api/delete-event", require("./deleteEvent"));
 app.post("/api/fetch-event", require("./fetchEvent"));

@@ -3,10 +3,48 @@ import { ISO_DAYS, ABBREVIATED_DAYS as DAYS } from "./Constants";
 import { NOW, UPCOMING, NOT_TODAY } from "./Colors";
 
 export function validateTime(str) {
-  const date = moment(str, ["h:ma", "H:m"]);
-  const validDate = date.isValid();
+  const validTime = str.match(/(\d{1,2}):(\d{2})/g);
   const containsMeridian = str.indexOf("am") > -1 || str.indexOf("pm") > -1;
-  return validDate && containsMeridian;
+  return validTime && containsMeridian;
+}
+
+const splitStringAt = index => x => [x.slice(0, index), x.slice(index)];
+
+export function detruncateTime(val) {
+  const aIndex = val.indexOf("a");
+  const pIndex = val.indexOf("p");
+
+  const hasA = aIndex > -1;
+  const hasP = pIndex > -1;
+  const hasAorP = hasA || hasP;
+  const hasMinutes = val.match(/:(\d{2})/g);
+  const hasM = val.indexOf("m") > -1;
+
+  if (hasMinutes && hasAorP && hasM) {
+    return val;
+  }
+
+  let str = val;
+
+  if (!hasMinutes) {
+    if (hasA) {
+      const [time, meridian] = splitStringAt(aIndex)(str);
+      str = `${time}:00${meridian}`;
+    } else if (hasP) {
+      const [time, meridian] = splitStringAt(pIndex)(str);
+      str = `${time}:00${meridian}`;
+    } else {
+      str = `${str}:00`;
+    }
+  }
+
+  if (!hasM && hasAorP) {
+    str = `${str}m`;
+  } else if (!hasAorP) {
+    str = `${str}pm`;
+  }
+
+  return str;
 }
 
 export function formatTime(time) {

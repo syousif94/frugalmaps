@@ -17,6 +17,9 @@ import { navigate, getHistory } from "../screens";
 import SubmitTags from "./SubmitTags";
 import SubmitDayPicker from "./SubmitDayPicker";
 import SubmitPlacePicker from "./SubmitPlacePicker";
+import { useSelector, useDispatch } from "react-redux";
+import SubmissionReset from "./SubmissionReset";
+import { submitEvent } from "../store/submission";
 
 let ScrollComponent = ScrollView;
 if (!WEB) {
@@ -34,11 +37,34 @@ const MOBILE_PROPS = WEB
       viewIsInsideTabBar: true
     };
 
+const ConnectedInput = ({ field, ...props }) => {
+  const dispatch = useDispatch();
+  const value = useSelector(state => state.submission[field]);
+  return (
+    <Input
+      value={value}
+      onChangeText={text => {
+        dispatch({
+          type: "submission/set",
+          payload: {
+            [field]: text
+          }
+        });
+      }}
+      {...props}
+    />
+  );
+};
+
 export default () => {
+  const dispatch = useDispatch();
+  const saving = useSelector(state => state.submission.saving);
+  const deleting = useSelector(state => state.submission.saving);
+  const submitting = saving || deleting;
   return (
     <View style={styles.container}>
       <Helmet>
-        <title>Submit - Buncha</title>
+        <title>Add Event - Buncha</title>
       </Helmet>
       <ScrollComponent
         style={styles.list}
@@ -49,15 +75,21 @@ export default () => {
         {...MOBILE_PROPS}
       >
         <View style={[styles.row, { justifyContent: WEB ? "center" : null }]}>
-          <Text style={styles.headerText}>Submit Event</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.headerText]}>Add Event</Text>
+            <Text style={styles.subtext}>
+              Fill out the form to add a fun thing to Buncha
+            </Text>
+          </View>
+
           {WEB ? (
             <View
               style={{
                 position: "absolute",
                 top: 0,
-                left: 0,
+                right: "100%",
                 bottom: 0,
-                justifyContent: "center"
+                paddingTop: 3
               }}
             >
               <Link
@@ -90,29 +122,44 @@ export default () => {
           for
         </Text>
         <Text style={styles.instructionText}>2. Title</Text>
-        <Input placeholder="What's the event?" />
+        <ConnectedInput field="title" placeholder="What's the event called?" />
         <Text style={styles.instructionText}>3. Days</Text>
         <SubmitDayPicker />
         <View style={styles.row}>
           <View style={styles.time}>
             <Text style={styles.instructionText}>4. Starts at</Text>
-            <Input placeholder="Open" />
+            <ConnectedInput field="start" placeholder="Open" />
           </View>
           <View style={{ width: 10 }} />
           <View style={styles.time}>
             <Text style={styles.instructionText}>5. Ends at</Text>
-            <Input placeholder="Close" />
+            <ConnectedInput field="end" placeholder="Close" />
           </View>
         </View>
-        <Text style={styles.subtext}>Format like 6am or 6:30pm</Text>
+        <Text style={styles.subtext}>
+          Formats like 7, 11a, or 4:19pm are all valid</Text>
+        <Text style={styles.subtext}>Afternoon is assumed by default</Text>
+        <Text style={styles.subtext}>
+          Leave blank for opening or closing hours
+        </Text>
         <Text style={styles.instructionText}>6. Description</Text>
-        <Input placeholder="Optional" />
+        <ConnectedInput field="description" placeholder="Optional" />
         <Text style={styles.instructionText}>7. Tags</Text>
         <SubmitTags />
         <Text style={styles.instructionText}>8. Admin Code</Text>
-        <Input placeholder="Leave this blank" />
-        <TouchableOpacity style={styles.submitButton}>
-          <Text style={styles.submitText}>Submit</Text>
+        <ConnectedInput field="postCode" placeholder="Leave this blank" />
+        <SubmissionReset />
+        <TouchableOpacity
+          disabled={submitting}
+          style={[
+            styles.submitButton,
+            { backgroundColor: submitting ? "#ccc" : BLUE }
+          ]}
+          onPress={() => {
+            dispatch(submitEvent());
+          }}
+        >
+          <Text style={styles.submitText}>Post</Text>
         </TouchableOpacity>
       </ScrollComponent>
     </View>
@@ -140,23 +187,23 @@ const styles = StyleSheet.create({
   },
   content: {
     width: "100%",
-    maxWidth: 500,
-    padding: 10,
+    maxWidth: 520,
+    padding: 20,
     alignSelf: "center",
-    paddingTop: IOS ? getInset("top") : 10,
+    paddingTop: IOS ? getInset("top") + 20 : 30,
     paddingBottom: 80
   },
   instructionText: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "600",
     color: "#000",
-    marginBottom: 4,
-    marginTop: 25
+    marginBottom: 8,
+    marginTop: 40
   },
   subtext: {
-    marginTop: 4,
-    fontSize: 12,
-    color: "#aaa"
+    marginTop: 6,
+    fontSize: 16,
+    color: "#333"
   },
   submitButton: {
     height: 40,

@@ -29,7 +29,7 @@ async function createEvent(req, res) {
     end,
     days,
     postCode,
-    type
+    tags
   } = req.body;
 
   if (postCode !== process.env.POSTCODE) {
@@ -45,7 +45,7 @@ async function createEvent(req, res) {
       title,
       description,
       days,
-      type
+      tags
     };
 
     if (start) {
@@ -151,7 +151,7 @@ async function createEvent(req, res) {
       days,
       start: startTime,
       end: endTime,
-      type,
+      tags,
       url,
       rating,
       priceLevel,
