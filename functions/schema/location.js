@@ -1,6 +1,5 @@
 const location = {
   index: "locations",
-  type: "location",
   body: {
     properties: {
       name: { type: "text" },

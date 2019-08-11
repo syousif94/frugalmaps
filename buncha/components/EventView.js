@@ -25,16 +25,16 @@ export default memo(({ item, index = 0, style, description, demo }) => {
       >
         <View style={{ flex: 1 }}>
           <View style={styles.row}>
-            <Text style={styles.titleText}>{item._source.title}</Text>
+            <Text style={styles.titleText}>
+              {item._source.title}
+              <Text style={{ color: time.color, fontWeight: "700" }}>
+                {" "}
+                {time.text}
+              </Text>
+            </Text>
           </View>
 
-          <Text style={[styles.subtitleText, { color: time.color }]}>
-            {time.span}
-            <Text style={{ color: "#000", fontWeight: "700" }}>
-              {" "}
-              {time.text}
-            </Text>
-          </Text>
+          <Text style={[styles.subtitleText]}>{time.span}</Text>
           {description ? (
             <Text style={styles.descriptionText}>
               {item._source.description}

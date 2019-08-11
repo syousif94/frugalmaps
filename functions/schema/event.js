@@ -1,6 +1,5 @@
 const event = {
   index: "events",
-  type: "event",
   body: {
     properties: {
       updatedAt: {
@@ -11,9 +10,9 @@ const event = {
       description: { type: "text" },
       location: { type: "text" },
       coordinates: { type: "geo_point" },
-      type: { type: "keyword" },
+      tags: { type: "keyword" },
       placeid: { type: "keyword" },
-      priceLevel: { enabled: false },
+      priceLevel: { type: "integer" },
       viewport: { enabled: false },
       rating: { enabled: false },
       website: { enabled: false },

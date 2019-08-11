@@ -46,7 +46,6 @@ export default memo(({ item: i, index, demo, section }) => {
 
   return (
     <View style={[styles.container]}>
-      <ImageGallery height={90} photos={item._source.photos} />
       <Link to={`e/${item._id}`} style={styles.infoButton} onPress={onPress}>
         <View
           style={[
@@ -60,17 +59,11 @@ export default memo(({ item: i, index, demo, section }) => {
           ]}
         >
           <View style={{ flex: 1 }}>
-            <Text style={styles.subtitleText}>
-              {item._source.location}
-              {distance ? (
-                <Text style={styles.distanceText}>
-                  {" "}
-                  {distance.toFixed(1)} mi
-                </Text>
-              ) : null}
+            <Text style={styles.subtitleText}>{item._source.location}</Text>
+            <Text style={styles.detailText}>
+              {distance ? <Text>{distance.toFixed(1)} mi</Text> : null}{" "}
+              {cityText}
             </Text>
-            <Text style={styles.detailText}>{streetText}</Text>
-            <Text style={styles.detailText}>{cityText}</Text>
           </View>
           {placeText && (
             <View style={styles.count}>
@@ -78,7 +71,14 @@ export default memo(({ item: i, index, demo, section }) => {
             </View>
           )}
         </View>
-        <EventView demo={demo} index={index} item={item} section={section} />
+        <ImageGallery height={110} photos={item._source.photos} />
+        <EventView
+          demo={demo}
+          index={index}
+          item={item}
+          section={section}
+          style={{ marginTop: 8 }}
+        />
       </Link>
     </View>
   );
@@ -86,19 +86,18 @@ export default memo(({ item: i, index, demo, section }) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 10,
     backgroundColor: "#fff"
   },
   infoButton: {
-    paddingHorizontal: 10,
-    paddingTop: 8
+    paddingLeft: 10,
+    paddingBottom: 8
   },
   row: {
     flexDirection: "row",
     alignItems: "center"
   },
   subtitleText: {
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: "600"
   },
   distanceText: {
@@ -106,8 +105,8 @@ const styles = StyleSheet.create({
     fontSize: 10
   },
   detailText: {
-    fontSize: 14,
-    color: "#000"
+    fontSize: 12,
+    color: "#555"
   },
   ratingText: {
     color: "#000",

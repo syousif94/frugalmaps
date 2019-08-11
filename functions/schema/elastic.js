@@ -15,12 +15,7 @@ function indexExists(indexName) {
 
 function createIndex(indexName) {
   return client.indices.create({
-    index: indexName,
-    body: {
-      settings: {
-        "index.mapper.dynamic": false
-      }
-    }
+    index: indexName
   });
 }
 
@@ -32,7 +27,7 @@ function initializeIndex(mapping) {
   return indexExists(mapping.index)
     .then(exists => {
       if (exists) {
-        console.log("index exists");
+        console.log(`${mapping.index} index exists`);
         return;
       }
 
@@ -59,53 +54,20 @@ function deleteIndex(indexName) {
     .catch(error => console.log(error));
 }
 
-function mapEvents() {
-  return initializeIndex(event);
-}
-
-function deleteEvents() {
-  return deleteIndex(event.index);
-}
-
-function mapLocations() {
-  return initializeIndex(location);
-}
-
-function deleteLocations() {
-  return deleteIndex(location.index);
-}
-
-function mapUsers() {
-  return initializeIndex(user);
-}
-
-function deleteUsers() {
-  return deleteIndex(user.index);
-}
-
-function mapReminders() {
-  return initializeIndex(reminder);
-}
-
-function deleteReminders() {
-  return deleteIndex(reminder.index);
+function index(event) {
+  return {
+    map: () => initializeIndex(event),
+    delete: () => deleteIndex(event.index)
+  };
 }
 
 module.exports = {
-  events: {
-    map: mapEvents,
-    delete: deleteEvents
-  },
-  locations: {
-    map: mapLocations,
-    delete: deleteLocations
-  },
-  users: {
-    map: mapUsers,
-    delete: deleteUsers
-  },
-  reminders: {
-    map: mapReminders,
-    delete: deleteReminders
+  events: index(event),
+  locations: index(location),
+  users: index(user),
+  reminders: index(reminder),
+  init: async function() {
+    await this.events.map();
+    await this.locations.map();
   }
 };

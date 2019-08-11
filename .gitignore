@@ -13,3 +13,4 @@ public/
 .node-gyp
 .npm
 .config
+elasticsearch

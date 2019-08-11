@@ -5,9 +5,20 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const express = require("express");
 
+const schema = require("./schema/elastic");
+
 const app = express();
 app.use(cors());
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "10mb" }));
+
+async function main() {
+  try {
+    await schema.init();
+    app.listen(2000, () => console.log(`frugal:2000!`));
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 app.get("/api", (req, res) => {
   res.send("FrugalMaps API says hi");
@@ -36,6 +47,9 @@ app.post("/api/events/published/count", require("./events/publishedCount"));
 app.post("/api/events/submissions", require("./events/submissions"));
 app.post("/api/events/suggest", require("./events/suggest"));
 
+app.post("/api/bulk", require("./bulk"));
+app.get("/api/stats", require("./stats"));
+
 app.get("/e/:id", require("./events/render"));
 
-app.listen(2000, () => console.log(`frugal:2000!`));
+main();

@@ -78,7 +78,7 @@ export default () => {
           <View style={{ flex: 1 }}>
             <Text style={[styles.headerText]}>Add Event</Text>
             <Text style={styles.subtext}>
-              Fill out the form to add a fun thing to Buncha
+              Fill out the form to add fun things to Buncha
             </Text>
           </View>
 
@@ -137,7 +137,8 @@ export default () => {
           </View>
         </View>
         <Text style={styles.subtext}>
-          Formats like 7, 11a, or 4:19pm are all valid</Text>
+          Formats like 7, 11a, or 4:19pm are all valid
+        </Text>
         <Text style={styles.subtext}>Afternoon is assumed by default</Text>
         <Text style={styles.subtext}>
           Leave blank for opening or closing hours

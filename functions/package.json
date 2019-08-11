@@ -3,8 +3,10 @@
   "description": "Cloud Functions for Firebase",
   "scripts": {
     "lint": "eslint .",
-    "start": "node index.js",
-    "elastic": "node schema/index.js"
+    "start": "docker-compose -f docker-compose-dev.yml up",
+    "build:docker": "docker-compose -f docker-compose-dev.yml build",
+    "elastic": "nodemon schema/index.js",
+    "transform": "nodemon schema/transform.js"
   },
   "dependencies": {
     "@google-cloud/firestore": "^0.18.0",

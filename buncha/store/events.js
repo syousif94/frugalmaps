@@ -16,6 +16,7 @@ const newest = makeReducer("newest", []);
 const city = makeReducer("city", null);
 const markers = makeReducer("markers", []);
 const bounds = makeReducer("bounds", null);
+const tags = makeReducer("tags", []);
 const selected = makeReducer("selected", null);
 const day = makeReducer("day", null, {
   set: (state, payload) => {
@@ -59,7 +60,8 @@ export default combineReducers({
   newest,
   selected,
   day,
-  time
+  time,
+  tags
 });
 
 export function selectEvent(id) {
@@ -165,7 +167,8 @@ export function get(bounds = null) {
           city: res.city,
           markers: res.markers[0].data,
           bounds: res.bounds,
-          data: res.data
+          data: res.data,
+          tags: res.tags
         }
       });
     } catch (error) {

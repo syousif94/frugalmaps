@@ -4,6 +4,7 @@ const servicesApi = require("./google");
 const turf = require("@turf/turf");
 const _ = require("lodash");
 const moment = require("moment");
+const popularTags = require("./events/popularTags");
 const { groupHours, makeEvents, makeMarkers, makeListData } = require("./time");
 
 module.exports = async function getEvents(req, res) {
@@ -170,11 +171,13 @@ module.exports = async function getEvents(req, res) {
     data: keyedData,
     list,
     places,
-    newest
+    newest,
+    tags: []
   };
 
   if (bounds) {
     response.bounds = bounds;
+    response.tags = await popularTags(bounds);
   }
 
   if (city) {

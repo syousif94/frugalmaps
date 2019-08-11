@@ -15,7 +15,7 @@ module.exports = async function backupAll(req, res) {
         type: index.type,
         body: {
           query: { match_all: {} },
-          size: 100
+          size: 1000
         }
       })
       .then(res => res.hits.hits);

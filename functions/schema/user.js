@@ -1,6 +1,5 @@
 const user = {
   index: "users",
-  type: "user",
   body: {
     properties: {
       pushtoken: { type: "keyword" },

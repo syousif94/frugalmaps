@@ -89,6 +89,7 @@ export default () => {
         >
           <AppBanner />
           <TopBar rotate={citiesTranslate.current} toggle={toggleCities} />
+          <SortBar />
           {data.map((item, index) => (
             <React.Fragment key={item._id}>
               {index !== 0 ? <View style={styles.separator} /> : null}
@@ -111,6 +112,7 @@ export default () => {
             keyExtractor={item => item._id}
             refreshing={refreshing}
             onRefresh={refresh}
+            ListHeaderComponent={() => <SortBar />}
             ListFooterComponent={() => (data.length ? <ListFooter /> : null)}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
           />
@@ -163,7 +165,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     width: "100%",
-    maxWidth: WEB ? 500 : null,
+    maxWidth: WEB ? 800 : null,
     alignSelf: WEB ? "center" : "stretch"
   },
   separator: {

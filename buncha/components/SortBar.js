@@ -6,9 +6,11 @@ import {
   Text,
   StyleSheet
 } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
 import { EVENT_TYPES } from "../utils/Constants";
+import { RED } from "../utils/Colors";
 
-const Button = ({ text }) => {
+const Button = ({ tag: { text, count } }) => {
   return (
     <TouchableOpacity
       style={{
@@ -21,18 +23,37 @@ const Button = ({ text }) => {
         marginHorizontal: 2.5
       }}
     >
-      <Text style={{ fontSize: 12, color: "#000" }}>{text}</Text>
+      <View
+        style={{
+          paddingHorizontal: 3,
+          borderRadius: 4,
+          backgroundColor: RED,
+          marginRight: 9
+        }}
+      >
+        <Text style={{ fontSize: 14, color: "#fff", fontWeight: "700" }}>
+          {count}
+        </Text>
+      </View>
+      <Text style={{ fontSize: 14, color: "#000", fontWeight: "600" }}>
+        {text.toUpperCase()}
+      </Text>
     </TouchableOpacity>
   );
 };
 
 export default ({ style }) => {
+  const tags = useSelector(state => state.events.tags);
   return (
     <View
       style={[
         {
+          marginHorizontal: -2,
           height: 38,
-          backgroundColor: "#fff"
+          backgroundColor: "#fff",
+          borderLeftWidth: 1,
+          borderRightWidth: 1,
+          borderColor: "#f2f2f2"
         },
         style
       ]}
@@ -43,8 +64,8 @@ export default ({ style }) => {
         horizontal
         showsHorizontalScrollIndicator={false}
       >
-        {EVENT_TYPES.map((text, index) => {
-          return <Button text={text} key={`${index}`} />;
+        {tags.map((tag, index) => {
+          return <Button tag={tag} key={`${index}`} />;
         })}
       </ScrollView>
     </View>
