@@ -59,7 +59,9 @@ export default memo(({ item: i, index, demo, section }) => {
           ]}
         >
           <View style={{ flex: 1 }}>
-            <Text style={styles.subtitleText}>{item._source.location}</Text>
+            <Text style={styles.subtitleText}>
+              {index + 1}. {item._source.location}
+            </Text>
             <Text style={styles.detailText}>
               {distance ? <Text>{distance.toFixed(1)} mi</Text> : null}{" "}
               {cityText}
@@ -71,14 +73,8 @@ export default memo(({ item: i, index, demo, section }) => {
             </View>
           )}
         </View>
-        <ImageGallery height={110} photos={item._source.photos} />
-        <EventView
-          demo={demo}
-          index={index}
-          item={item}
-          section={section}
-          style={{ marginTop: 8 }}
-        />
+        <EventView demo={demo} index={index} item={item} section={section} />
+        <ImageGallery height={90} photos={item._source.photos} />
       </Link>
     </View>
   );
@@ -89,7 +85,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff"
   },
   infoButton: {
-    paddingLeft: 10,
     paddingBottom: 8
   },
   row: {

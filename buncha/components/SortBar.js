@@ -7,15 +7,15 @@ import {
   StyleSheet
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import { EVENT_TYPES } from "../utils/Constants";
 import { RED } from "../utils/Colors";
+import _ from "lodash";
 
 const Button = ({ tag: { text, count } }) => {
   return (
     <TouchableOpacity
       style={{
         borderWidth: 1,
-        borderColor: "#e0e0e0",
+        borderColor: "#f2f2f2",
         borderRadius: 5,
         paddingHorizontal: 6,
         alignItems: "center",
@@ -36,7 +36,7 @@ const Button = ({ tag: { text, count } }) => {
         </Text>
       </View>
       <Text style={{ fontSize: 14, color: "#000", fontWeight: "600" }}>
-        {text.toUpperCase()}
+        {_.startCase(text)}
       </Text>
     </TouchableOpacity>
   );

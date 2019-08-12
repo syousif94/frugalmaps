@@ -6,7 +6,8 @@ import {
   FlatList,
   ActivityIndicator,
   ScrollView,
-  Text
+  Text,
+  Dimensions
 } from "react-native";
 import { get } from "../store/events";
 import * as Cities from "../store/cities";
@@ -24,6 +25,7 @@ import AppBanner from "../components/AppBanner";
 export default () => {
   const data = useSelector(state => state.events.upNext);
   const refreshing = useSelector(state => state.events.refreshing);
+  const error = useSelector(state => state.events.error);
   const locationEnabled = useSelector(state => state.permissions.location);
   const dispatch = useDispatch();
   const refresh = useCallback(() => dispatch(get()), []);
@@ -57,16 +59,35 @@ export default () => {
       dispatch(Cities.get());
     } else if (WEB) {
       const history = getHistory();
-      if (history.location.pathname === "/" && !data.length && !refreshing) {
+      if (
+        history.location.pathname === "/" &&
+        !data.length &&
+        !refreshing &&
+        !error
+      ) {
         setOpacity(1);
         refresh();
         dispatch(Cities.get());
       }
     }
-  }, [locationEnabled, data, refreshing]);
+  }, [locationEnabled, data, refreshing, error]);
 
   useEffect(() => {
     dispatch(enableLocation());
+  }, []);
+
+  const [width, setWidth] = useState(Dimensions.get("window").width);
+
+  useEffect(() => {
+    const onChange = ({ window }) => {
+      setWidth(window.width);
+    };
+
+    Dimensions.addEventListener("change", onChange);
+
+    return () => {
+      Dimensions.removeEventListener("change", onChange);
+    };
   }, []);
 
   const [citiesTranslate, toggleCities] = useCitiesToggle();
@@ -90,12 +111,21 @@ export default () => {
           <AppBanner />
           <TopBar rotate={citiesTranslate.current} toggle={toggleCities} />
           <SortBar />
-          {data.map((item, index) => (
-            <React.Fragment key={item._id}>
-              {index !== 0 ? <View style={styles.separator} /> : null}
-              <Item item={item} index={index} />
-            </React.Fragment>
-          ))}
+          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+            {data.map((item, index) => (
+              <View
+                style={{
+                  width: width > 900 ? "33%" : width > 600 ? "50%" : "100%",
+                  paddingHorizontal: width > 600 ? 20 : 0,
+                  paddingLeft: width <= 600 ? 15 : null
+                }}
+                key={item._id}
+              >
+                <Item item={item} index={index} />
+                {width <= 600 ? <View style={styles.separator} /> : null}
+              </View>
+            ))}
+          </View>
           {data.length ? <ListFooter /> : null}
         </ScrollView>
       ) : (
@@ -165,7 +195,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     width: "100%",
-    maxWidth: WEB ? 800 : null,
+    maxWidth: WEB ? 900 : null,
     alignSelf: WEB ? "center" : "stretch"
   },
   separator: {

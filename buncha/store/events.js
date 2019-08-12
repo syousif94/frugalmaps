@@ -9,6 +9,7 @@ import { WEB } from "../utils/Constants";
 const makeReducer = makeState("events");
 
 const refreshing = makeReducer("refreshing", false);
+const error = makeReducer("error", null);
 const upNext = makeReducer("upNext", []);
 const calendar = makeReducer("calendar", []);
 const closest = makeReducer("closest", []);
@@ -49,6 +50,7 @@ const places = makeReducer(
 
 export default combineReducers({
   refreshing,
+  error,
   upNext,
   places,
   city,
@@ -155,6 +157,11 @@ export function get(bounds = null) {
     try {
       const res = await api("events", body);
       console.log({ res });
+
+      // const res = require("../events.json");
+
+      // console.log(res);
+
       dispatch({
         type: "events/set",
         payload: {
@@ -176,7 +183,8 @@ export function get(bounds = null) {
       dispatch({
         type: "events/set",
         payload: {
-          refreshing: false
+          refreshing: false,
+          error: error
         }
       });
     }
