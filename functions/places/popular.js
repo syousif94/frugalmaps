@@ -72,7 +72,6 @@ module.exports = async function popularCities(req, res) {
 
     results = await elastic.mget({
       index: location.index,
-      type: location.type,
       body: {
         ids: popular.map(city => _.kebabCase(city.text))
       }
@@ -126,7 +125,7 @@ module.exports = async function popularCities(req, res) {
       .map((res, index) => {
         return {
           id: uniqueCities[index]._id,
-          count: res.hits.total
+          count: res.hits.total.value
         };
       })
       .keyBy("id")

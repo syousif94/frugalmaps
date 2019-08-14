@@ -10,12 +10,12 @@ const { groupHours, makeEvents, makeMarkers, makeListData } = require("./time");
 module.exports = async function getEvents(req, res) {
   const { lat, lng, now /** text, tags */, utc } = req.body;
 
+  let city;
+
   try {
     const currentTime = moment(now).utcOffset(utc);
 
     let { bounds } = req.body;
-
-    var city;
 
     const body = {
       query: {
@@ -77,6 +77,10 @@ module.exports = async function getEvents(req, res) {
         body
       })
       .then(results => {
+        if (!results.hits.hits.length) {
+          return results.hits.hits;
+        }
+
         const points = results.hits.hits.map(doc =>
           turf.point(doc._source.coordinates)
         );
@@ -115,6 +119,14 @@ module.exports = async function getEvents(req, res) {
           return hit;
         });
       });
+
+    if (!data.length) {
+      res.send({
+        empty: true,
+        city
+      });
+      return;
+    }
 
     const calendar = makeEvents(currentTime, data);
 
@@ -192,7 +204,8 @@ module.exports = async function getEvents(req, res) {
     res.send(response);
   } catch (error) {
     res.send({
-      error: error.message
+      error: error.message,
+      city
     });
   }
 };

@@ -39,7 +39,7 @@ export default () => {
       const unlisten = history.listen(location => {
         const home = location.pathname === "/";
         setOpacity(home ? 1 : 0);
-        if (home && !data.length && !refreshing) {
+        if (home && !data.length && !refreshing && !error) {
           refresh();
           dispatch(Cities.get());
         }
@@ -47,14 +47,14 @@ export default () => {
 
       return () => unlisten();
     }
-  }, [data, refreshing]);
+  }, [data, refreshing, error]);
 
   useEffect(() => {
     if (locationEnabled === null) {
       return;
     }
 
-    if (!WEB && !data.length && !refreshing) {
+    if (!WEB && !data.length && !refreshing && !error) {
       refresh();
       dispatch(Cities.get());
     } else if (WEB) {

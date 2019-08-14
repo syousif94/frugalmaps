@@ -24,6 +24,7 @@ export default memo(({ item, index = 0, style, description, demo }) => {
         style={[styles.row, { alignItems: "flex-start", paddingHorizontal: 5 }]}
       >
         <View style={{ flex: 1 }}>
+          <Text style={[styles.subtitleText]}>{time.span}</Text>
           <View style={styles.row}>
             <Text style={styles.titleText}>
               {item._source.title}
@@ -34,7 +35,6 @@ export default memo(({ item, index = 0, style, description, demo }) => {
             </Text>
           </View>
 
-          <Text style={[styles.subtitleText]}>{time.span}</Text>
           {description ? (
             <Text style={styles.descriptionText}>
               {item._source.description}

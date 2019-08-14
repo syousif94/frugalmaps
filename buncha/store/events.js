@@ -102,8 +102,10 @@ export function getCity(city) {
             text: city._source.name,
             bounds: city._source.bounds
           },
+          error: null,
           refreshing: true,
           upNext: [],
+          tags: [],
           selected: null
         }
       });
@@ -127,7 +129,9 @@ export function get(bounds = null) {
         city: bounds ? undefined : null,
         bounds,
         upNext: WEB ? [] : undefined,
-        selected: null
+        tags: [],
+        selected: null,
+        error: null
       }
     });
 
@@ -161,6 +165,23 @@ export function get(bounds = null) {
       // const res = require("../events.json");
 
       // console.log(res);
+
+      if (res.empty) {
+        dispatch({
+          type: "events/set",
+          payload: {
+            refreshing: false,
+            upNext: [],
+            calendar: [],
+            closest: [],
+            newest: [],
+            tags: [],
+            error: "No Results Found",
+            city: res.city
+          }
+        });
+        return;
+      }
 
       dispatch({
         type: "events/set",
