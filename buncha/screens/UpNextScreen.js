@@ -21,6 +21,7 @@ import SortBar from "../components/SortBar";
 import SearchPanel from "../components/SearchPanel";
 import { useCitiesToggle } from "../utils/Hooks";
 import AppBanner from "../components/AppBanner";
+import ListError from "../components/ListError";
 
 export default () => {
   const data = useSelector(state => state.events.upNext);
@@ -110,22 +111,29 @@ export default () => {
         >
           <AppBanner />
           <TopBar rotate={citiesTranslate.current} toggle={toggleCities} />
-          <SortBar />
-          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-            {data.map((item, index) => (
-              <View
-                style={{
-                  width: width > 900 ? "33%" : width > 600 ? "50%" : "100%",
-                  paddingHorizontal: width > 600 ? 20 : 0,
-                  paddingLeft: width <= 600 ? 15 : null
-                }}
-                key={item._id}
-              >
-                <Item item={item} index={index} />
-                {width <= 600 ? <View style={styles.separator} /> : null}
+          {error ? (
+            <ListError />
+          ) : (
+            <React.Fragment>
+              <SortBar />
+              <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+                {data.map((item, index) => (
+                  <View
+                    style={{
+                      width: width > 900 ? "33%" : width > 600 ? "50%" : "100%",
+                      paddingHorizontal: width > 600 ? 20 : 0,
+                      paddingLeft: width <= 600 ? 15 : null
+                    }}
+                    key={item._id}
+                  >
+                    <Item item={item} index={index} />
+                    {width <= 600 ? <View style={styles.separator} /> : null}
+                  </View>
+                ))}
               </View>
-            ))}
-          </View>
+            </React.Fragment>
+          )}
+
           {data.length ? <ListFooter /> : null}
         </ScrollView>
       ) : (

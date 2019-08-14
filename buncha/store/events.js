@@ -101,12 +101,7 @@ export function getCity(city) {
           city: {
             text: city._source.name,
             bounds: city._source.bounds
-          },
-          error: null,
-          refreshing: true,
-          upNext: [],
-          tags: [],
-          selected: null
+          }
         }
       });
       await dispatch(get(city._source.bounds));
@@ -176,7 +171,7 @@ export function get(bounds = null) {
             closest: [],
             newest: [],
             tags: [],
-            error: "No Results Found",
+            error: `We don't have any results for ${res.city.text} yet.`,
             city: res.city
           }
         });
