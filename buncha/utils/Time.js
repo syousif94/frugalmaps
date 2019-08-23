@@ -218,7 +218,15 @@ export function timeRemaining(hours, iso) {
 
     const minutes = Math.floor(minFloat);
 
-    remaining = { value: `${hour}h ${minutes}m`, unit: "" };
+    let value = "";
+
+    if (hour) {
+      value += `${hour}h `;
+    }
+
+    value += `${minutes}m`;
+
+    remaining = { value };
   }
 
   const ended =
@@ -357,12 +365,12 @@ export function itemRemaining(item) {
     if (!away) {
       away = 7;
     }
-    remaining = { unit: `day${pluralize(away)}`, value: away };
+    remaining = { value: `${away}d` };
   }
 
   const upcoming = !ended && !ending && spanHours.today;
 
-  const text = `${remaining.value} ${remaining.unit}`;
+  const text = `${remaining.value}`;
   let color = NOT_TODAY;
 
   if (ending) {
@@ -373,11 +381,13 @@ export function itemRemaining(item) {
     }
   }
 
+  const state = ending ? "left" : "away";
+
   const day = (tomorrow && tomorrow.text) || spanHours.days[0].text;
 
   const span = itemTime(day, spanHours, ending, upcoming);
 
-  return { text, color, span, remaining };
+  return { text, color, span, remaining, state };
 }
 
 const LONG_DAYS = {

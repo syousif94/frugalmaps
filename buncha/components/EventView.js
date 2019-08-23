@@ -30,7 +30,7 @@ export default memo(({ item, index = 0, style, description, demo }) => {
               {item._source.title}
               <Text style={{ color: time.color, fontWeight: "700" }}>
                 {" "}
-                {time.text}
+                {time.text} {time.state}
               </Text>
             </Text>
           </View>

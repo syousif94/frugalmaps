@@ -228,25 +228,30 @@ export function get(bounds = null) {
 
 export function getEvent(id) {
   return async dispatch => {
-    const payload = await api("fetch-event", { id }).then(res => {
-      const payload = {
-        places: {
-          [res.events[0]._source.placeid]: []
-        },
-        data: {}
-      };
-      res.events.forEach(hit => {
-        hit._source.groupedHours = groupHours(hit._source);
-        payload.places[hit._source.placeid].push(hit._id);
-        payload.data[hit._id] = hit;
+    console.log(id);
+    try {
+      const payload = await api("fetch-event", { id }).then(res => {
+        const payload = {
+          places: {
+            [res.events[0]._source.placeid]: []
+          },
+          data: {}
+        };
+        res.events.forEach(hit => {
+          hit._source.groupedHours = groupHours(hit._source);
+          payload.places[hit._source.placeid].push(hit._id);
+          payload.data[hit._id] = hit;
+        });
+        return payload;
       });
-      return payload;
-    });
-    console.log({ payload });
-    dispatch({
-      type: "events/append",
-      payload
-    });
+      console.log({ payload });
+      dispatch({
+        type: "events/append",
+        payload
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 }
 

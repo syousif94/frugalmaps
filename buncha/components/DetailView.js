@@ -17,7 +17,7 @@ import BackButton from "../components/BackButton";
 import EventView from "../components/EventView";
 import Link from "../components/Link";
 import { RED, BLUE, NOW } from "../utils/Colors";
-import { distanceTo, roundedDistanceTo } from "../utils/Locate";
+import { roundedDistanceTo } from "../utils/Locate";
 
 export default memo(({ item, id }) => {
   const events = useSelector(selectPlaceEvents(item));

@@ -89,7 +89,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff"
   },
   infoButton: {
-    paddingBottom: 8,
     paddingHorizontal: WEB ? null : 10
   },
   row: {

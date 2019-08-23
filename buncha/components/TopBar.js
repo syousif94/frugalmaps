@@ -64,32 +64,7 @@ export default ({ toggle, rotate, style = { paddingLeft: 15 } }) => {
               color={"#fff"}
             />
           </NavLink>
-        ) : (
-          <View style={styles.row}>
-            <Ionicons
-              style={{ marginTop: 1 }}
-              name="ios-search"
-              size={20}
-              color={BLUE}
-            />
-            <Animated.View
-              style={{
-                marginRight: 10,
-                marginTop: 3,
-                transform: [
-                  {
-                    rotate: rotate.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: ["0deg", "180deg"]
-                    })
-                  }
-                ]
-              }}
-            >
-              <Entypo name="chevron-small-down" size={22} color={BLUE} />
-            </Animated.View>
-          </View>
-        )}
+        ) : null}
       </TouchableOpacity>
     </View>
   );

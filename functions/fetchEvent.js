@@ -7,7 +7,7 @@ module.exports = async function fetchEvent(req, res) {
   try {
     const event = await elastic.get({
       index: Event.index,
-      type: Event.type,
+      type: "_doc",
       id
     });
 
@@ -21,7 +21,7 @@ module.exports = async function fetchEvent(req, res) {
     const events = await elastic
       .search({
         index: Event.index,
-        type: Event.type,
+        type: "_doc",
         body
       })
       .then(res => res.hits.hits.filter(hit => hit._id !== id));

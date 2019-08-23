@@ -228,7 +228,8 @@ const styles = StyleSheet.create({
     alignSelf: WEB ? "center" : "stretch"
   },
   separator: {
-    marginBottom: 10,
+    marginBottom: WEB ? null : 10,
+    marginTop: WEB ? 10 : null,
     height: 1,
     backgroundColor: "#f2f2f2"
   }

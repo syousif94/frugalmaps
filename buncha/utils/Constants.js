@@ -44,9 +44,8 @@ export const PLACEMENT_ID = IOS
 
 export const EVENT_TYPES = [
   "Food",
-  "Nonalcoholic",
   "Happy Hour",
-  "Club Meeting",
+  "Club",
   "Brunch",
   "Karaoke",
   "Trivia",

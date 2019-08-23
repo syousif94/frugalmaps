@@ -116,16 +116,15 @@ export default () => {
                   numberOfLines={2}
                   style={{ fontSize: 12, marginTop: 2, color: "#000" }}
                 >
-                  {eventCount} event{eventCount !== 1 ? "s" : ""}
                   {events.map((e, index) => {
                     const time = itemRemaining(e);
-                    let nameText = ` · ${e._source.title} `;
+                    const dotText = index === 0 ? "" : " · ";
+                    let nameText = `${dotText}${e._source.title} `;
                     return (
                       <React.Fragment>
                         <Text>{nameText}</Text>
                         <Text style={{ color: time.color, fontWeight: "600" }}>
-                          {time.remaining.value}
-                          {time.remaining.unit.substring(0, 1)}
+                          {time.text}
                         </Text>
                       </React.Fragment>
                     );
