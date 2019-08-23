@@ -14,8 +14,7 @@ const Button = ({ tag: { text, count } }) => {
   return (
     <TouchableOpacity
       style={{
-        borderWidth: 1,
-        borderColor: "#f2f2f2",
+        backgroundColor: "#f7f7f7",
         borderRadius: 5,
         paddingHorizontal: 6,
         alignItems: "center",
@@ -28,7 +27,9 @@ const Button = ({ tag: { text, count } }) => {
           paddingHorizontal: 3,
           borderRadius: 4,
           backgroundColor: RED,
-          marginRight: 9
+          marginRight: 6,
+          minWidth: 16,
+          alignItems: "center"
         }}
       >
         <Text style={{ fontSize: 14, color: "#fff", fontWeight: "700" }}>
@@ -48,12 +49,8 @@ export default ({ style }) => {
     <View
       style={[
         {
-          marginHorizontal: -2,
-          height: 38,
-          backgroundColor: "#fff",
-          borderLeftWidth: 1,
-          borderRightWidth: 1,
-          borderColor: "#f2f2f2"
+          height: 44,
+          backgroundColor: "#fff"
         },
         style
       ]}

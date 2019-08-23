@@ -15,13 +15,13 @@ import { Entypo, Ionicons } from "@expo/vector-icons";
 import { BLUE, RED, NOW } from "../utils/Colors";
 import Link from "./Link";
 
-export default ({ toggle, rotate }) => {
+export default ({ toggle, rotate, style = { paddingLeft: 15 } }) => {
   const city = useSelector(state => state.events.city);
   const locationEnabled = useSelector(state => state.permissions.location);
   const count = useSelector(state => state.events.upNext);
 
   const today = moment();
-  const day = today.format("dddd h:mma, MMMM D, Y");
+  const day = today.format("dddd h:mma");
 
   const locationText =
     city && city.text.length
@@ -40,51 +40,30 @@ export default ({ toggle, rotate }) => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={onPress} style={styles.button}>
+      <TouchableOpacity onPress={onPress} style={[styles.button, style]}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.subtitleText}>{day}</Text>
+          <Text style={styles.timeText}>{day}</Text>
           <View style={[styles.row, { marginTop: 5 }]}>
-            <Text style={styles.titleText} numberOfLines={1}>
+            <Text style={styles.locationText} numberOfLines={1}>
               {locationText}
             </Text>
           </View>
         </View>
         {WEB ? (
-          <View
-            style={{
-              flexDirection: "row"
+          <NavLink
+            to="/add"
+            onPress={() => {
+              navigate("Add");
             }}
+            text="Add Fun Stuff"
           >
-            <NavLink
-              to="/add"
-              onPress={() => {
-                navigate("Add");
-              }}
-              text="Add"
-            >
-              <Ionicons
-                style={{ marginTop: 1 }}
-                name="ios-add"
-                size={28}
-                color={NOW}
-              />
-            </NavLink>
-            <NavLink
-              to="/search"
-              onPress={() => {
-                navigate("Search");
-              }}
-              text="Search"
-              style={{ marginHorizontal: 10 }}
-            >
-              <Ionicons
-                style={{ marginTop: 1 }}
-                name="ios-search"
-                size={20}
-                color={BLUE}
-              />
-            </NavLink>
-          </View>
+            <Ionicons
+              style={{ marginTop: 1 }}
+              name="ios-add"
+              size={28}
+              color={"#fff"}
+            />
+          </NavLink>
         ) : (
           <View style={styles.row}>
             <Ionicons
@@ -123,10 +102,12 @@ const NavLink = ({ children, style = {}, text, ...props }) => {
       style={[
         {
           justifyContent: "center",
-          paddingHorizontal: 5,
+          paddingHorizontal: 15,
           alignItems: "center",
           flexDirection: "row",
-          height: 36
+          height: 36,
+          backgroundColor: NOW,
+          borderRadius: 18
         },
         style
       ]}
@@ -134,10 +115,10 @@ const NavLink = ({ children, style = {}, text, ...props }) => {
       {children}
       <Text
         style={{
-          fontSize: 12,
-          fontWeight: "500",
-          color: "#000",
-          marginLeft: 6
+          fontSize: 14,
+          fontWeight: "700",
+          color: "#fff",
+          marginLeft: 10
         }}
       >
         {text}
@@ -151,25 +132,29 @@ const topInset = getInset("top");
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    maxWidth: WEB ? 500 : null,
+    maxWidth: WEB ? 900 : null,
     alignSelf: WEB ? "center" : "stretch",
-    borderBottomWidth: 1,
-    borderBottomColor: WEB ? "#f2f2f2" : "#e0e0e0"
+    borderBottomWidth: WEB ? null : 1,
+    borderColor: "#e0e0e0"
   },
   row: {
     flexDirection: "row",
     alignItems: "center"
   },
   button: {
-    paddingTop: IOS ? topInset : 10,
-    paddingBottom: 7,
-    paddingLeft: 10,
+    paddingTop: IOS ? topInset : WEB ? 20 : 10,
+    paddingBottom: WEB ? 10 : 7,
     flexDirection: "row",
     alignItems: "center"
   },
-  titleText: {
-    fontSize: 14,
-    fontWeight: "600"
+  timeText: {
+    fontSize: 22,
+    fontWeight: "700"
+  },
+  locationText: {
+    fontSize: 16,
+    color: "#666",
+    fontWeight: "700"
   },
   subtitleText: {
     fontSize: 10,

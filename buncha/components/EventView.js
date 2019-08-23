@@ -39,7 +39,9 @@ export default memo(({ item, index = 0, style, description, demo }) => {
             <Text style={styles.descriptionText}>
               {item._source.description}
             </Text>
-          ) : null}
+          ) : (
+            <Text style={styles.tagText}>{item._source.tags.join(", ")}</Text>
+          )}
         </View>
       </View>
       <View
@@ -109,6 +111,13 @@ const styles = StyleSheet.create({
     marginTop: 7,
     color: "#000",
     fontSize: 14
+  },
+  tagText: {
+    marginTop: 3,
+    color: "#666",
+    fontWeight: "700",
+    fontSize: 10,
+    textTransform: "uppercase"
   },
   timeText: {
     color: "#000",

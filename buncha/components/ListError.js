@@ -16,10 +16,11 @@ export default () => {
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    paddingTop: 60
+    paddingTop: 60,
+    paddingHorizontal: 35
   },
   titleText: {
-    fontSize: 18,
+    fontSize: 48,
     color: "#aaa",
     fontWeight: "700"
   },

@@ -31,9 +31,11 @@ const ImageItem = memo(({ item, height }) => {
 
 const ImageGallery = ({ photos, height = 170, scrollEnabled = true }) => {
   return (
-    <View style={{ height }} pointerEvents={scrollEnabled ? "auto" : "none"}>
+    <View
+      style={{ height, width: "100%" }}
+      pointerEvents={scrollEnabled ? "auto" : "none"}
+    >
       <FlatList
-        style={styles.list}
         horizontal
         data={photos}
         renderItem={data => <ImageItem {...data} height={height} />}

@@ -406,9 +406,7 @@ export function itemTime(day, groupedHours, ending, upcoming) {
       return hour;
     });
 
-  if (ending) {
-    return `Ends at ${end}`;
-  } else if (upcoming) {
+  if (ending || upcoming) {
     return `${start} to ${end}`;
   } else {
     return `${LONG_DAYS[day]} ${start} to ${end}`;

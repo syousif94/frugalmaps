@@ -22,7 +22,6 @@ export default ({ toggle = () => {} }) => {
           return (
             <View style={styles.header}>
               <SearchTime />
-              <SearchTags />
               <Text style={styles.headerText}>Where</Text>
               <CityOrderPicker />
               <View style={styles.divider} />

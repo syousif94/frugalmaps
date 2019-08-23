@@ -34,6 +34,10 @@ export default () => {
   const [opacity, setOpacity] = useState(WEB ? 0 : 1);
 
   useEffect(() => {
+    dispatch(enableLocation());
+  }, []);
+
+  useEffect(() => {
     if (WEB) {
       const history = getHistory();
 
@@ -73,10 +77,6 @@ export default () => {
     }
   }, [locationEnabled, data, refreshing, error]);
 
-  useEffect(() => {
-    dispatch(enableLocation());
-  }, []);
-
   const [width, setWidth] = useState(Dimensions.get("window").width);
 
   useEffect(() => {
@@ -107,22 +107,40 @@ export default () => {
         <ScrollView
           ref={listRef}
           style={styles.list}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={[
+            styles.listContent,
+            {
+              borderLeftWidth: width > 902 ? 1 : null,
+              borderRightWidth: width > 902 ? 1 : null
+            }
+          ]}
         >
           <AppBanner />
-          <TopBar rotate={citiesTranslate.current} toggle={toggleCities} />
+          <TopBar
+            rotate={citiesTranslate.current}
+            toggle={toggleCities}
+            style={{ paddingHorizontal: width > 600 ? 25 : 10 }}
+          />
           {error ? (
             <ListError />
           ) : (
             <React.Fragment>
               <SortBar />
-              <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  paddingHorizontal: width > 600 ? 10 : null
+                }}
+              >
                 {data.map((item, index) => (
                   <View
                     style={{
-                      width: width > 900 ? "33%" : width > 600 ? "50%" : "100%",
-                      paddingHorizontal: width > 600 ? 20 : 0,
-                      paddingLeft: width <= 600 ? 15 : null
+                      width:
+                        width > 900 ? "33.33%" : width > 600 ? "50%" : "100%",
+                      paddingHorizontal: width > 600 ? 10 : null,
+                      paddingLeft: width <= 600 ? 10 : null,
+                      paddingVertical: width > 600 ? 10 : null
                     }}
                     key={item._id}
                   >
@@ -141,7 +159,7 @@ export default () => {
           <FlatList
             ref={listRef}
             renderItem={data => {
-              return <Item {...data} />;
+              return <Item {...data} photosOnTop />;
             }}
             contentContainerStyle={styles.listContent}
             data={data}
@@ -152,6 +170,7 @@ export default () => {
             onRefresh={refresh}
             ListHeaderComponent={() => <SortBar />}
             ListFooterComponent={() => (data.length ? <ListFooter /> : null)}
+            ListEmptyComponent={() => (error ? <ListError /> : null)}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
           />
           <SearchPanel
@@ -203,12 +222,14 @@ const styles = StyleSheet.create({
   },
   listContent: {
     width: "100%",
-    maxWidth: WEB ? 900 : null,
+    minHeight: "100%",
+    borderColor: "#f2f2f2",
+    maxWidth: WEB ? 902 : null,
     alignSelf: WEB ? "center" : "stretch"
   },
   separator: {
+    marginBottom: 10,
     height: 1,
-    marginLeft: 5,
     backgroundColor: "#f2f2f2"
   }
 });

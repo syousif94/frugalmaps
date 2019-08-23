@@ -103,6 +103,7 @@ export default class Input extends Component {
           style={styles.btn}
           onPress={this._focus}
           disabled={this.state.focused}
+          activeOpacity={1}
         >
           {render ? render() : null}
           <TextInput

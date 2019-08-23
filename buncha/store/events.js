@@ -153,6 +153,8 @@ export function get(bounds = null) {
       body.bounds = bounds;
     }
 
+    console.log({ body });
+
     try {
       const res = await api("events", body);
       console.log({ res });
@@ -161,7 +163,24 @@ export function get(bounds = null) {
 
       // console.log(res);
 
+      const city =
+        res.city && res.city.text
+          ? {
+              ...res.city,
+              text: res.city.text
+                .split(",")
+                .map(s => s.replace(/[0-9]/g, "").trim())
+                .join(", ")
+            }
+          : bounds
+          ? undefined
+          : null;
+
       if (res.empty) {
+        const error =
+          city && city.text
+            ? `We don't have any event data for ${city.text} yet.`
+            : `We can't determine your location`;
         dispatch({
           type: "events/set",
           payload: {
@@ -171,8 +190,8 @@ export function get(bounds = null) {
             closest: [],
             newest: [],
             tags: [],
-            error: `We don't have any results for ${res.city.text} yet.`,
-            city: res.city
+            error,
+            city
           }
         });
         return;
@@ -187,7 +206,7 @@ export function get(bounds = null) {
           closest: res.closest ? res.closest[0].data : [],
           newest: res.newest[0].data,
           places: res.places,
-          city: res.city,
+          city,
           markers: res.markers[0].data,
           bounds: res.bounds,
           data: res.data,

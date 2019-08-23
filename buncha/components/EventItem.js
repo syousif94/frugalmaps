@@ -7,9 +7,9 @@ import ImageGallery from "./ImageGallery";
 import { selectPlaceEvents } from "../store/events";
 import { useSelector } from "react-redux";
 import { WEB } from "../utils/Constants";
-import { distanceTo } from "../utils/Locate";
+import { distanceTo, roundedDistanceTo } from "../utils/Locate";
 
-export default memo(({ item: i, index, demo, section }) => {
+export default memo(({ item: i, index, demo, section, photosOnTop }) => {
   let item = i;
   if (demo) {
     item = {
@@ -25,7 +25,6 @@ export default memo(({ item: i, index, demo, section }) => {
     };
   }
 
-  const streetText = item._source.address.split(",")[0];
   const cityText = item._source.neighborhood || item._source.city;
 
   const onPress = () => {
@@ -42,10 +41,13 @@ export default memo(({ item: i, index, demo, section }) => {
       }`
     : null;
 
-  const distance = distanceTo(item);
+  const distance = roundedDistanceTo(item);
 
   return (
     <View style={[styles.container]}>
+      {photosOnTop ? (
+        <ImageGallery height={90} photos={item._source.photos} />
+      ) : null}
       <Link to={`e/${item._id}`} style={styles.infoButton} onPress={onPress}>
         <View
           style={[
@@ -63,7 +65,7 @@ export default memo(({ item: i, index, demo, section }) => {
               {index + 1}. {item._source.location}
             </Text>
             <Text style={styles.detailText}>
-              {distance ? <Text>{distance.toFixed(1)} mi</Text> : null}{" "}
+              {distance}
               {cityText}
             </Text>
           </View>
@@ -74,7 +76,9 @@ export default memo(({ item: i, index, demo, section }) => {
           )}
         </View>
         <EventView demo={demo} index={index} item={item} section={section} />
-        <ImageGallery height={90} photos={item._source.photos} />
+        {photosOnTop ? null : (
+          <ImageGallery height={90} photos={item._source.photos} />
+        )}
       </Link>
     </View>
   );
@@ -85,7 +89,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff"
   },
   infoButton: {
-    paddingBottom: 8
+    paddingBottom: 8,
+    paddingHorizontal: WEB ? null : 10
   },
   row: {
     flexDirection: "row",
