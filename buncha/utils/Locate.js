@@ -16,13 +16,13 @@ export function roundedDistance(distance, withDot = true) {
   const suffix = withDot ? " · " : " ";
   if (distance > 1000) {
     const kMiles = (distance / 1000).toFixed(1);
-    return `${kMiles}k mi${suffix}`;
+    return `${kMiles}kmi${suffix}`;
   } else if (distance > 100) {
     const miles = parseInt(distance, 10);
-    return `${miles} mi${suffix}`;
+    return `${miles}mi${suffix}`;
   } else {
     const miles = distance.toFixed(1);
-    return `${miles} mi${suffix}`;
+    return `${miles}mi${suffix}`;
   }
 }
 
@@ -30,5 +30,5 @@ export function roundedDistanceTo(item) {
   const distance = distanceTo(item);
   if (!distance) return null;
 
-  return roundedDistance(distance);
+  return roundedDistance(distance, false);
 }

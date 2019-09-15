@@ -72,7 +72,7 @@ export default memo(({ item, id }) => {
   };
 
   const scrollViewStyle = {
-    maxWidth: narrow ? null : 450,
+    maxWidth: narrow || !WEB ? null : 450,
     flex: 1
   };
 
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   },
   info: {
     width: "100%",
-    maxWidth: 500,
+    maxWidth: WEB ? 500 : null,
     alignSelf: "center"
   },
   row: {

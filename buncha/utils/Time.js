@@ -221,10 +221,10 @@ export function timeRemaining(hours, iso) {
     let value = "";
 
     if (hour) {
-      value += `${hour}h `;
+      value += `${hour}h`;
+    } else {
+      value += `${minutes}m`;
     }
-
-    value += `${minutes}m`;
 
     remaining = { value };
   }
@@ -381,7 +381,7 @@ export function itemRemaining(item) {
     }
   }
 
-  const state = ending ? "left" : "away";
+  const state = ending ? "left" : "";
 
   const day = (tomorrow && tomorrow.text) || spanHours.days[0].text;
 
@@ -417,8 +417,8 @@ export function itemTime(day, groupedHours, ending, upcoming) {
     });
 
   if (ending || upcoming) {
-    return `${start} to ${end}`;
+    return `Today ${start} to ${end}`;
   } else {
-    return `${LONG_DAYS[day]} ${start} to ${end}`;
+    return `${day} ${start} to ${end}`;
   }
 }

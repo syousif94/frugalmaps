@@ -3,13 +3,12 @@ import { View, Text, StyleSheet } from "react-native";
 import { navigate } from "../screens";
 import Link from "./Link";
 import EventView from "./EventView";
-import ImageGallery from "./ImageGallery";
 import { selectPlaceEvents } from "../store/events";
 import { useSelector } from "react-redux";
 import { WEB } from "../utils/Constants";
-import { distanceTo, roundedDistanceTo } from "../utils/Locate";
+import { roundedDistanceTo } from "../utils/Locate";
 
-export default memo(({ item: i, index, demo, section, photosOnTop }) => {
+export default memo(({ item: i, index, demo, section, style = {} }) => {
   let item = i;
   if (demo) {
     item = {
@@ -44,10 +43,7 @@ export default memo(({ item: i, index, demo, section, photosOnTop }) => {
   const distance = roundedDistanceTo(item);
 
   return (
-    <View style={[styles.container]}>
-      {photosOnTop ? (
-        <ImageGallery height={90} photos={item._source.photos} />
-      ) : null}
+    <View style={[styles.container, style]}>
       <Link to={`e/${item._id}`} style={styles.infoButton} onPress={onPress}>
         <View
           style={[
@@ -62,12 +58,10 @@ export default memo(({ item: i, index, demo, section, photosOnTop }) => {
         >
           <View style={{ flex: 1 }}>
             <Text style={styles.subtitleText}>
-              {index + 1}. {item._source.location}
+              {index + 1}. {item._source.location}{" "}
+              <Text style={{ color: "#666" }}>{distance}</Text>
             </Text>
-            <Text style={styles.detailText}>
-              {distance}
-              {cityText}
-            </Text>
+            <Text style={styles.detailText}>{cityText}</Text>
           </View>
           {placeText && (
             <View style={styles.count}>
@@ -76,9 +70,6 @@ export default memo(({ item: i, index, demo, section, photosOnTop }) => {
           )}
         </View>
         <EventView demo={demo} index={index} item={item} section={section} />
-        {photosOnTop ? null : (
-          <ImageGallery height={90} photos={item._source.photos} />
-        )}
       </Link>
     </View>
   );
@@ -86,18 +77,18 @@ export default memo(({ item: i, index, demo, section, photosOnTop }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff"
+    overflow: "hidden"
   },
   infoButton: {
-    paddingHorizontal: WEB ? null : 10
+    paddingHorizontal: WEB ? 5 : 10
   },
   row: {
     flexDirection: "row",
     alignItems: "center"
   },
   subtitleText: {
-    fontSize: 18,
-    fontWeight: "600"
+    fontSize: 12,
+    fontWeight: "700"
   },
   distanceText: {
     color: "#666",

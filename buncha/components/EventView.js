@@ -24,15 +24,15 @@ export default memo(({ item, index = 0, style, description, demo }) => {
         style={[styles.row, { alignItems: "flex-start", paddingHorizontal: 5 }]}
       >
         <View style={{ flex: 1 }}>
-          <Text style={[styles.subtitleText]}>{time.span}</Text>
-          <View style={styles.row}>
-            <Text style={styles.titleText}>
-              {item._source.title}
-              <Text style={{ color: time.color, fontWeight: "700" }}>
-                {" "}
-                {time.text} {time.state}
-              </Text>
+          <Text style={[styles.subtitleText]}>
+            {time.span}
+            <Text style={{ color: time.color, fontWeight: "700" }}>
+              {" "}
+              {time.text} {time.state}
             </Text>
+          </Text>
+          <View style={styles.row}>
+            <Text style={styles.titleText}>{item._source.title}</Text>
           </View>
 
           {description ? (
@@ -59,13 +59,13 @@ export default memo(({ item, index = 0, style, description, demo }) => {
           <FontAwesome name="star" size={16} color={"#FFA033"} />
           <Text style={styles.actionText}>Interested</Text>
         </TouchableOpacity>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={[styles.actionButton]}
           onPress={share.bind(null, item)}
         >
           <Feather name="share" size={16} color={BLUE} />
           <Text style={styles.actionText}>Share</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       {/* <View style={{ marginTop: 5, maxWidth: "100%" }}>
         <EventFriends />

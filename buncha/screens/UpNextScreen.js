@@ -12,6 +12,7 @@ import {
 import { get } from "../store/events";
 import * as Cities from "../store/cities";
 import Item from "../components/EventItem";
+// import PlaceItem from "../components/PlaceItem";
 import TopBar from "../components/TopBar";
 import { enableLocation } from "../store/permissions";
 import { WEB } from "../utils/Constants";
@@ -23,7 +24,12 @@ import { useCitiesToggle } from "../utils/Hooks";
 import AppBanner from "../components/AppBanner";
 import ListError from "../components/ListError";
 
+const narrow = 550;
+
 export default () => {
+  // const data = useSelector(state =>
+  //   state.events.markers.sort((a, b) => a._source.location > b._source.location)
+  // );
   const data = useSelector(state => state.events.upNext);
   const refreshing = useSelector(state => state.events.refreshing);
   const error = useSelector(state => state.events.error);
@@ -107,45 +113,50 @@ export default () => {
         <ScrollView
           ref={listRef}
           style={styles.list}
-          contentContainerStyle={[
-            styles.listContent,
-            {
-              borderLeftWidth: width > 902 ? 1 : null,
-              borderRightWidth: width > 902 ? 1 : null
-            }
-          ]}
+          contentContainerStyle={[styles.listContent]}
         >
           <AppBanner />
           <TopBar
             rotate={citiesTranslate.current}
             toggle={toggleCities}
-            style={{ paddingHorizontal: width > 600 ? 25 : 10 }}
+            style={{ paddingHorizontal: width > narrow ? 25 : 20 }}
           />
           {error ? (
             <ListError />
           ) : (
             <React.Fragment>
-              <SortBar />
+              {/* <SortBar /> */}
               <View
                 style={{
                   flexDirection: "row",
                   flexWrap: "wrap",
-                  paddingHorizontal: width > 600 ? 10 : null
+                  paddingHorizontal: width > narrow ? 10 : null
                 }}
               >
                 {data.map((item, index) => (
                   <View
                     style={{
                       width:
-                        width > 900 ? "33.33%" : width > 600 ? "50%" : "100%",
-                      paddingHorizontal: width > 600 ? 10 : null,
-                      paddingLeft: width <= 600 ? 10 : null,
-                      paddingVertical: width > 600 ? 10 : null
+                        width > 900
+                          ? "33.33%"
+                          : width > narrow
+                          ? "50%"
+                          : "100%",
+                      paddingHorizontal: width > narrow ? 10 : null,
+                      paddingLeft: width <= narrow ? 10 : null,
+                      paddingVertical: width > narrow ? 10 : null
                     }}
                     key={item._id}
                   >
-                    <Item item={item} index={index} />
-                    {width <= 600 ? <View style={styles.separator} /> : null}
+                    <Item
+                      item={item}
+                      index={index}
+                      style={{
+                        backgroundColor: width > narrow ? "#f4f4f4" : null,
+                        borderRadius: width > narrow ? 8 : null
+                      }}
+                    />
+                    {width <= narrow ? <View style={styles.separator} /> : null}
                   </View>
                 ))}
               </View>
@@ -224,12 +235,11 @@ const styles = StyleSheet.create({
     width: "100%",
     minHeight: "100%",
     borderColor: "#f2f2f2",
-    maxWidth: WEB ? 902 : null,
+    maxWidth: WEB ? 900 : null,
     alignSelf: WEB ? "center" : "stretch"
   },
   separator: {
     marginBottom: WEB ? null : 10,
-    marginTop: WEB ? 10 : null,
     height: 1,
     backgroundColor: "#f2f2f2"
   }
