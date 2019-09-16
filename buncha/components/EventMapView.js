@@ -37,15 +37,17 @@ export default ({ item }) => {
   return (
     <View
       style={{
-        height: 120,
-        borderTopWidth: 1,
-        borderTopColor: "#e0e0e0"
+        height: 160,
+        borderRadius: 8,
+        margin: 10,
+        overflow: "hidden"
       }}
     >
       <MapView
         ref={mapRef}
         style={{
-          flex: 1
+          flex: 1,
+          borderRadius: 8
         }}
       >
         <Marker data={item} />

@@ -12,11 +12,11 @@ import {
 import { get } from "../store/events";
 import * as Cities from "../store/cities";
 import Item from "../components/EventItem";
-import UpNextItem from "../components/UpNextItem";
+import UpNextItem, { columns, itemMargin } from "../components/UpNextItem";
 // import PlaceItem from "../components/PlaceItem";
 import TopBar from "../components/TopBar";
 import { enableLocation } from "../store/permissions";
-import { WEB } from "../utils/Constants";
+import { WEB, IOS } from "../utils/Constants";
 import { getHistory } from ".";
 import { Helmet } from "react-helmet";
 import SortBar from "../components/SortBar";
@@ -88,6 +88,23 @@ export default () => {
       }
     }
   }, [locationEnabled, data, refreshing, error]);
+
+  const initialLoadCompleted = useRef(false);
+
+  useEffect(() => {
+    if (
+      IOS &&
+      !refreshing &&
+      !initialLoadCompleted.current &&
+      (data.length || error)
+    ) {
+      initialLoadCompleted.current = true;
+      listRef.current.scrollToOffset({
+        animated: false,
+        offset: -(getInset("top") + 68)
+      });
+    }
+  }, [refreshing, initialLoadCompleted, data, error]);
 
   const [width, setWidth] = useState(Dimensions.get("window").width);
 
@@ -181,7 +198,7 @@ export default () => {
               left: 0,
               right: 0
             }}
-            numColumns={2}
+            numColumns={columns}
             data={data}
             style={styles.list}
             contentInsetAdjustmentBehavior="never"
@@ -194,7 +211,7 @@ export default () => {
           <TopBar
             rotate={citiesTranslate.current}
             toggle={toggleCities}
-            style={{ paddingHorizontal: 13 }}
+            style={{ paddingHorizontal: itemMargin }}
             containerStyle={{
               position: "absolute",
               top: 0,
@@ -220,7 +237,7 @@ const ListFooter = () => {
         backgroundColor: "#fff",
         borderTopWidth: 1,
         borderColor: "#f2f2f2",
-        paddingHorizontal: 13,
+        paddingHorizontal: WEB ? 20 : itemMargin,
         paddingTop: 10,
         paddingBottom: 60
       }}

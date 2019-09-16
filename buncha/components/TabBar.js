@@ -4,20 +4,65 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  Dimensions
 } from "react-native";
 import { getInset } from "../utils/SafeAreaInsets";
 import { IOS } from "../utils/Constants";
 import { navigate } from "../screens";
 import { BLUE } from "../utils/Colors";
-import { Ionicons, FontAwesome, EvilIcons } from "@expo/vector-icons";
+import { Ionicons, FontAwesome, EvilIcons, Entypo } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 
-const routeMap = {
-  Events: "UpNext",
-  Map: "Map",
-  Account: "Account",
-  Submit: "Submit"
+const width = Dimensions.get("window").width;
+
+// const routeMap = {
+//   Events: "UpNext",
+//   Map: "Map",
+//   Account: "Account",
+//   Submit: "Submit"
+// };
+
+let bottomInset = getInset("bottom");
+
+if (bottomInset > 25) {
+  bottomInset -= 10;
+}
+
+const PickerIcon = () => {
+  return (
+    <View
+      style={{
+        alignItems: "center",
+        marginRight: 8,
+        marginLeft: 3
+      }}
+    >
+      <Entypo name="chevron-up" size={10} color={BLUE} />
+      <Entypo
+        name="chevron-down"
+        size={10}
+        color={BLUE}
+        style={{ marginTop: -1 }}
+      />
+    </View>
+  );
+};
+
+const PickerButton = ({ title, value, onPress }) => {
+  return (
+    <TouchableOpacity style={styles.pickerBtn}>
+      <View style={styles.pickerInfo}>
+        <Text allowFontScaling={false} style={styles.pickerTitleText}>
+          {title}
+        </Text>
+        <Text allowFontScaling={false} style={styles.pickerValueText}>
+          {value}
+        </Text>
+      </View>
+      <PickerIcon />
+    </TouchableOpacity>
+  );
 };
 
 export default ({ navigation }) => {
@@ -30,10 +75,11 @@ export default ({ navigation }) => {
   return (
     <BlurView style={styles.container} intensity={100} tint="light">
       <ScrollView
+        centerContent={width > 600}
         contentContainerStyle={{
           paddingTop: 5,
           paddingHorizontal: 2.5,
-          paddingBottom: IOS ? getInset("bottom") - 10 : 5
+          paddingBottom: IOS ? bottomInset : 5
         }}
         style={{
           borderTopWidth: 1,
@@ -43,67 +89,62 @@ export default ({ navigation }) => {
         alwaysBounceHorizontal
         showsHorizontalScrollIndicator={false}
       >
-        <TouchableOpacity
-          style={styles.roundBtn}
-          onPress={() => {
-            if (routeKey === "Map") {
+        {routeKey === "UpNext" ? null : (
+          <TouchableOpacity
+            style={styles.roundBtn}
+            onPress={() => {
               navigate("UpNext");
-            } else {
+            }}
+          >
+            <EvilIcons name="calendar" size={28} color={BLUE} />
+            <Text
+              allowFontScaling={false}
+              style={[styles.buttonText, { marginTop: -3 }]}
+            >
+              List
+            </Text>
+          </TouchableOpacity>
+        )}
+
+        {routeKey === "Map" ? null : (
+          <TouchableOpacity
+            style={styles.roundBtn}
+            onPress={() => {
               navigate("Map");
-            }
-          }}
-        >
-          {/* <EvilIcons name="calendar" size={30} color={color} /> */}
-          <FontAwesome name="map-o" size={16} color={BLUE} />
-          <Text
-            allowFontScaling={false}
-            style={[styles.buttonText, { marginTop: 3 }]}
+            }}
           >
-            Map
-          </Text>
-        </TouchableOpacity>
+            <FontAwesome name="map-o" size={16} color={BLUE} />
+            <Text
+              allowFontScaling={false}
+              style={[styles.buttonText, { marginTop: 3 }]}
+            >
+              Map
+            </Text>
+          </TouchableOpacity>
+        )}
 
-        <TouchableOpacity
-          style={styles.roundBtn}
-          onPress={() => {
-            navigate("Account");
-          }}
-        >
-          <FontAwesome name="user-o" size={16} color={BLUE} />
-          <Text
-            allowFontScaling={false}
-            style={[styles.buttonText, { marginTop: 3 }]}
+        {routeKey === "Account" ? null : (
+          <TouchableOpacity
+            style={styles.roundBtn}
+            onPress={() => {
+              navigate("Account");
+            }}
           >
-            Friends
-          </Text>
-        </TouchableOpacity>
+            <FontAwesome name="user-o" size={16} color={BLUE} />
+            <Text
+              allowFontScaling={false}
+              style={[styles.buttonText, { marginTop: 3 }]}
+            >
+              Friends
+            </Text>
+          </TouchableOpacity>
+        )}
 
-        <TouchableOpacity style={styles.pickerBtn}>
-          <Text allowFontScaling={false} style={styles.pickerTitleText}>
-            Type
-          </Text>
-          <Text allowFontScaling={false} style={styles.pickerValueText}>
-            All
-          </Text>
-        </TouchableOpacity>
+        <PickerButton title="Type" value="All" />
 
-        <TouchableOpacity style={styles.pickerBtn}>
-          <Text allowFontScaling={false} style={styles.pickerTitleText}>
-            When
-          </Text>
-          <Text allowFontScaling={false} style={styles.pickerValueText}>
-            Tue 7:48pm
-          </Text>
-        </TouchableOpacity>
+        <PickerButton title="When" value="Tue 7:48pm" />
 
-        <TouchableOpacity style={styles.pickerBtn}>
-          <Text allowFontScaling={false} style={styles.pickerTitleText}>
-            Where
-          </Text>
-          <Text allowFontScaling={false} style={styles.pickerValueText}>
-            Austin
-          </Text>
-        </TouchableOpacity>
+        <PickerButton title="Where" value="Austin" />
 
         <TouchableOpacity
           style={styles.roundBtn}
@@ -143,11 +184,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 2.5
   },
   pickerBtn: {
-    paddingVertical: 5,
-    justifyContent: "space-between",
-    height: 44,
+    flexDirection: "row",
+    alignItems: "center",
+    overflow: "hidden",
     backgroundColor: "rgba(180,180,180,0.1)",
-    paddingHorizontal: 8,
     marginHorizontal: 2.5,
     borderRadius: 6
   },
@@ -155,6 +195,12 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: "500",
     color: "#777"
+  },
+  pickerInfo: {
+    paddingHorizontal: 8,
+    justifyContent: "space-between",
+    height: 44,
+    paddingVertical: 5
   },
   pickerTitleText: {
     fontSize: 10,

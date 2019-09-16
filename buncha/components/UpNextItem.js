@@ -12,13 +12,26 @@ import { selectPlaceEvents } from "../store/events";
 import { useSelector } from "react-redux";
 import { RED } from "../utils/Colors";
 import { roundedDistanceTo } from "../utils/Locate";
-import { AWSCF } from "../utils/Constants";
 import { itemRemaining } from "../utils/Time";
 import ImageGallery from "./ImageGallery";
 import { Entypo, FontAwesome } from "@expo/vector-icons";
 
 const windowWidth = Dimensions.get("window").width;
-const itemWidth = (windowWidth - 39) / 2;
+
+let columns;
+let itemMargin;
+
+if (windowWidth > 600) {
+  columns = 3;
+  itemMargin = 16;
+} else {
+  columns = 2;
+  itemMargin = 13;
+}
+
+const itemWidth = (windowWidth - itemMargin * (columns + 1)) / columns;
+
+export { columns, itemMargin, itemWidth };
 
 export default memo(({ item, index }) => {
   const onPress = () => {
@@ -38,14 +51,15 @@ export default memo(({ item, index }) => {
 
   const time = itemRemaining(item);
 
-  const photo = item._source.photos[0];
-
-  const uri = `${AWSCF}${photo.thumb.key}`;
-
   return (
     <Link to={`e/${item._id}`} style={styles.container} onPress={onPress}>
       <View style={styles.image}>
         <ImageGallery photos={item._source.photos} height={70} />
+        {placeText && (
+          <View style={styles.count}>
+            <Text style={styles.countText}>{placeText}</Text>
+          </View>
+        )}
       </View>
       <Text style={styles.subtitleText}>{time.span}</Text>
       <Text style={styles.subtitleText}>
@@ -76,8 +90,8 @@ export default memo(({ item, index }) => {
 const styles = StyleSheet.create({
   container: {
     width: itemWidth,
-    marginLeft: 13,
-    paddingVertical: 10
+    marginLeft: itemMargin,
+    paddingVertical: itemMargin - 3
   },
   image: {
     height: 70,
@@ -112,5 +126,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600",
     color: "#000"
+  },
+  count: {
+    position: "absolute",
+    top: 4,
+    right: 4,
+    paddingHorizontal: 4,
+    paddingVertical: 1,
+    borderRadius: 3,
+    backgroundColor: "rgba(0,0,0,0.5)"
+  },
+  countText: {
+    fontSize: 12,
+    color: "#fff",
+    fontWeight: "700"
   }
 });

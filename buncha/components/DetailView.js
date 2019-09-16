@@ -19,6 +19,17 @@ import Link from "../components/Link";
 import { RED, BLUE, NOW } from "../utils/Colors";
 import { roundedDistanceTo } from "../utils/Locate";
 
+let MapView = null;
+if (!WEB) {
+  MapView = require("./EventMapView").default;
+}
+
+let bottomInset = getInset("bottom");
+
+if (bottomInset > 25) {
+  bottomInset -= 10;
+}
+
 export default memo(({ item, id }) => {
   const events = useSelector(selectPlaceEvents(item));
   const iframeRef = useRef(null);
@@ -139,11 +150,25 @@ export default memo(({ item, id }) => {
               );
             })}
           </View>
+          {!WEB && item ? <MapView item={item} /> : null}
         </ScrollView>
-        <View style={{ flexDirection: "row" }}>
-          <ScrollView horizontal>
+        <View
+          style={{
+            flexDirection: "row",
+            borderTopWidth: 1,
+            borderTopColor: "#e0e0e0"
+          }}
+        >
+          <ScrollView
+            horizontal
+            contentContainerStyle={{
+              paddingHorizontal: 3.5,
+              paddingTop: 6,
+              paddingBottom: bottomInset
+            }}
+          >
             <Link
-              style={[styles.link, { marginLeft: 15 }]}
+              style={[styles.link]}
               onPress={() => {
                 Linking.openURL(`tel:${item._source.phone}`);
               }}
@@ -251,11 +276,11 @@ const styles = StyleSheet.create({
     fontSize: 14
   },
   link: {
-    marginBottom: 10,
-    marginHorizontal: 5,
+    borderRadius: 8,
+    marginHorizontal: 2.5,
     paddingHorizontal: 15,
     backgroundColor: "#f4f4f4",
-    height: HEIGHT * 0.05,
+    height: 44,
     flexDirection: "row",
     alignItems: "center"
   }
