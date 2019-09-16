@@ -1,10 +1,15 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView
+} from "react-native";
 import { getInset } from "../utils/SafeAreaInsets";
 import { IOS } from "../utils/Constants";
 import { navigate } from "../screens";
 import { BLUE } from "../utils/Colors";
-import moment from "moment";
 import { Ionicons, FontAwesome, EvilIcons } from "@expo/vector-icons";
 
 const routeMap = {
@@ -14,30 +19,6 @@ const routeMap = {
   Submit: "Submit"
 };
 
-const Button = ({ text, style, routeKey, render }) => {
-  const onPress = () => {
-    navigate(routeMap[text]);
-  };
-  const textStyle = [styles.buttonText];
-
-  const selected = routeKey === routeMap[text];
-
-  if (selected) {
-    textStyle.push(styles.selected);
-  }
-
-  return (
-    <TouchableOpacity onPress={onPress} style={[styles.button, style]}>
-      {render ? render(selected) : null}
-      {text ? (
-        <Text allowFontScaling={false} style={textStyle}>
-          {text}
-        </Text>
-      ) : null}
-    </TouchableOpacity>
-  );
-};
-
 export default ({ navigation }) => {
   const {
     state: { index, routes }
@@ -45,80 +26,140 @@ export default ({ navigation }) => {
 
   const routeKey = routes[index] && routes[index].key;
 
-  const today = moment().format("MMM D");
-
   return (
     <View style={styles.container}>
-      <Button
-        text="Events"
-        routeKey={routeKey}
-        render={selected => {
-          const color = selected ? BLUE : "#aaa";
-          return (
-            <View style={{ marginBottom: -2 }}>
-              <EvilIcons name="calendar" size={30} color={color} />
-            </View>
-          );
+      <ScrollView
+        contentContainerStyle={{
+          paddingTop: 5,
+          paddingHorizontal: 2.5,
+          paddingBottom: IOS ? getInset("bottom") - 10 : 5
         }}
-      />
-      <Button
-        text="Map"
-        routeKey={routeKey}
-        render={selected => {
-          const color = selected ? BLUE : "#aaa";
-          return (
-            <View style={{ marginBottom: 4 }}>
-              <FontAwesome name="map-o" size={18} color={color} />
-            </View>
-          );
-        }}
-      />
-      <Button
-        text="Account"
-        routeKey={routeKey}
-        render={selected => {
-          const color = selected ? BLUE : "#aaa";
-          return (
-            <View style={{ marginBottom: 4 }}>
-              <FontAwesome name="user-o" size={18} color={color} />
-            </View>
-          );
-        }}
-      />
-      <Button
-        text="Submit"
-        routeKey={routeKey}
-        render={selected => {
-          const color = selected ? BLUE : "#aaa";
-          return (
-            <View>
-              <Ionicons name="ios-add-circle-outline" size={22} color={color} />
-            </View>
-          );
-        }}
-      />
+        horizontal
+        alwaysBounceHorizontal
+        showsHorizontalScrollIndicator={false}
+      >
+        <TouchableOpacity
+          style={styles.roundBtn}
+          onPress={() => {
+            if (routeKey === "Map") {
+              navigate("UpNext");
+            } else {
+              navigate("Map");
+            }
+          }}
+        >
+          {/* <EvilIcons name="calendar" size={30} color={color} /> */}
+          <FontAwesome name="map-o" size={16} color={BLUE} />
+          <Text
+            allowFontScaling={false}
+            style={[styles.buttonText, { marginTop: 3 }]}
+          >
+            Map
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.roundBtn}
+          onPress={() => {
+            navigate("Account");
+          }}
+        >
+          <FontAwesome name="user-o" size={16} color={BLUE} />
+          <Text
+            allowFontScaling={false}
+            style={[styles.buttonText, { marginTop: 3 }]}
+          >
+            Friends
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.pickerBtn}>
+          <Text allowFontScaling={false} style={styles.pickerTitleText}>
+            Type
+          </Text>
+          <Text allowFontScaling={false} style={styles.pickerValueText}>
+            All
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.pickerBtn}>
+          <Text allowFontScaling={false} style={styles.pickerTitleText}>
+            When
+          </Text>
+          <Text allowFontScaling={false} style={styles.pickerValueText}>
+            Tue 7:48pm
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.pickerBtn}>
+          <Text allowFontScaling={false} style={styles.pickerTitleText}>
+            Where
+          </Text>
+          <Text allowFontScaling={false} style={styles.pickerValueText}>
+            Austin
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.roundBtn}
+          onPress={() => {
+            navigate("Submit");
+          }}
+        >
+          <Ionicons name="ios-add-circle-outline" size={18} color={BLUE} />
+          <Text allowFontScaling={false} style={styles.buttonText}>
+            Add
+          </Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    paddingBottom: IOS ? getInset("bottom") - 10 : 0,
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    left: 0,
+    backgroundColor: "rgba(255,255,255,0.95)",
     borderTopWidth: 1,
-    borderTopColor: "#e0e0e0",
-    flexDirection: "row"
+    borderColor: "rgba(0,0,0,0.05)"
   },
-  button: {
-    height: 48,
-    paddingBottom: 4,
-    flex: 1,
+  roundBtn: {
+    height: 44,
+    minWidth: 44,
+    paddingHorizontal: 16,
     alignItems: "center",
-    justifyContent: "flex-end"
+    justifyContent: "flex-end",
+    paddingBottom: 5,
+    borderRadius: 6,
+    backgroundColor: "rgba(230,230,230,0.35)",
+    marginHorizontal: 2.5
+  },
+  pickerBtn: {
+    paddingVertical: 5,
+    justifyContent: "space-between",
+    height: 44,
+    backgroundColor: "rgba(230,230,230,0.35)",
+    paddingHorizontal: 8,
+    marginHorizontal: 2.5,
+    borderRadius: 6
   },
   buttonText: {
     fontSize: 10,
     fontWeight: "500",
     color: "#777"
+  },
+  pickerTitleText: {
+    fontSize: 10,
+    fontWeight: "500",
+    color: "#777"
+  },
+  pickerValueText: {
+    fontSize: 14,
+    fontWeight: "400",
+    color: "#000"
   },
   selected: {
     color: BLUE

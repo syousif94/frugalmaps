@@ -12,6 +12,7 @@ import {
 import { get } from "../store/events";
 import * as Cities from "../store/cities";
 import Item from "../components/EventItem";
+import UpNextItem from "../components/UpNextItem";
 // import PlaceItem from "../components/PlaceItem";
 import TopBar from "../components/TopBar";
 import { enableLocation } from "../store/permissions";
@@ -106,9 +107,6 @@ export default () => {
           <title>Buncha</title>
         </Helmet>
       ) : null}
-      {!WEB ? (
-        <TopBar rotate={citiesTranslate.current} toggle={toggleCities} />
-      ) : null}
       {WEB ? (
         <ScrollView
           ref={listRef}
@@ -170,23 +168,28 @@ export default () => {
           <FlatList
             ref={listRef}
             renderItem={data => {
-              return <Item {...data} photosOnTop />;
+              return <UpNextItem {...data} />;
             }}
-            contentContainerStyle={styles.listContent}
+            numColumns={2}
             data={data}
             style={styles.list}
-            contentInsetAdjustmentBehavior="never"
+            contentInsetAdjustmentBehavior="always"
             keyExtractor={item => item._id}
             refreshing={refreshing}
             onRefresh={refresh}
-            ListHeaderComponent={() => <SortBar />}
+            ListHeaderComponent={() => (
+              <TopBar
+                rotate={citiesTranslate.current}
+                toggle={toggleCities}
+                style={{
+                  minWidth: "100%",
+                  paddingHorizontal: 13,
+                  paddingTop: 0
+                }}
+              />
+            )}
             ListFooterComponent={() => (data.length ? <ListFooter /> : null)}
             ListEmptyComponent={() => (error ? <ListError /> : null)}
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
-          />
-          <SearchPanel
-            translateY={citiesTranslate.current}
-            toggle={toggleCities}
           />
         </View>
       )}
@@ -203,10 +206,11 @@ const ListFooter = () => {
   return (
     <View
       style={{
+        minWidth: "100%",
         backgroundColor: "#fff",
         borderTopWidth: 1,
         borderColor: "#f2f2f2",
-        paddingHorizontal: 10,
+        paddingHorizontal: 13,
         paddingTop: 10,
         paddingBottom: 60
       }}

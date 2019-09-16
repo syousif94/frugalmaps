@@ -115,7 +115,7 @@ export default () => {
             </View>
           ) : null}
         </View>
-        <SortBar style={{ borderTopWidth: 1, borderTopColor: "#e0e0e0" }} />
+        {/* <SortBar style={{ borderTopWidth: 1, borderTopColor: "#e0e0e0" }} /> */}
         <SearchPanel
           translateY={citiesTranslate.current}
           toggle={toggleCities}
