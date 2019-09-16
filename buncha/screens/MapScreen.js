@@ -60,7 +60,6 @@ export default () => {
 
   return (
     <View style={styles.container}>
-      <TopBar rotate={citiesTranslate.current} toggle={toggleCities} />
       <View style={styles.container}>
         <View style={styles.container}>
           <MapView
@@ -115,6 +114,16 @@ export default () => {
             </View>
           ) : null}
         </View>
+        <TopBar
+          rotate={citiesTranslate.current}
+          toggle={toggleCities}
+          style={{ paddingHorizontal: 13 }}
+          containerStyle={{
+            position: "absolute",
+            top: 0,
+            left: 0
+          }}
+        />
         {/* <SortBar style={{ borderTopWidth: 1, borderTopColor: "#e0e0e0" }} /> */}
         <SearchPanel
           translateY={citiesTranslate.current}

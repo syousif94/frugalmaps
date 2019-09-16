@@ -68,6 +68,10 @@ export default () => {
     }
 
     if (!WEB && !data.length && !refreshing && !error) {
+      listRef.current.scrollToOffset({
+        animated: false,
+        offset: getInset("top") + 68
+      });
       refresh();
       dispatch(Cities.get());
     } else if (WEB) {
@@ -171,26 +175,31 @@ export default () => {
             renderItem={data => {
               return <UpNextItem {...data} />;
             }}
+            contentInset={{
+              top: getInset("top") + 68,
+              bottom: getInset("bottom") + 40,
+              left: 0,
+              right: 0
+            }}
             numColumns={2}
             data={data}
             style={styles.list}
-            contentInsetAdjustmentBehavior="always"
+            contentInsetAdjustmentBehavior="never"
             keyExtractor={item => item._id}
             refreshing={refreshing}
             onRefresh={refresh}
-            ListHeaderComponent={() => (
-              <TopBar
-                rotate={citiesTranslate.current}
-                toggle={toggleCities}
-                style={{
-                  minWidth: "100%",
-                  paddingHorizontal: 13,
-                  paddingTop: 0
-                }}
-              />
-            )}
             ListFooterComponent={() => (data.length ? <ListFooter /> : null)}
             ListEmptyComponent={() => (error ? <ListError /> : null)}
+          />
+          <TopBar
+            rotate={citiesTranslate.current}
+            toggle={toggleCities}
+            style={{ paddingHorizontal: 13 }}
+            containerStyle={{
+              position: "absolute",
+              top: 0,
+              left: 0
+            }}
           />
         </View>
       )}

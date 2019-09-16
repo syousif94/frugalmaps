@@ -13,9 +13,15 @@ import { WEB, IOS } from "../utils/Constants";
 import { navigate } from "../screens";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { BLUE, RED, NOW } from "../utils/Colors";
+import { BlurView } from "expo-blur";
 import Link from "./Link";
 
-export default ({ toggle, rotate, style = { paddingLeft: 15 } }) => {
+export default ({
+  toggle,
+  rotate,
+  style = { paddingLeft: 15 },
+  containerStyle = {}
+}) => {
   const city = useSelector(state => state.events.city);
   const locationEnabled = useSelector(state => state.permissions.location);
   const count = useSelector(state => state.events.upNext);
@@ -39,7 +45,11 @@ export default ({ toggle, rotate, style = { paddingLeft: 15 } }) => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <BlurView
+      intensity={100}
+      tint="light"
+      style={[styles.container, containerStyle]}
+    >
       <TouchableOpacity onPress={onPress} style={[styles.button, style]}>
         <View style={{ flex: 1 }}>
           <Text style={styles.timeText}>{day}</Text>
@@ -66,7 +76,7 @@ export default ({ toggle, rotate, style = { paddingLeft: 15 } }) => {
           </NavLink>
         ) : null}
       </TouchableOpacity>
-    </View>
+    </BlurView>
   );
 };
 
@@ -108,9 +118,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     maxWidth: WEB ? 900 : null,
-    alignSelf: WEB ? "center" : "stretch",
-    borderBottomWidth: WEB ? null : 1,
-    borderColor: "#e0e0e0"
+    alignSelf: WEB ? "center" : "stretch"
   },
   row: {
     flexDirection: "row",
@@ -120,7 +128,9 @@ const styles = StyleSheet.create({
     paddingTop: IOS ? topInset : WEB ? 20 : 10,
     paddingBottom: WEB ? 10 : 7,
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "center",
+    borderBottomWidth: WEB ? null : 1,
+    borderColor: "rgba(0,0,0,0.05)"
   },
   timeText: {
     fontSize: 22,

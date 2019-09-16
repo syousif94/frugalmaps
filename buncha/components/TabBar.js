@@ -11,6 +11,7 @@ import { IOS } from "../utils/Constants";
 import { navigate } from "../screens";
 import { BLUE } from "../utils/Colors";
 import { Ionicons, FontAwesome, EvilIcons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
 
 const routeMap = {
   Events: "UpNext",
@@ -27,12 +28,16 @@ export default ({ navigation }) => {
   const routeKey = routes[index] && routes[index].key;
 
   return (
-    <View style={styles.container}>
+    <BlurView style={styles.container} intensity={100} tint="light">
       <ScrollView
         contentContainerStyle={{
           paddingTop: 5,
           paddingHorizontal: 2.5,
           paddingBottom: IOS ? getInset("bottom") - 10 : 5
+        }}
+        style={{
+          borderTopWidth: 1,
+          borderColor: "rgba(0,0,0,0.05)"
         }}
         horizontal
         alwaysBounceHorizontal
@@ -112,7 +117,7 @@ export default ({ navigation }) => {
           </Text>
         </TouchableOpacity>
       </ScrollView>
-    </View>
+    </BlurView>
   );
 };
 
@@ -121,10 +126,10 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     right: 0,
-    left: 0,
-    backgroundColor: "rgba(255,255,255,0.95)",
-    borderTopWidth: 1,
-    borderColor: "rgba(0,0,0,0.05)"
+    left: 0
+    // backgroundColor: "rgba(255,255,255,0.95)",
+    // borderTopWidth: 1,
+    // borderColor: "rgba(0,0,0,0.05)"
   },
   roundBtn: {
     height: 44,
@@ -134,14 +139,14 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     paddingBottom: 5,
     borderRadius: 6,
-    backgroundColor: "rgba(230,230,230,0.35)",
+    backgroundColor: "rgba(180,180,180,0.1)",
     marginHorizontal: 2.5
   },
   pickerBtn: {
     paddingVertical: 5,
     justifyContent: "space-between",
     height: 44,
-    backgroundColor: "rgba(230,230,230,0.35)",
+    backgroundColor: "rgba(180,180,180,0.1)",
     paddingHorizontal: 8,
     marginHorizontal: 2.5,
     borderRadius: 6
