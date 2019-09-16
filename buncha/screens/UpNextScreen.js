@@ -24,6 +24,7 @@ import SearchPanel from "../components/SearchPanel";
 import { useCitiesToggle } from "../utils/Hooks";
 import AppBanner from "../components/AppBanner";
 import ListError from "../components/ListError";
+import { getInset } from "../utils/SafeAreaInsets";
 
 const narrow = 550;
 
