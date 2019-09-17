@@ -11,16 +11,12 @@ import {
 } from "react-native";
 import { get } from "../store/events";
 import * as Cities from "../store/cities";
-import Item from "../components/EventItem";
 import UpNextItem, { columns, itemMargin } from "../components/UpNextItem";
-// import PlaceItem from "../components/PlaceItem";
 import TopBar from "../components/TopBar";
 import { enableLocation } from "../store/permissions";
 import { WEB, IOS } from "../utils/Constants";
 import { getHistory } from ".";
 import { Helmet } from "react-helmet";
-import SortBar from "../components/SortBar";
-import SearchPanel from "../components/SearchPanel";
 import { useCitiesToggle } from "../utils/Hooks";
 import AppBanner from "../components/AppBanner";
 import ListError from "../components/ListError";

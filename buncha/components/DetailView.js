@@ -1,23 +1,15 @@
 import React, { useEffect, memo, useState, useRef } from "react";
 import { useSelector } from "react-redux";
-import {
-  View,
-  StyleSheet,
-  Text,
-  ScrollView,
-  Dimensions,
-  Linking
-} from "react-native";
-import { FontAwesome, Entypo } from "@expo/vector-icons";
+import { View, StyleSheet, Text, ScrollView, Dimensions } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
 import { selectPlaceEvents } from "../store/events";
 import ImageGallery from "../components/ImageGallery";
-import { WEB, IOS, HEIGHT } from "../utils/Constants";
+import { WEB, IOS } from "../utils/Constants";
 import { getInset } from "../utils/SafeAreaInsets";
 import BackButton from "../components/BackButton";
 import EventView from "../components/EventView";
-import Link from "../components/Link";
-import { RED, BLUE, NOW } from "../utils/Colors";
 import { roundedDistanceTo } from "../utils/Locate";
+import DetailActions from "./DetailActions";
 
 let MapView = null;
 if (!WEB) {
@@ -152,73 +144,9 @@ export default memo(({ item, id }) => {
               );
             })}
           </View>
-          {!WEB && item ? <MapView item={item} /> : null}
         </ScrollView>
-        <View
-          style={{
-            flexDirection: "row",
-            borderTopWidth: 1,
-            borderTopColor: "#e0e0e0"
-          }}
-        >
-          <ScrollView
-            horizontal
-            contentContainerStyle={{
-              paddingHorizontal: 3.5,
-              paddingTop: 6,
-              paddingBottom: bottomInset
-            }}
-          >
-            <Link
-              style={[styles.link]}
-              onPress={() => {
-                Linking.openURL(`tel:${item._source.phone}`);
-              }}
-            >
-              <FontAwesome
-                style={{ marginTop: 1 }}
-                name="phone"
-                size={14}
-                color={NOW}
-              />
-              <Text style={[styles.titleText, { marginLeft: 6 }]}>Call</Text>
-            </Link>
-            <Link
-              to={item._source.website}
-              style={styles.link}
-              onPress={() => {
-                if (WEB) {
-                  window.open(item._source.website, "_blank");
-                } else {
-                  Linking.openURL(item._source.website);
-                }
-              }}
-            >
-              <Entypo
-                style={{ marginTop: 1.5 }}
-                name="link"
-                size={14}
-                color={BLUE}
-              />
-              <Text style={[styles.titleText, { marginLeft: 6 }]}>Website</Text>
-            </Link>
-            <Link
-              style={styles.link}
-              onPress={() => {
-                if (WEB) {
-                  window.open(item._source.url, "_blank");
-                } else {
-                  Linking.openURL(item._source.url);
-                }
-              }}
-            >
-              <FontAwesome name="map-marker" size={14} color={RED} />
-              <Text style={[styles.titleText, { marginLeft: 6 }]}>
-                Google Maps
-              </Text>
-            </Link>
-          </ScrollView>
-        </View>
+        <DetailActions item={item} />
+        {!WEB ? <MapView item={item} /> : null}
       </View>
     </View>
   );
@@ -276,14 +204,5 @@ const styles = StyleSheet.create({
     marginTop: 5,
     color: "#000",
     fontSize: 14
-  },
-  link: {
-    borderRadius: 8,
-    marginHorizontal: 2.5,
-    paddingHorizontal: 15,
-    backgroundColor: "#f4f4f4",
-    height: 44,
-    flexDirection: "row",
-    alignItems: "center"
   }
 });

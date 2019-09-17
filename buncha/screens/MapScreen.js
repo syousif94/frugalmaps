@@ -10,6 +10,7 @@ import SearchPanel from "../components/SearchPanel";
 import MapEventButton from "../components/MapEventButton";
 import { ANDROID } from "../utils/Constants";
 import emitter from "tiny-emitter/instance";
+import MapMarkerList from "../components/MapMarkerList";
 
 export default () => {
   const mapView = useRef(null);
@@ -55,7 +56,11 @@ export default () => {
           emitter.emit("deselect-marker");
         }
       }
-    : {};
+    : {
+        onPress: () => {
+          emitter.emit("select-marker");
+        }
+      };
 
   return (
     <View style={styles.container}>
@@ -106,6 +111,7 @@ export default () => {
               );
             })}
           </MapView>
+          <MapMarkerList />
           <MapEventButton />
           {refreshing ? (
             <View style={styles.loading} pointerEvents="none">
@@ -124,10 +130,10 @@ export default () => {
           }}
         />
         {/* <SortBar style={{ borderTopWidth: 1, borderTopColor: "#e0e0e0" }} /> */}
-        <SearchPanel
+        {/* <SearchPanel
           translateY={citiesTranslate.current}
           toggle={toggleCities}
-        />
+        /> */}
       </View>
     </View>
   );

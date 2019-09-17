@@ -18,7 +18,12 @@ class MapMarker extends Component {
     selected: false
   };
 
+  componentDidMount() {
+    emitter.on("select-marker", this._handleSelect);
+  }
+
   componentWillUnmount() {
+    emitter.off("select-marker", this._handleSelect);
     emitter.off("deselect-marker", this._onDeselect);
   }
 
@@ -29,6 +34,21 @@ class MapMarker extends Component {
       nextProps.ending !== this.props.ending
     );
   }
+
+  _handleSelect = id => {
+    const notMarker = this.props.data._id !== id;
+    const selected = this.state.selected;
+    if (selected && notMarker) {
+      this._marker.hideCallout();
+      this._onDeselect();
+    }
+    if (notMarker) {
+      return;
+    }
+    if (!selected) {
+      this._marker.showCallout();
+    }
+  };
 
   _onSelect = () => {
     if (ANDROID) {

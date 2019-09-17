@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { View, StyleSheet } from "react-native";
 import MapView from "react-native-maps";
 import Marker from "./MapMarker";
+import { getInset } from "../utils/SafeAreaInsets";
 
 export default ({ item }) => {
   const mapRef = useRef(null);
@@ -25,9 +26,9 @@ export default ({ item }) => {
       mapRef.current.fitToCoordinates(coords, {
         animated: false,
         edgePadding: {
-          top: 50,
-          left: 50,
-          right: 50,
+          top: 40,
+          left: 150,
+          right: 150,
           bottom: 0
         }
       });
@@ -38,16 +39,13 @@ export default ({ item }) => {
     <View
       style={{
         height: 160,
-        borderRadius: 8,
-        margin: 10,
         overflow: "hidden"
       }}
     >
       <MapView
         ref={mapRef}
         style={{
-          flex: 1,
-          borderRadius: 8
+          flex: 1
         }}
       >
         <Marker data={item} />
