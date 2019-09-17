@@ -33,7 +33,7 @@ const itemWidth = (windowWidth - itemMargin * (columns + 1)) / columns;
 
 export { columns, itemMargin, itemWidth };
 
-export default memo(({ item, index }) => {
+export default memo(({ item, index, style = {}, containerStyle = {} }) => {
   const onPress = () => {
     navigate("Detail", { id: item._id });
   };
@@ -52,7 +52,12 @@ export default memo(({ item, index }) => {
   const time = itemRemaining(item);
 
   return (
-    <Link to={`e/${item._id}`} style={styles.container} onPress={onPress}>
+    <Link
+      to={`e/${item._id}`}
+      containerStyle={containerStyle}
+      style={[styles.container, style]}
+      onPress={onPress}
+    >
       <View style={styles.image}>
         <ImageGallery photos={item._source.photos} height={70} />
         {placeText && (

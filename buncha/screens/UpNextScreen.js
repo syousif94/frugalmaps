@@ -31,7 +31,7 @@ if (!WEB) {
   tabBarHeight = require("../components/TabBar").tabBarHeight;
 }
 
-const narrow = 550;
+const narrow = 600;
 
 export default () => {
   // const data = useSelector(state =>
@@ -149,43 +149,32 @@ export default () => {
           {error ? (
             <ListError />
           ) : (
-            <React.Fragment>
-              {/* <SortBar /> */}
-              <View
-                style={{
-                  flexDirection: "row",
-                  flexWrap: "wrap",
-                  paddingHorizontal: width > narrow ? 10 : null
-                }}
-              >
-                {data.map((item, index) => (
-                  <View
-                    style={{
-                      width:
-                        width > 900
-                          ? "33.33%"
-                          : width > narrow
-                          ? "50%"
-                          : "100%",
-                      paddingHorizontal: width > narrow ? 10 : null,
-                      paddingLeft: width <= narrow ? 10 : null,
-                      paddingVertical: width > narrow ? 10 : null
-                    }}
-                    key={item._id}
-                  >
-                    <Item
-                      item={item}
-                      index={index}
-                      style={{
-                        backgroundColor: width > narrow ? "#f4f4f4" : null,
-                        borderRadius: width > narrow ? 8 : null
-                      }}
-                    />
-                    {width <= narrow ? <View style={styles.separator} /> : null}
-                  </View>
-                ))}
-              </View>
-            </React.Fragment>
+            <View
+              style={{
+                flexDirection: "row",
+                flexWrap: "wrap",
+                width: "100%",
+                paddingHorizontal: width < narrow ? 8 : 10
+              }}
+            >
+              {data.map((item, index) => (
+                <UpNextItem
+                  key={item._id}
+                  item={item}
+                  index={index}
+                  containerStyle={{
+                    width: width < narrow ? "50%" : "33.33%",
+                    paddingHorizontal: width < narrow ? 8 : 10,
+                    marginVertical: width < narrow ? 6 : 8
+                  }}
+                  style={{
+                    width: "100%",
+                    marginLeft: 0,
+                    paddingVertical: 0
+                  }}
+                />
+              ))}
+            </View>
           )}
 
           {data.length ? <ListFooter /> : null}
@@ -270,7 +259,6 @@ const styles = StyleSheet.create({
   listContent: {
     width: "100%",
     minHeight: "100%",
-    borderColor: "#f2f2f2",
     maxWidth: WEB ? 900 : null,
     alignSelf: WEB ? "center" : "stretch"
   },

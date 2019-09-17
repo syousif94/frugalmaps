@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { WEB } from "../utils/Constants";
 
-export default ({ to, children, ...props }) => {
+export default ({ to, children, containerStyle = {}, ...props }) => {
   const doClickRef = useRef(false);
   if (WEB) {
     const onClick = e => {
@@ -18,7 +18,7 @@ export default ({ to, children, ...props }) => {
       doClickRef.current = true;
     };
     return (
-      <TouchableOpacity onPress={onPress}>
+      <TouchableOpacity onPress={onPress} style={containerStyle}>
         <a
           href={to}
           onClick={onClick}
