@@ -10,9 +10,14 @@ import {
 } from "react-native";
 import { navigate } from "../screens";
 import { Entypo } from "@expo/vector-icons";
-import { AWSCF, ANDROID } from "../utils/Constants";
+import { AWSCF, ANDROID, WEB } from "../utils/Constants";
 import { selectPlaceEvents } from "../store/events";
 import { itemRemaining } from "../utils/Time";
+
+let tabBarHeight;
+if (!WEB) {
+  tabBarHeight = require("./TabBar").tabBarHeight;
+}
 
 const height = 60;
 
@@ -145,10 +150,11 @@ export default () => {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    bottom: 0,
+    bottom: tabBarHeight,
     left: 0,
     right: 0,
-    height
+    height,
+    overflow: "hidden"
   },
   slider: {
     borderTopWidth: 1,

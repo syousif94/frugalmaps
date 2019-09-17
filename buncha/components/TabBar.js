@@ -16,54 +16,21 @@ import { BlurView } from "expo-blur";
 
 const width = Dimensions.get("window").width;
 
-// const routeMap = {
-//   Events: "UpNext",
-//   Map: "Map",
-//   Account: "Account",
-//   Submit: "Submit"
-// };
+let bottomInset = IOS ? getInset("bottom") : 0;
 
-let bottomInset = getInset("bottom");
-
-if (bottomInset > 25) {
+if (bottomInset === 0) {
+  bottomInset = 5;
+} else if (bottomInset > 25) {
   bottomInset -= 10;
 }
 
-const PickerIcon = () => {
-  return (
-    <View
-      style={{
-        alignItems: "center",
-        marginRight: 8,
-        marginLeft: 3
-      }}
-    >
-      <Entypo name="chevron-up" size={10} color={BLUE} />
-      <Entypo
-        name="chevron-down"
-        size={10}
-        color={BLUE}
-        style={{ marginTop: -1 }}
-      />
-    </View>
-  );
-};
+const buttonHeight = 44;
+const topPadding = 5;
+const topBorderWidth = 1;
 
-const PickerButton = ({ title, value, onPress }) => {
-  return (
-    <TouchableOpacity style={styles.pickerBtn}>
-      <View style={styles.pickerInfo}>
-        <Text allowFontScaling={false} style={styles.pickerTitleText}>
-          {title}
-        </Text>
-        <Text allowFontScaling={false} style={styles.pickerValueText}>
-          {value}
-        </Text>
-      </View>
-      <PickerIcon />
-    </TouchableOpacity>
-  );
-};
+const tabBarHeight = bottomInset + buttonHeight + topPadding + topBorderWidth;
+
+export { tabBarHeight };
 
 export default ({ navigation }) => {
   const {
@@ -77,12 +44,12 @@ export default ({ navigation }) => {
       <ScrollView
         centerContent={width > 600}
         contentContainerStyle={{
-          paddingTop: 5,
+          paddingTop: topPadding,
           paddingHorizontal: 2.5,
-          paddingBottom: IOS ? bottomInset : 5
+          paddingBottom: bottomInset
         }}
         style={{
-          borderTopWidth: 1,
+          borderTopWidth: topBorderWidth,
           borderColor: "rgba(0,0,0,0.05)"
         }}
         horizontal
@@ -168,13 +135,10 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     left: 0
-    // backgroundColor: "rgba(255,255,255,0.95)",
-    // borderTopWidth: 1,
-    // borderColor: "rgba(0,0,0,0.05)"
   },
   roundBtn: {
-    height: 44,
-    minWidth: 44,
+    height: buttonHeight,
+    minWidth: buttonHeight,
     paddingHorizontal: 16,
     alignItems: "center",
     justifyContent: "flex-end",
@@ -199,7 +163,7 @@ const styles = StyleSheet.create({
   pickerInfo: {
     paddingHorizontal: 8,
     justifyContent: "space-between",
-    height: 44,
+    height: buttonHeight,
     paddingVertical: 5
   },
   pickerTitleText: {
@@ -216,3 +180,39 @@ const styles = StyleSheet.create({
     color: BLUE
   }
 });
+
+const PickerIcon = () => {
+  return (
+    <View
+      style={{
+        alignItems: "center",
+        marginRight: 8,
+        marginLeft: 3
+      }}
+    >
+      <Entypo name="chevron-up" size={10} color={BLUE} />
+      <Entypo
+        name="chevron-down"
+        size={10}
+        color={BLUE}
+        style={{ marginTop: -1 }}
+      />
+    </View>
+  );
+};
+
+const PickerButton = ({ title, value, onPress }) => {
+  return (
+    <TouchableOpacity style={styles.pickerBtn}>
+      <View style={styles.pickerInfo}>
+        <Text allowFontScaling={false} style={styles.pickerTitleText}>
+          {title}
+        </Text>
+        <Text allowFontScaling={false} style={styles.pickerValueText}>
+          {value}
+        </Text>
+      </View>
+      <PickerIcon />
+    </TouchableOpacity>
+  );
+};

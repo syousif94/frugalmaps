@@ -26,6 +26,11 @@ import AppBanner from "../components/AppBanner";
 import ListError from "../components/ListError";
 import { getInset } from "../utils/SafeAreaInsets";
 
+let tabBarHeight;
+if (!WEB) {
+  tabBarHeight = require("../components/TabBar").tabBarHeight;
+}
+
 const narrow = 550;
 
 export default () => {
@@ -194,7 +199,7 @@ export default () => {
             }}
             contentInset={{
               top: getInset("top") + 68,
-              bottom: getInset("bottom") + 40,
+              bottom: tabBarHeight,
               left: 0,
               right: 0
             }}

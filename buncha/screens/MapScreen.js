@@ -5,7 +5,6 @@ import MapView from "react-native-maps";
 import TopBar from "../components/TopBar";
 import Marker from "../components/MapMarker";
 import { timeRemaining, makeISO, makeYesterdayISO } from "../utils/Time";
-import SortBar from "../components/SortBar";
 import { useCitiesToggle } from "../utils/Hooks";
 import SearchPanel from "../components/SearchPanel";
 import MapEventButton from "../components/MapEventButton";

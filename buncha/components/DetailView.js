@@ -26,7 +26,9 @@ if (!WEB) {
 
 let bottomInset = getInset("bottom");
 
-if (bottomInset > 25) {
+if (bottomInset === 0) {
+  bottomInset = 6;
+} else if (bottomInset > 25) {
   bottomInset -= 10;
 }
 
