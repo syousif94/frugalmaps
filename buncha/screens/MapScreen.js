@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { StyleSheet, View, ActivityIndicator } from "react-native";
 import MapView from "react-native-maps";
@@ -6,7 +6,6 @@ import TopBar from "../components/TopBar";
 import Marker from "../components/MapMarker";
 import { timeRemaining, makeISO, makeYesterdayISO } from "../utils/Time";
 import { useCitiesToggle } from "../utils/Hooks";
-import SearchPanel from "../components/SearchPanel";
 import MapEventButton from "../components/MapEventButton";
 import { ANDROID } from "../utils/Constants";
 import emitter from "tiny-emitter/instance";
@@ -18,6 +17,7 @@ export default () => {
   const locationEnabled = useSelector(state => state.permissions.location);
   const refreshing = useSelector(state => state.events.refreshing);
   const markers = useSelector(state => state.events.markers);
+
   useEffect(() => {
     if (!bounds) {
       return;
@@ -61,6 +61,16 @@ export default () => {
           emitter.emit("select-marker");
         }
       };
+
+  const [, rerender] = useState();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      rerender();
+    }, 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -129,11 +139,6 @@ export default () => {
             left: 0
           }}
         />
-        {/* <SortBar style={{ borderTopWidth: 1, borderTopColor: "#e0e0e0" }} /> */}
-        {/* <SearchPanel
-          translateY={citiesTranslate.current}
-          toggle={toggleCities}
-        /> */}
       </View>
     </View>
   );

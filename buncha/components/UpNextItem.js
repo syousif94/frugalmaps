@@ -67,7 +67,7 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
         )}
       </View>
       <Text style={styles.subtitleText}>{time.span}</Text>
-      <Text style={styles.subtitleText}>
+      <Text style={styles.locationText}>
         {item._source.location}{" "}
         <Text style={{ color: "#666" }}>{distance}</Text>
       </Text>
@@ -107,8 +107,12 @@ const styles = StyleSheet.create({
     marginBottom: 2
   },
   titleText: {
-    marginTop: 1,
-    fontSize: 16,
+    fontSize: 15,
+    fontWeight: "700"
+  },
+  locationText: {
+    fontSize: 12,
+    color: "#000",
     fontWeight: "700"
   },
   subtitleText: {

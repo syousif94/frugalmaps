@@ -64,7 +64,7 @@ export default () => {
   return (
     <View style={styles.container}>
       <Helmet>
-        <title>Add Event - Buncha</title>
+        <title>Add Fun Stuff - Buncha</title>
       </Helmet>
       <ScrollComponent
         style={styles.list}
@@ -76,7 +76,7 @@ export default () => {
       >
         <View style={[styles.row, { justifyContent: WEB ? "center" : null }]}>
           <View style={{ flex: 1 }}>
-            <Text style={[styles.headerText]}>Add Event</Text>
+            <Text style={[styles.headerText]}>Add Fun Stuff</Text>
             <Text style={styles.subtext}>
               Fill out the form to add fun things to Buncha
             </Text>

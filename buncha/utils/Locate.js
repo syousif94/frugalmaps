@@ -13,7 +13,7 @@ export function distanceTo(item) {
 }
 
 export function roundedDistance(distance, withDot = true) {
-  const suffix = withDot ? " · " : " ";
+  const suffix = withDot ? " · " : "";
   if (distance > 1000) {
     const kMiles = (distance / 1000).toFixed(1);
     return `${kMiles}kmi${suffix}`;

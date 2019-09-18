@@ -8,7 +8,7 @@ import {
   Dimensions
 } from "react-native";
 import { getInset } from "../utils/SafeAreaInsets";
-import { IOS } from "../utils/Constants";
+import { IOS, ANDROID } from "../utils/Constants";
 import { navigate } from "../screens";
 import { BLUE } from "../utils/Colors";
 import { Ionicons, FontAwesome, EvilIcons, Entypo } from "@expo/vector-icons";
@@ -40,7 +40,7 @@ export default ({ navigation }) => {
   const routeKey = routes[index] && routes[index].key;
 
   return (
-    <BlurView style={styles.container} intensity={100} tint="light">
+    <ContainerView>
       <ScrollView
         centerContent={width > 600}
         contentContainerStyle={{
@@ -125,8 +125,29 @@ export default ({ navigation }) => {
           </Text>
         </TouchableOpacity>
       </ScrollView>
-    </BlurView>
+    </ContainerView>
   );
+};
+
+const ContainerView = ({ children }) => {
+  if (IOS) {
+    return (
+      <BlurView style={styles.container} intensity={100} tint="light">
+        {children}
+      </BlurView>
+    );
+  } else {
+    return (
+      <View
+        style={[
+          styles.container,
+          { backgroundColor: "rgba(255,255,255,0.95)" }
+        ]}
+      >
+        {children}
+      </View>
+    );
+  }
 };
 
 const styles = StyleSheet.create({

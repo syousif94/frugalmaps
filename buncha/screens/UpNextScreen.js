@@ -14,7 +14,7 @@ import * as Cities from "../store/cities";
 import UpNextItem, { columns, itemMargin } from "../components/UpNextItem";
 import TopBar from "../components/TopBar";
 import { enableLocation } from "../store/permissions";
-import { WEB, IOS } from "../utils/Constants";
+import { WEB, IOS, ANDROID } from "../utils/Constants";
 import { getHistory } from ".";
 import { Helmet } from "react-helmet";
 import { useCitiesToggle } from "../utils/Hooks";
@@ -188,6 +188,11 @@ export default () => {
               left: 0,
               right: 0
             }}
+            contentContainerStyle={{
+              paddingTop: ANDROID ? 68 : null,
+              paddingBottom: ANDROID ? tabBarHeight : null
+            }}
+            progressViewOffset={68}
             numColumns={columns}
             data={data}
             style={styles.list}
@@ -250,17 +255,14 @@ const styles = StyleSheet.create({
     alignSelf: WEB ? "center" : "stretch"
   },
   list: {
+    backgroundColor: "#fff",
     flex: 1
   },
   listContent: {
+    backgroundColor: "#fff",
     width: "100%",
     minHeight: "100%",
     maxWidth: WEB ? 900 : null,
     alignSelf: WEB ? "center" : "stretch"
-  },
-  separator: {
-    marginBottom: WEB ? null : 10,
-    height: 1,
-    backgroundColor: "#f2f2f2"
   }
 });
