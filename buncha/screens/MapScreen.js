@@ -1,23 +1,60 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { StyleSheet, View, ActivityIndicator } from "react-native";
 import MapView from "react-native-maps";
 import TopBar from "../components/TopBar";
 import Marker from "../components/MapMarker";
 import { timeRemaining, makeISO, makeYesterdayISO } from "../utils/Time";
-import { useCitiesToggle } from "../utils/Hooks";
+import { useCitiesToggle, useEveryMinute } from "../utils/Hooks";
 import MapEventButton from "../components/MapEventButton";
 import { ANDROID } from "../utils/Constants";
 import emitter from "tiny-emitter/instance";
 import MapMarkerList from "../components/MapMarkerList";
 
 export default () => {
+  const [citiesTranslate, toggleCities] = useCitiesToggle();
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.container}>
+        <View style={styles.container}>
+          <MarkerMapView />
+          <MapMarkerList />
+          <MapEventButton />
+          <IndicatorView />
+        </View>
+        <TopBar
+          rotate={citiesTranslate.current}
+          toggle={toggleCities}
+          style={{ paddingHorizontal: 13 }}
+          containerStyle={{
+            position: "absolute",
+            top: 0,
+            left: 0
+          }}
+        />
+      </View>
+    </View>
+  );
+};
+
+const IndicatorView = () => {
+  const refreshing = useSelector(state => state.events.refreshing);
+  if (!refreshing) {
+    return null;
+  }
+  return (
+    <View style={styles.loading} pointerEvents="none">
+      <ActivityIndicator size="large" color="#000" />
+    </View>
+  );
+};
+
+const MarkerMapView = () => {
   const mapView = useRef(null);
   const bounds = useSelector(state => state.events.bounds);
   const locationEnabled = useSelector(state => state.permissions.location);
-  const refreshing = useSelector(state => state.events.refreshing);
   const markers = useSelector(state => state.events.markers);
-
   useEffect(() => {
     if (!bounds) {
       return;
@@ -47,8 +84,7 @@ export default () => {
     });
   }, [bounds]);
 
-  const [citiesTranslate, toggleCities] = useCitiesToggle();
-
+  const [time] = useEveryMinute();
   const androidMapProps = ANDROID
     ? {
         moveOnMarkerPress: false,
@@ -61,86 +97,47 @@ export default () => {
           emitter.emit("select-marker");
         }
       };
-
-  const [, rerender] = useState();
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      rerender();
-    }, 60 * 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   return (
-    <View style={styles.container}>
-      <View style={styles.container}>
-        <View style={styles.container}>
-          <MapView
-            ref={mapView}
-            style={{ flex: 1 }}
-            showsUserLocation={locationEnabled}
-            {...androidMapProps}
-          >
-            {markers.map(data => {
-              const { _id, _source: item } = data;
+    <MapView
+      ref={mapView}
+      style={{ flex: 1 }}
+      showsUserLocation={locationEnabled}
+      {...androidMapProps}
+    >
+      {markers.map(data => {
+        const { _id, _source: item } = data;
 
-              const iso = makeISO(item.days);
+        const iso = makeISO(item.days);
 
-              const hours = item.groupedHours.find(group =>
-                group.days.find(day => day.iso === iso)
-              );
+        const hours = item.groupedHours.find(group =>
+          group.days.find(day => day.iso === iso)
+        );
 
-              let { ending, ended } = timeRemaining(hours, iso);
+        let { ending, ended } = timeRemaining(hours, iso);
 
-              if (!ending && item.groupedHours.length > 1) {
-                const yesterdayISO = makeYesterdayISO(item.days);
-                const hours = item.groupedHours.find(group =>
-                  group.days.find(day => day.iso === yesterdayISO)
-                );
-                if (hours) {
-                  const { ending: endingYesterday } = timeRemaining(
-                    hours,
-                    yesterdayISO
-                  );
-                  ending = endingYesterday;
-                }
-              }
+        if (!ending && item.groupedHours.length > 1) {
+          const yesterdayISO = makeYesterdayISO(item.days);
+          const hours = item.groupedHours.find(group =>
+            group.days.find(day => day.iso === yesterdayISO)
+          );
+          if (hours) {
+            const { ending: endingYesterday } = timeRemaining(
+              hours,
+              yesterdayISO
+            );
+            ending = endingYesterday;
+          }
+        }
 
-              const upcoming = hours.today && !ended && !ending;
+        const upcoming = hours.today && !ended && !ending;
 
-              const key = `${upcoming}${ending}${_id}`;
+        const key = `${upcoming}${ending}${_id}`;
 
-              return (
-                <Marker
-                  upcoming={upcoming}
-                  ending={ending}
-                  data={data}
-                  key={key}
-                />
-              );
-            })}
-          </MapView>
-          <MapMarkerList />
-          <MapEventButton />
-          {refreshing ? (
-            <View style={styles.loading} pointerEvents="none">
-              <ActivityIndicator size="large" color="#000" />
-            </View>
-          ) : null}
-        </View>
-        <TopBar
-          rotate={citiesTranslate.current}
-          toggle={toggleCities}
-          style={{ paddingHorizontal: 13 }}
-          containerStyle={{
-            position: "absolute",
-            top: 0,
-            left: 0
-          }}
-        />
-      </View>
-    </View>
+        return (
+          <Marker upcoming={upcoming} ending={ending} data={data} key={key} />
+        );
+      })}
+    </MapView>
   );
 };
 

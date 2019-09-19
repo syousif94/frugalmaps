@@ -15,6 +15,7 @@ import { roundedDistanceTo } from "../utils/Locate";
 import { itemRemaining } from "../utils/Time";
 import ImageGallery from "./ImageGallery";
 import { Entypo, FontAwesome } from "@expo/vector-icons";
+import { useEveryMinute } from "../utils/Hooks";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -34,6 +35,7 @@ const itemWidth = (windowWidth - itemMargin * (columns + 1)) / columns;
 export { columns, itemMargin, itemWidth };
 
 export default memo(({ item, index, style = {}, containerStyle = {} }) => {
+  const [currentTime] = useEveryMinute();
   const onPress = () => {
     navigate("Detail", { id: item._id });
   };

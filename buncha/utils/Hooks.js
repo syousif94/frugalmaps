@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useRef, useState, useEffect } from "react";
 import { Animated } from "react-native";
 
 export function useCitiesToggle() {
@@ -16,4 +16,39 @@ export function useCitiesToggle() {
   }, []);
 
   return [citiesTranslate, toggleCities];
+}
+
+function repeatEvery(func, interval) {
+  let canceled = false;
+
+  function repeater() {
+    if (canceled) {
+      return;
+    }
+    repeatEvery(func, interval);
+    func();
+  }
+
+  var now = new Date();
+  var delay = interval - (now % interval);
+
+  setTimeout(repeater, delay);
+
+  return () => {
+    canceled = true;
+  };
+}
+
+export function useEveryMinute() {
+  const [state, setState] = useState();
+
+  useEffect(() => {
+    const cancel = repeatEvery(() => {
+      setState(Date.now());
+    }, 60 * 1000);
+
+    return () => cancel();
+  }, []);
+
+  return [state];
 }

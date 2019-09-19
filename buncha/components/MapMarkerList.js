@@ -13,6 +13,7 @@ import { WEB } from "../utils/Constants";
 import { roundedDistanceTo } from "../utils/Locate";
 import { FontAwesome } from "@expo/vector-icons";
 import emitter from "tiny-emitter/instance";
+import { useEveryMinute } from "../utils/Hooks";
 
 let tabBarHeight = 0;
 if (!WEB) {
@@ -20,6 +21,7 @@ if (!WEB) {
 }
 
 const Item = ({ item, index }) => {
+  const [currentTime] = useEveryMinute();
   const events = useSelector(selectPlaceEvents(item));
   const distance = roundedDistanceTo(events[0]);
   const time = itemRemaining(events[0]);
@@ -97,7 +99,7 @@ const styles = StyleSheet.create({
   },
   item: {
     margin: 4,
-    height: 80,
+    height: 72,
     width: 105,
     borderRadius: 8,
     backgroundColor: "#fff",
