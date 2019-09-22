@@ -1,10 +1,10 @@
 import React, { useEffect, memo, useState, useRef } from "react";
 import { useSelector } from "react-redux";
-import { View, StyleSheet, Text, ScrollView, Dimensions } from "react-native";
+import { View, StyleSheet, Text, Dimensions, Animated } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { selectPlaceEvents } from "../store/events";
 import ImageGallery from "../components/ImageGallery";
-import { WEB, IOS } from "../utils/Constants";
+import { WEB, HEIGHT } from "../utils/Constants";
 import { getInset } from "../utils/SafeAreaInsets";
 import BackButton from "../components/BackButton";
 import EventView from "../components/EventView";
@@ -24,10 +24,19 @@ if (bottomInset === 0) {
   bottomInset -= 10;
 }
 
+const mapViewHeight = WEB ? 0 : HEIGHT * 0.76;
+
+const mapMinHeight = 190;
+
+const contentMinHeight = HEIGHT - mapMinHeight;
+
+const initialOffset = mapViewHeight - mapMinHeight;
+
 export default memo(({ item, id }) => {
   const events = useSelector(selectPlaceEvents(item));
   const iframeRef = useRef(null);
   const [iframeReady, setIframeReady] = useState(false);
+  const scrollOffset = useRef(new Animated.Value(initialOffset));
 
   useEffect(() => {
     if (iframeRef.current && !iframeRef.current.onload) {
@@ -105,48 +114,75 @@ export default memo(({ item, id }) => {
         </View>
       ) : null}
       <View style={scrollViewStyle}>
-        <ScrollView
+        <Animated.ScrollView
           style={scrollViewStyle}
           contentInsetAdjustmentBehavior="never"
-          contentContainerStyle={styles.content}
+          contentOffset={{ x: 0, y: initialOffset }}
+          onScroll={Animated.event([
+            { nativeEvent: { contentOffset: { y: scrollOffset.current } } }
+          ])}
         >
-          <View style={[styles.info, { padding: 10 }]}>
-            <View style={[styles.row]}>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.locationText}>{item._source.location}</Text>
-                <Text style={styles.detailText}>{cityText}</Text>
-              </View>
-              <View style={styles.rating}>
-                <FontAwesome name="star" size={14} color="#FFA033" />
-                <Text style={styles.ratingText}>
-                  {parseFloat(item._source.rating, 10).toFixed(1)}
-                </Text>
+          {!WEB ? (
+            <MapView
+              item={item}
+              style={{
+                height: mapViewHeight,
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                transform: [
+                  {
+                    translateY: scrollOffset.current.interpolate({
+                      inputRange: [0, initialOffset],
+                      outputRange: [0, (mapViewHeight - mapMinHeight) / 2],
+                      extrapolate: "clamp"
+                    })
+                  }
+                ]
+              }}
+            />
+          ) : null}
+          <View style={styles.content}>
+            <View style={[styles.info, { padding: 10 }]}>
+              <View style={[styles.row]}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.locationText}>
+                    {item._source.location}
+                  </Text>
+                  <Text style={styles.detailText}>{cityText}</Text>
+                </View>
+                <View style={styles.rating}>
+                  <FontAwesome name="star" size={14} color="#FFA033" />
+                  <Text style={styles.ratingText}>
+                    {parseFloat(item._source.rating, 10).toFixed(1)}
+                  </Text>
+                </View>
               </View>
             </View>
+            <ImageGallery photos={item._source.photos} />
+            <View style={styles.info}>
+              {events.map((item, index) => {
+                return (
+                  <EventView
+                    description
+                    style={{
+                      borderBottomWidth: 1,
+                      borderColor: "#f2f2f2",
+                      paddingHorizontal: 10,
+                      paddingTop: 8,
+                      backgroundColor: item._id === id ? "#fafafa" : "#fff"
+                    }}
+                    item={item}
+                    index={index}
+                    key={item._id}
+                  />
+                );
+              })}
+            </View>
           </View>
-          <ImageGallery photos={item._source.photos} />
-          <View style={styles.info}>
-            {events.map((item, index) => {
-              return (
-                <EventView
-                  description
-                  style={{
-                    borderBottomWidth: 1,
-                    borderColor: "#f2f2f2",
-                    paddingHorizontal: 10,
-                    paddingTop: 8,
-                    backgroundColor: item._id === id ? "#fafafa" : "#fff"
-                  }}
-                  item={item}
-                  index={index}
-                  key={item._id}
-                />
-              );
-            })}
-          </View>
-        </ScrollView>
-        <DetailActions item={item} />
-        {!WEB ? <MapView item={item} /> : null}
+        </Animated.ScrollView>
+        {/* <DetailActions item={item} /> */}
       </View>
     </View>
   );
@@ -154,8 +190,10 @@ export default memo(({ item, id }) => {
 
 const styles = StyleSheet.create({
   content: {
-    paddingTop: IOS ? getInset("top") : null,
-    paddingBottom: 10
+    paddingBottom: getInset("bottom") + 70,
+    minHeight: contentMinHeight,
+    marginTop: mapViewHeight,
+    backgroundColor: "#fff"
   },
   info: {
     width: "100%",

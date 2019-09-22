@@ -1,10 +1,9 @@
 import React, { useEffect, useRef } from "react";
-import { View, StyleSheet } from "react-native";
+import { Animated } from "react-native";
 import MapView from "react-native-maps";
 import Marker from "./MapMarker";
-import { getInset } from "../utils/SafeAreaInsets";
 
-export default ({ item }) => {
+export default ({ item, style = {} }) => {
   const mapRef = useRef(null);
 
   useEffect(() => {
@@ -36,10 +35,10 @@ export default ({ item }) => {
   }, [item]);
 
   return (
-    <View
+    <Animated.View
       style={{
-        height: 160,
-        overflow: "hidden"
+        overflow: "hidden",
+        ...style
       }}
     >
       <MapView
@@ -50,6 +49,6 @@ export default ({ item }) => {
       >
         <Marker data={item} />
       </MapView>
-    </View>
+    </Animated.View>
   );
 };
