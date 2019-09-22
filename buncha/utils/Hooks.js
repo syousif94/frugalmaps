@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useState, useEffect } from "react";
 import { Animated } from "react-native";
+import { ANDROID } from "./Constants";
 
 export function useCitiesToggle() {
   const citiesTranslate = useRef(new Animated.Value(0));
@@ -51,4 +52,44 @@ export function useEveryMinute() {
   }, []);
 
   return [state];
+}
+
+export function useAnimateOn(value) {
+  const [internalValue, setInteralValue] = useState(null);
+
+  const transform = useRef(new Animated.Value(0));
+
+  useEffect(() => {
+    if (internalValue !== value) {
+      let toValue;
+
+      if (value && !internalValue) {
+        toValue = 1;
+      } else if (internalValue && !value) {
+        toValue = 0;
+      }
+
+      if (value && toValue) {
+        setInteralValue(value);
+      }
+
+      if (toValue !== undefined) {
+        requestAnimationFrame(() => {
+          Animated.timing(
+            transform.current,
+            { toValue, duration: 150 },
+            { useNativeDriver: true }
+          ).start(() => {
+            if (!toValue) {
+              setInteralValue(value);
+            }
+          });
+        });
+      } else if (ANDROID && value) {
+        setInteralValue(value);
+      }
+    }
+  }, [value, internalValue]);
+
+  return [internalValue, transform];
 }

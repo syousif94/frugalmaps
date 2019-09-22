@@ -13,13 +13,15 @@ import { Entypo } from "@expo/vector-icons";
 import { AWSCF, ANDROID, WEB } from "../utils/Constants";
 import { selectPlaceEvents } from "../store/events";
 import { itemRemaining } from "../utils/Time";
+import { useAnimateOn } from "../utils/Hooks";
 
 let tabBarHeight;
 if (!WEB) {
   tabBarHeight = require("./TabBar").tabBarHeight;
 }
 
-const height = 60;
+const height = 84;
+const imageHeight = height - 30;
 
 export default () => {
   const selectedEvent = useSelector(state => {
@@ -30,45 +32,11 @@ export default () => {
     return state.events.data[selected];
   });
 
-  const [event, setEvent] = useState(null);
-
-  const transform = useRef(new Animated.Value(0));
-
-  useEffect(() => {
-    if (event !== selectedEvent) {
-      let toValue;
-
-      if (selectedEvent && !event) {
-        toValue = 1;
-      } else if (event && !selectedEvent) {
-        toValue = 0;
-      }
-
-      if (selectedEvent && toValue) {
-        setEvent(selectedEvent);
-      }
-
-      if (toValue !== undefined) {
-        requestAnimationFrame(() => {
-          Animated.timing(
-            transform.current,
-            { toValue, duration: 150 },
-            { useNativeDriver: true }
-          ).start(() => {
-            if (!toValue) {
-              setEvent(selectedEvent);
-            }
-          });
-        });
-      } else if (ANDROID && selectedEvent) {
-        setEvent(selectedEvent);
-      }
-    }
-  }, [selectedEvent, event]);
+  const [event, transform] = useAnimateOn(selectedEvent);
 
   const events = useSelector(selectPlaceEvents(event));
 
-  const eventCount = events.length;
+  // const eventCount = events.length;
 
   return (
     <View style={styles.container} pointerEvents="box-none">
@@ -76,6 +44,7 @@ export default () => {
         style={[
           styles.slider,
           {
+            opacity: transform.current,
             transform: [
               {
                 translateY: transform.current.interpolate({
@@ -126,7 +95,7 @@ export default () => {
                     const dotText = index === 0 ? "" : " · ";
                     let nameText = `${dotText}${e._source.title} `;
                     return (
-                      <React.Fragment>
+                      <React.Fragment key={`${index}`}>
                         <Text>{nameText}</Text>
                         <Text style={{ color: time.color, fontWeight: "600" }}>
                           {time.text}
@@ -157,10 +126,21 @@ const styles = StyleSheet.create({
     overflow: "hidden"
   },
   slider: {
-    borderTopWidth: 1,
-    borderTopColor: "#e0e0e0",
     flex: 1,
-    backgroundColor: "#fff"
+    marginHorizontal: 8,
+    marginTop: 4,
+    marginBottom: 8,
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    backgroundColor: "#fff",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3
   },
   button: {
     flex: 1
@@ -170,11 +150,11 @@ const styles = StyleSheet.create({
     flex: 1
   },
   image: {
-    height: 50,
-    width: 50,
+    height: imageHeight,
+    width: imageHeight,
     backgroundColor: "#f2f2f2",
-    marginLeft: 5,
-    borderRadius: 2,
+    marginLeft: 9,
+    borderRadius: 4,
     alignSelf: "center"
   }
 });

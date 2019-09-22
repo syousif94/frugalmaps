@@ -4,7 +4,8 @@ import {
   FlatList,
   TouchableOpacity,
   StyleSheet,
-  Text
+  Text,
+  Animated
 } from "react-native";
 import { useSelector } from "react-redux";
 import { selectPlaceEvents } from "../store/events";
@@ -13,7 +14,7 @@ import { WEB } from "../utils/Constants";
 import { roundedDistanceTo } from "../utils/Locate";
 import { FontAwesome } from "@expo/vector-icons";
 import emitter from "tiny-emitter/instance";
-import { useEveryMinute } from "../utils/Hooks";
+import { useEveryMinute, useAnimateOn } from "../utils/Hooks";
 
 let tabBarHeight = 0;
 if (!WEB) {
@@ -71,8 +72,29 @@ export default () => {
   const data = useSelector(state =>
     state.events.markers.sort((a, b) => a._source.location > b._source.location)
   );
+
+  const selectedEvent = useSelector(state => {
+    const selected = state.events.selected;
+    if (!selected) {
+      return null;
+    }
+    return state.events.data[selected];
+  });
+
+  const [, transform] = useAnimateOn(selectedEvent);
+
   return (
-    <View style={styles.container}>
+    <Animated.View
+      style={[
+        styles.container,
+        {
+          opacity: transform.current.interpolate({
+            inputRange: [0, 1],
+            outputRange: [1, 0]
+          })
+        }
+      ]}
+    >
       <FlatList
         data={data}
         renderItem={data => <Item {...data} />}
@@ -82,7 +104,7 @@ export default () => {
         contentInsetAdjustmentBehavior="never"
         keyExtractor={item => item._id}
       />
-    </View>
+    </Animated.View>
   );
 };
 

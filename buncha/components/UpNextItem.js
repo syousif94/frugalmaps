@@ -68,7 +68,7 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
           </View>
         )}
       </View>
-      <Text style={styles.subtitleText}>{time.span}</Text>
+      <Text style={[styles.subtitleText, { color: RED }]}>{time.span}</Text>
       <Text style={styles.locationText}>
         {item._source.location}{" "}
         <Text style={{ color: "#666" }}>{distance}</Text>
