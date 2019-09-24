@@ -4,7 +4,7 @@ import { View, StyleSheet, Text, Dimensions, Animated } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { selectPlaceEvents } from "../store/events";
 import ImageGallery from "../components/ImageGallery";
-import { WEB, HEIGHT } from "../utils/Constants";
+import { WEB, HEIGHT, ANDROID } from "../utils/Constants";
 import { getInset } from "../utils/SafeAreaInsets";
 import BackButton from "../components/BackButton";
 import EventView from "../components/EventView";
@@ -37,6 +37,7 @@ export default memo(({ item, id }) => {
   const iframeRef = useRef(null);
   const [iframeReady, setIframeReady] = useState(false);
   const scrollOffset = useRef(new Animated.Value(initialOffset));
+  const scrollRef = useRef(null);
 
   useEffect(() => {
     if (iframeRef.current && !iframeRef.current.onload) {
@@ -69,6 +70,16 @@ export default memo(({ item, id }) => {
     return () => {
       Dimensions.removeEventListener("change", onChange);
     };
+  }, []);
+
+  useEffect(() => {
+    if (ANDROID) {
+      requestAnimationFrame(() => {
+        scrollRef.current
+          .getNode()
+          .scrollTo({ y: initialOffset, animated: false });
+      });
+    }
   }, []);
 
   let cityText = item._source.neighborhood || item._source.city;
@@ -116,6 +127,7 @@ export default memo(({ item, id }) => {
       <View style={scrollViewStyle}>
         <Animated.ScrollView
           style={scrollViewStyle}
+          ref={scrollRef}
           contentInsetAdjustmentBehavior="never"
           contentOffset={{ x: 0, y: initialOffset }}
           onScroll={Animated.event([
