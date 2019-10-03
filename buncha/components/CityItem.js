@@ -5,8 +5,9 @@ import { navigate } from "../screens";
 import { RED } from "../utils/Colors";
 import * as Events from "../store/events";
 import { WEB } from "../utils/Constants";
+import emitter from "tiny-emitter/instance";
 
-export default ({ item, index, toggle }) => {
+export default ({ item, index, toggle = () => {} }) => {
   const dispatch = useDispatch();
   const onPress = useCallback(() => {
     if (WEB) {
@@ -16,6 +17,7 @@ export default ({ item, index, toggle }) => {
       toggle();
       setTimeout(() => {
         dispatch(Events.getCity(item));
+        emitter.emit("refresh");
       }, 350);
     }
   }, [item]);

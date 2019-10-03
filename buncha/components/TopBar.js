@@ -23,10 +23,11 @@ export default ({
   containerStyle = {}
 }) => {
   const city = useSelector(state => state.events.city);
+  const now = useSelector(state => state.events.now);
   const locationEnabled = useSelector(state => state.permissions.location);
   const count = useSelector(state => state.events.upNext);
 
-  const today = moment();
+  const today = moment(now);
   const day = today.format("dddd h:mma");
 
   const locationText =

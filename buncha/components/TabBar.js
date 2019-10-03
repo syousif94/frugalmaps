@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   View,
   Text,
@@ -8,11 +8,14 @@ import {
   Dimensions
 } from "react-native";
 import { getInset } from "../utils/SafeAreaInsets";
-import { IOS, ANDROID } from "../utils/Constants";
+import { useSelector, useDispatch } from "react-redux";
+import { IOS } from "../utils/Constants";
 import { navigate } from "../screens";
 import { BLUE } from "../utils/Colors";
 import { Ionicons, FontAwesome, EvilIcons, Entypo } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
+import moment from "moment";
+import BlurView from "./BlurView";
+import { PAGE } from "../store/filters";
 
 const width = Dimensions.get("window").width;
 
@@ -40,7 +43,7 @@ export default ({ navigation }) => {
   const routeKey = routes[index] && routes[index].key;
 
   return (
-    <ContainerView>
+    <BlurView style={styles.container}>
       <ScrollView
         centerContent={width > 600}
         contentContainerStyle={{
@@ -107,11 +110,11 @@ export default ({ navigation }) => {
           </TouchableOpacity>
         )}
 
-        <PickerButton title="Type" value="All" />
+        <PickerButton title={PAGE.TYPE} value="All" />
 
-        <PickerButton title="When" value="Tue 7:48pm" />
+        <TimePicker />
 
-        <PickerButton title="Where" value="Austin" />
+        <PlacePicker />
 
         <TouchableOpacity
           style={styles.roundBtn}
@@ -125,29 +128,31 @@ export default ({ navigation }) => {
           </Text>
         </TouchableOpacity>
       </ScrollView>
-    </ContainerView>
+    </BlurView>
   );
 };
 
-const ContainerView = ({ children }) => {
-  if (IOS) {
-    return (
-      <BlurView style={styles.container} intensity={100} tint="light">
-        {children}
-      </BlurView>
-    );
-  } else {
-    return (
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: "rgba(255,255,255,0.95)" }
-        ]}
-      >
-        {children}
-      </View>
-    );
-  }
+const TimePicker = () => {
+  const now = useSelector(state => state.events.now);
+  const time = moment(now);
+  const value = time.format("ddd h:mma");
+  return <PickerButton title={PAGE.WHEN} value={value} />;
+};
+
+const PlacePicker = () => {
+  const value = useSelector(state => {
+    const city = state.events.city;
+    const locationEnabled = state.permissions.location;
+    const locationText =
+      city && city.text.length
+        ? city.text.split(",")[0]
+        : locationEnabled
+        ? "Locating"
+        : "Everywhere";
+    return locationText;
+  });
+
+  return <PickerButton title={PAGE.WHERE} value={value} />;
 };
 
 const styles = StyleSheet.create({
@@ -222,9 +227,20 @@ const PickerIcon = () => {
   );
 };
 
-const PickerButton = ({ title, value, onPress }) => {
+const PickerButton = ({ title, value }) => {
+  const dispatch = useDispatch();
+  const onPress = () => {
+    requestAnimationFrame(() => {
+      dispatch({
+        type: "filters/set",
+        payload: {
+          page: title
+        }
+      });
+    });
+  };
   return (
-    <TouchableOpacity style={styles.pickerBtn}>
+    <TouchableOpacity style={styles.pickerBtn} onPress={onPress}>
       <View style={styles.pickerInfo}>
         <Text allowFontScaling={false} style={styles.pickerTitleText}>
           {title}

@@ -9,7 +9,7 @@ import {
   Text,
   Dimensions
 } from "react-native";
-import { get } from "../store/events";
+import { refresh } from "../store/events";
 import * as Cities from "../store/cities";
 import UpNextItem, { columns, itemMargin } from "../components/UpNextItem";
 import TopBar from "../components/TopBar";
@@ -21,6 +21,7 @@ import { useCitiesToggle } from "../utils/Hooks";
 import AppBanner from "../components/AppBanner";
 import ListError from "../components/ListError";
 import { getInset } from "../utils/SafeAreaInsets";
+import emitter from "tiny-emitter/instance";
 
 let tabBarHeight;
 if (!WEB) {
@@ -38,7 +39,7 @@ export default () => {
   const error = useSelector(state => state.events.error);
   const locationEnabled = useSelector(state => state.permissions.location);
   const dispatch = useDispatch();
-  const refresh = useCallback(() => dispatch(get()), []);
+  const onRefresh = useCallback(() => dispatch(refresh()), []);
   const listRef = useRef(null);
   const [opacity, setOpacity] = useState(WEB ? 0 : 1);
 
@@ -54,7 +55,7 @@ export default () => {
         const home = location.pathname === "/";
         setOpacity(home ? 1 : 0);
         if (home && !data.length && !refreshing && !error) {
-          refresh();
+          onRefresh();
           dispatch(Cities.get());
         }
       });
@@ -73,7 +74,7 @@ export default () => {
         animated: false,
         offset: getInset("top") + 68
       });
-      refresh();
+      onRefresh();
       dispatch(Cities.get());
     } else if (WEB) {
       const history = getHistory();
@@ -84,7 +85,7 @@ export default () => {
         !error
       ) {
         setOpacity(1);
-        refresh();
+        onRefresh();
         dispatch(Cities.get());
       }
     }
@@ -118,6 +119,26 @@ export default () => {
 
     return () => {
       Dimensions.removeEventListener("change", onChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    const onEvent = () => {
+      if (IOS) {
+        initialLoadCompleted.current = false;
+        requestAnimationFrame(() => {
+          listRef.current.scrollToOffset({
+            animated: true,
+            offset: -(getInset("top") + 68 + 80)
+          });
+        });
+      }
+    };
+
+    emitter.on("refresh", onEvent);
+
+    return () => {
+      emitter.off("refresh", onEvent);
     };
   }, []);
 
@@ -199,7 +220,7 @@ export default () => {
             contentInsetAdjustmentBehavior="never"
             keyExtractor={item => item._id}
             refreshing={refreshing}
-            onRefresh={refresh}
+            onRefresh={onRefresh}
             ListFooterComponent={() => (data.length ? <ListFooter /> : null)}
             ListEmptyComponent={() => (error ? <ListError /> : null)}
           />

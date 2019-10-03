@@ -9,6 +9,7 @@ import { WEB } from "../utils/Constants";
 const makeReducer = makeState("events");
 
 const refreshing = makeReducer("refreshing", false);
+const now = makeReducer("now", Date.now());
 const error = makeReducer("error", null);
 const upNext = makeReducer("upNext", []);
 const calendar = makeReducer("calendar", []);
@@ -27,7 +28,6 @@ const day = makeReducer("day", null, {
     return payload;
   }
 });
-const time = makeReducer("time", "");
 
 const data = makeReducer(
   "data",
@@ -62,8 +62,8 @@ export default combineReducers({
   newest,
   selected,
   day,
-  time,
-  tags
+  tags,
+  now
 });
 
 export function selectEvent(id) {
@@ -104,14 +104,26 @@ export function getCity(city) {
           }
         }
       });
-      await dispatch(get(city._source.bounds));
-      dispatch({
-        type: "events/set",
-        payload: {
-          refreshing: false
-        }
-      });
+      await dispatch(refresh(city._source.bounds));
+      // dispatch({
+      //   type: "events/set",
+      //   payload: {
+      //     refreshing: false
+      //   }
+      // });
     } catch (error) {}
+  };
+}
+
+export function refresh(bounds = null) {
+  return dispatch => {
+    dispatch({
+      type: "events/set",
+      payload: {
+        now: Date.now()
+      }
+    });
+    dispatch(get(bounds));
   };
 }
 
@@ -130,15 +142,16 @@ export function get(bounds = null) {
       }
     });
 
-    const time = moment();
+    const {
+      permissions: { location: locationEnabled },
+      events: { now }
+    } = getState();
+
+    const time = moment(now);
     const body = {
-      now: time.valueOf(),
+      now,
       utc: time.utcOffset()
     };
-
-    const {
-      permissions: { location: locationEnabled }
-    } = getState();
 
     if (locationEnabled) {
       const {
@@ -330,7 +343,7 @@ export function selectPlaceEvents(item) {
               b = bEnding ? 1 : 0;
             }
 
-            return a - b;
+            return b - a;
           })
       : [];
   };

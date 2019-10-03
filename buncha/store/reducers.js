@@ -5,13 +5,15 @@ import permissions from "./permissions";
 import cities from "./cities";
 import submission from "./submission";
 import submissions from "./submissions";
+import filters from "./filters";
 
 export default combineReducers({
   events,
   permissions,
   cities,
   submission,
-  submissions
+  submissions,
+  filters
 });
 
 export function makeState(prefix) {

@@ -54,7 +54,7 @@ export function useEveryMinute() {
   return [state];
 }
 
-export function useAnimateOn(value) {
+export function useAnimateOn(value, duration = 150) {
   const [internalValue, setInteralValue] = useState(null);
 
   const transform = useRef(new Animated.Value(0));
@@ -77,7 +77,7 @@ export function useAnimateOn(value) {
         requestAnimationFrame(() => {
           Animated.timing(
             transform.current,
-            { toValue, duration: 150 },
+            { toValue, duration },
             { useNativeDriver: true }
           ).start(() => {
             if (!toValue) {
