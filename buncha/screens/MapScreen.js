@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   },
   loading: {
     position: "absolute",
-    top: 50,
+    top: 68 + 55,
     alignSelf: "center"
   }
 });

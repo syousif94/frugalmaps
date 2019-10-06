@@ -6,7 +6,6 @@ import CityItem from "./CityItem";
 import { getInset } from "../utils/SafeAreaInsets";
 
 export default () => {
-  const dispatch = useDispatch();
   const cities = useSelector(state => state.cities[state.cities.list]);
   return (
     <View style={styles.container}>
@@ -14,21 +13,7 @@ export default () => {
         contentContainerStyle={styles.content}
         data={cities}
         style={styles.list}
-        renderItem={data => (
-          <CityItem
-            {...data}
-            toggle={() => {
-              requestAnimationFrame(() => {
-                dispatch({
-                  type: "filters/set",
-                  payload: {
-                    page: null
-                  }
-                });
-              });
-            }}
-          />
-        )}
+        renderItem={data => <CityItem {...data} />}
         keyExtractor={(item, index) => `${index}`}
         ItemSeparatorComponent={() => <View style={styles.divider} />}
         ListHeaderComponent={() => (

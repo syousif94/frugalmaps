@@ -1,11 +1,11 @@
 import React, { useCallback } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { useDispatch } from "react-redux";
 import { navigate } from "../screens";
 import { RED } from "../utils/Colors";
 import * as Events from "../store/events";
 import { WEB } from "../utils/Constants";
-import emitter from "tiny-emitter/instance";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 export default ({ item, index, toggle = () => {} }) => {
   const dispatch = useDispatch();
@@ -14,11 +14,7 @@ export default ({ item, index, toggle = () => {} }) => {
       dispatch(Events.getCity(item));
       navigate("UpNext");
     } else {
-      toggle();
-      setTimeout(() => {
-        dispatch(Events.getCity(item));
-        emitter.emit("refresh");
-      }, 350);
+      dispatch(Events.getCity(item));
     }
   }, [item]);
   const [city, state] = item._source.name.split(",");
@@ -52,7 +48,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600",
     marginTop: 3,
-    color: "#aaa"
+    color: !WEB ? "rgba(0,0,0,0.5)" : "#aaa"
   },
   count: {
     height: 24,

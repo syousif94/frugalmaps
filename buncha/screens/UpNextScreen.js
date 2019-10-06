@@ -127,9 +127,30 @@ export default () => {
       if (IOS) {
         initialLoadCompleted.current = false;
         requestAnimationFrame(() => {
+          dispatch({
+            type: "filters/set",
+            payload: {
+              page: null
+            }
+          });
+        });
+        setTimeout(() => {
           listRef.current.scrollToOffset({
-            animated: true,
-            offset: -(getInset("top") + 68 + 80)
+            animated: false,
+            offset: -(getInset("top") + 68 + 44)
+          });
+        }, 500);
+      } else if (ANDROID) {
+        listRef.current.scrollToOffset({
+          animated: false,
+          offset: 0
+        });
+        requestAnimationFrame(() => {
+          dispatch({
+            type: "filters/set",
+            payload: {
+              page: null
+            }
           });
         });
       }

@@ -4,7 +4,8 @@ import moment from "moment";
 import { makeState } from "./reducers";
 import locate from "../utils/Locate";
 import { groupHours, makeYesterdayISO, timeRemaining } from "../utils/Time";
-import { WEB } from "../utils/Constants";
+import { WEB, DEV, IOS, ANDROID } from "../utils/Constants";
+import emitter from "tiny-emitter/instance";
 
 const makeReducer = makeState("events");
 
@@ -104,13 +105,7 @@ export function getCity(city) {
           }
         }
       });
-      await dispatch(refresh(city._source.bounds));
-      // dispatch({
-      //   type: "events/set",
-      //   payload: {
-      //     refreshing: false
-      //   }
-      // });
+      dispatch(refresh(city._source.bounds));
     } catch (error) {}
   };
 }
@@ -163,14 +158,21 @@ export function get(bounds = null) {
     }
 
     if (bounds) {
+      if (IOS || ANDROID) {
+        emitter.emit("refresh");
+      }
+
       body.bounds = bounds;
     }
-
-    console.log({ body });
-
+    if (DEV) {
+      console.log({ body });
+    }
     try {
       const res = await api("events", body);
-      console.log({ res });
+
+      if (DEV) {
+        console.log({ res });
+      }
 
       // const res = require("../events.json");
 
@@ -208,6 +210,12 @@ export function get(bounds = null) {
           }
         });
         return;
+      }
+
+      if (bounds && IOS) {
+        await new Promise(resolve => {
+          setTimeout(resolve, 2000);
+        });
       }
 
       dispatch({

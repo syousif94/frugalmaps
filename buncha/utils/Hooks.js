@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState, useEffect } from "react";
-import { Animated } from "react-native";
+import { Animated, Easing } from "react-native";
 import { ANDROID } from "./Constants";
 
 export function useCitiesToggle() {
@@ -54,7 +54,7 @@ export function useEveryMinute() {
   return [state];
 }
 
-export function useAnimateOn(value, duration = 150) {
+export function useAnimateOn(value, duration = 150, easing = Easing.linear) {
   const [internalValue, setInteralValue] = useState(null);
 
   const transform = useRef(new Animated.Value(0));
@@ -77,7 +77,7 @@ export function useAnimateOn(value, duration = 150) {
         requestAnimationFrame(() => {
           Animated.timing(
             transform.current,
-            { toValue, duration },
+            { toValue, duration, easing },
             { useNativeDriver: true }
           ).start(() => {
             if (!toValue) {
@@ -89,7 +89,7 @@ export function useAnimateOn(value, duration = 150) {
         setInteralValue(value);
       }
     }
-  }, [value, internalValue]);
+  }, [value, internalValue, easing]);
 
   return [internalValue, transform];
 }

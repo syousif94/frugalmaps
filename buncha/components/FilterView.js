@@ -4,8 +4,8 @@ import {
   View,
   Animated,
   StyleSheet,
-  Text,
-  TouchableOpacity
+  TouchableOpacity,
+  Easing
 } from "react-native";
 import BlurView from "./BlurView";
 import { HEIGHT } from "../utils/Constants";
@@ -22,7 +22,11 @@ export default () => {
 
   const selectedPage = useSelector(state => state.filters.page);
 
-  const [page, transform] = useAnimateOn(selectedPage, 250);
+  const [page, transform] = useAnimateOn(
+    selectedPage,
+    200,
+    selectedPage ? Easing.in(Easing.quad) : Easing.out(Easing.quad)
+  );
 
   let PageView = null;
   switch (page) {

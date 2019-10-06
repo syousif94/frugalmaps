@@ -1,12 +1,5 @@
 import React, { useCallback } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  Dimensions
-} from "react-native";
+import { View, Text, StyleSheet, ScrollView, Dimensions } from "react-native";
 import { getInset } from "../utils/SafeAreaInsets";
 import { useSelector, useDispatch } from "react-redux";
 import { IOS } from "../utils/Constants";
@@ -15,7 +8,8 @@ import { BLUE } from "../utils/Colors";
 import { Ionicons, FontAwesome, EvilIcons, Entypo } from "@expo/vector-icons";
 import moment from "moment";
 import BlurView from "./BlurView";
-import { PAGE } from "../store/filters";
+import { PAGE, resetTime } from "../store/filters";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const width = Dimensions.get("window").width;
 
@@ -133,10 +127,19 @@ export default ({ navigation }) => {
 };
 
 const TimePicker = () => {
+  const dispatch = useDispatch();
   const now = useSelector(state => state.events.now);
   const time = moment(now);
   const value = time.format("ddd h:mma");
-  return <PickerButton title={PAGE.WHEN} value={value} />;
+  return (
+    <PickerButton
+      title={PAGE.WHEN}
+      value={value}
+      onPress={() => {
+        dispatch(resetTime());
+      }}
+    />
+  );
 };
 
 const PlacePicker = () => {
@@ -227,16 +230,17 @@ const PickerIcon = () => {
   );
 };
 
-const PickerButton = ({ title, value }) => {
+const PickerButton = ({ title, value, onPress: pressHandler }) => {
   const dispatch = useDispatch();
   const onPress = () => {
-    requestAnimationFrame(() => {
-      dispatch({
-        type: "filters/set",
-        payload: {
-          page: title
-        }
-      });
+    if (pressHandler) {
+      pressHandler();
+    }
+    dispatch({
+      type: "filters/set",
+      payload: {
+        page: title
+      }
     });
   };
   return (
