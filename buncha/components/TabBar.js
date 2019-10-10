@@ -1,15 +1,18 @@
-import React, { useCallback } from "react";
-import { View, Text, StyleSheet, ScrollView, Dimensions } from "react-native";
+import React from "react";
+import { Text, StyleSheet, ScrollView, Dimensions } from "react-native";
 import { getInset } from "../utils/SafeAreaInsets";
-import { useSelector, useDispatch } from "react-redux";
 import { IOS } from "../utils/Constants";
 import { navigate } from "../screens";
 import { BLUE } from "../utils/Colors";
-import { Ionicons, FontAwesome, EvilIcons, Entypo } from "@expo/vector-icons";
-import moment from "moment";
+import { Ionicons, FontAwesome, EvilIcons } from "@expo/vector-icons";
 import BlurView from "./BlurView";
-import { PAGE, resetTime } from "../store/filters";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import {
+  TimePicker,
+  PlacePicker,
+  buttonHeight,
+  TagPicker
+} from "./PickerButton";
 
 const width = Dimensions.get("window").width;
 
@@ -21,7 +24,6 @@ if (bottomInset === 0) {
   bottomInset -= 10;
 }
 
-const buttonHeight = 44;
 const topPadding = 5;
 const topBorderWidth = 1;
 
@@ -104,7 +106,7 @@ export default ({ navigation }) => {
           </TouchableOpacity>
         )}
 
-        <PickerButton title={PAGE.TYPE} value="All" />
+        <TagPicker />
 
         <TimePicker />
 
@@ -126,38 +128,6 @@ export default ({ navigation }) => {
   );
 };
 
-const TimePicker = () => {
-  const dispatch = useDispatch();
-  const now = useSelector(state => state.events.now);
-  const time = moment(now);
-  const value = time.format("ddd h:mma");
-  return (
-    <PickerButton
-      title={PAGE.WHEN}
-      value={value}
-      onPress={() => {
-        dispatch(resetTime());
-      }}
-    />
-  );
-};
-
-const PlacePicker = () => {
-  const value = useSelector(state => {
-    const city = state.events.city;
-    const locationEnabled = state.permissions.location;
-    const locationText =
-      city && city.text.length
-        ? city.text.split(",")[0]
-        : locationEnabled
-        ? "Locating"
-        : "Everywhere";
-    return locationText;
-  });
-
-  return <PickerButton title={PAGE.WHERE} value={value} />;
-};
-
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
@@ -168,7 +138,7 @@ const styles = StyleSheet.create({
   roundBtn: {
     height: buttonHeight,
     minWidth: buttonHeight,
-    paddingHorizontal: 16,
+    paddingHorizontal: 10,
     alignItems: "center",
     justifyContent: "flex-end",
     paddingBottom: 5,
@@ -176,84 +146,12 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(180,180,180,0.1)",
     marginHorizontal: 2.5
   },
-  pickerBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    overflow: "hidden",
-    backgroundColor: "rgba(180,180,180,0.1)",
-    marginHorizontal: 2.5,
-    borderRadius: 6
+  selected: {
+    color: BLUE
   },
   buttonText: {
     fontSize: 10,
     fontWeight: "500",
     color: "#777"
-  },
-  pickerInfo: {
-    paddingHorizontal: 8,
-    justifyContent: "space-between",
-    height: buttonHeight,
-    paddingVertical: 5
-  },
-  pickerTitleText: {
-    fontSize: 10,
-    fontWeight: "500",
-    color: "#777"
-  },
-  pickerValueText: {
-    fontSize: 14,
-    fontWeight: "400",
-    color: "#000"
-  },
-  selected: {
-    color: BLUE
   }
 });
-
-const PickerIcon = () => {
-  return (
-    <View
-      style={{
-        alignItems: "center",
-        marginRight: 8,
-        marginLeft: 3
-      }}
-    >
-      <Entypo name="chevron-up" size={10} color={BLUE} />
-      <Entypo
-        name="chevron-down"
-        size={10}
-        color={BLUE}
-        style={{ marginTop: -1 }}
-      />
-    </View>
-  );
-};
-
-const PickerButton = ({ title, value, onPress: pressHandler }) => {
-  const dispatch = useDispatch();
-  const onPress = () => {
-    if (pressHandler) {
-      pressHandler();
-    }
-    dispatch({
-      type: "filters/set",
-      payload: {
-        page: title
-      }
-    });
-  };
-  return (
-    <TouchableOpacity style={styles.pickerBtn} onPress={onPress}>
-      <View style={styles.pickerInfo}>
-        <Text allowFontScaling={false} style={styles.pickerTitleText}>
-          {title}
-        </Text>
-        <Text allowFontScaling={false} style={styles.pickerValueText}>
-          {value}
-        </Text>
-      </View>
-      <PickerIcon />
-    </TouchableOpacity>
-  );
-};

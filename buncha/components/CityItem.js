@@ -1,21 +1,18 @@
 import React, { useCallback } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useDispatch } from "react-redux";
-import { navigate } from "../screens";
 import { RED } from "../utils/Colors";
 import * as Events from "../store/events";
 import { WEB } from "../utils/Constants";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
-export default ({ item, index, toggle = () => {} }) => {
+const TouchableOpacity = WEB
+  ? require("react-native").TouchableOpacity
+  : require("react-native-gesture-handler/touchables/TouchableOpacity").default;
+
+export default ({ item, index }) => {
   const dispatch = useDispatch();
   const onPress = useCallback(() => {
-    if (WEB) {
-      dispatch(Events.getCity(item));
-      navigate("UpNext");
-    } else {
-      dispatch(Events.getCity(item));
-    }
+    dispatch(Events.getCity(item));
   }, [item]);
   const [city, state] = item._source.name.split(",");
   return (
@@ -45,10 +42,10 @@ const styles = StyleSheet.create({
     fontWeight: "600"
   },
   subtitleText: {
-    fontSize: 12,
-    fontWeight: "600",
-    marginTop: 3,
-    color: !WEB ? "rgba(0,0,0,0.5)" : "#aaa"
+    fontSize: 14,
+    fontWeight: "500",
+    marginTop: 1,
+    color: "#777"
   },
   count: {
     height: 24,

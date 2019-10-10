@@ -7,10 +7,9 @@ const ISO_DAYS = [1, 2, 3, 4, 5, 6, 0];
 
 function formatTime(time) {
   let hours = parseInt(time.substring(0, 2), 10);
-  let meridian = "am";
+  const meridian = hours > 11 ? "pm" : "am";
   if (hours > 12) {
     hours = hours - 12;
-    meridian = "pm";
   } else if (hours === 0) {
     hours = 12;
   }

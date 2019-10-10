@@ -1,5 +1,5 @@
 import moment from "moment";
-import { ISO_DAYS, ABBREVIATED_DAYS as DAYS } from "./Constants";
+import { ISO_DAYS, ABBREVIATED_DAYS as DAYS, LONG_DAYS } from "./Constants";
 import { NOW, UPCOMING, NOT_TODAY } from "./Colors";
 
 export function validateTime(str) {
@@ -49,10 +49,9 @@ export function detruncateTime(val) {
 
 export function formatTime(time) {
   let hours = parseInt(time.substring(0, 2), 10);
-  let meridian = "am";
+  const meridian = hours > 11 ? "pm" : "am";
   if (hours > 12) {
     hours = hours - 12;
-    meridian = "pm";
   } else if (hours === 0) {
     hours = 12;
   }
@@ -370,7 +369,7 @@ export function itemRemaining(item) {
 
   const upcoming = !ended && !ending && spanHours.today;
 
-  const text = `${remaining.value}`;
+  // const text = `${remaining.value}`;
   let color = NOT_TODAY;
 
   if (ending) {
@@ -385,20 +384,34 @@ export function itemRemaining(item) {
 
   const day = (tomorrow && tomorrow.text) || spanHours.days[0].text;
 
-  const span = itemTime(day, spanHours, ending, upcoming);
+  const { span, start, end } = itemTime(day, spanHours, ending, upcoming);
 
-  return { text, color, span, remaining, state };
+  const notToday = !(ending || upcoming);
+
+  let text;
+
+  if (ending) {
+    text = `til ${end}`;
+  } else if (upcoming) {
+    text = `${start} today`;
+  } else {
+    text = `${start} ${LONG_DAYS[day]}`;
+  }
+
+  const duration = ending ? ` ${remaining.value} left` : "";
+
+  return {
+    text,
+    color,
+    span,
+    remaining,
+    state,
+    day,
+    start,
+    duration,
+    end
+  };
 }
-
-const LONG_DAYS = {
-  Mon: "Monday",
-  Tue: "Tuesday",
-  Wed: "Wednesday",
-  Thu: "Thursday",
-  Fri: "Friday",
-  Sat: "Saturday",
-  Sun: "Sunday"
-};
 
 export function itemTime(day, groupedHours, ending, upcoming) {
   const [start, end] = groupedHours.hours
@@ -416,9 +429,12 @@ export function itemTime(day, groupedHours, ending, upcoming) {
       return hour;
     });
 
+  let span;
   if (ending || upcoming) {
-    return `Today ${start} to ${end}`;
+    span = `Today ${start} to ${end}`;
   } else {
-    return `${day} ${start} to ${end}`;
+    span = `${day} ${start} to ${end}`;
   }
+
+  return { span, start, end };
 }

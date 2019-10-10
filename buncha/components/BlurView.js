@@ -11,10 +11,10 @@ export default ({ children, style = {}, intensity = 100, tint = "light" }) => {
       </BlurView>
     );
   } else {
-    return (
-      <View style={[style, { backgroundColor: "rgba(255,255,255,0.95)" }]}>
-        {children}
-      </View>
-    );
+    const bgColor = { backgroundColor: "rgba(255,255,255,0.95)" };
+    const styles = Array.isArray(style)
+      ? [...style, bgColor]
+      : [style, bgColor];
+    return <View style={styles}>{children}</View>;
   }
 };

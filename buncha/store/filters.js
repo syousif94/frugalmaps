@@ -21,7 +21,7 @@ export default combineReducers({
 });
 
 export const PAGE = {
-  TYPE: "Type",
+  TYPE: "What",
   WHERE: "Where",
   WHEN: "When"
 };

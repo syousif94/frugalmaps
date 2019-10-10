@@ -16,6 +16,7 @@ import { itemRemaining } from "../utils/Time";
 import ImageGallery from "./ImageGallery";
 import { Entypo, FontAwesome } from "@expo/vector-icons";
 import { useEveryMinute } from "../utils/Hooks";
+import { WEB } from "../utils/Constants";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -27,7 +28,7 @@ if (windowWidth > 600) {
   itemMargin = 16;
 } else {
   columns = 2;
-  itemMargin = 13;
+  itemMargin = 11;
 }
 
 const itemWidth = (windowWidth - itemMargin * (columns + 1)) / columns;
@@ -57,18 +58,28 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
     <Link
       to={`e/${item._id}`}
       containerStyle={containerStyle}
-      style={[styles.container, style]}
+      style={[
+        styles.container,
+        { paddingTop: !WEB && index < columns ? itemMargin - 3 : null },
+        style
+      ]}
       onPress={onPress}
     >
       <View style={styles.image}>
-        <ImageGallery photos={item._source.photos} height={70} />
+        <ImageGallery
+          photos={item._source.photos}
+          height={70}
+          scrollEnabled={false}
+        />
         {placeText && (
           <View style={styles.count}>
             <Text style={styles.countText}>{placeText}</Text>
           </View>
         )}
+        <View style={styles.index}>
+          <Text style={styles.countText}>{index + 1}</Text>
+        </View>
       </View>
-      <Text style={[styles.subtitleText, { color: RED }]}>{time.span}</Text>
       <Text style={styles.locationText}>
         {item._source.location}{" "}
         <Text style={{ color: "#666" }}>{distance}</Text>
@@ -77,8 +88,14 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
         {item._source.title}
         <Text style={{ color: time.color, fontWeight: "700" }}>
           {" "}
-          {time.text} {time.state}
+          {time.text}
         </Text>
+        <Text style={{ fontSize: 10, color: "#aaa", fontWeight: "700" }}>
+          {time.duration}
+        </Text>
+      </Text>
+      <Text numberOfLines={2} style={styles.descriptionText}>
+        {item._source.description}
       </Text>
       <View style={styles.actions}>
         <TouchableOpacity style={styles.actionButton}>
@@ -98,7 +115,7 @@ const styles = StyleSheet.create({
   container: {
     width: itemWidth,
     marginLeft: itemMargin,
-    paddingVertical: itemMargin - 3
+    paddingBottom: 7
   },
   image: {
     height: 70,
@@ -106,22 +123,22 @@ const styles = StyleSheet.create({
     backgroundColor: "#f4f4f4",
     borderRadius: 6,
     overflow: "hidden",
-    marginBottom: 2
+    marginBottom: 4
   },
   titleText: {
     fontSize: 15,
-    fontWeight: "700"
+    fontWeight: "600"
   },
   locationText: {
-    fontSize: 12,
+    fontSize: 13,
     color: "#000",
     fontWeight: "700"
   },
-  subtitleText: {
-    marginVertical: 1,
+  descriptionText: {
+    marginTop: 2,
     fontSize: 12,
-    color: "#000",
-    fontWeight: "600"
+    fontWeight: "500",
+    color: "#666"
   },
   actions: {
     flexDirection: "row",
@@ -137,6 +154,15 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600",
     color: "#000"
+  },
+  index: {
+    position: "absolute",
+    top: 4,
+    left: 4,
+    paddingHorizontal: 4,
+    paddingVertical: 1,
+    borderRadius: 3,
+    backgroundColor: "rgba(0,0,0,0.5)"
   },
   count: {
     position: "absolute",

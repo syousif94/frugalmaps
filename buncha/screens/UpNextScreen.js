@@ -22,6 +22,7 @@ import AppBanner from "../components/AppBanner";
 import ListError from "../components/ListError";
 import { getInset } from "../utils/SafeAreaInsets";
 import emitter from "tiny-emitter/instance";
+import FilterView from "../components/FilterView";
 
 let tabBarHeight;
 if (!WEB) {
@@ -153,6 +154,15 @@ export default () => {
             }
           });
         });
+      } else if (WEB) {
+        requestAnimationFrame(() => {
+          dispatch({
+            type: "filters/set",
+            payload: {
+              page: null
+            }
+          });
+        });
       }
     };
 
@@ -173,50 +183,56 @@ export default () => {
         </Helmet>
       ) : null}
       {WEB ? (
-        <ScrollView
-          ref={listRef}
-          style={styles.list}
-          contentContainerStyle={[styles.listContent]}
-        >
-          <AppBanner />
-          <TopBar
-            rotate={citiesTranslate.current}
-            toggle={toggleCities}
-            style={{ paddingHorizontal: width > narrow ? 25 : 20 }}
-          />
-          {error ? (
-            <ListError />
-          ) : (
-            <View
-              style={{
-                flexDirection: "row",
-                flexWrap: "wrap",
-                width: "100%",
-                paddingHorizontal: width < narrow ? 8 : 10
-              }}
-            >
-              {data.map((item, index) => (
-                <UpNextItem
-                  key={item._id}
-                  item={item}
-                  index={index}
-                  containerStyle={{
-                    width: width < narrow ? "50%" : "33.33%",
-                    paddingHorizontal: width < narrow ? 8 : 10,
-                    marginVertical: width < narrow ? 6 : 8
-                  }}
-                  style={{
-                    width: "100%",
-                    marginLeft: 0,
-                    paddingVertical: 0
-                  }}
-                />
-              ))}
-            </View>
-          )}
+        <React.Fragment>
+          <ScrollView
+            ref={listRef}
+            style={styles.list}
+            contentContainerStyle={[styles.listContent, { paddingTop: 48 }]}
+          >
+            <AppBanner />
+            {error ? (
+              <ListError />
+            ) : (
+              <View
+                style={{
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  width: "100%",
+                  paddingHorizontal: width < narrow ? 8 : 10
+                }}
+              >
+                {data.map((item, index) => (
+                  <UpNextItem
+                    key={item._id}
+                    item={item}
+                    index={index}
+                    containerStyle={{
+                      width: width < narrow ? "50%" : "33.33%",
+                      paddingHorizontal: width < narrow ? 8 : 10,
+                      marginVertical: width < narrow ? 6 : 8
+                    }}
+                    style={{
+                      width: "100%",
+                      marginLeft: 0,
+                      paddingVertical: 0,
+                      paddingTop:
+                        index < (width < narrow ? 2 : 3) ? itemMargin - 3 : null
+                    }}
+                  />
+                ))}
+              </View>
+            )}
 
-          {data.length ? <ListFooter /> : null}
-        </ScrollView>
+            {data.length ? <ListFooter /> : null}
+          </ScrollView>
+          <FilterView />
+          <TopBar
+            narrow={width < 500}
+            contentContainerStyle={{
+              paddingHorizontal: width > narrow ? 16.5 : 4.5
+            }}
+          />
+        </React.Fragment>
       ) : (
         <View style={styles.list}>
           <FlatList

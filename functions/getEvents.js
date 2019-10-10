@@ -8,7 +8,7 @@ const popularTags = require("./events/popularTags");
 const { groupHours, makeEvents, makeMarkers, makeListData } = require("./time");
 
 module.exports = async function getEvents(req, res) {
-  const { lat, lng, now /** text, tags */, utc } = req.body;
+  const { lat, lng, now, text = "", tags = [], utc } = req.body;
 
   let city;
 
@@ -19,7 +19,13 @@ module.exports = async function getEvents(req, res) {
 
     const body = {
       query: {
-        match_all: {}
+        bool: {
+          must: [
+            {
+              match_all: {}
+            }
+          ]
+        }
       },
       size: 100
     };
@@ -68,6 +74,59 @@ module.exports = async function getEvents(req, res) {
       };
 
       city = await getCity(lat, lng);
+    }
+
+    if (tags.length || text.length) {
+      body.query.bool.must = [];
+    }
+
+    if (tags.length) {
+      body.query.bool.must.push({
+        terms: {
+          tags
+        }
+      });
+    }
+
+    if (text.length) {
+      body.query.bool.must.push({
+        bool: {
+          should: [
+            {
+              match: {
+                title: {
+                  query: text
+                }
+              },
+              match: {
+                description: {
+                  query: text
+                }
+              },
+              match: {
+                location: {
+                  query: text
+                }
+              },
+              match_bool_prefix: {
+                title: {
+                  query: text
+                }
+              },
+              match_bool_prefix: {
+                description: {
+                  query: text
+                }
+              },
+              match_bool_prefix: {
+                location: {
+                  query: text
+                }
+              }
+            }
+          ]
+        }
+      });
     }
 
     const data = await elastic

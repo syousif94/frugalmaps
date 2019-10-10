@@ -69,7 +69,7 @@ export function useAnimateOn(value, duration = 150, easing = Easing.linear) {
         toValue = 0;
       }
 
-      if (value && toValue) {
+      if (value && value !== internalValue) {
         setInteralValue(value);
       }
 

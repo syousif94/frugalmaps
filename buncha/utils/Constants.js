@@ -14,6 +14,16 @@ export const ABBREVIATED_DAYS = [
   "Sun"
 ];
 
+export const LONG_DAYS = {
+  Mon: "Monday",
+  Tue: "Tuesday",
+  Wed: "Wednesday",
+  Thu: "Thursday",
+  Fri: "Friday",
+  Sat: "Saturday",
+  Sun: "Sunday"
+};
+
 export const ISO_DAYS = [1, 2, 3, 4, 5, 6, 0];
 
 export const DEV = process.env.NODE_ENV === "development";

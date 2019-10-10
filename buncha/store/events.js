@@ -20,6 +20,8 @@ const city = makeReducer("city", null);
 const markers = makeReducer("markers", []);
 const bounds = makeReducer("bounds", null);
 const tags = makeReducer("tags", []);
+const tag = makeReducer("tag", null);
+const text = makeReducer("text", "");
 const selected = makeReducer("selected", null);
 const day = makeReducer("day", null, {
   set: (state, payload) => {
@@ -34,6 +36,9 @@ const data = makeReducer(
   "data",
   {},
   {
+    set: (state, payload) => {
+      return { ...state, ...payload };
+    },
     append: (state, payload) => {
       return { ...state, ...payload };
     }
@@ -64,7 +69,9 @@ export default combineReducers({
   selected,
   day,
   tags,
-  now
+  now,
+  tag,
+  text
 });
 
 export function selectEvent(id) {
@@ -102,7 +109,9 @@ export function getCity(city) {
           city: {
             text: city._source.name,
             bounds: city._source.bounds
-          }
+          },
+          tag: null,
+          text: ""
         }
       });
       dispatch(refresh(city._source.bounds));
@@ -110,19 +119,39 @@ export function getCity(city) {
   };
 }
 
-export function refresh(bounds = null) {
-  return dispatch => {
+export function filter({ tag = null, text = "" }) {
+  return (dispatch, getState) => {
+    const {
+      events: { bounds }
+    } = getState();
+
     dispatch({
       type: "events/set",
       payload: {
-        now: Date.now()
+        tag,
+        text
       }
     });
+
     dispatch(get(bounds));
   };
 }
 
-export function get(bounds = null) {
+export function refresh(bounds = null, refresh = false) {
+  return dispatch => {
+    dispatch({
+      type: "events/set",
+      payload: {
+        now: Date.now(),
+        text: "",
+        tag: null
+      }
+    });
+    dispatch(get(bounds, refresh));
+  };
+}
+
+export function get(bounds = null, refresh = false) {
   return async (dispatch, getState) => {
     dispatch({
       type: "events/set",
@@ -131,7 +160,6 @@ export function get(bounds = null) {
         city: bounds ? undefined : null,
         bounds,
         upNext: WEB ? [] : undefined,
-        tags: [],
         selected: null,
         error: null
       }
@@ -139,13 +167,15 @@ export function get(bounds = null) {
 
     const {
       permissions: { location: locationEnabled },
-      events: { now }
+      events: { now, tag, text }
     } = getState();
 
     const time = moment(now);
     const body = {
       now,
-      utc: time.utcOffset()
+      utc: time.utcOffset(),
+      tags: tag ? [tag] : [],
+      text
     };
 
     if (locationEnabled) {
@@ -157,10 +187,8 @@ export function get(bounds = null) {
       body.lng = longitude;
     }
 
-    if (bounds) {
-      if (IOS || ANDROID) {
-        emitter.emit("refresh");
-      }
+    if (bounds || refresh) {
+      emitter.emit("refresh");
 
       body.bounds = bounds;
     }
@@ -226,12 +254,12 @@ export function get(bounds = null) {
           calendar: res.calendar,
           closest: res.closest ? res.closest[0].data : [],
           newest: res.newest[0].data,
-          places: res.places,
+          places: tag || text.length ? undefined : res.places,
           city,
           markers: res.markers[0].data,
-          bounds: res.bounds,
+          bounds: tag || text.length ? undefined : res.bounds,
           data: res.data,
-          tags: res.tags
+          tags: tag || text.length ? undefined : res.tags
         }
       });
     } catch (error) {

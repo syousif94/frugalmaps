@@ -8,7 +8,7 @@ import {
   Easing
 } from "react-native";
 import BlurView from "./BlurView";
-import { HEIGHT } from "../utils/Constants";
+import { HEIGHT, WEB } from "../utils/Constants";
 import { useAnimateOn } from "../utils/Hooks";
 import { PAGE } from "../store/filters";
 import FilterTypeView from "./FilterTypeView";
@@ -50,7 +50,7 @@ export default () => {
         style={{ opacity: transform.current, ...StyleSheet.absoluteFillObject }}
       >
         <TouchableOpacity
-          activeOpacity={0.7}
+          activeOpacity={1}
           style={styles.dismiss}
           onPress={() => {
             requestAnimationFrame(() => {
@@ -87,7 +87,8 @@ export default () => {
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject
+    ...StyleSheet.absoluteFillObject,
+    top: WEB ? 48 : 0
   },
   dismiss: {
     flex: 1,

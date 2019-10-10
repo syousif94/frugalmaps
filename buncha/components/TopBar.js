@@ -11,10 +11,10 @@ import { useSelector } from "react-redux";
 import { getInset } from "../utils/SafeAreaInsets";
 import { WEB, IOS } from "../utils/Constants";
 import { navigate } from "../screens";
-import { Entypo, Ionicons } from "@expo/vector-icons";
-import { BLUE, RED, NOW } from "../utils/Colors";
-import { BlurView } from "expo-blur";
+import { Ionicons } from "@expo/vector-icons";
+import { RED, NOW } from "../utils/Colors";
 import Link from "./Link";
+import BlurView from "./BlurView";
 
 export default ({
   toggle,
@@ -46,11 +46,7 @@ export default ({
   }, []);
 
   return (
-    <BlurView
-      intensity={100}
-      tint="light"
-      style={[styles.container, containerStyle]}
-    >
+    <BlurView style={[styles.container, containerStyle]}>
       <TouchableOpacity onPress={onPress} style={[styles.button, style]}>
         <View style={{ flex: 1 }}>
           <Text style={styles.timeText}>{day}</Text>
