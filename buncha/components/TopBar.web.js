@@ -1,11 +1,6 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
-import {
-  TimePicker,
-  PlacePicker,
-  buttonHeight,
-  TagPicker
-} from "./PickerButton";
+import { TimePicker, PlacePicker, buttonHeight } from "./PickerButton";
 import { navigate } from "../screens";
 import { Ionicons } from "@expo/vector-icons";
 import { BLUE } from "../utils/Colors";
@@ -41,7 +36,6 @@ export default ({ style = {}, contentContainerStyle = {}, narrow = false }) => {
     <div style={containerStyle}>
       <View style={contentStyle}>
         <TimePicker />
-        <TagPicker />
         <PlacePicker />
         <View style={{ flex: 1 }} />
         <AddButton narrow={narrow} />

@@ -4,7 +4,7 @@ import moment from "moment";
 import { makeState } from "./reducers";
 import locate from "../utils/Locate";
 import { groupHours, makeYesterdayISO, timeRemaining } from "../utils/Time";
-import { WEB, DEV, IOS, ANDROID } from "../utils/Constants";
+import { WEB, DEV, IOS } from "../utils/Constants";
 import emitter from "tiny-emitter/instance";
 
 const makeReducer = makeState("events");
@@ -111,7 +111,8 @@ export function getCity(city) {
             bounds: city._source.bounds
           },
           tag: null,
-          text: ""
+          text: "",
+          tags: []
         }
       });
       dispatch(refresh(city._source.bounds));
@@ -246,6 +247,8 @@ export function get(bounds = null, refresh = false) {
         });
       }
 
+      const filtering = tag || text.length;
+
       dispatch({
         type: "events/set",
         payload: {
@@ -254,12 +257,12 @@ export function get(bounds = null, refresh = false) {
           calendar: res.calendar,
           closest: res.closest ? res.closest[0].data : [],
           newest: res.newest[0].data,
-          places: tag || text.length ? undefined : res.places,
+          places: filtering ? undefined : res.places,
           city,
           markers: res.markers[0].data,
-          bounds: tag || text.length ? undefined : res.bounds,
+          bounds: filtering ? undefined : res.bounds,
           data: res.data,
-          tags: tag || text.length ? undefined : res.tags
+          tags: filtering ? undefined : res.tags
         }
       });
     } catch (error) {
@@ -306,7 +309,9 @@ export function getEvent(id) {
 
 export function selectPlaceEvents(item) {
   return state => {
-    return item && item._source.placeid
+    return item &&
+      item._source.placeid &&
+      state.events.places[item._source.placeid]
       ? state.events.places[item._source.placeid]
           .map(id => state.events.data[id])
           .sort((_a, _b) => {

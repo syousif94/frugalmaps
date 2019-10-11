@@ -41,6 +41,7 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
     navigate("Detail", { id: item._id });
   };
   const placeEvents = useSelector(selectPlaceEvents(item));
+  const currentTag = useSelector(state => state.events.tag);
 
   const hasMoreEvents = placeEvents.length > 1;
 
@@ -94,9 +95,12 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
           {time.duration}
         </Text>
       </Text>
-      <Text numberOfLines={2} style={styles.descriptionText}>
-        {item._source.description}
-      </Text>
+      <MatchableText
+        text={item._source.description}
+        numberOfLines={2}
+        match={currentTag}
+        style={styles.descriptionText}
+      />
       <View style={styles.actions}>
         <TouchableOpacity style={styles.actionButton}>
           <Entypo name="calendar" size={16} color={RED} />
@@ -110,6 +114,32 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
     </Link>
   );
 });
+
+const MatchableText = ({ match, text, ...props }) => {
+  if (match) {
+    const regex = new RegExp(match, "igm");
+    const matchedTexts = text.replace(regex, match => {
+      return `*_*${match}*_`;
+    });
+    const splitText = matchedTexts.split("*_");
+    return (
+      <Text {...props}>
+        {splitText.map(text => {
+          if (_.startsWith(text, "*")) {
+            return (
+              <Text key={text} style={{ backgroundColor: "yellow" }}>
+                {text.substr(1)}
+              </Text>
+            );
+          }
+          return <Text key={text}>{text}</Text>;
+        })}
+      </Text>
+    );
+  } else {
+    return <Text {...props}>{text}</Text>;
+  }
+};
 
 const styles = StyleSheet.create({
   container: {

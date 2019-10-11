@@ -18,11 +18,12 @@ import { WEB, IOS, ANDROID } from "../utils/Constants";
 import { getHistory } from ".";
 import { Helmet } from "react-helmet";
 import { useCitiesToggle } from "../utils/Hooks";
-import AppBanner from "../components/AppBanner";
+// import AppBanner from "../components/AppBanner";
 import ListError from "../components/ListError";
 import { getInset } from "../utils/SafeAreaInsets";
 import emitter from "tiny-emitter/instance";
 import FilterView from "../components/FilterView";
+import SortBar from "../components/SortBar";
 
 let tabBarHeight;
 if (!WEB) {
@@ -189,7 +190,19 @@ export default () => {
             style={styles.list}
             contentContainerStyle={[styles.listContent, { paddingTop: 48 }]}
           >
-            <AppBanner />
+            {/* <AppBanner /> */}
+            <SortBar
+              style={{
+                marginTop: 10,
+                marginBottom: 5,
+                marginHorizontal: width < 900 || width > 920 ? null : 8,
+                backgroundColor: width < 900 ? null : "#f0f0f0",
+                borderRadius: width < 900 ? null : 6,
+                borderWidth: width < 900 ? null : 0.5,
+                borderColor: width < 900 ? null : "rgba(0,0,0,0.05)"
+              }}
+              contentContainerStyle={{ paddingHorizontal: width < 900 ? 8 : 2 }}
+            />
             {error ? (
               <ListError />
             ) : (
@@ -214,9 +227,8 @@ export default () => {
                     style={{
                       width: "100%",
                       marginLeft: 0,
-                      paddingVertical: 0,
-                      paddingTop:
-                        index < (width < narrow ? 2 : 3) ? itemMargin - 3 : null
+                      paddingVertical: 0
+                      // paddingTop: index < (width < narrow ? 2 : 3) ? 5 : null
                     }}
                   />
                 ))}
