@@ -15,6 +15,7 @@ import { roundedDistanceTo } from "../utils/Locate";
 import { FontAwesome } from "@expo/vector-icons";
 import emitter from "tiny-emitter/instance";
 import { useEveryMinute, useAnimateOn } from "../utils/Hooks";
+import PriceText from "./PriceText";
 
 let tabBarHeight = 0;
 if (!WEB) {
@@ -24,44 +25,52 @@ if (!WEB) {
 const Item = ({ item, index }) => {
   const [currentTime] = useEveryMinute();
   const events = useSelector(selectPlaceEvents(item));
-  const distance = roundedDistanceTo(events[0]);
-  const time = itemRemaining(events[0]);
+  const distance = roundedDistanceTo(item);
+  const time = itemRemaining(item);
   const eventsText = `${events.length} event${events.length != 1 ? "s" : ""}`;
   return (
     <View style={styles.item}>
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
-          emitter.emit("select-marker", item._id);
+          emitter.emit("select-marker", item._source.placeid);
         }}
       >
         <View style={{ flex: 1 }}>
-          <Text numberOfLines={2} style={styles.locationText}>
+          <Text numberOfLines={1} style={styles.locationText}>
             {item._source.location}
           </Text>
-          <Text style={{ fontSize: 10, color: "#666" }}>
-            <Text style={{ color: time.color, fontWeight: "600" }}>
-              {time.text}
-            </Text>{" "}
-            {eventsText}
+          <Text numberOfLines={1} style={styles.locationText}>
+            {item._source.title}
+          </Text>
+          <Text
+            style={{ fontSize: 10, color: time.color, fontWeight: "600" }}
+            numberOfLines={1}
+          >
+            {time.text}
           </Text>
         </View>
         <View
           style={{
             flexDirection: "row",
+            alignItems: "center",
             justifyContent: "space-between",
-            alignItems: "center"
+            paddingRight: 8
           }}
         >
-          <Text style={[styles.locationText, { color: "#666" }]}>
-            {distance}
-          </Text>
-          <View style={styles.rating}>
+          {/* <View style={styles.rating}>
             <FontAwesome name="star" size={14} color="#FFA033" />
             <Text style={styles.ratingText}>
               {parseFloat(events[0]._source.rating, 10).toFixed(1)}
             </Text>
-          </View>
+          </View> */}
+          <Text style={[styles.locationText, { color: "#666" }]}>
+            {distance}
+          </Text>
+          <PriceText
+            priceLevel={item._source.priceLevel}
+            style={{ fontSize: 11, fontWeight: "700" }}
+          />
         </View>
       </TouchableOpacity>
     </View>
@@ -69,9 +78,7 @@ const Item = ({ item, index }) => {
 };
 
 export default () => {
-  const data = useSelector(state =>
-    state.events.markers.sort((a, b) => a._source.location > b._source.location)
-  );
+  const data = useSelector(state => state.events.upNext);
 
   const selectedEvent = useSelector(state => {
     const selected = state.events.selected;
@@ -136,7 +143,7 @@ const styles = StyleSheet.create({
   },
   button: {
     paddingTop: 7,
-    paddingHorizontal: 8,
+    paddingLeft: 8,
     paddingBottom: 5,
     flex: 1,
     overflow: "hidden"
@@ -154,6 +161,6 @@ const styles = StyleSheet.create({
     color: "#000",
     fontSize: 11,
     fontWeight: "600",
-    marginLeft: 5
+    marginLeft: 3
   }
 });

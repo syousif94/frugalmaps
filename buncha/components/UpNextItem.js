@@ -17,6 +17,8 @@ import ImageGallery from "./ImageGallery";
 import { Entypo, FontAwesome } from "@expo/vector-icons";
 import { useEveryMinute } from "../utils/Hooks";
 import { WEB } from "../utils/Constants";
+import _ from "lodash";
+import PriceText from "./PriceText";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -82,8 +84,9 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
         </View>
       </View>
       <Text style={styles.locationText}>
-        {item._source.location}{" "}
-        <Text style={{ color: "#666" }}>{distance}</Text>
+        {item._source.location}
+        <PriceText prefix=" " priceLevel={item._source.priceLevel} />
+        <Text style={styles.subText}> {distance}</Text>
       </Text>
       <Text style={styles.titleText}>
         {item._source.title}
@@ -91,9 +94,7 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
           {" "}
           {time.text}
         </Text>
-        <Text style={{ fontSize: 10, color: "#aaa", fontWeight: "700" }}>
-          {time.duration}
-        </Text>
+        <Text style={styles.subText}>{time.duration}</Text>
       </Text>
       <MatchableText
         text={item._source.description}
@@ -127,7 +128,15 @@ const MatchableText = ({ match, text, ...props }) => {
         {splitText.map(text => {
           if (_.startsWith(text, "*")) {
             return (
-              <Text key={text} style={{ backgroundColor: "yellow" }}>
+              <Text
+                key={text}
+                style={{
+                  backgroundColor: "yellow",
+                  paddingHorizontal: 1,
+                  borderRadius: 2,
+                  marginHorizontal: -1
+                }}
+              >
                 {text.substr(1)}
               </Text>
             );
@@ -159,6 +168,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "600"
   },
+  subText: { fontSize: 10, color: "#aaa", fontWeight: "700" },
   locationText: {
     fontSize: 13,
     color: "#000",

@@ -201,6 +201,11 @@ export default () => {
                 borderWidth: width < 900 ? null : 0.5,
                 borderColor: width < 900 ? null : "rgba(0,0,0,0.05)"
               }}
+              buttonStyle={{
+                paddingVertical: width < 900 ? 4 : 3,
+                paddingRight: width < 900 ? 4 : 3,
+                paddingLeft: width < 900 ? 6 : 5
+              }}
               contentContainerStyle={{ paddingHorizontal: width < 900 ? 8 : 2 }}
             />
             {error ? (
@@ -270,6 +275,7 @@ export default () => {
             keyExtractor={item => item._id}
             refreshing={refreshing}
             onRefresh={onRefresh}
+            ListHeaderComponent={ListHeader}
             ListFooterComponent={() => (data.length ? <ListFooter /> : null)}
             ListEmptyComponent={() => (error ? <ListError /> : null)}
           />
@@ -293,6 +299,20 @@ export default () => {
     </View>
   );
 };
+
+const ListHeader = () => (
+  <SortBar
+    style={{ flex: 1 }}
+    contentContainerStyle={{
+      paddingHorizontal: 5
+    }}
+    buttonStyle={{
+      paddingVertical: 4,
+      paddingRight: 4,
+      paddingLeft: 6
+    }}
+  />
+);
 
 const ListFooter = () => {
   return (

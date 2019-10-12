@@ -36,7 +36,7 @@ class MapMarker extends Component {
   }
 
   _handleSelect = id => {
-    const notMarker = this.props.data._id !== id;
+    const notMarker = this.props.data._source.placeid !== id;
     const selected = this.state.selected;
     if (!ANDROID && selected && notMarker) {
       this._marker.hideCallout();

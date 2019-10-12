@@ -112,7 +112,7 @@ export function getCity(city) {
           },
           tag: null,
           text: "",
-          tags: []
+          tags: WEB ? [] : undefined
         }
       });
       dispatch(refresh(city._source.bounds));
