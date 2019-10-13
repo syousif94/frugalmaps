@@ -80,14 +80,6 @@ module.exports = async function getEvents(req, res) {
       body.query.bool.must = [];
     }
 
-    if (tags.length) {
-      body.query.bool.must.push({
-        terms: {
-          tags
-        }
-      });
-    }
-
     if (text.length) {
       body.query.bool.must.push({
         bool: {
@@ -95,36 +87,85 @@ module.exports = async function getEvents(req, res) {
             {
               match: {
                 title: {
-                  query: text
+                  query: text,
+                  fuzziness: "AUTO",
+                  operator: "AND"
                 }
-              },
+              }
+            },
+            {
               match: {
                 description: {
-                  query: text
+                  query: text,
+                  fuzziness: "AUTO",
+                  operator: "AND"
                 }
-              },
+              }
+            },
+            {
               match: {
                 location: {
-                  query: text
+                  query: text,
+                  fuzziness: "AUTO",
+                  operator: "AND"
                 }
-              },
+              }
+            },
+            {
               match_bool_prefix: {
                 title: {
-                  query: text
+                  query: text,
+                  fuzziness: "AUTO",
+                  operator: "AND"
                 }
-              },
+              }
+            },
+            {
               match_bool_prefix: {
                 description: {
-                  query: text
+                  query: text,
+                  fuzziness: "AUTO",
+                  operator: "AND"
                 }
-              },
+              }
+            },
+            {
               match_bool_prefix: {
                 location: {
-                  query: text
+                  query: text,
+                  fuzziness: "AUTO",
+                  operator: "AND"
                 }
+              }
+            },
+            {
+              fuzzy: {
+                tags: {
+                  value: text
+                }
+              }
+            },
+            {
+              prefix: {
+                tags: text
+              }
+            },
+            {
+              bool: {
+                must: text.split(" ").map(value => ({
+                  term: {
+                    value
+                  }
+                }))
               }
             }
           ]
+        }
+      });
+    } else if (tags.length) {
+      body.query.bool.must.push({
+        terms: {
+          tags
         }
       });
     }

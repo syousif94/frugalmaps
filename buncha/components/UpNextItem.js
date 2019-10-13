@@ -43,7 +43,9 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
     navigate("Detail", { id: item._id });
   };
   const placeEvents = useSelector(selectPlaceEvents(item));
-  const currentTag = useSelector(state => state.events.tag);
+  const searchTerm = useSelector(state =>
+    state.events.text.length ? state.events.text : state.events.tag
+  );
 
   const hasMoreEvents = placeEvents.length > 1;
 
@@ -99,7 +101,7 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
       <MatchableText
         text={item._source.description}
         numberOfLines={2}
-        match={currentTag}
+        match={searchTerm}
         style={styles.descriptionText}
       />
       <View style={styles.actions}>
@@ -120,16 +122,17 @@ const MatchableText = ({ match, text, ...props }) => {
   if (match) {
     const regex = new RegExp(match, "igm");
     const matchedTexts = text.replace(regex, match => {
-      return `*_*${match}*_`;
+      return `__*${match}__`;
     });
-    const splitText = matchedTexts.split("*_");
+    const splitText = matchedTexts.split("__");
     return (
       <Text {...props}>
-        {splitText.map(text => {
+        {splitText.map((text, index) => {
+          let key = `${index}${text}`;
           if (_.startsWith(text, "*")) {
             return (
               <Text
-                key={text}
+                key={key}
                 style={{
                   backgroundColor: "yellow",
                   paddingHorizontal: 1,
@@ -141,7 +144,7 @@ const MatchableText = ({ match, text, ...props }) => {
               </Text>
             );
           }
-          return <Text key={text}>{text}</Text>;
+          return <Text key={key}>{text}</Text>;
         })}
       </Text>
     );

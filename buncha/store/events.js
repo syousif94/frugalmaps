@@ -6,10 +6,12 @@ import locate from "../utils/Locate";
 import { groupHours, makeYesterdayISO, timeRemaining } from "../utils/Time";
 import { WEB, DEV, IOS } from "../utils/Constants";
 import emitter from "tiny-emitter/instance";
+import _ from "lodash";
 
 const makeReducer = makeState("events");
 
 const refreshing = makeReducer("refreshing", false);
+const searching = makeReducer("searching", null);
 const now = makeReducer("now", Date.now());
 const error = makeReducer("error", null);
 const upNext = makeReducer("upNext", []);
@@ -56,6 +58,7 @@ const places = makeReducer(
 
 export default combineReducers({
   refreshing,
+  searching,
   error,
   upNext,
   places,
@@ -120,6 +123,10 @@ export function getCity(city) {
   };
 }
 
+const debouncedGet = _.debounce((dispatch, ...args) => {
+  dispatch(get(...args));
+}, 150);
+
 export function filter({ tag = null, text = "" }) {
   return (dispatch, getState) => {
     const {
@@ -134,7 +141,11 @@ export function filter({ tag = null, text = "" }) {
       }
     });
 
-    dispatch(get(bounds));
+    if (text.length) {
+      debouncedGet(dispatch, bounds, false, true);
+    } else if (tag) {
+      dispatch(get(bounds));
+    }
   };
 }
 
@@ -152,15 +163,18 @@ export function refresh(bounds = null, refresh = false) {
   };
 }
 
-export function get(bounds = null, refresh = false) {
+export function get(bounds = null, refresh = false, searching = false) {
   return async (dispatch, getState) => {
+    const searchingTime = searching ? Date.now() : null;
+
     dispatch({
       type: "events/set",
       payload: {
-        refreshing: true,
+        refreshing: searching ? undefined : true,
+        searching: searchingTime,
         city: bounds ? undefined : null,
         bounds,
-        upNext: WEB ? [] : undefined,
+        upNext: WEB && !searching ? [] : undefined,
         selected: null,
         error: null
       }
@@ -189,7 +203,9 @@ export function get(bounds = null, refresh = false) {
     }
 
     if (bounds || refresh) {
-      emitter.emit("refresh");
+      if (!searching) {
+        emitter.emit("refresh");
+      }
 
       body.bounds = bounds;
     }
@@ -220,6 +236,17 @@ export function get(bounds = null, refresh = false) {
           ? undefined
           : null;
 
+      let searchCompleted = undefined;
+      if (searching) {
+        const {
+          events: { searching }
+        } = getState();
+
+        if (searching === searchingTime) {
+          searchCompleted = null;
+        }
+      }
+
       if (res.empty) {
         const error =
           city && city.text
@@ -229,6 +256,7 @@ export function get(bounds = null, refresh = false) {
           type: "events/set",
           payload: {
             refreshing: false,
+            searching: searchCompleted,
             upNext: [],
             calendar: [],
             closest: [],
@@ -252,7 +280,8 @@ export function get(bounds = null, refresh = false) {
       dispatch({
         type: "events/set",
         payload: {
-          refreshing: false,
+          refreshing: searching ? undefined : false,
+          searching: searchCompleted,
           upNext: res.list[0].data,
           calendar: res.calendar,
           closest: res.closest ? res.closest[0].data : [],
@@ -270,7 +299,8 @@ export function get(bounds = null, refresh = false) {
       dispatch({
         type: "events/set",
         payload: {
-          refreshing: false,
+          searching: null,
+          refreshing: searching ? undefined : false,
           error: error
         }
       });

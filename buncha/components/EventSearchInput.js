@@ -1,13 +1,23 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Input from "./Input";
 import { StyleSheet, View, ActivityIndicator, Animated } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { WEB, WIDTH, IOS_WEB } from "../utils/Constants";
+import { WEB, IOS_WEB } from "../utils/Constants";
 import { buttonHeight } from "./PickerButton";
+import { BLUE } from "../utils/Colors";
+import * as Events from "../store/events";
 
 export default ({ width }) => {
+  const dispatch = useDispatch();
+  const query = useSelector(state => state.events.text);
+  const searching = useSelector(state => state.events.searching);
   const animation = useRef(new Animated.Value(0));
   const focused = useRef(false);
+
+  const onChangeText = text => {
+    dispatch(Events.filter({ text }));
+  };
 
   const narrow = width < 500;
 
@@ -38,8 +48,6 @@ export default ({ width }) => {
       { useNativeDriver: true }
     ).start();
   };
-
-  const [query, setQuery] = useState("");
 
   let containerStyle;
   if (narrow) {
@@ -97,7 +105,7 @@ export default ({ width }) => {
         <Animated.View style={sliderStyle} pointerEvents="box-none">
           <Input
             value={query}
-            onChangeText={setQuery}
+            onChangeText={onChangeText}
             placeholder="Search"
             autoCorrect={WEB ? "false" : false}
             autoCompleteType="off"
@@ -114,7 +122,15 @@ export default ({ width }) => {
             onBlur={onBlur}
             render={() => (
               <View style={styles.icon}>
-                <Ionicons name="ios-search" size={18} color={"#666"} />
+                {searching ? (
+                  <ActivityIndicator
+                    style={{ transform: [{ scale: 0.7 }] }}
+                    size="small"
+                    color="#ccc"
+                  />
+                ) : (
+                  <Ionicons name="ios-search" size={18} color={BLUE} />
+                )}
               </View>
             )}
           />
