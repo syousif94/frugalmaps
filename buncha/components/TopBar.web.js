@@ -4,8 +4,9 @@ import { TimePicker, PlacePicker, buttonHeight } from "./PickerButton";
 import { navigate } from "../screens";
 import { Ionicons } from "@expo/vector-icons";
 import { BLUE } from "../utils/Colors";
+import EventSearchInput from "./EventSearchInput";
 
-export default ({ style = {}, contentContainerStyle = {}, narrow = false }) => {
+export default ({ style = {}, contentContainerStyle = {}, width }) => {
   const containerStyle = {
     backgroundColor: "rgba(240,240,240,0.9)",
     WebkitBackdropFilter: "blur(30px)",
@@ -32,12 +33,14 @@ export default ({ style = {}, contentContainerStyle = {}, narrow = false }) => {
     ...StyleSheet.flatten(contentContainerStyle)
   };
 
+  const narrow = width < 500;
+
   return (
     <div style={containerStyle}>
       <View style={contentStyle}>
         <TimePicker />
         <PlacePicker />
-        <View style={{ flex: 1 }} />
+        <EventSearchInput width={width} />
         <AddButton narrow={narrow} />
       </View>
     </div>

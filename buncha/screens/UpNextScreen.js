@@ -244,7 +244,7 @@ export default () => {
           </ScrollView>
           <FilterView />
           <TopBar
-            narrow={width < 500}
+            width={width}
             contentContainerStyle={{
               paddingHorizontal: width > narrow ? 16.5 : 4.5
             }}

@@ -45,7 +45,9 @@ export const WEB = os === "web";
 
 export const ANDROID_WEB = WEB && /Android/.test(navigator.userAgent);
 export const IOS_WEB =
-  WEB && /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  WEB &&
+  ((/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1));
 export const MOBILE_WEB = ANDROID_WEB || IOS_WEB;
 
 export const PLACEMENT_ID = IOS

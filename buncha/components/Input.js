@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { TouchableOpacity, TextInput, View, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { WEB } from "../utils/Constants";
+import { WEB, IOS_WEB } from "../utils/Constants";
 import { BLUE } from "../utils/Colors";
 
 export default class Input extends Component {
@@ -16,10 +16,22 @@ export default class Input extends Component {
     });
   };
 
+  _onFocus = () => {
+    this.setState({
+      focused: true
+    });
+    if (this.props.onFocus) {
+      this.props.onFocus();
+    }
+  };
+
   _onBlur = () => {
     this.setState({
       focused: false
     });
+    if (this.props.onBlur) {
+      this.props.onBlur();
+    }
   };
 
   _clear = () => {
@@ -50,6 +62,7 @@ export default class Input extends Component {
       onChangeText,
       autoCompleteType,
       containerStyle = {},
+      backgroundColor = "#f4f4f4",
       ...props
     } = this.props;
     const { focused } = this.state;
@@ -59,16 +72,27 @@ export default class Input extends Component {
       styles.inputContainer,
       containerStyle,
       {
-        backgroundColor: focused ? "#fff" : "#f4f4f4",
+        backgroundColor: focused ? "#fff" : backgroundColor,
         borderWidth: 1,
-        borderColor: focused ? BLUE : "#f4f4f4"
+        borderColor: focused ? BLUE : "rgba(0,0,0,0)"
       }
     ];
 
     if (WEB) {
       return (
         <View style={container}>
-          {render ? render() : null}
+          {render ? (
+            <TouchableOpacity
+              style={{ flexDirection: "row" }}
+              onPress={() => {
+                requestAnimationFrame(() => {
+                  this._input.focus();
+                });
+              }}
+            >
+              {render()}
+            </TouchableOpacity>
+          ) : null}
           <input
             ref={ref => (this._input = ref)}
             {...props}
@@ -82,11 +106,7 @@ export default class Input extends Component {
               background: "transparent",
               fontSize: 14
             }}
-            onFocus={() => {
-              this.setState({
-                focused: true
-              });
-            }}
+            onFocus={this._onFocus}
             onBlur={this._onBlur}
             onChange={e => {
               onChangeText(e.target.value);
@@ -153,7 +173,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.4)",
     justifyContent: "center",
     alignItems: "center",
-    paddingTop: 1.5,
+    paddingTop: IOS_WEB ? null : 1.5,
     paddingLeft: 0.5,
     marginRight: 20
   }
