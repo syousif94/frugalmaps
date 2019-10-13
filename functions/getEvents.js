@@ -85,6 +85,14 @@ module.exports = async function getEvents(req, res) {
         bool: {
           should: [
             {
+              multi_match: {
+                query: text,
+                type: "cross_fields",
+                fields: ["title", "description", "location"],
+                operator: "and"
+              }
+            },
+            {
               match: {
                 title: {
                   query: text,

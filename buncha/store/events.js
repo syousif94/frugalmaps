@@ -143,7 +143,7 @@ export function filter({ tag = null, text = "" }) {
 
     if (text.length) {
       debouncedGet(dispatch, bounds, false, true);
-    } else if (tag) {
+    } else {
       dispatch(get(bounds));
     }
   };
@@ -248,6 +248,16 @@ export function get(bounds = null, refresh = false, searching = false) {
       }
 
       if (res.empty) {
+        if (searching) {
+          dispatch({
+            type: "events/set",
+            payload: {
+              searching: searchCompleted
+            }
+          });
+          return;
+        }
+
         const error =
           city && city.text
             ? `We don't have any event data for ${city.text} yet.`

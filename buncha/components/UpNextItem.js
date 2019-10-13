@@ -44,7 +44,12 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
   };
   const placeEvents = useSelector(selectPlaceEvents(item));
   const searchTerm = useSelector(state =>
-    state.events.text.length ? state.events.text : state.events.tag
+    state.events.text.length
+      ? state.events.text
+          .split(" ")
+          .map(text => text.trim())
+          .filter(text => text.length)
+      : state.events.tag
   );
 
   const hasMoreEvents = placeEvents.length > 1;
@@ -120,7 +125,8 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
 
 const MatchableText = ({ match, text, ...props }) => {
   if (match) {
-    const regex = new RegExp(match, "igm");
+    const regexStr = Array.isArray(match) ? `(?:${match.join("|")})` : match;
+    const regex = new RegExp(regexStr, "igm");
     const matchedTexts = text.replace(regex, match => {
       return `__*${match}__`;
     });
