@@ -1,158 +1,123 @@
-import React, { useCallback } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  Animated
-} from "react-native";
+import React from "react";
+import { View, StyleSheet, Text } from "react-native";
 import moment from "moment";
 import { useSelector } from "react-redux";
 import { getInset } from "../utils/SafeAreaInsets";
-import { WEB, IOS } from "../utils/Constants";
-import { navigate } from "../screens";
-import { Ionicons } from "@expo/vector-icons";
-import { RED, NOW } from "../utils/Colors";
-import Link from "./Link";
+import { IOS } from "../utils/Constants";
 import BlurView from "./BlurView";
+import EventSearchInput from "./EventSearchInput";
 
-export default ({
-  toggle,
-  rotate,
-  style = { paddingLeft: 15 },
-  containerStyle = {}
-}) => {
+const topInset = getInset("top");
+export const topBarHeight = 68 + topInset;
+
+export default ({ style = { paddingLeft: 15 }, containerStyle = {} }) => {
   const city = useSelector(state => state.events.city);
   const now = useSelector(state => state.events.now);
-  const locationEnabled = useSelector(state => state.permissions.location);
-  const count = useSelector(state => state.events.upNext);
+  const locationText = useSelector(state => {
+    const city = state.events.city;
+    const locationEnabled = state.permissions.location;
+    const locationText =
+      city && city.text.length
+        ? city.text.split(",")[0]
+        : locationEnabled
+        ? "Locating"
+        : "Everywhere";
+    return locationText;
+  });
+  const count = useSelector(state => state.events.upNext.length);
 
   const today = moment(now);
-  const day = today.format("dddd h:mma");
-
-  const locationText =
-    city && city.text.length
-      ? city.text
-      : locationEnabled
-      ? "Locating"
-      : "Everywhere";
-
-  const onPress = useCallback(() => {
-    if (WEB) {
-      navigate("Search");
-    } else {
-      toggle();
-    }
-  }, []);
+  const day = today.format("ddd h:mma");
 
   return (
     <BlurView style={[styles.container, containerStyle]}>
-      <TouchableOpacity onPress={onPress} style={[styles.button, style]}>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.timeText}>{day}</Text>
-          <View style={[styles.row, { marginTop: 5 }]}>
-            <Text style={styles.locationText} numberOfLines={1}>
-              {locationText}
+      <View style={[styles.content, style]}>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            justifyContent: "space-between"
+          }}
+        >
+          <Text allowFontScaling={false} style={styles.titleText}>
+            {day}
+            <Text style={{ color: "#777", fontWeight: "500" }}>
+              {" "}
+              refreshed{" "}
             </Text>
-          </View>
+            0m ago
+          </Text>
+          <Text allowFontScaling={false} style={styles.titleText}>
+            {locationText}
+          </Text>
         </View>
-        {WEB ? (
-          <NavLink
-            to="/add"
-            onPress={() => {
-              navigate("Add");
-            }}
-            text="Add Fun Stuff"
-          >
-            <Ionicons
-              style={{ marginTop: 1 }}
-              name="ios-add"
-              size={28}
-              color={"#fff"}
-            />
-          </NavLink>
-        ) : null}
-      </TouchableOpacity>
+        <EventSearchInput
+          contentContainerStyle={{
+            flexDirection: "row",
+            alignItems: "center"
+          }}
+        />
+      </View>
     </BlurView>
   );
 };
 
-const NavLink = ({ children, style = {}, text, ...props }) => {
-  return (
-    <Link
-      {...props}
-      style={[
-        {
-          justifyContent: "center",
-          paddingHorizontal: 15,
-          alignItems: "center",
-          flexDirection: "row",
-          height: 36,
-          backgroundColor: NOW,
-          borderRadius: 18
-        },
-        style
-      ]}
-    >
-      {children}
-      <Text
-        style={{
-          fontSize: 14,
-          fontWeight: "700",
-          color: "#fff",
-          marginLeft: 10
-        }}
-      >
-        {text}
-      </Text>
-    </Link>
-  );
-};
-
-const topInset = getInset("top");
-
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    maxWidth: WEB ? 900 : null,
-    alignSelf: WEB ? "center" : "stretch"
+    height: topBarHeight
   },
   row: {
     flexDirection: "row",
     alignItems: "center"
   },
-  button: {
-    paddingTop: IOS ? topInset : WEB ? 20 : 10,
-    paddingBottom: WEB ? 10 : 7,
-    flexDirection: "row",
-    alignItems: "center",
-    borderBottomWidth: WEB ? null : 1,
+  content: {
+    flex: 1,
+    paddingTop: IOS ? topInset : 10,
+    paddingBottom: 7,
+    borderBottomWidth: 1,
     borderColor: "rgba(0,0,0,0.05)"
   },
+  titleText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#000"
+  },
   timeText: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "700"
   },
   locationText: {
-    fontSize: 16,
+    fontSize: 18,
     color: "#666",
     fontWeight: "700"
   },
-  subtitleText: {
-    fontSize: 10,
-    fontWeight: "600"
-  },
   count: {
-    height: 16,
     justifyContent: "center",
-    paddingHorizontal: 5,
-    borderRadius: 8,
-    backgroundColor: RED,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 4,
+    backgroundColor: "rgba(0,0,0,0.3)",
     marginLeft: 7
   },
   countText: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: "700",
     color: "#fff"
+  },
+  search: {
+    height: 36,
+    paddingHorizontal: 8,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 6,
+    backgroundColor: "rgba(180,180,180,0.1)"
+  },
+  searchText: {
+    marginLeft: 6,
+    fontSize: 16,
+    fontWeight: "400",
+    color: "#777"
   }
 });

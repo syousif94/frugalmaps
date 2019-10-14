@@ -40,7 +40,14 @@ export default ({ style = {}, contentContainerStyle = {}, width }) => {
       <View style={contentStyle}>
         <TimePicker />
         <PlacePicker />
-        <EventSearchInput width={width} />
+        <EventSearchInput
+          contentContainerStyle={{
+            flex: 1,
+            marginHorizontal: 2.5,
+            flexDirection: "row",
+            alignItems: "center"
+          }}
+        />
         <AddButton narrow={narrow} />
       </View>
     </div>

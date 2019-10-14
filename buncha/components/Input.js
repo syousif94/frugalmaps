@@ -99,12 +99,12 @@ export default class Input extends Component {
             style={{
               border: "none",
               ...StyleSheet.flatten(styles.input),
-              ...StyleSheet.flatten(style),
               outline: "none",
               textDecoration: "none",
               appearance: "none",
               background: "transparent",
-              fontSize: 14
+              fontSize: 14,
+              ...StyleSheet.flatten(style)
             }}
             onFocus={this._onFocus}
             onBlur={this._onBlur}
@@ -150,13 +150,16 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 44,
+    padding: 0,
+    margin: 0,
     paddingLeft: 10,
     flex: 1
   },
   inputContainer: {
     flexDirection: "row",
     backgroundColor: "#f4f4f4",
-    borderRadius: 5
+    borderRadius: 5,
+    overflow: "hidden"
   },
   clearWrap: {
     position: "absolute",

@@ -105,7 +105,7 @@ export default () => {
                 color="#ccc"
               />
             ) : (
-              <Ionicons name="ios-search" size={18} color={"#666"} />
+              <Ionicons name="ios-search" size={18} color={BLUE} />
             )}
           </View>
         )}

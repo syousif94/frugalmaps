@@ -123,8 +123,8 @@ export function getCity(city) {
   };
 }
 
-const debouncedGet = _.debounce((dispatch, ...args) => {
-  dispatch(get(...args));
+const debouncedGet = _.debounce((dispatch, args) => {
+  dispatch(get(args));
 }, 150);
 
 export function filter({ tag = null, text = "" }) {
@@ -142,9 +142,9 @@ export function filter({ tag = null, text = "" }) {
     });
 
     if (text.length) {
-      debouncedGet(dispatch, bounds, false, true);
+      debouncedGet(dispatch, { bounds, refresh: false, searching: true });
     } else {
-      dispatch(get(bounds));
+      dispatch(get({ bounds }));
     }
   };
 }
@@ -159,11 +159,11 @@ export function refresh(bounds = null, refresh = false) {
         tag: null
       }
     });
-    dispatch(get(bounds, refresh));
+    dispatch(get({ bounds, refresh }));
   };
 }
 
-export function get(bounds = null, refresh = false, searching = false) {
+export function get({ bounds = null, refresh = false, searching = false }) {
   return async (dispatch, getState) => {
     const searchingTime = searching ? Date.now() : null;
 
@@ -279,9 +279,9 @@ export function get(bounds = null, refresh = false, searching = false) {
         return;
       }
 
-      if (bounds && IOS) {
+      if (bounds && IOS && !searching) {
         await new Promise(resolve => {
-          setTimeout(resolve, 2000);
+          setTimeout(resolve, 1500);
         });
       }
 

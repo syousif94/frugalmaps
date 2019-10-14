@@ -26,8 +26,10 @@ import FilterView from "../components/FilterView";
 import SortBar from "../components/SortBar";
 
 let tabBarHeight;
+let topBarHeight;
 if (!WEB) {
   tabBarHeight = require("../components/TabBar").tabBarHeight;
+  topBarHeight = require("../components/TopBar").topBarHeight;
 }
 
 const narrow = 600;
@@ -74,7 +76,7 @@ export default () => {
     if (!WEB && !data.length && !refreshing && !error) {
       listRef.current.scrollToOffset({
         animated: false,
-        offset: getInset("top") + 68
+        offset: topBarHeight
       });
       onRefresh();
       dispatch(Cities.get());
@@ -105,7 +107,7 @@ export default () => {
       initialLoadCompleted.current = true;
       listRef.current.scrollToOffset({
         animated: false,
-        offset: -(getInset("top") + 68)
+        offset: -topBarHeight
       });
     }
   }, [refreshing, initialLoadCompleted, data, error]);
@@ -138,10 +140,10 @@ export default () => {
         });
         setTimeout(() => {
           listRef.current.scrollToOffset({
-            animated: false,
-            offset: -(getInset("top") + 68 + 44)
+            animated: true,
+            offset: -(topBarHeight + 54)
           });
-        }, 500);
+        }, 350);
       } else if (ANDROID) {
         listRef.current.scrollToOffset({
           animated: false,
@@ -258,16 +260,16 @@ export default () => {
               return <UpNextItem {...data} />;
             }}
             contentInset={{
-              top: getInset("top") + 68,
+              top: topBarHeight,
               bottom: tabBarHeight,
               left: 0,
               right: 0
             }}
             contentContainerStyle={{
-              paddingTop: ANDROID ? 68 : null,
+              paddingTop: ANDROID ? topBarHeight : null,
               paddingBottom: ANDROID ? tabBarHeight : null
             }}
-            progressViewOffset={68}
+            progressViewOffset={topBarHeight}
             numColumns={columns}
             data={data}
             style={styles.list}
@@ -304,6 +306,7 @@ const ListHeader = () => (
   <SortBar
     style={{ flex: 1 }}
     contentContainerStyle={{
+      marginTop: 5,
       paddingHorizontal: 5
     }}
     buttonStyle={{

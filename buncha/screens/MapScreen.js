@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { StyleSheet, View, ActivityIndicator } from "react-native";
 import MapView from "react-native-maps";
-import TopBar from "../components/TopBar";
+import TopBar, { topBarHeight } from "../components/TopBar";
 import Marker from "../components/MapMarker";
 import { timeRemaining, makeISO, makeYesterdayISO } from "../utils/Time";
 import { useCitiesToggle, useEveryMinute } from "../utils/Hooks";
@@ -10,6 +10,7 @@ import MapEventButton from "../components/MapEventButton";
 import { ANDROID } from "../utils/Constants";
 import emitter from "tiny-emitter/instance";
 import MapMarkerList from "../components/MapMarkerList";
+import { itemMargin } from "../components/UpNextItem";
 
 export default () => {
   const [citiesTranslate, toggleCities] = useCitiesToggle();
@@ -26,7 +27,7 @@ export default () => {
         <TopBar
           rotate={citiesTranslate.current}
           toggle={toggleCities}
-          style={{ paddingHorizontal: 13 }}
+          style={{ paddingHorizontal: itemMargin }}
           containerStyle={{
             position: "absolute",
             top: 0,
@@ -149,7 +150,7 @@ const styles = StyleSheet.create({
   },
   loading: {
     position: "absolute",
-    top: 68 + 55,
+    top: topBarHeight + 55,
     alignSelf: "center"
   }
 });
