@@ -215,7 +215,7 @@ export function timeRemaining(hours, iso) {
 
     const minFloat = (hourFloat - hour) * 60;
 
-    const minutes = Math.floor(minFloat);
+    const minutes = Math.ceil(minFloat);
 
     let value = "";
 
@@ -398,7 +398,9 @@ export function itemRemaining(item) {
     text = `${start} ${LONG_DAYS[day]}`;
   }
 
-  const duration = ending ? ` ${remaining.value} left` : "";
+  const duration = ending
+    ? ` ${remaining.value} left`
+    : ` in ${remaining.value}`;
 
   return {
     text,

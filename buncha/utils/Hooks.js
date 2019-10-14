@@ -41,7 +41,7 @@ function repeatEvery(func, interval) {
 }
 
 export function useEveryMinute() {
-  const [state, setState] = useState();
+  const [state, setState] = useState(Date.now());
 
   useEffect(() => {
     const cancel = repeatEvery(() => {

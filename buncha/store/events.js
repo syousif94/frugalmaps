@@ -130,7 +130,7 @@ const debouncedGet = _.debounce((dispatch, args) => {
 export function filter({ tag = null, text = "" }) {
   return (dispatch, getState) => {
     const {
-      events: { bounds }
+      events: { bounds, text: prevText }
     } = getState();
 
     dispatch({
@@ -141,8 +141,8 @@ export function filter({ tag = null, text = "" }) {
       }
     });
 
-    if (text.length) {
-      debouncedGet(dispatch, { bounds, refresh: false, searching: true });
+    if (text.length || (prevText.length && !tag)) {
+      debouncedGet(dispatch, { bounds, searching: true });
     } else {
       dispatch(get({ bounds }));
     }
