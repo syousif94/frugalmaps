@@ -6,17 +6,8 @@ import { Entypo, FontAwesome, Feather } from "@expo/vector-icons";
 import EventFriends from "./EventFriends";
 import share from "../utils/Share";
 
-export default memo(({ item, index = 0, style, description, demo }) => {
-  let time;
-  if (demo) {
-    time = {
-      color: UPCOMING,
-      text: "in 40 minutes",
-      span: "Mon 7pm - 9:30pm"
-    };
-  } else {
-    time = itemRemaining(item);
-  }
+export default memo(({ item, index = 0, style }) => {
+  const time = itemRemaining(item);
 
   return (
     <View style={[{ overflow: "hidden" }, style]}>
@@ -24,24 +15,17 @@ export default memo(({ item, index = 0, style, description, demo }) => {
         style={[styles.row, { alignItems: "flex-start", paddingHorizontal: 5 }]}
       >
         <View style={{ flex: 1 }}>
-          <Text style={[styles.subtitleText]}>
-            {time.span}
+          <Text style={styles.titleText}>
+            {item._source.title}
             <Text style={{ color: time.color, fontWeight: "700" }}>
               {" "}
               {time.text} {time.state}
             </Text>
           </Text>
-          <View style={styles.row}>
-            <Text style={styles.titleText}>{item._source.title}</Text>
-          </View>
 
-          {description ? (
-            <Text style={styles.descriptionText}>
-              {item._source.description}
-            </Text>
-          ) : (
-            <Text style={styles.tagText}>{item._source.tags.join(", ")}</Text>
-          )}
+          <Text style={styles.descriptionText}>{item._source.description}</Text>
+
+          <Text style={styles.tagText}>{item._source.tags.join(", ")}</Text>
         </View>
       </View>
       <View
@@ -59,13 +43,6 @@ export default memo(({ item, index = 0, style, description, demo }) => {
           <FontAwesome name="star" size={16} color={"#FFA033"} />
           <Text style={styles.actionText}>Interested</Text>
         </TouchableOpacity>
-        {/* <TouchableOpacity
-          style={[styles.actionButton]}
-          onPress={share.bind(null, item)}
-        >
-          <Feather name="share" size={16} color={BLUE} />
-          <Text style={styles.actionText}>Share</Text>
-        </TouchableOpacity> */}
       </View>
       {/* <View style={{ marginTop: 5, maxWidth: "100%" }}>
         <EventFriends />

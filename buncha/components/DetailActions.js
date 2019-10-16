@@ -3,6 +3,7 @@ import { View, StyleSheet, ScrollView, Text, Linking } from "react-native";
 import Link from "./Link";
 import { FontAwesome, Entypo } from "@expo/vector-icons";
 import { RED, BLUE, NOW } from "../utils/Colors";
+import { WEB } from "../utils/Constants";
 
 export default ({ item }) => {
   return (
@@ -52,7 +53,7 @@ export default ({ item }) => {
           }}
         >
           <FontAwesome name="map-marker" size={14} color={RED} />
-          <Text style={[styles.titleText, { marginLeft: 6 }]}>Google Maps</Text>
+          <Text style={[styles.titleText, { marginLeft: 8 }]}>Google Maps</Text>
         </Link>
       </ScrollView>
     </View>
@@ -61,13 +62,13 @@ export default ({ item }) => {
 
 const styles = StyleSheet.create({
   container: {
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: "#f2f2f2"
+    width: "100%",
+    alignSelf: WEB ? "center" : null,
+    maxWidth: WEB ? 500 : null
   },
   scrollContent: {
-    paddingHorizontal: 3.5,
-    paddingVertical: 6
+    paddingHorizontal: 6,
+    paddingVertical: 10
   },
   titleText: {
     fontSize: 14,
@@ -75,10 +76,11 @@ const styles = StyleSheet.create({
   },
   link: {
     borderRadius: 8,
-    marginHorizontal: 2.5,
-    paddingHorizontal: 15,
+    marginHorizontal: 4,
+    paddingLeft: 10,
+    paddingRight: 8,
     backgroundColor: "#f4f4f4",
-    height: 44,
+    height: 28,
     flexDirection: "row",
     alignItems: "center"
   }

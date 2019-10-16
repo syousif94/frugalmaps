@@ -85,7 +85,7 @@ export default memo(({ item, id }) => {
   let cityText = item._source.neighborhood || item._source.city;
   const distance = roundedDistanceTo(item);
   if (distance) {
-    cityText = `${distance}${cityText}`;
+    cityText = `${distance} ${cityText}`;
   }
 
   const narrow = width < 800;
@@ -156,7 +156,7 @@ export default memo(({ item, id }) => {
             />
           ) : null}
           <View style={styles.content}>
-            <View style={[styles.info, { padding: 10 }]}>
+            <View style={[styles.info, { padding: 10, paddingBottom: 0 }]}>
               <View style={[styles.row]}>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.locationText}>
@@ -165,13 +165,14 @@ export default memo(({ item, id }) => {
                   <Text style={styles.detailText}>{cityText}</Text>
                 </View>
                 <View style={styles.rating}>
-                  <FontAwesome name="star" size={14} color="#FFA033" />
+                  <FontAwesome name="star" size={18} color="#FFA033" />
                   <Text style={styles.ratingText}>
                     {parseFloat(item._source.rating, 10).toFixed(1)}
                   </Text>
                 </View>
               </View>
             </View>
+            <DetailActions item={item} />
             <ImageGallery photos={item._source.photos} />
             <View style={styles.info}>
               {events.map((item, index) => {
@@ -194,7 +195,6 @@ export default memo(({ item, id }) => {
             </View>
           </View>
         </Animated.ScrollView>
-        {/* <DetailActions item={item} /> */}
       </View>
     </View>
   );
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     color: "#000",
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: "600",
     marginLeft: 5
   },
