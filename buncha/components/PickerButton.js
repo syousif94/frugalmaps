@@ -37,9 +37,9 @@ const PlacePicker = () => {
     const locationText =
       city && city.text.length
         ? city.text.split(",")[0]
-        : locationEnabled
+        : locationEnabled || locationEnabled === null
         ? "Locating"
-        : "Everywhere";
+        : "Everywhere"
     return locationText;
   });
 

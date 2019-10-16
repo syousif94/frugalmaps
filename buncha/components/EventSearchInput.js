@@ -10,6 +10,8 @@ import * as Events from "../store/events";
 
 const searchText = `Search${WEB ? "" : " for places and activites"}`;
 
+const mobileProps = WEB ? {} : { returnKeyType: "search" };
+
 export default ({ contentContainerStyle = {} }) => {
   const dispatch = useDispatch();
   const query = useSelector(state => state.events.text);
@@ -31,7 +33,7 @@ export default ({ contentContainerStyle = {} }) => {
         autoCompleteType="off"
         spellCheck={WEB ? "false" : false}
         autoCapitalize="none"
-        returnKeyType="search"
+        {...mobileProps}
         backgroundColor="rgba(180,180,180,0.1)"
         containerStyle={{ flex: 1, borderRadius: 6 }}
         style={styles.input}

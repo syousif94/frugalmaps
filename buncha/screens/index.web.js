@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { View } from "react-native";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import UpNextScreen from "./UpNextScreen";
 import DetailScreen from "./DetailScreen";
-import MenuScreen from "./MenuScreen";
 import MapScreen from "./MapScreen";
 import IntroScreen from "./IntroScreen";
 import AccountScreen from "./AccountScreen";
@@ -54,11 +53,6 @@ const routeMap = {
     component: DetailScreen,
     path: "/e/:id"
   },
-  Search: {
-    component: MenuScreen,
-    path: "/search",
-    exact: true
-  },
   Map: {
     component: MapScreen,
     path: "/map",
@@ -94,10 +88,20 @@ const WebRoutesGenerator = ({ routeMap }) => {
 };
 
 export default () => {
+  const [intro, setIntro] = useState(!localStorage["intro"]);
+
   return (
     <Router ref={setTopLevelNavigator}>
       <View style={{ flex: 1, backgroundColor: "#fff" }}>
-        <UpNextScreen />
+        <UpNextScreen intro={intro} />
+        {intro ? (
+          <IntroScreen
+            onComplete={() => {
+              localStorage["intro"] = "complete";
+              setIntro(false);
+            }}
+          />
+        ) : null}
         <View
           style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
           pointerEvents="box-none"

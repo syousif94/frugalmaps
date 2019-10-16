@@ -20,7 +20,6 @@ import { Helmet } from "react-helmet";
 import { useCitiesToggle } from "../utils/Hooks";
 // import AppBanner from "../components/AppBanner";
 import ListError from "../components/ListError";
-import { getInset } from "../utils/SafeAreaInsets";
 import emitter from "tiny-emitter/instance";
 import FilterView from "../components/FilterView";
 import SortBar from "../components/SortBar";
@@ -34,10 +33,7 @@ if (!WEB) {
 
 const narrow = 600;
 
-export default () => {
-  // const data = useSelector(state =>
-  //   state.events.markers.sort((a, b) => a._source.location > b._source.location)
-  // );
+export default ({ intro = false }) => {
   const data = useSelector(state => state.events.upNext);
   const refreshing = useSelector(state => state.events.refreshing);
   const error = useSelector(state => state.events.error);
@@ -45,10 +41,20 @@ export default () => {
   const dispatch = useDispatch();
   const onRefresh = useCallback(() => dispatch(refresh()), []);
   const listRef = useRef(null);
-  const [opacity, setOpacity] = useState(WEB ? 0 : 1);
+  const [opacity, setOpacity] = useState(
+    WEB && location.pathname !== "/" ? 0 : 1
+  );
 
   useEffect(() => {
-    dispatch(enableLocation());
+    if (
+      !refreshing &&
+      !data.length &&
+      !intro &&
+      locationEnabled === null &&
+      (!WEB || location.pathname === "/")
+    ) {
+      dispatch(enableLocation());
+    }
   }, []);
 
   useEffect(() => {
@@ -59,14 +65,18 @@ export default () => {
         const home = location.pathname === "/";
         setOpacity(home ? 1 : 0);
         if (home && !data.length && !refreshing && !error) {
-          onRefresh();
-          dispatch(Cities.get());
+          if (locationEnabled === null && !intro) {
+            dispatch(enableLocation());
+          } else if (!intro) {
+            onRefresh();
+            dispatch(Cities.get());
+          }
         }
       });
 
       return () => unlisten();
     }
-  }, [data, refreshing, error]);
+  }, [data, refreshing, error, locationEnabled, intro]);
 
   useEffect(() => {
     if (locationEnabled === null) {
