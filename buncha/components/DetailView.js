@@ -30,12 +30,21 @@ const mapMinHeight = 190;
 
 const contentMinHeight = HEIGHT - mapMinHeight;
 
-const initialOffset = mapViewHeight - mapMinHeight;
+let initialOffset = mapViewHeight - mapMinHeight;
+
+function makeNarrowWebMapOffset(dimensions) {
+  return dimensions.height * 0.7;
+}
 
 export default memo(({ item, id }) => {
   const events = useSelector(selectPlaceEvents(item));
   const iframeRef = useRef(null);
   const [iframeReady, setIframeReady] = useState(false);
+  const [dimensions, setDimensions] = useState(Dimensions.get("window"));
+  if (WEB) {
+    initialOffset =
+      makeNarrowWebMapOffset(dimensions) - dimensions.height * 0.15;
+  }
   const scrollOffset = useRef(new Animated.Value(initialOffset));
   const scrollRef = useRef(null);
 
@@ -58,11 +67,9 @@ export default memo(({ item, id }) => {
     }
   }, [iframeReady, item]);
 
-  const [width, setWidth] = useState(Dimensions.get("window").width);
-
   useEffect(() => {
     const onChange = ({ window }) => {
-      setWidth(window.width);
+      setDimensions(window);
     };
 
     Dimensions.addEventListener("change", onChange);
@@ -73,12 +80,15 @@ export default memo(({ item, id }) => {
   }, []);
 
   useEffect(() => {
+    const scroll = () => {
+      scrollRef.current
+        .getNode()
+        .scrollTo({ y: initialOffset, animated: false });
+    };
     if (ANDROID) {
-      requestAnimationFrame(() => {
-        scrollRef.current
-          .getNode()
-          .scrollTo({ y: initialOffset, animated: false });
-      });
+      requestAnimationFrame(scroll);
+    } else if (WEB) {
+      scroll();
     }
   }, []);
 
@@ -88,12 +98,12 @@ export default memo(({ item, id }) => {
     cityText = `${distance} ${cityText}`;
   }
 
-  const narrow = width < 800;
+  const narrow = dimensions.width < 800;
 
   const containerStyle = {
     backgroundColor: "#fff",
     flex: 1,
-    flexDirection: narrow ? (WEB ? "column-reverse" : null) : "row"
+    flexDirection: narrow ? (WEB ? "column" : null) : "row-reverse"
   };
 
   const scrollViewStyle = {
@@ -101,38 +111,32 @@ export default memo(({ item, id }) => {
     flex: 1
   };
 
+  const scrollProps = WEB
+    ? {
+        onScroll: e => {
+          const offset = e.nativeEvent.contentOffset.y;
+          scrollOffset.current.setValue(offset);
+        },
+        scrollEventThrottle: 16,
+        contentContainerStyle: {
+          paddingTop: narrow ? dimensions.height * 0.7 : null
+        }
+      }
+    : {
+        onScroll: Animated.event([
+          { nativeEvent: { contentOffset: { y: scrollOffset.current } } }
+        ])
+      };
+
   return (
     <View style={containerStyle}>
-      {WEB ? (
-        <View
-          style={{
-            flex: narrow ? 0 : 1,
-            visibility: narrow ? "hidden" : null,
-            backgroundColor: "#fff"
-          }}
-        >
-          <iframe
-            ref={iframeRef}
-            style={{
-              backgroundColor: "#fff",
-              flex: 1,
-              border: "none",
-              borderTop: narrow ? "1px solid #ddd" : "none"
-            }}
-            src="/map"
-          />
-          <BackButton style={{ position: "absolute", top: 10, left: 10 }} />
-        </View>
-      ) : null}
       <View style={scrollViewStyle}>
         <Animated.ScrollView
           style={scrollViewStyle}
           ref={scrollRef}
           contentInsetAdjustmentBehavior="never"
           contentOffset={{ x: 0, y: initialOffset }}
-          onScroll={Animated.event([
-            { nativeEvent: { contentOffset: { y: scrollOffset.current } } }
-          ])}
+          {...scrollProps}
         >
           {!WEB ? (
             <MapView
@@ -196,6 +200,44 @@ export default memo(({ item, id }) => {
           </View>
         </Animated.ScrollView>
       </View>
+      {WEB ? (
+        <Animated.View
+          style={{
+            flex: narrow ? null : 1,
+            backgroundColor: "#fff",
+            position: narrow ? "absolute" : null,
+            top: narrow ? 0 : null,
+            left: narrow ? 0 : null,
+            right: narrow ? 0 : null,
+            height: narrow
+              ? scrollOffset.current.interpolate({
+                  inputRange: [0, makeNarrowWebMapOffset(dimensions)],
+                  outputRange: [
+                    scrollProps.contentContainerStyle.paddingTop,
+                    0
+                  ],
+                  extrapolate: "clamp"
+                })
+              : null,
+            overflow: "hidden"
+          }}
+        >
+          <iframe
+            ref={iframeRef}
+            style={{
+              backgroundColor: "#fff",
+              flex: narrow ? null : 1,
+              height: narrow
+                ? scrollProps.contentContainerStyle.paddingTop
+                : null,
+              border: "none",
+              borderTop: narrow ? "1px solid #ddd" : "none"
+            }}
+            src="/map"
+          />
+          <BackButton style={{ position: "absolute", top: 10, left: 10 }} />
+        </Animated.View>
+      ) : null}
     </View>
   );
 });
@@ -203,8 +245,8 @@ export default memo(({ item, id }) => {
 const styles = StyleSheet.create({
   content: {
     paddingBottom: getInset("bottom") + 70,
-    minHeight: contentMinHeight,
-    marginTop: mapViewHeight,
+    minHeight: WEB ? null : contentMinHeight,
+    marginTop: WEB ? null : mapViewHeight,
     backgroundColor: "#fff"
   },
   info: {
