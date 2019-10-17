@@ -41,12 +41,16 @@ export default memo(({ item, id }) => {
   const iframeRef = useRef(null);
   const [iframeReady, setIframeReady] = useState(false);
   const [dimensions, setDimensions] = useState(Dimensions.get("window"));
+  const prevDimensions = useRef(null);
   if (WEB) {
     initialOffset =
       makeNarrowWebMapOffset(dimensions) - dimensions.height * 0.15;
   }
   const scrollOffset = useRef(new Animated.Value(initialOffset));
   const scrollRef = useRef(null);
+  const scrollToTop = () => {
+    scrollRef.current.getNode().scrollTo({ y: initialOffset, animated: false });
+  };
 
   useEffect(() => {
     if (iframeRef.current && !iframeRef.current.onload) {
@@ -68,27 +72,38 @@ export default memo(({ item, id }) => {
   }, [iframeReady, item]);
 
   useEffect(() => {
-    const onChange = ({ window }) => {
-      setDimensions(window);
-    };
+    if (WEB) {
+      const onChange = ({ window }) => {
+        setDimensions(window);
+      };
 
-    Dimensions.addEventListener("change", onChange);
+      Dimensions.addEventListener("change", onChange);
 
-    return () => {
-      Dimensions.removeEventListener("change", onChange);
-    };
+      return () => {
+        Dimensions.removeEventListener("change", onChange);
+      };
+    }
   }, []);
 
   useEffect(() => {
-    const scroll = () => {
-      scrollRef.current
-        .getNode()
-        .scrollTo({ y: initialOffset, animated: false });
-    };
+    if (WEB) {
+      if (prevDimensions.current) {
+        const width = dimensions.width;
+        const prevWidth = prevDimensions.current.width;
+        if (width < 800 && prevWidth >= 800) {
+          scrollToTop();
+        }
+      }
+
+      prevDimensions.current = dimensions;
+    }
+  }, [dimensions]);
+
+  useEffect(() => {
     if (ANDROID) {
-      requestAnimationFrame(scroll);
+      requestAnimationFrame(scrollToTop);
     } else if (WEB) {
-      scroll();
+      scrollToTop();
     }
   }, []);
 
@@ -159,8 +174,21 @@ export default memo(({ item, id }) => {
               }}
             />
           ) : null}
-          <View style={styles.content}>
-            <View style={[styles.info, { padding: 10, paddingBottom: 0 }]}>
+          <View
+            style={[
+              styles.content,
+              { minHeight: WEB && narrow ? dimensions.height * 0.8 : null }
+            ]}
+          >
+            <View
+              style={[
+                styles.info,
+                {
+                  padding: 10,
+                  paddingBottom: 0
+                }
+              ]}
+            >
               <View style={[styles.row]}>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.locationText}>
