@@ -245,7 +245,6 @@ export default ({ intro = false }) => {
                       width: "100%",
                       marginLeft: 0,
                       paddingVertical: 0
-                      // paddingTop: index < (width < narrow ? 2 : 3) ? 5 : null
                     }}
                   />
                 ))}
