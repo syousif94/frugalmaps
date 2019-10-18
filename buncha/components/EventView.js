@@ -1,32 +1,38 @@
 import React, { useMemo, memo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { itemRemaining } from "../utils/Time";
-import { RED, BLUE, UPCOMING } from "../utils/Colors";
+import { itemRemaining, itemSpans } from "../utils/Time";
+import { RED } from "../utils/Colors";
 import { Entypo, FontAwesome, Feather } from "@expo/vector-icons";
 import EventFriends from "./EventFriends";
 import share from "../utils/Share";
+import { useEveryMinute } from "../utils/Hooks";
 
 export default memo(({ item, index = 0, style }) => {
+  const [currentTime] = useEveryMinute();
+
   const time = itemRemaining(item);
+
+  const timeSpans = itemSpans(item);
 
   return (
     <View style={[{ overflow: "hidden" }, style]}>
-      <View
-        style={[styles.row, { alignItems: "flex-start", paddingHorizontal: 5 }]}
-      >
-        <View style={{ flex: 1 }}>
-          <Text style={styles.titleText}>
-            {item._source.title}
-            <Text style={{ color: time.color, fontWeight: "700" }}>
-              {" "}
-              {time.text} {time.state}
-            </Text>
+      <View style={{ paddingHorizontal: 5, paddingTop: 2 }}>
+        {timeSpans.map(span => {
+          return <Text style={styles.spanText}>{span}</Text>;
+        })}
+
+        <Text style={styles.titleText}>
+          {item._source.title}
+          <Text style={{ color: time.color, fontWeight: "700" }}>
+            {" "}
+            {time.text}
           </Text>
+          <Text style={styles.subText}> {time.duration}</Text>
+        </Text>
 
-          <Text style={styles.descriptionText}>{item._source.description}</Text>
+        <Text style={styles.descriptionText}>{item._source.description}</Text>
 
-          <Text style={styles.tagText}>{item._source.tags.join(", ")}</Text>
-        </View>
+        <Text style={styles.tagText}>{item._source.tags.join(", ")}</Text>
       </View>
       <View
         style={{
@@ -70,7 +76,6 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   titleText: {
-    marginTop: 2,
     fontSize: 16,
     fontWeight: "700"
   },
@@ -87,10 +92,17 @@ const styles = StyleSheet.create({
   descriptionText: {
     marginTop: 7,
     color: "#000",
-    fontSize: 14
+    fontSize: 15
+  },
+  spanText: {
+    marginBottom: 5,
+    color: "#666",
+    fontWeight: "700",
+    fontSize: 10,
+    textTransform: "uppercase"
   },
   tagText: {
-    marginTop: 3,
+    marginTop: 5,
     color: "#666",
     fontWeight: "700",
     fontSize: 10,
@@ -100,5 +112,6 @@ const styles = StyleSheet.create({
     color: "#000",
     fontSize: 12,
     fontWeight: "600"
-  }
+  },
+  subText: { fontSize: 10, color: "#aaa", fontWeight: "700" }
 });

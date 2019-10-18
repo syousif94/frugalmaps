@@ -324,6 +324,54 @@ export function groupHours(source) {
   return groups;
 }
 
+function allDaysConsecutive(sortedDays) {
+  let i = 1;
+
+  while (i < sortedDays.length) {
+    const prevDay = sortedDays[i - 1];
+    const day = sortedDays[i];
+
+    const daysApart = day.iso - prevDay.iso;
+    if (daysApart !== 1) {
+      return false;
+    }
+    i += 1;
+  }
+
+  return true;
+}
+
+export function itemSpans(item) {
+  const hours = item._source.groupedHours;
+  const spans = hours.map(hours => {
+    const hoursText = `: ${hours.hours}`;
+
+    if (hours.days.length === 1) {
+      return `${hours.days[0].text}${hoursText}`;
+    } else if (hours.days.length === 7) {
+      return `Everyday${hoursText}`;
+    }
+
+    let sortedDays = hours.days.sort((a, b) => a.iso - b.iso);
+
+    if (!sortedDays[0].iso) {
+      sortedDays = [...sortedDays.slice(1), { ...sortedDays[0], iso: 7 }];
+    }
+
+    if (sortedDays.length === 2) {
+      return `${sortedDays.map(day => day.text).join(" & ")}${hoursText}`;
+    }
+
+    if (allDaysConsecutive(sortedDays)) {
+      return `${sortedDays[0].text} - ${sortedDays[sortedDays.length - 1].text}${hoursText}`;
+    }
+
+    return `${sortedDays.map(day => day.text).join(", ")}${hoursText}`;
+  });
+
+  return spans;
+}
+
 export function itemRemaining(item) {
   const iso = makeISO(item._source.days);
   const yesterdayIso = makeYesterdayISO(item._source.days);
@@ -369,7 +417,6 @@ export function itemRemaining(item) {
 
   const upcoming = !ended && !ending && spanHours.today;
 
-  // const text = `${remaining.value}`;
   let color = NOT_TODAY;
 
   if (ending) {
@@ -385,8 +432,6 @@ export function itemRemaining(item) {
   const day = (tomorrow && tomorrow.text) || spanHours.days[0].text;
 
   const { span, start, end } = itemTime(day, spanHours, ending, upcoming);
-
-  const notToday = !(ending || upcoming);
 
   let text;
 

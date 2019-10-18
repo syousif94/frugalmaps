@@ -10,6 +10,7 @@ import BackButton from "../components/BackButton";
 import EventView from "../components/EventView";
 import { roundedDistanceTo } from "../utils/Locate";
 import DetailActions from "./DetailActions";
+import PriceText from "./PriceText";
 
 let MapView = null;
 if (!WEB) {
@@ -99,10 +100,12 @@ export default memo(({ item, id }) => {
     }
   }, [dimensions]);
 
+  const narrow = dimensions.width < 800;
+
   useEffect(() => {
     if (ANDROID) {
       requestAnimationFrame(scrollToTop);
-    } else if (WEB) {
+    } else if (WEB && narrow) {
       scrollToTop();
     }
   }, []);
@@ -112,8 +115,6 @@ export default memo(({ item, id }) => {
   if (distance) {
     cityText = `${distance} ${cityText}`;
   }
-
-  const narrow = dimensions.width < 800;
 
   const containerStyle = {
     backgroundColor: "#fff",
@@ -189,19 +190,41 @@ export default memo(({ item, id }) => {
                 }
               ]}
             >
-              <View style={[styles.row]}>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.locationText}>
-                    {item._source.location}
-                  </Text>
-                  <Text style={styles.detailText}>{cityText}</Text>
-                </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "baseline"
+                }}
+              >
+                <Text style={styles.locationText}>
+                  {item._source.location}
+                  <PriceText
+                    priceLevel={item._source.priceLevel}
+                    prefix=" "
+                    style={{
+                      fontSize: 18,
+                      fontWeight: "600"
+                    }}
+                  />
+                </Text>
                 <View style={styles.rating}>
                   <FontAwesome name="star" size={18} color="#FFA033" />
                   <Text style={styles.ratingText}>
                     {parseFloat(item._source.rating, 10).toFixed(1)}
                   </Text>
                 </View>
+              </View>
+              <View
+                style={[
+                  styles.row,
+                  { justifyContent: "space-between", marginTop: 2 }
+                ]}
+              >
+                <Text style={styles.detailText}>{cityText}</Text>
+                <Text style={styles.detailText}>
+                  {events.length} event{events.length !== 1 ? "s" : ""}
+                </Text>
               </View>
             </View>
             <DetailActions item={item} />
@@ -264,6 +287,7 @@ export default memo(({ item, id }) => {
             src="/map"
           />
           <BackButton style={{ position: "absolute", top: 10, left: 10 }} />
+          {narrow ? <View style={styles.bar} /> : null}
         </Animated.View>
       ) : null}
     </View>
@@ -295,12 +319,13 @@ const styles = StyleSheet.create({
     fontWeight: "600"
   },
   detailText: {
-    fontSize: 12,
+    fontSize: 13,
+    fontWeight: "600",
     color: "#444"
   },
   rating: {
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "baseline"
   },
   ratingText: {
     color: "#000",
@@ -324,5 +349,14 @@ const styles = StyleSheet.create({
     marginTop: 5,
     color: "#000",
     fontSize: 14
+  },
+  bar: {
+    position: "absolute",
+    alignSelf: "center",
+    bottom: 8,
+    width: 60,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: "rgba(0,0,0,0.5)"
   }
 });

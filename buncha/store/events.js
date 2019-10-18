@@ -347,6 +347,27 @@ export function getEvent(id) {
   };
 }
 
+function getDaysAway(item) {
+  const days = item._source.groupedHours[0].days.sort((a, b) => {
+    return a.daysAway - b.daysAway;
+  });
+
+  let away = days[0].daysAway;
+
+  const remaining = timeRemaining(
+    item._source.groupedHours[0],
+    item._source.groupedHours[0].iso
+  );
+
+  if (remaining.ended && days.length === 1) {
+    away += 7;
+  } else if (remaining.ended) {
+    away = days[1].daysAway;
+  }
+
+  return away;
+}
+
 export function selectPlaceEvents(item) {
   return state => {
     return item &&
@@ -355,35 +376,9 @@ export function selectPlaceEvents(item) {
       ? state.events.places[item._source.placeid]
           .map(id => state.events.data[id])
           .sort((_a, _b) => {
-            const aDay = _a._source.groupedHours[0].days.sort((a, b) => {
-              return a.daysAway - b.daysAway;
-            })[0];
+            const aAway = getDaysAway(_a);
 
-            let aAway = aDay.daysAway;
-
-            const aRemaining = timeRemaining(
-              _a._source.groupedHours[0],
-              _a._source.groupedHours[0].iso
-            );
-
-            if (aRemaining.ended) {
-              aAway += 7;
-            }
-
-            const bDay = _b._source.groupedHours[0].days.sort((a, b) => {
-              return a.daysAway - b.daysAway;
-            })[0];
-
-            let bAway = bDay.daysAway;
-
-            const bRemaining = timeRemaining(
-              _b._source.groupedHours[0],
-              _b._source.groupedHours[0].iso
-            );
-
-            if (bRemaining.ended) {
-              bAway += 7;
-            }
+            const bAway = getDaysAway(_b);
 
             if (aAway !== bAway) {
               return aAway - bAway;
