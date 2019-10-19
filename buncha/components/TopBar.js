@@ -28,7 +28,7 @@ export default ({ style = { paddingLeft: 15 }, containerStyle = {} }) => {
   const count = useSelector(state => state.events.upNext.length);
 
   const today = moment(now);
-  const day = today.format("ddd h:mma");
+  const day = today.format("h:mma");
   const minDiff = Math.ceil((currentTime - now) / 60000);
   let fromNow = "";
 
@@ -44,9 +44,7 @@ export default ({ style = { paddingLeft: 15 }, containerStyle = {} }) => {
       <View style={[styles.content, style]}>
         <View
           style={{
-            flex: 1,
             flexDirection: "row",
-            justifyContent: "space-between",
             alignItems: "center"
           }}
         >
@@ -56,14 +54,14 @@ export default ({ style = { paddingLeft: 15 }, containerStyle = {} }) => {
           </Text>
           <View style={styles.row}>
             <Text allowFontScaling={false} style={styles.titleText}>
+              {" "}
               {locationText}
             </Text>
             {count ? (
-              <View style={styles.count}>
-                <Text allowFontScaling={false} style={styles.countText}>
-                  {count}
-                </Text>
-              </View>
+              <Text allowFontScaling={false} style={styles.countText}>
+                {" "}
+                {count} events
+              </Text>
             ) : null}
           </View>
         </View>
@@ -89,26 +87,20 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    justifyContent: "space-between",
     paddingTop: IOS ? topInset : 4,
     paddingBottom: 6,
     borderBottomWidth: 1,
     borderColor: "rgba(0,0,0,0.05)"
   },
   titleText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "600",
     color: "#000"
   },
-  count: {
-    justifyContent: "center",
-    paddingHorizontal: 2,
-    borderRadius: 3,
-    backgroundColor: "rgba(0,0,0,0.3)",
-    marginLeft: 4
-  },
   countText: {
-    fontSize: 12,
-    fontWeight: "700",
-    color: "#fff"
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#777"
   }
 });

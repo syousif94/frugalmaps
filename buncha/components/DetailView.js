@@ -110,10 +110,11 @@ export default memo(({ item, id }) => {
     }
   }, []);
 
-  let cityText = item._source.neighborhood || item._source.city;
+  const cityText = item._source.neighborhood || item._source.city;
+  let distanceText;
   const distance = roundedDistanceTo(item);
   if (distance) {
-    cityText = `${distance} ${cityText}`;
+    distanceText = `${distance} `;
   }
 
   const containerStyle = {
@@ -181,6 +182,7 @@ export default memo(({ item, id }) => {
               { minHeight: WEB && narrow ? dimensions.height * 0.8 : null }
             ]}
           >
+            {WEB ? null : <View style={styles.mobileBar} />}
             <View
               style={[
                 styles.info,
@@ -216,13 +218,21 @@ export default memo(({ item, id }) => {
                 </View>
               </View>
               <View
-                style={[
-                  styles.row,
-                  { justifyContent: "space-between", marginTop: 2 }
-                ]}
+                style={{
+                  overflow: "hidden",
+                  marginTop: 2,
+                  flexDirection: "row",
+                  justifyContent: "space-between"
+                }}
               >
-                <Text style={styles.detailText}>{cityText}</Text>
-                <Text style={styles.detailText}>
+                <Text
+                  numberOfLines={1}
+                  style={[styles.detailText, { maxWidth: "80%" }]}
+                >
+                  {distanceText || null}
+                  <Text style={{ fontWeight: "400" }}>{cityText}</Text>
+                </Text>
+                <Text style={styles.detailText} numberOfLines={1}>
                   {events.length} event{events.length !== 1 ? "s" : ""}
                 </Text>
               </View>
@@ -358,5 +368,14 @@ const styles = StyleSheet.create({
     height: 4,
     borderRadius: 2,
     backgroundColor: "rgba(0,0,0,0.5)"
+  },
+  mobileBar: {
+    position: "absolute",
+    alignSelf: "center",
+    width: 60,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    top: -12
   }
 });
