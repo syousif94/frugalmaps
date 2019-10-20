@@ -2,6 +2,7 @@
   "name": "functions",
   "description": "Cloud Functions for Firebase",
   "scripts": {
+    "test": "mocha -w",
     "lint": "eslint .",
     "start": "docker-compose -f docker-compose-dev.yml up",
     "build:docker": "docker-compose -f docker-compose-dev.yml build",
@@ -9,7 +10,7 @@
     "transform": "nodemon schema/transform.js"
   },
   "dependencies": {
-    "@google-cloud/firestore": "^0.18.0",
+    "@google-cloud/firestore": "^2.4.0",
     "@google/maps": "0.3.1",
     "@turf/turf": "^5.1.6",
     "aws-sdk": "^2.389.0",
@@ -19,8 +20,8 @@
     "elasticsearch": "^15.1.1",
     "expo-server-sdk": "^3.1.0",
     "express": "^4.16.3",
-    "firebase-admin": "^6.1.0",
-    "firebase-functions": "^2.0.5",
+    "firebase-admin": "^8.6.1",
+    "firebase-functions": "^3.3.0",
     "fuse.js": "^3.4.1",
     "handlebars": "^4.0.12",
     "isomorphic-fetch": "^2.2.1",
@@ -30,9 +31,16 @@
     "request-promise-native": "^1.0.5",
     "sharp": "^0.22.1"
   },
+  "directories": {
+    "test": "./test"
+  },
   "devDependencies": {
+    "chai": "^4.2.0",
     "eslint": "^5",
-    "eslint-plugin-node": "^8"
+    "eslint-plugin-mocha": "^6.2.0",
+    "eslint-plugin-node": "^8",
+    "mocha": "^6.2.2",
+    "supertest": "^4.0.2"
   },
   "private": true
 }

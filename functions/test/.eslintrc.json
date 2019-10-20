@@ -1,0 +1,19 @@
+{
+  "plugins": ["mocha"],
+  "extends": ["plugin:mocha/recommended"],
+  "globals": {
+    "fetch": true
+  },
+  "env": {
+    "mocha": true
+  },
+  "rules": {
+    "no-unused-vars": [
+      "error",
+      {
+        "varsIgnorePattern": "should|expect"
+      }
+    ],
+    "node/no-unpublished-require": 0
+  }
+}

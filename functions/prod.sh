@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd /home/app
-npm install
+npm install --production
 
 dockerize -wait http://es01:9200 -timeout 25s
 
