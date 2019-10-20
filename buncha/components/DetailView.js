@@ -326,7 +326,8 @@ const styles = StyleSheet.create({
   },
   locationText: {
     fontSize: 22,
-    fontWeight: "600"
+    fontWeight: "600",
+    maxWidth: "85%"
   },
   detailText: {
     fontSize: 13,

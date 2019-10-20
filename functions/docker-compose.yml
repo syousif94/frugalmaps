@@ -17,15 +17,15 @@ services:
       - server
 
   es01:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.3.0
+    image: blacktop/elasticsearch:7.4
+    ulimits:
+      memlock: -1
     environment:
       - bootstrap.memory_lock=true
-      - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
+      - discovery.type=single-node
+    volumes:
+      - ../frugalsearch/es01:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
     networks:

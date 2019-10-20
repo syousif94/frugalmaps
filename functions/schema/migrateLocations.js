@@ -34,7 +34,7 @@ async function getObjects(index) {
 }
 
 async function transform() {
-  const docs = await getObjects("location").then(docs =>
+  const docs = await getObjects("locations").then(docs =>
     docs.map(doc => ({ ...doc, _id: _.kebabCase(doc.name) }))
   );
 

@@ -30,18 +30,18 @@ async function getObjects(index) {
     )
   );
 
-  const objs = objects.map(obj => {
-    const result = {
-      ...obj,
-      tags: getKeywords(obj)
-    };
+  // const objs = objects.map(obj => {
+  //   const result = {
+  //     ...obj,
+  //     tags: getKeywords(obj)
+  //   };
 
-    delete result.type;
+  //   delete result.type;
 
-    return result;
-  });
+  //   return result;
+  // });
 
-  return objs;
+  return objects;
 }
 
 function getKeywords(obj) {
@@ -103,7 +103,7 @@ const EVENT_TYPES = [
 const eventWords = EVENT_TYPES.map(word => word.toLowerCase().split(" "));
 
 async function transform() {
-  const docs = await getObjects("event");
+  const docs = await getObjects("events");
 
   const res = await fetch("https://frugal.ideakeg.xyz/api/bulk", {
     method: "POST",

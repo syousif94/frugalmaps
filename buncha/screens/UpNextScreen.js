@@ -302,7 +302,7 @@ export default ({ intro = false }) => {
           />
         </View>
       )}
-      {WEB && refreshing ? (
+      {WEB && (refreshing || (!data.length && !error && !intro)) ? (
         <View style={styles.loading}>
           <ActivityIndicator size="small" color="#000" />
         </View>

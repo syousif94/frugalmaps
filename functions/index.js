@@ -48,6 +48,7 @@ app.post("/api/events/submissions", require("./events/submissions"));
 app.post("/api/events/suggest", require("./events/suggest"));
 
 app.post("/api/bulk", require("./bulk"));
+app.post("/api/backup", require("./backupAll"));
 app.get("/api/stats", require("./stats"));
 
 app.get("/e/:id", require("./events/render"));
