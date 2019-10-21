@@ -1,7 +1,7 @@
 const AWS = require("./aws");
 const s3 = new AWS.S3();
 
-module.exports = async function backup(key, body) {
+async function backup(key, body) {
   const params = {
     Bucket: "buncha",
     Key: `backup/${key}.json`,
@@ -21,4 +21,8 @@ module.exports = async function backup(key, body) {
   } catch (error) {
     console.log("backup failed", error.message, key, body);
   }
+}
+
+module.exports = {
+  backup
 };

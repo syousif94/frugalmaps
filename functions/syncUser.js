@@ -1,6 +1,6 @@
 const elastic = require("./elastic");
 const user = require("./schema/user");
-const backup = require("./backupToS3");
+const { backup } = require("./backupToS3");
 
 module.exports = async function syncUser(req, res) {
   try {

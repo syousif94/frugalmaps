@@ -1,6 +1,6 @@
 {
   "ignore": ["*.test.js", "fixtures/*"],
   "events": {
-    "start": "cls || clear"
+    "start": "clear"
   }
 }

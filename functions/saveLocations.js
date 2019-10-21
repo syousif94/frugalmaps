@@ -4,9 +4,9 @@ const elastic = require("./elastic");
 const servicesApi = require("./google");
 const location = require("./schema/location");
 
-const backup = require("./backupToS3");
+const { backup } = require("./backupToS3");
 
-module.exports = function saveLocations(city, state) {
+function saveLocations(city, state) {
   const cityAddress = `${city.long_name}, ${state.long_name}`;
   const cityID = _.kebabCase(cityAddress);
 
@@ -33,7 +33,7 @@ module.exports = function saveLocations(city, state) {
                 coordinates
               };
 
-              backup(`location/${id}`, body);
+              backup(`locations/${id}`, body);
 
               return elastic.index({
                 index: location.index,
@@ -48,6 +48,10 @@ module.exports = function saveLocations(city, state) {
   );
 
   return promises;
+}
+
+module.exports = {
+  saveLocations
 };
 
 function getGeometry(address) {

@@ -2,10 +2,10 @@ const elastic = require("./elastic");
 const moment = require("moment");
 const servicesApi = require("./google");
 const event = require("./schema/event");
-const indexLocations = require("./saveLocations");
+const { saveLocations: indexLocations } = require("./saveLocations");
 const { db } = require("./firebase.js");
-const processImages = require("./processImages");
-const backup = require("./backupToS3");
+const { processImages } = require("./processImages");
+const { backup } = require("./backupToS3");
 
 function formatTime(str) {
   const date = moment(str, ["h:ma", "H:m"]);
@@ -36,6 +36,13 @@ async function createEvent(req, res) {
     if (id || fid || postCode !== "") {
       res.send({
         error: "Invalid Code"
+      });
+      return;
+    }
+
+    if (!placeid || !placeid.trim().length) {
+      res.send({
+        error: "Invalid Place"
       });
       return;
     }
@@ -194,9 +201,9 @@ async function createEvent(req, res) {
 
     const [{ _id }] = await Promise.all([save, ...saveLocations]);
 
-    if (!id) {
-      notifyNearbyUsers(_id, body);
-    }
+    // if (!id) {
+    //   notifyNearbyUsers(_id, body);
+    // }
 
     if (fid) {
       await db
@@ -212,7 +219,7 @@ async function createEvent(req, res) {
       }
     });
 
-    backup(`event/${_id}`, body);
+    backup(`events/${_id}`, body);
   } catch (error) {
     res.send({
       error: error.message

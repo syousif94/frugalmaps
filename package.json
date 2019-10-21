@@ -3,8 +3,8 @@
   "description": "A calendar of fun and affordable things to do nearby",
   "scripts": {
     "release": "cd buncha && expo publish",
-    "ios": "cd frugalapp && expo build:ios",
-    "android": "cd frugalapp && expo build:android",
+    "ios": "cd buncha && expo build:ios",
+    "android": "cd buncha && expo build:android",
     "start": "cd frugalapp && expo start",
     "test:api": "chmod a+x ./scripts/test-api.sh && ./scripts/test-api.sh",
     "deploy:api": "chmod a+x ./scripts/deploy-api.sh && ./scripts/deploy-api.sh",

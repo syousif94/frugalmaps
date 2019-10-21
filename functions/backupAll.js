@@ -1,4 +1,4 @@
-const backup = require("./backupToS3");
+const { backup } = require("./backupToS3");
 const elastic = require("./elastic");
 const event = require("./schema/event");
 const location = require("./schema/location");
@@ -20,7 +20,6 @@ module.exports = async function backupAll(req, res) {
       const docs = await elastic
         .search({
           index: index.index,
-          type: index.type,
           body: {
             query: { match_all: {} },
             size: 1000

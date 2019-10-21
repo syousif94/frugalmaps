@@ -2,7 +2,7 @@ const elastic = require("./elastic");
 const Event = require("./schema/event");
 const Reminder = require("./schema/reminder");
 const { db } = require("./firebase.js");
-const backup = require("./backupToS3");
+const { backup } = require("./backupToS3");
 
 module.exports = async function syncReminder(req, res) {
   try {

@@ -6,9 +6,7 @@ const event = require("./schema/event");
 
 const s3 = new AWS.S3();
 
-const photoBase = `https://maps.googleapis.com/maps/api/place/photo?key=${
-  process.env.GOOGLE
-}&maxheight=800&photoreference=`;
+const photoBase = `https://maps.googleapis.com/maps/api/place/photo?key=${process.env.GOOGLE}&maxheight=800&photoreference=`;
 
 function transformRes(buffer, res) {
   return {
@@ -104,7 +102,7 @@ async function createImage(placeid, photo, heights, index) {
   };
 }
 
-module.exports = async function processImages(place) {
+async function processImages(place) {
   const exists = await existsInS3(place.place_id);
 
   if (exists) {
@@ -134,4 +132,8 @@ module.exports = async function processImages(place) {
   const photos = await Promise.all(photoLinks);
 
   return photos;
+}
+
+module.exports = {
+  processImages
 };
