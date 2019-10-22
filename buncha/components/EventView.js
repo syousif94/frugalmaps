@@ -18,7 +18,11 @@ export default memo(({ item, index = 0, style }) => {
     <View style={[{ overflow: "hidden" }, style]}>
       <View style={{ paddingHorizontal: 5, paddingTop: 2 }}>
         {timeSpans.map(span => {
-          return <Text style={styles.spanText}>{span}</Text>;
+          return (
+            <Text key={span} style={styles.spanText}>
+              {span}
+            </Text>
+          );
         })}
 
         <Text style={styles.titleText}>

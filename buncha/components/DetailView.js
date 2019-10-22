@@ -6,7 +6,6 @@ import { selectPlaceEvents } from "../store/events";
 import ImageGallery from "../components/ImageGallery";
 import { WEB, HEIGHT, ANDROID } from "../utils/Constants";
 import { getInset } from "../utils/SafeAreaInsets";
-import BackButton from "../components/BackButton";
 import EventView from "../components/EventView";
 import { roundedDistanceTo } from "../utils/Locate";
 import DetailActions from "./DetailActions";
@@ -296,7 +295,6 @@ export default memo(({ item, id }) => {
             }}
             src="/map"
           />
-          <BackButton style={{ position: "absolute", top: 10, left: 10 }} />
           {narrow ? <View style={styles.bar} /> : null}
         </Animated.View>
       ) : null}

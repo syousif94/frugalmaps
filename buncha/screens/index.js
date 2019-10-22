@@ -105,3 +105,7 @@ export function navigate(routeName, params) {
       })
     );
 }
+
+export function pop() {
+  _navigator && _navigator.dispatch(NavigationActions.back());
+}

@@ -90,12 +90,12 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 13,
-    fontWeight: "700",
+    fontWeight: "600",
     color: "#000"
   },
   countText: {
     fontSize: 13,
-    fontWeight: "700",
+    fontWeight: "600",
     color: "#777"
   }
 });

@@ -1,14 +1,27 @@
 import React from "react";
-import { View, StyleSheet, ScrollView, Text, Linking } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Text,
+  Linking,
+  TouchableOpacity
+} from "react-native";
 import Link from "./Link";
-import { FontAwesome, Entypo } from "@expo/vector-icons";
+import { FontAwesome, Entypo, Ionicons } from "@expo/vector-icons";
 import { RED, BLUE, NOW } from "../utils/Colors";
-import { WEB } from "../utils/Constants";
+import { WEB, ANDROID } from "../utils/Constants";
+import { getHistory, navigate, pop } from "../screens";
 
 export default ({ item }) => {
   return (
     <View style={styles.container}>
-      <ScrollView horizontal contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        showsHorizontalScrollIndicator={false}
+        horizontal
+        contentContainerStyle={styles.scrollContent}
+      >
+        <BackButton />
         <Link
           style={[styles.link]}
           onPress={() => {
@@ -60,6 +73,39 @@ export default ({ item }) => {
   );
 };
 
+const BackButton = () => {
+  if (ANDROID) {
+    return null;
+  }
+  const onPress = () => {
+    if (WEB) {
+      const history = getHistory();
+      if (history) {
+        if (history.length > 2) {
+          history.goBack();
+        } else {
+          navigate("UpNext");
+        }
+      }
+    } else {
+      pop();
+    }
+  };
+  return (
+    <View style={styles.back}>
+      <TouchableOpacity onPress={onPress} style={styles.backButton}>
+        <Ionicons
+          style={{ marginTop: 1 }}
+          name="ios-arrow-back"
+          color={BLUE}
+          size={16}
+        />
+        <Text style={[styles.titleText, { marginLeft: 8 }]}>Back</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
     width: "100%",
@@ -81,6 +127,19 @@ const styles = StyleSheet.create({
     paddingRight: 8,
     backgroundColor: "#f4f4f4",
     height: 28,
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  back: {
+    borderRadius: 8,
+    marginHorizontal: 4,
+    backgroundColor: "#f4f4f4",
+    height: 28
+  },
+  backButton: {
+    height: 28,
+    paddingLeft: 10,
+    paddingRight: 8,
     flexDirection: "row",
     alignItems: "center"
   }
