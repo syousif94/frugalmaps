@@ -45,25 +45,20 @@ export default ({ style = { paddingLeft: 15 }, containerStyle = {} }) => {
         <View
           style={{
             flexDirection: "row",
-            alignItems: "center"
+            alignItems: "center",
+            justifyContent: "flex-end"
           }}
         >
           <Text allowFontScaling={false} style={styles.titleText}>
             {day}
-            <Text style={{ color: "#777" }}>{fromNow}</Text>
+            <Text style={{ color: "#777" }}>{fromNow}</Text> {locationText}
           </Text>
-          <View style={styles.row}>
-            <Text allowFontScaling={false} style={styles.titleText}>
+          {count ? (
+            <Text allowFontScaling={false} style={styles.countText}>
               {" "}
-              {locationText}
+              {count} events
             </Text>
-            {count ? (
-              <Text allowFontScaling={false} style={styles.countText}>
-                {" "}
-                {count} events
-              </Text>
-            ) : null}
-          </View>
+          ) : null}
         </View>
         <EventSearchInput
           contentContainerStyle={{
@@ -95,12 +90,12 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 13,
-    fontWeight: "600",
+    fontWeight: "700",
     color: "#000"
   },
   countText: {
     fontSize: 13,
-    fontWeight: "600",
+    fontWeight: "700",
     color: "#777"
   }
 });

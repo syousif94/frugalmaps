@@ -106,7 +106,7 @@ export function useKeyboardHeight(bottomOffset = 0) {
         heightRef.current,
         {
           toValue: 0,
-          duration: e.duration,
+          duration: ANDROID ? 150 : e.duration,
           easing: KEYBOARD_EASING
         },
         { useNativeDriver: true }
