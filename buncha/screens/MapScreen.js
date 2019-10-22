@@ -5,7 +5,7 @@ import MapView from "react-native-maps";
 import TopBar, { topBarHeight } from "../components/TopBar";
 import Marker from "../components/MapMarker";
 import { timeRemaining, makeISO, makeYesterdayISO } from "../utils/Time";
-import { useCitiesToggle, useEveryMinute } from "../utils/Hooks";
+import { useEveryMinute } from "../utils/Hooks";
 import MapEventButton from "../components/MapEventButton";
 import { ANDROID } from "../utils/Constants";
 import emitter from "tiny-emitter/instance";
@@ -13,8 +13,6 @@ import MapMarkerList from "../components/MapMarkerList";
 import { itemMargin } from "../components/UpNextItem";
 
 export default () => {
-  const [citiesTranslate, toggleCities] = useCitiesToggle();
-
   return (
     <View style={styles.container}>
       <View style={styles.container}>
@@ -25,8 +23,6 @@ export default () => {
           <IndicatorView />
         </View>
         <TopBar
-          rotate={citiesTranslate.current}
-          toggle={toggleCities}
           style={{ paddingHorizontal: itemMargin }}
           containerStyle={{
             position: "absolute",

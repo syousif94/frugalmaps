@@ -1,23 +1,6 @@
-import React, { useCallback, useRef, useState, useEffect } from "react";
-import { Animated, Easing } from "react-native";
+import React, { useRef, useState, useEffect } from "react";
+import { Animated, Easing, Keyboard } from "react-native";
 import { ANDROID } from "./Constants";
-
-export function useCitiesToggle() {
-  const citiesTranslate = useRef(new Animated.Value(0));
-  const citiesVisible = useRef(false);
-
-  const toggleCities = useCallback(() => {
-    citiesVisible.current = !citiesVisible.current;
-    const toValue = citiesVisible.current ? 1 : 0;
-    Animated.timing(
-      citiesTranslate.current,
-      { toValue, duration: 350 },
-      { useNativeDriver: true }
-    ).start();
-  }, []);
-
-  return [citiesTranslate, toggleCities];
-}
 
 function repeatEvery(func, interval) {
   let canceled = false;
@@ -92,4 +75,53 @@ export function useAnimateOn(value, duration = 150, easing = Easing.linear) {
   }, [value, internalValue, easing]);
 
   return [internalValue, transform];
+}
+
+const KEYBOARD_EVENTS = ANDROID
+  ? ["keyboardDidShow", "keyboardDidHide"]
+  : ["keyboardWillShow", "keyboardWillHide"];
+
+const KEYBOARD_EASING = ANDROID
+  ? Easing.linear
+  : Easing.bezier(0.17, 0.59, 0.4, 0.77);
+
+export function useKeyboardHeight(bottomOffset = 0) {
+  const heightRef = useRef(new Animated.Value(0));
+
+  useEffect(() => {
+    const onShow = e => {
+      Animated.timing(
+        heightRef.current,
+        {
+          toValue: -e.endCoordinates.height + bottomOffset,
+          duration: e.duration,
+          easing: KEYBOARD_EASING
+        },
+        { useNativeDriver: true }
+      ).start();
+    };
+
+    const onHide = e => {
+      Animated.timing(
+        heightRef.current,
+        {
+          toValue: 0,
+          duration: e.duration,
+          easing: KEYBOARD_EASING
+        },
+        { useNativeDriver: true }
+      ).start();
+    };
+
+    Keyboard.addListener(KEYBOARD_EVENTS[0], onShow);
+
+    Keyboard.addListener(KEYBOARD_EVENTS[1], onHide);
+
+    return () => {
+      Keyboard.removeListener(KEYBOARD_EVENTS[0], onShow);
+      Keyboard.removeListener(KEYBOARD_EVENTS[1], onHide);
+    };
+  }, []);
+
+  return [heightRef];
 }

@@ -17,7 +17,6 @@ import { enableLocation } from "../store/permissions";
 import { WEB, IOS, ANDROID } from "../utils/Constants";
 import { getHistory } from ".";
 import { Helmet } from "react-helmet";
-import { useCitiesToggle } from "../utils/Hooks";
 // import AppBanner from "../components/AppBanner";
 import ListError from "../components/ListError";
 import emitter from "tiny-emitter/instance";
@@ -186,8 +185,6 @@ export default ({ intro = false }) => {
     };
   }, []);
 
-  const [citiesTranslate, toggleCities] = useCitiesToggle();
-
   return (
     <View style={[styles.container, { opacity }]}>
       {WEB ? (
@@ -291,8 +288,6 @@ export default ({ intro = false }) => {
             ListEmptyComponent={() => (error ? <ListError /> : null)}
           />
           <TopBar
-            rotate={citiesTranslate.current}
-            toggle={toggleCities}
             style={{ paddingHorizontal: itemMargin }}
             containerStyle={{
               position: "absolute",

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import {
   View,
   FlatList,
@@ -12,9 +12,12 @@ import { selectPlaceEvents } from "../store/events";
 import { itemRemaining } from "../utils/Time";
 import { WEB } from "../utils/Constants";
 import { roundedDistanceTo } from "../utils/Locate";
-import { FontAwesome } from "@expo/vector-icons";
 import emitter from "tiny-emitter/instance";
-import { useEveryMinute, useAnimateOn } from "../utils/Hooks";
+import {
+  useEveryMinute,
+  useAnimateOn,
+  useKeyboardHeight
+} from "../utils/Hooks";
 import PriceText from "./PriceText";
 
 let tabBarHeight = 0;
@@ -55,15 +58,10 @@ const Item = ({ item, index }) => {
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",
-            paddingRight: 8
+            paddingRight: 8,
+            marginTop: 5
           }}
         >
-          {/* <View style={styles.rating}>
-            <FontAwesome name="star" size={14} color="#FFA033" />
-            <Text style={styles.ratingText}>
-              {parseFloat(events[0]._source.rating, 10).toFixed(1)}
-            </Text>
-          </View> */}
           <Text style={[styles.locationText, { color: "#666" }]}>
             {distance}
           </Text>
@@ -78,6 +76,7 @@ const Item = ({ item, index }) => {
 };
 
 export default () => {
+  const listRef = useRef(null);
   const data = useSelector(state => state.events.upNext);
 
   const selectedEvent = useSelector(state => {
@@ -88,7 +87,16 @@ export default () => {
     return state.events.data[selected];
   });
 
+  const [keyboardHeight] = useKeyboardHeight(tabBarHeight);
+
   const [, transform] = useAnimateOn(selectedEvent);
+
+  useEffect(() => {
+    listRef.current.scrollToOffset({
+      animated: false,
+      offset: 0
+    });
+  }, [data]);
 
   return (
     <Animated.View
@@ -98,11 +106,13 @@ export default () => {
           opacity: transform.current.interpolate({
             inputRange: [0, 1],
             outputRange: [1, 0]
-          })
+          }),
+          transform: [{ translateY: keyboardHeight.current }]
         }
       ]}
     >
       <FlatList
+        ref={listRef}
         data={data}
         renderItem={data => <Item {...data} />}
         style={styles.list}
@@ -128,7 +138,6 @@ const styles = StyleSheet.create({
   },
   item: {
     margin: 4,
-    height: 72,
     width: 105,
     borderRadius: 8,
     backgroundColor: "#fff",
