@@ -9,8 +9,11 @@ import {
 } from "react-native";
 import { getSubmissions } from "../store/submissions";
 import { restore } from "../store/submission";
+import SegmentedControl from "./SegmentedControl";
+import { IOS, WEB } from "../utils/Constants";
+import { getInset } from "../utils/SafeAreaInsets";
 
-export default () => {
+export default ({ page, pages, setPage }) => {
   const dispatch = useDispatch();
   const data = useSelector(state => state.submissions.list);
 
@@ -21,6 +24,7 @@ export default () => {
   return (
     <FlatList
       style={styles.list}
+      contentContainerStyle={styles.content}
       data={data}
       renderItem={({ item, index }) => {
         const { id: fid, ...event } = item;
@@ -30,14 +34,26 @@ export default () => {
             key={`${index}`}
             style={styles.item}
             onPress={() => {
-              console.log(event);
               dispatch(restore(event));
+              if (!WEB) {
+                setPage(pages[0]);
+              }
             }}
           >
             <Text>{item.id}</Text>
             <Text>{item.title}</Text>
             <Text>{item.description}</Text>
           </TouchableOpacity>
+        );
+      }}
+      ListHeaderComponent={() => {
+        return (
+          <SegmentedControl
+            containerStyle={{ marginBottom: 5 }}
+            options={pages}
+            onPress={setPage}
+            selected={page}
+          />
         );
       }}
       ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -49,12 +65,16 @@ const styles = StyleSheet.create({
   list: {
     flex: 1
   },
+  content: {
+    padding: 20,
+    paddingTop: IOS ? getInset("top") + 20 : 20
+  },
   separator: {
     height: 1,
     backgroundColor: "#f2f2f2"
   },
   item: {
-    padding: 10,
+    paddingVertical: 10,
     backgroundColor: "#fff"
   }
 });

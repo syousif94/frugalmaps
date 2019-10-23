@@ -40,6 +40,7 @@
     "eslint": "^5",
     "eslint-plugin-mocha": "^6.2.0",
     "eslint-plugin-node": "^8",
+    "faker": "^4.1.0",
     "mocha": "^6.2.2",
     "nodemon": "^1.19.4",
     "sinon": "^7.5.0",

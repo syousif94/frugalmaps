@@ -9,8 +9,11 @@ import {
 } from "react-native";
 import { getPublished } from "../store/submissions";
 import { restore } from "../store/submission";
+import { IOS } from "../utils/Constants";
+import { getInset } from "../utils/SafeAreaInsets";
+import SegmentedControl from "./SegmentedControl";
 
-export default () => {
+export default ({ page, pages, setPage }) => {
   const dispatch = useDispatch();
   const data = useSelector(state => state.submissions.published);
 
@@ -22,17 +25,30 @@ export default () => {
     <FlatList
       style={styles.list}
       data={data}
-      renderItem={({ item, index }) => {
+      contentContainerStyle={styles.content}
+      renderItem={({ item }) => {
         return (
           <TouchableOpacity
-            key={`${index}`}
+            key={item._id}
             style={styles.item}
             onPress={() => {
               console.log(item);
             }}
           >
-            <Text>{JSON.stringify(item)}</Text>
+            <Text style={{ fontWeight: "700" }}>{item._source.title}</Text>
+            <Text style={{ fontWeight: "500" }}>{item._source.location}</Text>
+            <Text style={{ color: "#777" }}>{item._source.city}</Text>
           </TouchableOpacity>
+        );
+      }}
+      ListHeaderComponent={() => {
+        return (
+          <SegmentedControl
+            containerStyle={{ marginBottom: 5 }}
+            options={pages}
+            onPress={setPage}
+            selected={page}
+          />
         );
       }}
       ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -48,8 +64,12 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#f2f2f2"
   },
+  content: {
+    padding: 20,
+    paddingTop: IOS ? getInset("top") + 20 : 20
+  },
   item: {
-    padding: 10,
+    paddingVertical: 10,
     backgroundColor: "#fff"
   }
 });

@@ -20,6 +20,7 @@ import SubmitPlacePicker from "./SubmitPlacePicker";
 import { useSelector, useDispatch } from "react-redux";
 import SubmissionReset from "./SubmissionReset";
 import { submitEvent } from "../store/submission";
+import SegmentedControl from "./SegmentedControl";
 
 let ScrollComponent = ScrollView;
 if (!WEB) {
@@ -56,7 +57,7 @@ const ConnectedInput = ({ field, ...props }) => {
   );
 };
 
-export default () => {
+export default ({ page, setPage, pages }) => {
   const dispatch = useDispatch();
   const saving = useSelector(state => state.submission.saving);
   const deleting = useSelector(state => state.submission.saving);
@@ -74,7 +75,16 @@ export default () => {
         keyboardShouldPersistTaps="handled"
         {...MOBILE_PROPS}
       >
-        <View style={[styles.row, { justifyContent: WEB ? "center" : null }]}>
+        {pages ? (
+          <SegmentedControl options={pages} selected={page} onPress={setPage} />
+        ) : null}
+
+        <View
+          style={[
+            styles.row,
+            { justifyContent: WEB ? "center" : null, marginTop: 20 }
+          ]}
+        >
           <View style={{ flex: 1 }}>
             <Text style={[styles.headerText]}>Add Fun Stuff</Text>
             <Text style={styles.subtext}>
@@ -191,7 +201,7 @@ const styles = StyleSheet.create({
     maxWidth: 520,
     padding: 20,
     alignSelf: "center",
-    paddingTop: IOS ? getInset("top") + 20 : 30,
+    paddingTop: IOS ? getInset("top") + 20 : 20,
     paddingBottom: 80
   },
   instructionText: {

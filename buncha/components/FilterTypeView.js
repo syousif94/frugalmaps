@@ -9,7 +9,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { PAGE } from "../store/filters";
 import { getInset } from "../utils/SafeAreaInsets";
-import { RED } from "../utils/Colors";
+import { RED, BLUE } from "../utils/Colors";
 import * as Events from "../store/events";
 import _ from "lodash";
 
@@ -24,11 +24,7 @@ export default () => {
         renderItem={data => <Button {...data} />}
         keyExtractor={(item, index) => `${index}`}
         ItemSeparatorComponent={() => <View style={styles.divider} />}
-        ListHeaderComponent={() => (
-          <View style={styles.header}>
-            <Text style={styles.titleText}>{PAGE.TYPE}</Text>
-          </View>
-        )}
+        ListHeaderComponent={() => <HeaderView data={tags} />}
       />
     </View>
   );
@@ -55,7 +51,7 @@ const Button = ({ item: { text, count }, index }) => {
           borderRadius: 4,
           backgroundColor: RED,
           marginRight: 6,
-          minWidth: 16,
+          minWidth: 18,
           alignItems: "center"
         }}
       >
@@ -67,6 +63,27 @@ const Button = ({ item: { text, count }, index }) => {
         {index + 1}. {_.startCase(text)}
       </Text>
     </TouchableOpacity>
+  );
+};
+
+const HeaderView = ({ data }) => {
+  const dispatch = useDispatch();
+
+  const countText = data.length
+    ? `${data.length} tag${data.length !== 1 ? "s" : ""}`
+    : "Loading..";
+  return (
+    <View style={styles.header}>
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.titleText}>{PAGE.TYPE}</Text>
+          <Text style={styles.subText}>{countText}</Text>
+        </View>
+        <TouchableOpacity style={styles.navButton}>
+          <Text style={[styles.navButtonText]}>All Events</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 };
 
@@ -89,12 +106,12 @@ const styles = StyleSheet.create({
     paddingBottom: getInset("bottom") + 15
   },
   header: {
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    flexDirection: "row",
+    marginLeft: 10,
+    paddingBottom: 10,
+    paddingRight: 10,
+    paddingTop: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(0,0,0,0.05)",
-    alignItems: "center"
+    borderBottomColor: "rgba(0,0,0,0.05)"
   },
   titleText: {
     fontSize: 16,
@@ -106,5 +123,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#777",
     fontWeight: "500"
+  },
+  navButton: {
+    flexDirection: "row",
+    paddingHorizontal: 15,
+    height: 34,
+    borderRadius: 34 / 2,
+    backgroundColor: BLUE,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  navButtonText: {
+    fontSize: 16,
+    color: "#fff",
+    fontWeight: "700"
   }
 });
