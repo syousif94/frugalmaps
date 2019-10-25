@@ -1,6 +1,24 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Animated, Easing, Keyboard } from "react-native";
+import { Animated, Easing, Keyboard, Dimensions } from "react-native";
 import { ANDROID } from "./Constants";
+
+export function useDimensions() {
+  const [dimensions, setDimensions] = useState(Dimensions.get("window"));
+
+  useEffect(() => {
+    const onChange = ({ window }) => {
+      setDimensions(window);
+    };
+
+    Dimensions.addEventListener("change", onChange);
+
+    return () => {
+      Dimensions.removeEventListener("change", onChange);
+    };
+  }, []);
+
+  return [dimensions];
+}
 
 function repeatEvery(func, interval) {
   let canceled = false;

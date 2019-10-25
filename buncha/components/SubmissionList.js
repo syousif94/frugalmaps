@@ -12,6 +12,7 @@ import { restore } from "../store/submission";
 import SegmentedControl from "./SegmentedControl";
 import { IOS, WEB } from "../utils/Constants";
 import { getInset } from "../utils/SafeAreaInsets";
+import { FORM_WIDTH } from "./SubmitForm";
 
 export default ({ page, pages, setPage }) => {
   const dispatch = useDispatch();
@@ -66,8 +67,12 @@ const styles = StyleSheet.create({
     flex: 1
   },
   content: {
-    padding: 20,
-    paddingTop: IOS ? getInset("top") + 20 : 20
+    width: "100%",
+    paddingTop: IOS ? getInset("top") + 20 : 20,
+    maxWidth: FORM_WIDTH,
+    alignSelf: "center",
+    paddingHorizontal: 20,
+    paddingBottom: 80
   },
   separator: {
     height: 1,

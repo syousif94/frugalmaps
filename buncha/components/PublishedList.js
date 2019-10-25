@@ -12,6 +12,7 @@ import { restore } from "../store/submission";
 import { IOS } from "../utils/Constants";
 import { getInset } from "../utils/SafeAreaInsets";
 import SegmentedControl from "./SegmentedControl";
+import { FORM_WIDTH } from "./SubmitForm";
 
 export default ({ page, pages, setPage }) => {
   const dispatch = useDispatch();
@@ -26,7 +27,7 @@ export default ({ page, pages, setPage }) => {
       style={styles.list}
       data={data}
       contentContainerStyle={styles.content}
-      renderItem={({ item }) => {
+      renderItem={({ item, index }) => {
         return (
           <TouchableOpacity
             key={item._id}
@@ -35,7 +36,9 @@ export default ({ page, pages, setPage }) => {
               console.log(item);
             }}
           >
-            <Text style={{ fontWeight: "700" }}>{item._source.title}</Text>
+            <Text style={{ fontWeight: "700" }}>
+              {index + 1}. {item._source.title}
+            </Text>
             <Text style={{ fontWeight: "500" }}>{item._source.location}</Text>
             <Text style={{ color: "#777" }}>{item._source.city}</Text>
           </TouchableOpacity>
@@ -65,8 +68,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#f2f2f2"
   },
   content: {
-    padding: 20,
-    paddingTop: IOS ? getInset("top") + 20 : 20
+    width: "100%",
+    paddingTop: IOS ? getInset("top") + 20 : 20,
+    maxWidth: FORM_WIDTH,
+    paddingHorizontal: 20,
+    alignSelf: "center",
+    paddingBottom: 80
   },
   item: {
     paddingVertical: 10,

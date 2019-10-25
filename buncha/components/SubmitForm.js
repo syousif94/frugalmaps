@@ -4,12 +4,13 @@ import {
   View,
   ScrollView,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  Image
 } from "react-native";
 import { Helmet } from "react-helmet";
 import Input from "./Input";
 import { Entypo } from "@expo/vector-icons";
-import { IOS, WEB } from "../utils/Constants";
+import { IOS, WEB, WIDTH } from "../utils/Constants";
 import { getInset } from "../utils/SafeAreaInsets";
 import Link from "./Link";
 import { BLUE } from "../utils/Colors";
@@ -21,6 +22,9 @@ import { useSelector, useDispatch } from "react-redux";
 import SubmissionReset from "./SubmissionReset";
 import { submitEvent } from "../store/submission";
 import SegmentedControl from "./SegmentedControl";
+import { useDimensions } from "../utils/Hooks";
+
+export const FORM_WIDTH = 520;
 
 let ScrollComponent = ScrollView;
 if (!WEB) {
@@ -54,6 +58,44 @@ const ConnectedInput = ({ field, ...props }) => {
       }}
       {...props}
     />
+  );
+};
+
+const BackButton = () => {
+  const [dimensions] = useDimensions();
+  if (dimensions.width <= 550) {
+    return null;
+  }
+  return (
+    <View
+      style={{
+        position: "absolute",
+        top: 0,
+        right: "100%",
+        bottom: 0,
+        paddingTop: 3
+      }}
+    >
+      <Link
+        to="/"
+        onPress={() => {
+          const history = getHistory();
+          if (history) {
+            if (history.length > 2) {
+              history.goBack();
+            } else {
+              navigate("UpNext");
+            }
+          }
+        }}
+        style={{
+          paddingTop: 2,
+          paddingRight: 8
+        }}
+      >
+        <Entypo name="chevron-left" size={22} color={BLUE} />
+      </Link>
+    </View>
   );
 };
 
@@ -92,40 +134,24 @@ export default ({ page, setPage, pages }) => {
             </Text>
           </View>
 
-          {WEB ? (
-            <View
-              style={{
-                position: "absolute",
-                top: 0,
-                right: "100%",
-                bottom: 0,
-                paddingTop: 3
-              }}
-            >
-              <Link
-                to="/"
-                onPress={() => {
-                  const history = getHistory();
-                  if (history) {
-                    if (history.length > 2) {
-                      history.goBack();
-                    } else {
-                      navigate("UpNext");
-                    }
-                  }
-                }}
-                style={{
-                  paddingTop: 2,
-                  paddingRight: 8
-                }}
-              >
-                <Entypo name="chevron-left" size={22} color={BLUE} />
-              </Link>
-            </View>
-          ) : null}
+          {WEB ? <BackButton /> : null}
         </View>
 
-        <Text style={styles.instructionText}>1. Location</Text>
+        <Image
+          pointerEvents="none"
+          style={{
+            marginTop: WEB ? 12 : 8,
+            marginBottom: WEB ? 12 : 6,
+            maxWidth: "100%",
+            height: WEB ? 300 : ((WIDTH - 100) / 453) * 456
+          }}
+          resizeMode="contain"
+          source={require("../assets/add.png")}
+        />
+
+        <Text style={[styles.instructionText, { marginTop: 0 }]}>
+          1. Location
+        </Text>
         <SubmitPlacePicker />
         <Text style={styles.subtext}>
           Try including the city and state if you can't find what you're looking
@@ -198,7 +224,7 @@ const styles = StyleSheet.create({
   },
   content: {
     width: "100%",
-    maxWidth: 520,
+    maxWidth: FORM_WIDTH,
     padding: 20,
     alignSelf: "center",
     paddingTop: IOS ? getInset("top") + 20 : 20,

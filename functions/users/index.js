@@ -1,9 +1,11 @@
 const express = require("express");
+const jwtMiddleware = require("express-jwt")({ secret: process.env.JWT });
 const router = express.Router();
 const AWS = require("../aws");
 const jwt = require("jsonwebtoken");
 const elastic = require("../elastic");
 const userSchema = require("../schema/user");
+const { contacts, contact } = require("./contacts");
 
 const sns = new AWS.SNS();
 
@@ -12,6 +14,20 @@ const codesMap = new Map();
 const minWait = 1000 * 60;
 
 const jwtSecret = process.env.JWT;
+
+router.use(
+  jwtMiddleware.unless({ path: ["/api/users/login", "/api/users/token"] })
+);
+
+router.use(function(err, req, res, next) {
+  if (err && err.name === "UnauthorizedError") {
+    res.send({
+      error: "Invalid Token"
+    });
+  } else {
+    next(err, req, res, next);
+  }
+});
 
 router.post("/login", async (req, res) => {
   try {
@@ -86,6 +102,10 @@ router.post("/token", async (req, res) => {
     });
   }
 });
+
+router.post("/contacts", contacts);
+
+router.post("/contact", contact);
 
 module.exports = router;
 

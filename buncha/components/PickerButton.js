@@ -14,13 +14,14 @@ const TouchableOpacity = WEB
 
 const buttonHeight = WEB ? 36 : 44;
 
-const TimePicker = () => {
+const TimePicker = props => {
   const dispatch = useDispatch();
   const now = useSelector(state => state.events.now);
   const time = moment(now);
   const value = time.format("ddd h:mma");
   return (
     <PickerButton
+      {...props}
       title={PAGE.WHEN}
       value={value}
       onPress={() => {
@@ -30,7 +31,7 @@ const TimePicker = () => {
   );
 };
 
-const PlacePicker = () => {
+const PlacePicker = props => {
   const value = useSelector(state => {
     const city = state.events.city;
     const locationEnabled = state.permissions.location;
@@ -39,22 +40,27 @@ const PlacePicker = () => {
         ? city.text.split(",")[0]
         : locationEnabled || locationEnabled === null
         ? "Locating"
-        : "Everywhere"
+        : "Everywhere";
     return locationText;
   });
 
-  return <PickerButton title={PAGE.WHERE} value={value} />;
+  return <PickerButton {...props} title={PAGE.WHERE} value={value} />;
 };
 
-const TagPicker = () => {
+const TagPicker = props => {
   const value = useSelector(state => _.startCase(state.events.tag || "All"));
 
-  return <PickerButton title={PAGE.TYPE} value={value} />;
+  return <PickerButton {...props} {...props} title={PAGE.TYPE} value={value} />;
 };
 
 export { TimePicker, PlacePicker, TagPicker, buttonHeight };
 
-const PickerButton = ({ title, value, onPress: pressHandler }) => {
+const PickerButton = ({
+  title,
+  value,
+  onPress: pressHandler,
+  style = null
+}) => {
   const dispatch = useDispatch();
   const onPress = () => {
     if (pressHandler) {
@@ -68,8 +74,8 @@ const PickerButton = ({ title, value, onPress: pressHandler }) => {
     });
   };
   return (
-    <TouchableOpacity style={styles.pickerBtn} onPress={onPress}>
-      <View style={styles.pickerInfo}>
+    <TouchableOpacity style={[styles.pickerBtn, style]} onPress={onPress}>
+      <View style={[styles.pickerInfo, style]}>
         <Text allowFontScaling={false} style={styles.pickerTitleText}>
           {title}
         </Text>
@@ -110,8 +116,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     overflow: "hidden",
     backgroundColor: "rgba(180,180,180,0.1)",
-    marginHorizontal: 2.5,
-    borderRadius: 6
+    marginHorizontal: WEB ? 2.5 : 0.5,
+    borderRadius: WEB ? 6 : null
   },
   buttonText: {
     fontSize: 10,

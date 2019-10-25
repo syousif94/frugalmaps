@@ -20,7 +20,7 @@ describe("test users", function() {
     for (let i = 0; i < 5; i++) {
       users.push({
         name: faker.fake("{{name.firstName}} {{name.lastName}}"),
-        number: faker.phone.phoneNumberFormat().replace(/[^0-9\.]+/g, "")
+        number: faker.phone.phoneNumberFormat().replace(/[^0-9.]+/g, "")
       });
     }
   });
@@ -86,35 +86,21 @@ describe("test users", function() {
   });
 
   it("adds contacts", async function() {
-    const { body: token } = await request(app)
-      .post("/api/users/token")
+    const token = jwt.sign({ number: process.env.PHONE }, process.env.JWT);
+
+    await request(app)
+      .post("/api/users/contacts")
+      .set("Authorization", `bearer ${token}`)
       .send({
-        number: process.env.PHONE,
-        code: "123456"
+        contacts: users
       })
+      .expect(200)
+      .expect({});
+
+    await request(app)
+      .post("/api/users/contacts")
+      .set("Authorization", `bearer ${token}`)
       .expect(200);
-
-    await request(app)
-      .post("/api/users/contacts")
-      .send({
-        token,
-        contacts: [
-          {
-            name: "",
-            number: ""
-          }
-        ]
-      })
-      .expect(200)
-      .expect({});
-
-    await request(app)
-      .post("/api/users/contacts")
-      .send({
-        token
-      })
-      .expect(200)
-      .expect({});
   });
 
   // it("adds friends", function() {

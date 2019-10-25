@@ -22,12 +22,10 @@ const images = [
   require("../assets/pin.png"),
   require("../assets/pin-now.png"),
   require("../assets/pin-upcoming.png"),
-  require("../assets/intro.png"),
-  require("../assets/sadCalendar.png"),
-  require("../assets/sadCalendarLarge.png"),
   require("../assets/pin-selected.png"),
   require("../assets/pin-now-selected.png"),
-  require("../assets/pin-upcoming-selected.png")
+  require("../assets/pin-upcoming-selected.png"),
+  require("../assets/add.png")
 ];
 
 function cacheImages(images) {
