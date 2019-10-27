@@ -105,13 +105,14 @@ const KEYBOARD_EASING = ANDROID
 
 export function useKeyboardHeight(bottomOffset = 0) {
   const heightRef = useRef(new Animated.Value(0));
+  const bottomOffsetRef = useRef(bottomOffset);
 
   useEffect(() => {
     const onShow = e => {
       Animated.timing(
         heightRef.current,
         {
-          toValue: -e.endCoordinates.height + bottomOffset,
+          toValue: -(e.endCoordinates.height + bottomOffsetRef.current),
           duration: e.duration,
           easing: KEYBOARD_EASING
         },
@@ -141,5 +142,5 @@ export function useKeyboardHeight(bottomOffset = 0) {
     };
   }, []);
 
-  return [heightRef];
+  return [heightRef, bottomOffsetRef];
 }

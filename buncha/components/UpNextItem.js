@@ -19,6 +19,7 @@ import { useEveryMinute } from "../utils/Hooks";
 import { WEB } from "../utils/Constants";
 import _ from "lodash";
 import PriceText from "./PriceText";
+import emitter from "tiny-emitter/instance";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -114,7 +115,12 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
           <Entypo name="calendar" size={16} color={RED} />
           <Text style={styles.actionText}>Plan</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.actionButton, { marginLeft: 10 }]}>
+        <TouchableOpacity
+          onPress={() => {
+            emitter.emit("interested", item);
+          }}
+          style={[styles.actionButton, { marginLeft: 10 }]}
+        >
           <FontAwesome name="star" size={16} color={"#FFA033"} />
           <Text style={styles.actionText}>Interested</Text>
         </TouchableOpacity>

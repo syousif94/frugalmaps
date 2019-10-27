@@ -87,7 +87,7 @@ export default () => {
     return state.events.data[selected];
   });
 
-  const [keyboardHeight] = useKeyboardHeight(tabBarHeight);
+  const [keyboardHeight] = useKeyboardHeight(-tabBarHeight);
 
   const [, transform] = useAnimateOn(selectedEvent);
 

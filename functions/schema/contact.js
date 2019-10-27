@@ -4,7 +4,7 @@ const user = {
     properties: {
       uid: { type: "keyword" },
       cid: { type: "keyword" },
-      blocked: { type: "boolean" },
+      name: { type: "text" },
       createdAt: {
         type: "date",
         format: "epoch_millis"

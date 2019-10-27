@@ -16,6 +16,7 @@ import AccountScreen from "./AccountScreen";
 import SubmitScreen from "./SubmitScreen";
 import Updater from "../components/Updater";
 import FilterView from "../components/FilterView";
+import InterestedModal from "../components/InterestedModal";
 
 const TabScreen = createBottomTabNavigator(
   {
@@ -78,6 +79,7 @@ export default () => {
     <View style={styles.container}>
       <AppContainer ref={setTopLevelNavigator} />
       <FilterView />
+      <InterestedModal />
       <Updater />
     </View>
   );
