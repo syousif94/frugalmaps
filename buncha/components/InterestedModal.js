@@ -6,7 +6,8 @@ import {
   StyleSheet,
   Text,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  ScrollView
 } from "react-native";
 import { AWSCF, HEIGHT } from "../utils/Constants";
 import emitter from "tiny-emitter/instance";
@@ -78,45 +79,53 @@ export default () => {
   };
   return (
     <Animated.View style={containerStyle} pointerEvents={pointerEvents}>
-      <Animated.View style={modalStyle} onLayout={onLayout}>
-        <EventHeader event={event} />
-        <View style={{ paddingHorizontal: 15 }}>
-          <Text style={styles.titleText}>Interested</Text>
-          <SegmentedControl
-            options={["Always", "Dates", "Never"]}
-            selected={mode}
-            onPress={option => {
-              setMode(option);
-            }}
-          />
-          <CalendarView expanded={mode === "Dates"} event={event} />
-          <Input
-            placeholder="Time"
-            containerStyle={{ marginTop: 10 }}
-            returnKeyType="done"
-          />
-          <Text style={styles.timeText}>
-            Time is optional, formats like 7, 7a, 7:45pm are cool
-          </Text>
-          <View style={styles.actions}>
-            <View style={styles.cancelButton}>
-              <TouchableOpacity
-                onPress={() => {
-                  emitter.emit("interested", null);
-                }}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>Cancel</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.saveButton}>
-              <TouchableOpacity style={styles.button}>
-                <Text style={[styles.buttonText, { color: "#fff" }]}>Save</Text>
-              </TouchableOpacity>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        alwaysBounceVertical
+      >
+        <Animated.View style={modalStyle} onLayout={onLayout}>
+          <EventHeader event={event} />
+          <View style={{ paddingHorizontal: 15 }}>
+            <Text style={styles.titleText}>Interested</Text>
+            <SegmentedControl
+              options={["Always", "Dates", "Never"]}
+              selected={mode}
+              onPress={option => {
+                setMode(option);
+              }}
+            />
+            <CalendarView expanded={mode === "Dates"} event={event} />
+            <Input
+              placeholder="Time"
+              containerStyle={{ marginTop: 10 }}
+              returnKeyType="done"
+            />
+            <Text style={styles.timeText}>
+              Time is optional, formats like 7, 7a, 7:45pm are cool
+            </Text>
+            <View style={styles.actions}>
+              <View style={styles.cancelButton}>
+                <TouchableOpacity
+                  onPress={() => {
+                    emitter.emit("interested", null);
+                  }}
+                  style={styles.button}
+                >
+                  <Text style={styles.buttonText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.saveButton}>
+                <TouchableOpacity style={styles.button}>
+                  <Text style={[styles.buttonText, { color: "#fff" }]}>
+                    Save
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-      </Animated.View>
+        </Animated.View>
+      </ScrollView>
     </Animated.View>
   );
 };
@@ -154,7 +163,14 @@ const EventHeader = ({ event }) => {
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    backgroundColor: "rgba(0,0,0,0.4)"
+  },
+  scroll: {
+    flex: 1
+  },
+  scrollContent: {
+    minHeight: "100%",
+    paddingVertical: 20,
     justifyContent: "center",
     alignItems: "center"
   },

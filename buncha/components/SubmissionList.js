@@ -36,14 +36,16 @@ export default ({ page, pages, setPage }) => {
             style={styles.item}
             onPress={() => {
               dispatch(restore(event));
-              if (!WEB) {
+              if (pages.length > 2) {
                 setPage(pages[0]);
               }
             }}
           >
-            <Text>{item.id}</Text>
-            <Text>{item.title}</Text>
-            <Text>{item.description}</Text>
+            <Text style={styles.titleText}>{item.title}</Text>
+            <Text style={styles.descriptionText} numberOfLines={2}>
+              {item.description}
+            </Text>
+            <Text style={styles.idText}>{item.id}</Text>
           </TouchableOpacity>
         );
       }}
@@ -81,5 +83,18 @@ const styles = StyleSheet.create({
   item: {
     paddingVertical: 10,
     backgroundColor: "#fff"
+  },
+  titleText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#000"
+  },
+  descriptionText: {
+    fontSize: 12,
+    color: "#000"
+  },
+  idText: {
+    fontSize: 12,
+    color: "#777"
   }
 });

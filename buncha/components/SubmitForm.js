@@ -99,8 +99,28 @@ const BackButton = () => {
   );
 };
 
+const HeaderImage = () => {
+  const place = useSelector(state => state.submission.place);
+  return place ? (
+    <View style={{ height: 40 }} />
+  ) : (
+    <Image
+      pointerEvents="none"
+      style={{
+        marginTop: WEB ? 12 : 8,
+        marginBottom: WEB ? 12 : 6,
+        maxWidth: "100%",
+        height: WEB ? 300 : ((WIDTH - 100) / 453) * 456
+      }}
+      resizeMode="contain"
+      source={require("../assets/add.png")}
+    />
+  );
+};
+
 export default ({ page, setPage, pages }) => {
   const dispatch = useDispatch();
+
   const saving = useSelector(state => state.submission.saving);
   const deleting = useSelector(state => state.submission.saving);
   const submitting = saving || deleting;
@@ -137,17 +157,7 @@ export default ({ page, setPage, pages }) => {
           {WEB ? <BackButton /> : null}
         </View>
 
-        <Image
-          pointerEvents="none"
-          style={{
-            marginTop: WEB ? 12 : 8,
-            marginBottom: WEB ? 12 : 6,
-            maxWidth: "100%",
-            height: WEB ? 300 : ((WIDTH - 100) / 453) * 456
-          }}
-          resizeMode="contain"
-          source={require("../assets/add.png")}
-        />
+        <HeaderImage />
 
         <Text style={[styles.instructionText, { marginTop: 0 }]}>
           1. Location
@@ -185,7 +195,6 @@ export default ({ page, setPage, pages }) => {
         <SubmitTags />
         <Text style={styles.instructionText}>8. Admin Code</Text>
         <ConnectedInput field="postCode" placeholder="Leave this blank" />
-        <SubmissionReset />
         <TouchableOpacity
           disabled={submitting}
           style={[
@@ -199,6 +208,7 @@ export default ({ page, setPage, pages }) => {
           <Text style={styles.submitText}>Post</Text>
         </TouchableOpacity>
       </ScrollComponent>
+      <SubmissionReset />
     </View>
   );
 };
@@ -228,7 +238,7 @@ const styles = StyleSheet.create({
     padding: 20,
     alignSelf: "center",
     paddingTop: IOS ? getInset("top") + 20 : 20,
-    paddingBottom: 80
+    paddingBottom: 120
   },
   instructionText: {
     fontSize: 16,

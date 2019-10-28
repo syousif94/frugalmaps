@@ -1,4 +1,10 @@
-import React, { useEffect, memo, useState, useRef } from "react";
+import React, {
+  useEffect,
+  memo,
+  useState,
+  useRef,
+  useLayoutEffect
+} from "react";
 import { useSelector } from "react-redux";
 import { View, StyleSheet, Text, Dimensions, Animated } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
@@ -28,9 +34,9 @@ const mapViewHeight = WEB ? 0 : HEIGHT * 0.76;
 
 const mapMinHeight = 190;
 
-const contentMinHeight = HEIGHT - mapMinHeight;
-
 let initialOffset = mapViewHeight - mapMinHeight;
+
+const contentMinHeight = HEIGHT - initialOffset / 2;
 
 function makeNarrowWebMapOffset(dimensions) {
   return dimensions.height * 0.7;
@@ -85,7 +91,7 @@ export default memo(({ item, id }) => {
     }
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (WEB) {
       if (prevDimensions.current) {
         const width = dimensions.width;

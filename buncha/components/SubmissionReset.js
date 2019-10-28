@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { RED } from "../utils/Colors";
 import { reset } from "../store/submission";
+import { getInset } from "../utils/SafeAreaInsets";
+import { Ionicons } from "@expo/vector-icons";
 
 export default () => {
   const dispatch = useDispatch();
@@ -22,23 +24,60 @@ export default () => {
         dispatch(reset());
       }}
     >
-      <Text>{fid}</Text>
-      {submission ? (
-        <React.Fragment>
-          <Text>{submission.title}</Text>
-          <Text>{submission.description}</Text>
-        </React.Fragment>
-      ) : null}
+      <View style={{ flex: 1 }}>
+        {submission ? (
+          <React.Fragment>
+            <Text style={styles.titleText}>{submission.title}</Text>
+            <Text style={styles.descriptionText} numberOfLines={2}>
+              {submission.description}
+            </Text>
+          </React.Fragment>
+        ) : (
+          <Text style={styles.fidText}>{fid}</Text>
+        )}
+      </View>
+      <Ionicons
+        name="md-close"
+        size={14}
+        color="#fff"
+        style={{ alignSelf: "center", marginRight: 5, marginLeft: 20 }}
+      />
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 6,
-    paddingHorizontal: 10,
+    position: "absolute",
+    top: getInset("top"),
+    right: 15,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
     borderRadius: 5,
     backgroundColor: RED,
-    marginVertical: 40
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 3
+    },
+    shadowOpacity: 0.29,
+    shadowRadius: 4.65,
+    elevation: 7,
+    flexDirection: "row"
+  },
+  titleText: {
+    fontSize: 10,
+    color: "#fff",
+    fontWeight: "700"
+  },
+  descriptionText: {
+    fontSize: 10,
+    color: "#fff",
+    fontWeight: "500"
+  },
+  fidText: {
+    fontSize: 10,
+    color: "rgba(0,0,0,0.6)",
+    fontWeight: "500"
   }
 });
