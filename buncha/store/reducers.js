@@ -13,7 +13,8 @@ export default combineReducers({
   cities,
   submission,
   submissions,
-  filters
+  filters,
+  plans: require("./plans").default
 });
 
 export function makeState(prefix) {

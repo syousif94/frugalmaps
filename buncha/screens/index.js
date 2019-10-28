@@ -17,6 +17,7 @@ import SubmitScreen from "./SubmitScreen";
 import Updater from "../components/Updater";
 import FilterView from "../components/FilterView";
 import InterestedModal from "../components/InterestedModal";
+import PlanScreen from "./PlanScreen";
 
 const TabScreen = createBottomTabNavigator(
   {
@@ -65,6 +66,14 @@ const RootScreen = createStackNavigator(
     Detail: {
       screen: DetailScreen,
       path: "e/:id"
+    },
+    Plan: {
+      screen: PlanScreen,
+      path: "plan/:eid"
+    },
+    Planned: {
+      screen: PlanScreen,
+      path: "p/:id"
     }
   },
   {

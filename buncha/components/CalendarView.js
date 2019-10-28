@@ -6,11 +6,15 @@ import {
   Text,
   Animated
 } from "react-native";
-import { DAYS } from "../utils/Constants";
 import moment from "moment";
+import { BLUE } from "../utils/Colors";
+import { Ionicons } from "@expo/vector-icons";
+import _ from "lodash";
+
+const DAYS = ["S", "M", "T", "W", "Th", "F", "Sa"];
 
 const rowHeight = 36;
-const height = rowHeight * 7 + 10;
+const height = rowHeight * 8 + 10;
 
 export default ({ event, expanded }) => {
   const now = useRef(moment());
@@ -21,14 +25,10 @@ export default ({ event, expanded }) => {
 
   const animation = useRef(new Animated.Value(0));
 
-  let startDate =
-    month
-      .clone()
-      .date(1)
-      .day() - 1;
-  if (startDate < 0) {
-    startDate = 6;
-  }
+  let startDate = month
+    .clone()
+    .date(1)
+    .day();
   const daysInMonth = month.daysInMonth();
   const date = month.date();
 
@@ -42,6 +42,18 @@ export default ({ event, expanded }) => {
     })
   );
 
+  if (rows[4][6] && rows[4][6] < daysInMonth) {
+    rows.push(
+      [0, 1, 2, 3, 4, 5, 6].map(day => {
+        const val = 5 * 7 + day + 1 - startDate;
+        if (val < 0 || val > daysInMonth) {
+          return null;
+        }
+        return val;
+      })
+    );
+  }
+
   useEffect(() => {
     Animated.timing(
       animation.current,
@@ -54,6 +66,7 @@ export default ({ event, expanded }) => {
     if (event) {
       animation.current.setValue(0);
       now.current = moment();
+      setSelected(new Set());
     }
   }, [event]);
 
@@ -67,52 +80,144 @@ export default ({ event, expanded }) => {
     }
   ];
 
+  const onPrevMonth = () => {
+    const prevMonth = month.clone().subtract(1, "M");
+    setMonth(prevMonth);
+  };
+
+  const onLongPrevMonth = () => {
+    setMonth(now.current);
+  };
+
+  const onNextMonth = () => {
+    const nextMonth = month.clone().add(1, "M");
+    setMonth(nextMonth);
+  };
+
+  const sameMonth =
+    month.month() <= now.current.month() && month.year() <= now.current.year();
+
+  const onSelect = id => {
+    if (selected.has(id)) {
+      selected.delete(id);
+    } else {
+      selected.add(id);
+    }
+    setSelected(new Set(selected));
+  };
+
+  let allowedDays;
+  if (event) {
+    const days = _.flattenDeep(
+      event._source.groupedHours.map(group => group.days.map(day => day.iso))
+    );
+    allowedDays = new Set(days);
+  }
+
   return (
     <Animated.View style={containerStyle}>
-      <View style={styles.month}>
-        <Text style={styles.boldText}>{month.format("MMMM Y")}</Text>
-      </View>
-      <View style={styles.row}>
-        {DAYS.map(day => {
+      <View style={{ height, paddingTop: 10 }}>
+        <View style={styles.month}>
+          <TouchableOpacity
+            style={styles.prevMonthButton}
+            onPress={onPrevMonth}
+            onLongPress={onLongPrevMonth}
+            disabled={sameMonth}
+          >
+            <Ionicons
+              style={{ marginTop: 1 }}
+              name="ios-arrow-back"
+              color={BLUE}
+              size={16}
+            />
+          </TouchableOpacity>
+          <Text style={[styles.boldText, { alignSelf: "center" }]}>
+            {month.format("MMMM Y")}
+          </Text>
+          <TouchableOpacity
+            style={styles.nextMonthButton}
+            onPress={onNextMonth}
+          >
+            <Ionicons
+              style={{ marginTop: 1 }}
+              name="ios-arrow-forward"
+              color={BLUE}
+              size={16}
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.row}>
+          {DAYS.map((day, index) => {
+            const textStyle = [styles.boldText];
+            const disabled = allowedDays && !allowedDays.has(index);
+            if (disabled) {
+              textStyle.push({
+                color: "#777"
+              });
+            }
+            if (selected.has(index)) {
+              textStyle.push({
+                color: BLUE
+              });
+            }
+            return (
+              <View style={styles.day} key={day}>
+                <TouchableOpacity
+                  onPress={onSelect.bind(null, index)}
+                  style={styles.dayBtn}
+                  disabled={disabled}
+                >
+                  <Text style={textStyle}>{day}</Text>
+                </TouchableOpacity>
+              </View>
+            );
+          })}
+        </View>
+        {rows.map(row => {
           return (
-            <View style={styles.day} key={day}>
-              <TouchableOpacity style={styles.dayBtn}>
-                <Text style={styles.boldText}>{day}</Text>
-              </TouchableOpacity>
+            <View style={styles.row} key={`${row}`}>
+              {row.map((day, index) => {
+                const dayStyle = [styles.dayText];
+                const disabled =
+                  (sameMonth && day < date) ||
+                  (allowedDays && !allowedDays.has(index));
+
+                const id = `${month.year()}-${month.month()}-${day}`;
+
+                const isSelected = selected.has(id) || selected.has(index);
+                if (isSelected) {
+                  dayStyle.push({
+                    color: BLUE
+                  });
+                }
+                if (disabled) {
+                  dayStyle.push({
+                    color: "#aaa"
+                  });
+                }
+                if (sameMonth && date === day) {
+                  dayStyle.push({
+                    fontWeight: "600"
+                  });
+                }
+                return (
+                  <View style={styles.day} key={`${index}`}>
+                    {day ? (
+                      <TouchableOpacity
+                        style={styles.dayBtn}
+                        disabled={disabled}
+                        onPress={onSelect.bind(null, id)}
+                      >
+                        <Text style={dayStyle}>{day}</Text>
+                      </TouchableOpacity>
+                    ) : null}
+                  </View>
+                );
+              })}
             </View>
           );
         })}
       </View>
-      {rows.map(row => {
-        return (
-          <View style={styles.row} key={`${row}`}>
-            {row.map((day, index) => {
-              const dayStyle = [styles.dayText];
-              if (date === day) {
-                dayStyle.push({
-                  fontWeight: "600"
-                });
-              } else if (day < date) {
-                dayStyle.push({
-                  color: "#aaa"
-                });
-              }
-              return (
-                <View style={styles.day} key={`${index}`}>
-                  {day ? (
-                    <TouchableOpacity
-                      style={styles.dayBtn}
-                      disabled={day < date}
-                    >
-                      <Text style={dayStyle}>{day}</Text>
-                    </TouchableOpacity>
-                  ) : null}
-                </View>
-              );
-            })}
-          </View>
-        );
-      })}
     </Animated.View>
   );
 };
@@ -123,10 +228,19 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff"
   },
   month: {
-    marginTop: 10,
     height: rowHeight,
+    flexDirection: "row"
+  },
+  prevMonthButton: {
+    flex: 1,
     justifyContent: "center",
-    alignItems: "center"
+    paddingLeft: 15
+  },
+  nextMonthButton: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "flex-end",
+    paddingRight: 15
   },
   row: {
     flexDirection: "row",

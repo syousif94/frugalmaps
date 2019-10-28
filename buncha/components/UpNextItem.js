@@ -111,7 +111,12 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
         style={styles.descriptionText}
       />
       <View style={styles.actions}>
-        <TouchableOpacity style={styles.actionButton}>
+        <TouchableOpacity
+          onPress={() => {
+            navigate("Plan", { eid: item._id });
+          }}
+          style={styles.actionButton}
+        >
           <Entypo name="calendar" size={16} color={RED} />
           <Text style={styles.actionText}>Plan</Text>
         </TouchableOpacity>

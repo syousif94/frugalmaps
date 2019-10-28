@@ -15,6 +15,7 @@ import SegmentedControl from "./SegmentedControl";
 import Input from "./Input";
 import { useKeyboardHeight } from "../utils/Hooks";
 import CalendarView from "./CalendarView";
+import { itemSpans } from "../utils/Time";
 
 export default () => {
   const [event, setEvent] = useState(null);
@@ -123,6 +124,7 @@ export default () => {
 const EventHeader = ({ event }) => {
   const titleText = event ? event._source.title : null;
   const locationText = event ? event._source.location : null;
+  const timeSpans = event && itemSpans(event);
   return (
     <View style={headerStyles.container}>
       <Image
@@ -134,6 +136,15 @@ const EventHeader = ({ event }) => {
       />
       <View style={headerStyles.info}>
         <Text style={headerStyles.titleText}>{titleText}</Text>
+        {timeSpans
+          ? timeSpans.map(span => {
+              return (
+                <Text key={span} style={headerStyles.spanText}>
+                  {span}
+                </Text>
+              );
+            })
+          : null}
         <Text style={headerStyles.locationText}>{locationText}</Text>
       </View>
     </View>
@@ -219,6 +230,12 @@ const headerStyles = StyleSheet.create({
   locationText: {
     marginTop: 2,
     fontSize: 14,
+    color: "#fff"
+  },
+  spanText: {
+    marginTop: 2,
+    fontSize: 12,
+    fontWeight: "600",
     color: "#fff"
   }
 });

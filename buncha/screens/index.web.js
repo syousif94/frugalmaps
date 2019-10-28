@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { View } from "react-native";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import UpNextScreen from "./UpNextScreen";
 import DetailScreen from "./DetailScreen";
 import MapScreen from "./MapScreen";
 import IntroScreen from "./IntroScreen";
 import AccountScreen from "./AccountScreen";
 import SubmitScreen from "./SubmitScreen";
+import InterestedModal from "../components/InterestedModal";
+import PlanScreen from "./PlanScreen";
+import NotFoundScreen from "./NotFoundScreen";
 
 function Wrapper({ element, history, match, routeMap, closeModal }) {
   const navigate = (to, params) => {
@@ -53,6 +56,14 @@ const routeMap = {
     component: DetailScreen,
     path: "/e/:id"
   },
+  Plan: {
+    component: PlanScreen,
+    path: "/plan/:eid"
+  },
+  Planned: {
+    component: PlanScreen,
+    path: "/p/:id"
+  },
   Map: {
     component: MapScreen,
     path: "/map",
@@ -67,6 +78,9 @@ const routeMap = {
     component: SubmitScreen,
     path: "/add",
     exact: true
+  },
+  NotFound: {
+    component: NotFoundScreen
   }
 };
 
@@ -76,7 +90,7 @@ const WebRoutesGenerator = ({ routeMap }) => {
     const Component = currentRoute.component;
     return (
       <Route
-        key={currentRoute.path}
+        key={currentRoute.path || "notFound"}
         path={currentRoute.path}
         exact={currentRoute.exact}
         render={props => (
@@ -106,8 +120,9 @@ export default () => {
           style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
           pointerEvents="box-none"
         >
-          {WebRoutesGenerator({ routeMap })}
+          <Switch>{WebRoutesGenerator({ routeMap })}</Switch>
         </View>
+        <InterestedModal />
       </View>
     </Router>
   );
