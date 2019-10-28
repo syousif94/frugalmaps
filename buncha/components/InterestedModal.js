@@ -144,6 +144,7 @@ const EventHeader = ({ event }) => {
         style={headerStyles.image}
       />
       <View style={headerStyles.info}>
+        <Text style={headerStyles.locationText}>{locationText}</Text>
         <Text style={headerStyles.titleText}>{titleText}</Text>
         {timeSpans
           ? timeSpans.map(span => {
@@ -154,7 +155,6 @@ const EventHeader = ({ event }) => {
               );
             })
           : null}
-        <Text style={headerStyles.locationText}>{locationText}</Text>
       </View>
     </View>
   );
@@ -233,25 +233,25 @@ const headerStyles = StyleSheet.create({
     backgroundColor: "#f2f2f2"
   },
   info: {
-    paddingLeft: 15,
+    paddingHorizontal: 15,
     paddingTop: 25,
     paddingBottom: 10,
     backgroundColor: "rgba(0,0,0,0.4)"
   },
   titleText: {
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 17,
+    fontWeight: "700",
     color: "#fff"
   },
   locationText: {
-    marginTop: 2,
+    marginBottom: 2,
     fontSize: 14,
     color: "#fff"
   },
   spanText: {
     marginTop: 2,
-    fontSize: 12,
-    fontWeight: "600",
+    fontSize: 14,
+    fontWeight: "700",
     color: "#fff"
   }
 });

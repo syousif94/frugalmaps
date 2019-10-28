@@ -101,7 +101,8 @@ const BackButton = () => {
 
 const HeaderImage = () => {
   const place = useSelector(state => state.submission.place);
-  return place ? (
+  const fetchingPlace = useSelector(state => state.submission.fetchingPlace);
+  return place || fetchingPlace ? (
     <View style={{ height: 40 }} />
   ) : (
     <Image

@@ -24,9 +24,10 @@ export default () => {
         dispatch(reset());
       }}
     >
-      <View style={{ flex: 1 }}>
+      <View>
         {submission ? (
           <React.Fragment>
+            <Text style={styles.descriptionText}>Currently Editing</Text>
             <Text style={styles.titleText}>{submission.title}</Text>
             <Text style={styles.descriptionText} numberOfLines={2}>
               {submission.description}

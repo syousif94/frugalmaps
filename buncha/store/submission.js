@@ -14,7 +14,7 @@ const start = makeReducer("start", "");
 const end = makeReducer("end", "");
 const postCode = makeReducer("postCode", "");
 const place = makeReducer("place", null);
-const fetchingPlace = makeReducer("place", false);
+const fetchingPlace = makeReducer("fetchingPlace", false);
 const days = makeReducer("days", [], {
   toggle: (state, payload) => {
     if (state.indexOf(payload) > -1) {

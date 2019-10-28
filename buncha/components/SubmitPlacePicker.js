@@ -140,6 +140,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center"
   },
+  loading: {
+    marginVertical: 20
+  },
   suggestion: {
     paddingVertical: 8,
     borderBottomWidth: 1,

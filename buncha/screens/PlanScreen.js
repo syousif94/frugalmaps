@@ -1,6 +1,25 @@
 import React from "react";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  FlatList
+} from "react-native";
 import { useSelector } from "react-redux";
+import PlanHeader from "../components/PlanHeader";
+import PlanFriendItem from "../components/PlanFriendItem";
+
+const friends = [
+  {
+    name: "Sammy Yousif",
+    id: "1"
+  },
+  {
+    name: "Kelly Zupan",
+    id: "2"
+  }
+];
 
 export default ({ navigation }) => {
   const eid = navigation.getParam("eid", null);
@@ -19,10 +38,14 @@ export default ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text>testing</Text>
-      {/* <PlanHeader />
-    <PlanDate />
-    <PlanTime /> */}
+      <FlatList
+        style={styles.list}
+        data={friends}
+        renderItem={data => <PlanFriendItem {...data} />}
+        keyExtractor={item => item.id}
+        ListHeaderComponent={() => <PlanHeader event={event} plan={plan} />}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
+      />
     </View>
   );
 };
@@ -35,5 +58,13 @@ const styles = StyleSheet.create({
   loading: {
     flex: 1,
     backgroundColor: "#fff"
+  },
+  list: {
+    flex: 1
+  },
+  separator: {
+    height: 1,
+    backgroundColor: "#fafafa",
+    marginLeft: 59
   }
 });

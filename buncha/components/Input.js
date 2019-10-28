@@ -63,6 +63,7 @@ export default class Input extends Component {
       autoCompleteType,
       containerStyle = {},
       backgroundColor = "#f4f4f4",
+      returnKeyType = null,
       ...props
     } = this.props;
     const { focused } = this.state;
@@ -130,6 +131,7 @@ export default class Input extends Component {
             pointerEvents={pointerEvents}
             ref={ref => (this._input = ref)}
             {...props}
+            returnKeyType={returnKeyType}
             onChangeText={onChangeText || null}
             style={[styles.input, style]}
             onBlur={this._onBlur}
