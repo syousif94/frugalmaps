@@ -1,20 +1,47 @@
-import React, { useRef } from "react";
+import React, { useState, useRef } from "react";
 import {
-  Animated,
   View,
   StyleSheet,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  Animated
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import CalendarView from "./CalendarView";
 
-export default () => {
+export default ({ event }) => {
+  const [expanded, setExpanded] = useState(false);
+  const animation = useRef(new Animated.Value(0));
+  const onHeaderPress = () => {
+    setExpanded(!expanded);
+  };
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.header}>
+      <TouchableOpacity onPress={onHeaderPress} style={styles.header}>
         <Text style={styles.dateText}>Date</Text>
-        <Ionicons name="ios-arrow-down" color="rgba(0,0,0,0.2)" size={16} />
+        <Animated.View
+          style={{
+            marginTop: 2,
+            transform: [
+              {
+                rotate: animation.current.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: ["0deg", "180deg"]
+                })
+              }
+            ]
+          }}
+        >
+          <Ionicons name="ios-arrow-down" color="rgba(0,0,0,0.3)" size={16} />
+        </Animated.View>
       </TouchableOpacity>
+      <CalendarView
+        style={{ paddingHorizontal: 10 }}
+        event={event}
+        expanded={expanded}
+        singleDay
+        animatedValue={animation.current}
+      />
     </View>
   );
 };
@@ -30,7 +57,8 @@ const styles = StyleSheet.create({
     height: 46,
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 10,
+    paddingLeft: 10,
+    paddingRight: 20,
     justifyContent: "space-between"
   },
   dateText: {

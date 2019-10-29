@@ -6,17 +6,30 @@ import { getInset } from "../utils/SafeAreaInsets";
 import SegmentedControl from "./SegmentedControl";
 import Input from "./Input";
 import PlanCalendarView from "./PlanCalendarView";
+import { useDimensions } from "../utils/Hooks";
 
 export default ({ plan, event: selectedEvent }) => {
+  const [dimensions] = useDimensions();
+
   const event = selectedEvent || plan.event;
 
   const titleText = event._source.title;
   const locationText = event._source.location;
   const timeSpans = itemSpans(event);
 
+  let headerStyle = null;
+  if (dimensions.width > 500) {
+    headerStyle = {
+      marginTop: 15,
+      marginHorizontal: 15,
+      borderRadius: 8,
+      overflow: "hidden"
+    };
+  }
+
   return (
     <View style={styles.container}>
-      <View>
+      <View style={headerStyle}>
         <Image
           source={{
             uri: event && `${AWSCF}${event._source.photos[0].thumb.key}`
@@ -39,7 +52,7 @@ export default ({ plan, event: selectedEvent }) => {
         </View>
       </View>
       <View style={{ paddingHorizontal: 15 }}>
-        <PlanCalendarView />
+        <PlanCalendarView event={event} />
         <Input
           placeholder="Time"
           containerStyle={{ marginTop: 10 }}

@@ -11,19 +11,25 @@ import { BLUE } from "../utils/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import _ from "lodash";
 
-const DAYS = ["S", "M", "T", "W", "Th", "F", "Sa"];
+const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 const rowHeight = 36;
 const height = rowHeight * 8 + 10;
 
-export default ({ event, expanded }) => {
+export default ({
+  event,
+  expanded,
+  style,
+  singleDay = false,
+  animatedValue = new Animated.Value(0)
+}) => {
   const now = useRef(moment());
 
   const [month, setMonth] = useState(moment());
 
   const [selected, setSelected] = useState(new Set());
 
-  const animation = useRef(new Animated.Value(0));
+  const animation = useRef(animatedValue);
 
   let startDate = month
     .clone()
@@ -72,6 +78,7 @@ export default ({ event, expanded }) => {
 
   const containerStyle = [
     styles.container,
+    style,
     {
       height: animation.current.interpolate({
         inputRange: [0, 1],
@@ -101,6 +108,10 @@ export default ({ event, expanded }) => {
     if (selected.has(id)) {
       selected.delete(id);
     } else {
+      if (singleDay) {
+        setSelected(new Set([id]));
+        return;
+      }
       selected.add(id);
     }
     setSelected(new Set(selected));
@@ -127,7 +138,7 @@ export default ({ event, expanded }) => {
             <Ionicons
               style={{ marginTop: 1 }}
               name="ios-arrow-back"
-              color={BLUE}
+              color={sameMonth ? "#ccc" : BLUE}
               size={16}
             />
           </TouchableOpacity>
@@ -148,11 +159,12 @@ export default ({ event, expanded }) => {
         </View>
         <View style={styles.row}>
           {DAYS.map((day, index) => {
-            const textStyle = [styles.boldText];
-            const disabled = allowedDays && !allowedDays.has(index);
-            if (disabled) {
+            const textStyle = [styles.dayNameText];
+            const disabled =
+              singleDay || (allowedDays && !allowedDays.has(index));
+            if (!singleDay && disabled) {
               textStyle.push({
-                color: "#777"
+                color: "rgba(0,0,0,0.1)"
               });
             }
             if (selected.has(index)) {
@@ -177,7 +189,7 @@ export default ({ event, expanded }) => {
           return (
             <View style={styles.row} key={`${row}`}>
               {row.map((day, index) => {
-                const dayStyle = [styles.dayText];
+                const dayTextStyle = [styles.dayText];
                 const disabled =
                   (sameMonth && day < date) ||
                   (allowedDays && !allowedDays.has(index));
@@ -186,29 +198,38 @@ export default ({ event, expanded }) => {
 
                 const isSelected = selected.has(id) || selected.has(index);
                 if (isSelected) {
-                  dayStyle.push({
-                    color: BLUE
+                  dayTextStyle.push({
+                    color: BLUE,
+                    fontWeight: "700"
                   });
                 }
                 if (disabled) {
-                  dayStyle.push({
-                    color: "#aaa"
+                  dayTextStyle.push({
+                    color: "rgba(0,0,0,0.1)"
                   });
                 }
-                if (sameMonth && date === day) {
-                  dayStyle.push({
-                    fontWeight: "600"
-                  });
-                }
+                const today = sameMonth && date === day;
                 return (
                   <View style={styles.day} key={`${index}`}>
+                    {today ? (
+                      <View
+                        style={{
+                          position: "absolute",
+                          height: rowHeight,
+                          width: rowHeight,
+                          borderRadius: rowHeight / 2,
+                          alignSelf: "center",
+                          backgroundColor: "rgba(0,0,0,0.02)"
+                        }}
+                      />
+                    ) : null}
                     {day ? (
                       <TouchableOpacity
                         style={styles.dayBtn}
                         disabled={disabled}
                         onPress={onSelect.bind(null, id)}
                       >
-                        <Text style={dayStyle}>{day}</Text>
+                        <Text style={dayTextStyle}>{day}</Text>
                       </TouchableOpacity>
                     ) : null}
                   </View>
@@ -224,8 +245,7 @@ export default ({ event, expanded }) => {
 
 const styles = StyleSheet.create({
   container: {
-    overflow: "hidden",
-    backgroundColor: "#fff"
+    overflow: "hidden"
   },
   month: {
     height: rowHeight,
@@ -259,8 +279,14 @@ const styles = StyleSheet.create({
     color: "#000",
     fontWeight: "600"
   },
+  dayNameText: {
+    fontSize: 10,
+    color: "rgba(0,0,0,0.4)",
+    fontWeight: "600"
+  },
   dayText: {
     fontSize: 14,
-    color: "#000"
+    color: "rgba(0,0,0,0.4)",
+    fontWeight: "500"
   }
 });

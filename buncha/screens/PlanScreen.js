@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -6,9 +6,10 @@ import {
   TouchableOpacity,
   FlatList
 } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import PlanHeader from "../components/PlanHeader";
 import PlanFriendItem from "../components/PlanFriendItem";
+import { getEvent } from "../store/events";
 
 const friends = [
   {
@@ -22,11 +23,18 @@ const friends = [
 ];
 
 export default ({ navigation }) => {
+  const dispatch = useDispatch();
   const eid = navigation.getParam("eid", null);
   const id = navigation.getParam("id", null);
 
   const plan = useSelector(state => (id ? state.plans.data[id] : null));
   const event = useSelector(state => (eid ? state.events.data[eid] : null));
+
+  useEffect(() => {
+    if (eid && !event) {
+      dispatch(getEvent(eid));
+    }
+  }, []);
 
   if ((id && !plan) || !event) {
     return (
@@ -40,6 +48,11 @@ export default ({ navigation }) => {
     <View style={styles.container}>
       <FlatList
         style={styles.list}
+        contentContainerStyle={{
+          maxWidth: 520,
+          width: "100%",
+          alignSelf: "center"
+        }}
         data={friends}
         renderItem={data => <PlanFriendItem {...data} />}
         keyExtractor={item => item.id}
