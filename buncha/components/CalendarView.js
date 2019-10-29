@@ -7,14 +7,28 @@ import {
   Animated
 } from "react-native";
 import moment from "moment";
-import { BLUE } from "../utils/Colors";
+import { BLUE, RED } from "../utils/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import _ from "lodash";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec"
+];
 
 const rowHeight = 36;
-const height = rowHeight * 8 + 10;
+const height = rowHeight * 6 + 20;
 
 export default ({
   event,
@@ -23,42 +37,54 @@ export default ({
   singleDay = false,
   animatedValue = new Animated.Value(0)
 }) => {
-  const now = useRef(moment());
-
-  const [month, setMonth] = useState(moment());
+  const [now, setNow] = useState(moment());
 
   const [selected, setSelected] = useState(new Set());
 
   const animation = useRef(animatedValue);
 
-  let startDate = month
-    .clone()
-    .date(1)
-    .day();
-  const daysInMonth = month.daysInMonth();
-  const date = month.date();
+  const date = now.date();
+  const year = now.year();
+  const month = now.month();
+  const todayISO = now.day();
+  const monthDays = now.daysInMonth();
+  const prevMonth = now.clone().subtract(1, "M");
+  const prevMonthDays = prevMonth.daysInMonth();
+  const nextMonth = now.clone().add(1, "M");
+  const nextMonthDays = nextMonth.daysInMonth();
 
   const rows = [0, 1, 2, 3, 4].map(row =>
     [0, 1, 2, 3, 4, 5, 6].map(day => {
-      const val = row * 7 + day + 1 - startDate;
-      if (val < 0 || val > daysInMonth) {
-        return null;
+      const val = {
+        day: date,
+        month,
+        year
+      };
+      if (!row && day < todayISO) {
+        val.day = date - (todayISO - day);
+        if (val.day <= 0) {
+          val.day = prevMonthDays + val.day;
+          val.month = prevMonth.month();
+          val.year = prevMonth.year();
+        }
+        return val;
+      }
+      val.day = date + row * 7 + day - todayISO;
+      if (val.day > monthDays) {
+        val.day = val.day - monthDays;
+        if (val.day > nextMonthDays) {
+          val.day = val.day - nextMonthDays;
+          const month = nextMonth.clone().add(1, "M");
+          val.month = month.month();
+          val.year = month.year();
+        } else {
+          val.month = nextMonth.month();
+          val.year = nextMonth.year();
+        }
       }
       return val;
     })
   );
-
-  if (rows[4][6] && rows[4][6] < daysInMonth) {
-    rows.push(
-      [0, 1, 2, 3, 4, 5, 6].map(day => {
-        const val = 5 * 7 + day + 1 - startDate;
-        if (val < 0 || val > daysInMonth) {
-          return null;
-        }
-        return val;
-      })
-    );
-  }
 
   useEffect(() => {
     Animated.timing(
@@ -71,7 +97,7 @@ export default ({
   useEffect(() => {
     if (event) {
       animation.current.setValue(0);
-      now.current = moment();
+      setNow(moment());
       setSelected(new Set());
     }
   }, [event]);
@@ -86,23 +112,6 @@ export default ({
       })
     }
   ];
-
-  const onPrevMonth = () => {
-    const prevMonth = month.clone().subtract(1, "M");
-    setMonth(prevMonth);
-  };
-
-  const onLongPrevMonth = () => {
-    setMonth(now.current);
-  };
-
-  const onNextMonth = () => {
-    const nextMonth = month.clone().add(1, "M");
-    setMonth(nextMonth);
-  };
-
-  const sameMonth =
-    month.month() <= now.current.month() && month.year() <= now.current.year();
 
   const onSelect = id => {
     if (selected.has(id)) {
@@ -128,35 +137,6 @@ export default ({
   return (
     <Animated.View style={containerStyle}>
       <View style={{ height, paddingTop: 10 }}>
-        <View style={styles.month}>
-          <TouchableOpacity
-            style={styles.prevMonthButton}
-            onPress={onPrevMonth}
-            onLongPress={onLongPrevMonth}
-            disabled={sameMonth}
-          >
-            <Ionicons
-              style={{ marginTop: 1 }}
-              name="ios-arrow-back"
-              color={sameMonth ? "#ccc" : BLUE}
-              size={16}
-            />
-          </TouchableOpacity>
-          <Text style={[styles.boldText, { alignSelf: "center" }]}>
-            {month.format("MMMM Y")}
-          </Text>
-          <TouchableOpacity
-            style={styles.nextMonthButton}
-            onPress={onNextMonth}
-          >
-            <Ionicons
-              style={{ marginTop: 1 }}
-              name="ios-arrow-forward"
-              color={BLUE}
-              size={16}
-            />
-          </TouchableOpacity>
-        </View>
         <View style={styles.row}>
           {DAYS.map((day, index) => {
             const textStyle = [styles.dayNameText];
@@ -185,16 +165,16 @@ export default ({
             );
           })}
         </View>
-        {rows.map(row => {
+        {rows.map((row, index) => {
           return (
-            <View style={styles.row} key={`${row}`}>
-              {row.map((day, index) => {
+            <View style={styles.row} key={`${index}`}>
+              {row.map(({ day, month: m, year: y }, index) => {
                 const dayTextStyle = [styles.dayText];
                 const disabled =
-                  (sameMonth && day < date) ||
+                  (y <= year && m <= month && day < date) ||
                   (allowedDays && !allowedDays.has(index));
 
-                const id = `${month.year()}-${month.month()}-${day}`;
+                const id = `${y}-${m}-${day}`;
 
                 const isSelected = selected.has(id) || selected.has(index);
                 if (isSelected) {
@@ -208,7 +188,7 @@ export default ({
                     color: "rgba(0,0,0,0.1)"
                   });
                 }
-                const today = sameMonth && date === day;
+                const today = date === day && m === month && y === year;
                 return (
                   <View style={styles.day} key={`${index}`}>
                     {today ? (
@@ -219,9 +199,12 @@ export default ({
                           width: rowHeight,
                           borderRadius: rowHeight / 2,
                           alignSelf: "center",
-                          backgroundColor: "rgba(0,0,0,0.02)"
+                          backgroundColor: "rgba(0,0,0,0.05)"
                         }}
                       />
+                    ) : null}
+                    {day === 1 ? (
+                      <Text style={styles.monthText}>{MONTHS[m]}</Text>
                     ) : null}
                     {day ? (
                       <TouchableOpacity
@@ -288,5 +271,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "rgba(0,0,0,0.4)",
     fontWeight: "500"
+  },
+  monthText: {
+    position: "absolute",
+    top: -4,
+    alignSelf: "center",
+    fontSize: 10,
+    fontWeight: "600",
+    color: RED
   }
 });
