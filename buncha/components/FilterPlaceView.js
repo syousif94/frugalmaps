@@ -15,11 +15,21 @@ import * as Events from "../store/events";
 import { FontAwesome } from "@expo/vector-icons";
 import CityOrderPicker from "./CityOrderPicker";
 
-export default () => {
+export default ({ page }) => {
   const cities = useSelector(state => state.cities[state.cities.list]);
 
+  const isPage = page === PAGE.WHERE;
+  const pointerEvents = isPage ? "auto" : "none";
   return (
-    <View style={styles.container}>
+    <View
+      pointerEvents={pointerEvents}
+      style={[
+        styles.container,
+        {
+          opacity: isPage ? 1 : 0
+        }
+      ]}
+    >
       <FlatList
         contentContainerStyle={styles.content}
         data={cities}
@@ -65,7 +75,7 @@ const HeaderView = ({ cities }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    ...StyleSheet.absoluteFillObject
   },
   list: {
     flex: 1

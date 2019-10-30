@@ -184,7 +184,14 @@ export default memo(({ item, id }) => {
           <View
             style={[
               styles.content,
-              { minHeight: WEB && narrow ? dimensions.height * 0.8 : null }
+              {
+                minHeight:
+                  WEB && narrow
+                    ? dimensions.height * 0.8
+                    : !WEB
+                    ? contentMinHeight
+                    : null
+              }
             ]}
           >
             {WEB ? null : <View style={styles.mobileBar} />}
@@ -311,7 +318,6 @@ export default memo(({ item, id }) => {
 const styles = StyleSheet.create({
   content: {
     paddingBottom: getInset("bottom") + 70,
-    minHeight: WEB ? null : contentMinHeight,
     marginTop: WEB ? null : mapViewHeight,
     backgroundColor: "#fff"
   },

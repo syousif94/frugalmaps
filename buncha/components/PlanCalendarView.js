@@ -18,7 +18,7 @@ export default ({ event }) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={onHeaderPress} style={styles.header}>
-        <Text style={styles.dateText}>Date</Text>
+        <Text style={styles.dateText}>Pick a Date</Text>
         <Animated.View
           style={{
             marginTop: 2,

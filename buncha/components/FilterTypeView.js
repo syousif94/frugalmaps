@@ -13,10 +13,20 @@ import { RED, BLUE } from "../utils/Colors";
 import * as Events from "../store/events";
 import _ from "lodash";
 
-export default () => {
+export default ({ page }) => {
   const tags = useSelector(state => state.events.tags);
+  const isPage = page === PAGE.TYPE;
+  const pointerEvents = isPage ? "auto" : "none";
   return (
-    <View style={styles.container}>
+    <View
+      pointerEvents={pointerEvents}
+      style={[
+        styles.container,
+        {
+          opacity: isPage ? 1 : 0
+        }
+      ]}
+    >
       <FlatList
         contentContainerStyle={styles.content}
         data={tags}
@@ -89,7 +99,7 @@ const HeaderView = ({ data }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    ...StyleSheet.absoluteFillObject
   },
   list: {
     flex: 1

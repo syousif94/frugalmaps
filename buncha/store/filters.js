@@ -1,16 +1,16 @@
 import { combineReducers } from "redux";
 import { makeState } from "./reducers";
-import { ABBREVIATED_DAYS } from "../utils/Constants";
 import moment from "moment";
 
 const makeReducer = makeState("filters");
 
 const page = makeReducer("page", null);
 
-const day = makeReducer("day", ABBREVIATED_DAYS[0]);
-const hour = makeReducer("hour", 1);
-const minutes = makeReducer("minutes", 0);
-const meridian = makeReducer("meridian", "PM");
+const currentTime = makeCurrentTime();
+const day = makeReducer("day", currentTime.day);
+const hour = makeReducer("hour", currentTime.hour);
+const minutes = makeReducer("minutes", currentTime.minutes);
+const meridian = makeReducer("meridian", currentTime.meridian);
 
 export default combineReducers({
   page,
@@ -26,19 +26,23 @@ export const PAGE = {
   WHEN: "When"
 };
 
-export function resetTime() {
+function makeCurrentTime() {
   const now = moment();
-  const day = now.format("ddd");
+  const day = now.format("dddd");
   const hour = parseInt(now.format("h"), 10);
   const minutes = parseInt(now.format("m"), 10);
   const meridian = now.format("A");
   return {
+    day,
+    hour,
+    minutes,
+    meridian
+  };
+}
+
+export function resetTime() {
+  return {
     type: "filters/set",
-    payload: {
-      day,
-      hour,
-      minutes,
-      meridian
-    }
+    payload: makeCurrentTime()
   };
 }

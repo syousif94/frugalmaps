@@ -140,9 +140,9 @@ export default ({
         <View style={styles.row}>
           {DAYS.map((day, index) => {
             const textStyle = [styles.dayNameText];
-            const disabled =
-              singleDay || (allowedDays && !allowedDays.has(index));
-            if (!singleDay && disabled) {
+            const offDay = allowedDays && !allowedDays.has(index);
+            const disabled = singleDay || offDay;
+            if (offDay) {
               textStyle.push({
                 color: "rgba(0,0,0,0.1)"
               });

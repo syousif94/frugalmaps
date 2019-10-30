@@ -1,12 +1,14 @@
 import React from "react";
-import { View, StyleSheet, Text, Image } from "react-native";
-import { AWSCF } from "../utils/Constants";
+import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
+import { AWSCF, ANDROID, WEB, IOS } from "../utils/Constants";
 import { itemSpans } from "../utils/Time";
 import { getInset } from "../utils/SafeAreaInsets";
 import SegmentedControl from "./SegmentedControl";
 import Input from "./Input";
 import PlanCalendarView from "./PlanCalendarView";
 import { useDimensions } from "../utils/Hooks";
+import { getHistory, navigate, pop } from "../screens";
+import { Entypo, Feather } from "@expo/vector-icons";
 
 export default ({ plan, event: selectedEvent }) => {
   const [dimensions] = useDimensions();
@@ -50,15 +52,19 @@ export default ({ plan, event: selectedEvent }) => {
               })
             : null}
         </View>
+        <BackButton />
+        <MoreButton event={event} />
       </View>
       <View style={{ paddingHorizontal: 15 }}>
         <PlanCalendarView event={event} />
         <Input
-          placeholder="Time"
+          placeholder="Enter a Time"
           containerStyle={{ marginTop: 10 }}
           returnKeyType="done"
         />
-        <Text style={styles.timeText}>Formats like 7, 7a, 7:45pm are cool</Text>
+        <Text style={styles.timeText}>
+          Formats like 7, 7a, and 7:45pm are cool
+        </Text>
         {plan ? (
           <SegmentedControl
             options={["Comments", "Invite"]}
@@ -119,3 +125,73 @@ const styles = StyleSheet.create({
     color: "#000"
   }
 });
+
+const BackButton = () => {
+  if (ANDROID) {
+    return null;
+  }
+  const onPress = () => {
+    if (WEB) {
+      const history = getHistory();
+      if (history) {
+        if (history.length > 2) {
+          history.goBack();
+        } else {
+          navigate("UpNext");
+        }
+      }
+    } else {
+      pop();
+    }
+  };
+  return (
+    <View
+      style={{
+        position: "absolute",
+        top: IOS ? getInset("top") + 6 : 6,
+        left: 6,
+        height: 30,
+        width: 30
+      }}
+    >
+      <TouchableOpacity
+        onPress={onPress}
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center"
+        }}
+      >
+        <Entypo name="chevron-left" size={20} color="#fff" />
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const MoreButton = ({ event }) => {
+  const onPress = () => {
+    navigate("Detail", { id: event._id });
+  };
+  return (
+    <View
+      style={{
+        position: "absolute",
+        bottom: 6,
+        right: 4,
+        height: 30,
+        width: 30
+      }}
+    >
+      <TouchableOpacity
+        onPress={onPress}
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center"
+        }}
+      >
+        <Feather name="more-vertical" size={20} color="#fff" />
+      </TouchableOpacity>
+    </View>
+  );
+};

@@ -10,7 +10,7 @@ import {
 import BlurView from "./BlurView";
 import { HEIGHT, WEB } from "../utils/Constants";
 import { useAnimateOn } from "../utils/Hooks";
-import { PAGE } from "../store/filters";
+
 import FilterTypeView from "./FilterTypeView";
 import FilterPlaceView from "./FilterPlaceView";
 import FilterTimeView from "./FilterTimeView";
@@ -27,19 +27,6 @@ export default () => {
     200,
     selectedPage ? Easing.in(Easing.quad) : Easing.out(Easing.quad)
   );
-
-  let PageView = null;
-  switch (page) {
-    case PAGE.TYPE:
-      PageView = FilterTypeView;
-      break;
-    case PAGE.WHERE:
-      PageView = FilterPlaceView;
-      break;
-    case PAGE.WHEN:
-      PageView = FilterTimeView;
-      break;
-  }
 
   return (
     <View
@@ -79,7 +66,11 @@ export default () => {
           }
         ]}
       >
-        <BlurView style={styles.blur}>{PageView && <PageView />}</BlurView>
+        <BlurView style={styles.blur}>
+          <FilterTypeView page={page} />
+          <FilterPlaceView page={page} />
+          <FilterTimeView page={page} />
+        </BlurView>
       </Animated.View>
     </View>
   );

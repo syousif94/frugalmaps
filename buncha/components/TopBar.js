@@ -51,7 +51,7 @@ export default ({ style = { paddingLeft: 15 }, containerStyle = {} }) => {
         >
           <Text allowFontScaling={false} style={styles.titleText}>
             {day}
-            <Text style={{ color: "#777" }}>{fromNow}</Text> {locationText}
+            <Text style={{ color: "#000" }}>{fromNow}</Text> {locationText}
           </Text>
           {count ? (
             <Text allowFontScaling={false} style={styles.countText}>
@@ -91,11 +91,11 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#000"
+    color: "#777"
   },
   countText: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#777"
+    color: "#000"
   }
 });
