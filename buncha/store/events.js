@@ -131,7 +131,7 @@ const debouncedGet = _.debounce((dispatch, args) => {
 export function filter({ tag = null, text = "" }) {
   return (dispatch, getState) => {
     const {
-      events: { bounds, text: prevText }
+      events: { bounds, text: prevText, notNow }
     } = getState();
 
     dispatch({
@@ -139,6 +139,7 @@ export function filter({ tag = null, text = "" }) {
       payload: {
         tag,
         text,
+        now: notNow ? Date.now() : undefined,
         day: null,
         notNow: false
       }
