@@ -90,7 +90,7 @@ export default ({ page }) => {
         <Input
           value={selectedTime}
           spellCheck={false}
-          autoCorrect={WEB ? "no" : false}
+          autoCorrect={WEB ? "off" : false}
           autoCapitalize="none"
           placeholder="Time"
           containerStyle={{ marginHorizontal: 10, marginTop: 5 }}

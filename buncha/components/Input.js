@@ -35,8 +35,11 @@ export default class Input extends Component {
   };
 
   _clear = () => {
-    this.props.onChangeText("");
-    this._focus();
+    requestAnimationFrame(() => {
+      this.props.onChangeText("");
+    });
+
+    // this._focus();
   };
 
   _renderClear = () => {
@@ -105,7 +108,9 @@ export default class Input extends Component {
               appearance: "none",
               background: "transparent",
               fontSize: 14,
-              ...StyleSheet.flatten(style)
+              ...StyleSheet.flatten(style),
+              fontFamily:
+                'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif'
             }}
             onFocus={this._onFocus}
             onBlur={this._onBlur}
