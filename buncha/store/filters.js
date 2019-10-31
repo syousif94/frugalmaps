@@ -1,23 +1,19 @@
 import { combineReducers } from "redux";
 import { makeState } from "./reducers";
 import moment from "moment";
+import { detruncateTime, validateTime } from "../utils/Time";
 
 const makeReducer = makeState("filters");
 
-const page = makeReducer("page", null);
-
 const currentTime = makeCurrentTime();
 const day = makeReducer("day", currentTime.day);
-const hour = makeReducer("hour", currentTime.hour);
-const minutes = makeReducer("minutes", currentTime.minutes);
-const meridian = makeReducer("meridian", currentTime.meridian);
+const time = makeReducer("time", currentTime.time);
+const validTime = makeReducer("validTime", true);
 
 export default combineReducers({
-  page,
   day,
-  hour,
-  minutes,
-  meridian
+  time,
+  validTime
 });
 
 export const PAGE = {
@@ -29,20 +25,42 @@ export const PAGE = {
 function makeCurrentTime() {
   const now = moment();
   const day = now.format("dddd");
-  const hour = parseInt(now.format("h"), 10);
-  const minutes = parseInt(now.format("m"), 10);
-  const meridian = now.format("A");
+  const time = now.format("h:mma");
   return {
     day,
-    hour,
-    minutes,
-    meridian
+    time
   };
 }
 
 export function resetTime() {
-  return {
-    type: "filters/set",
-    payload: makeCurrentTime()
+  return dispatch =>
+    dispatch({
+      type: "filters/set",
+      payload: {
+        ...makeCurrentTime(),
+        validTime: true
+      }
+    });
+}
+
+export function setTime(time) {
+  return dispatch => {
+    dispatch({
+      type: "filters/set",
+      payload: {
+        time
+      }
+    });
+    let validTime = true;
+    if (time.trim().length) {
+      const expandedTime = detruncateTime(time);
+      validTime = validateTime(expandedTime);
+    }
+    dispatch({
+      type: "filters/set",
+      payload: {
+        validTime
+      }
+    });
   };
 }

@@ -136,17 +136,13 @@ export default ({ intro = false }) => {
   }, []);
 
   useEffect(() => {
+    const dismissFilters = () => {
+      emitter.emit("filters");
+    };
     const onEvent = () => {
       if (IOS) {
         initialLoadCompleted.current = false;
-        requestAnimationFrame(() => {
-          dispatch({
-            type: "filters/set",
-            payload: {
-              page: null
-            }
-          });
-        });
+        requestAnimationFrame(dismissFilters);
         setTimeout(() => {
           listRef.current.scrollToOffset({
             animated: true,
@@ -158,23 +154,9 @@ export default ({ intro = false }) => {
           animated: false,
           offset: 0
         });
-        requestAnimationFrame(() => {
-          dispatch({
-            type: "filters/set",
-            payload: {
-              page: null
-            }
-          });
-        });
+        requestAnimationFrame(dismissFilters);
       } else if (WEB) {
-        requestAnimationFrame(() => {
-          dispatch({
-            type: "filters/set",
-            payload: {
-              page: null
-            }
-          });
-        });
+        requestAnimationFrame(dismissFilters);
       }
     };
 

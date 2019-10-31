@@ -1,5 +1,4 @@
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Animated,
@@ -9,44 +8,53 @@ import {
 } from "react-native";
 import BlurView from "./BlurView";
 import { HEIGHT, WEB } from "../utils/Constants";
-import { useAnimateOn } from "../utils/Hooks";
+import emitter from "tiny-emitter/instance";
 
 import FilterTypeView from "./FilterTypeView";
 import FilterPlaceView from "./FilterPlaceView";
 import FilterTimeView from "./FilterTimeView";
 
-const panelHeight = HEIGHT * 0.65;
+const panelHeight = WEB ? HEIGHT * 0.8 : HEIGHT * 0.65;
 
 export default () => {
-  const dispatch = useDispatch();
+  const [page, setPage] = useState(null);
+  const animation = useRef(new Animated.Value(0));
+  useEffect(() => {
+    const handlePage = page => {
+      if (page) {
+        setPage(page);
+        Animated.timing(
+          animation.current,
+          { toValue: 1, duration: 200, easing: Easing.in(Easing.quad) },
+          { useNativeDriver: true }
+        ).start();
+      } else {
+        Animated.timing(
+          animation.current,
+          { toValue: 0, duration: 200, easing: Easing.out(Easing.quad) },
+          { useNativeDriver: true }
+        ).start(() => {
+          setPage(null);
+        });
+      }
+    };
 
-  const selectedPage = useSelector(state => state.filters.page);
+    emitter.on("filters", handlePage);
 
-  const [page, transform] = useAnimateOn(
-    selectedPage,
-    200,
-    selectedPage ? Easing.in(Easing.quad) : Easing.out(Easing.quad)
-  );
+    return () => emitter.off("filters", handlePage);
+  }, []);
 
   return (
-    <View
-      style={styles.container}
-      pointerEvents={selectedPage ? "auto" : "none"}
-    >
+    <View style={styles.container} pointerEvents={page ? "auto" : "none"}>
       <Animated.View
-        style={{ opacity: transform.current, ...StyleSheet.absoluteFillObject }}
+        style={{ opacity: animation.current, ...StyleSheet.absoluteFillObject }}
       >
         <TouchableOpacity
           activeOpacity={1}
           style={styles.dismiss}
           onPress={() => {
             requestAnimationFrame(() => {
-              dispatch({
-                type: "filters/set",
-                payload: {
-                  page: null
-                }
-              });
+              emitter.emit("filters");
             });
           }}
         />
@@ -57,7 +65,7 @@ export default () => {
           {
             transform: [
               {
-                translateY: transform.current.interpolate({
+                translateY: animation.current.interpolate({
                   inputRange: [0, 1],
                   outputRange: [panelHeight, 0]
                 })
@@ -88,8 +96,9 @@ const styles = StyleSheet.create({
   panel: {
     position: "absolute",
     bottom: 0,
-    right: 0,
-    left: 0,
+    alignSelf: "center",
+    width: "100%",
+    maxWidth: 600,
     height: panelHeight,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,

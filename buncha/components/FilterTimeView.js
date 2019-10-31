@@ -3,118 +3,24 @@ import {
   View,
   StyleSheet,
   Text,
-  ScrollView,
   TouchableOpacity,
-  Picker
+  ScrollView
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { PAGE } from "../store/filters";
-import { getInset } from "../utils/SafeAreaInsets";
-
-const HOURS = [];
-for (let i = 0; i < 12; i++) {
-  HOURS.push(i + 1);
-}
-
-const MINUTES = [];
-for (let i = 0; i < 60; i++) {
-  MINUTES.push(i);
-}
-
-const DAYS = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday"
-];
-
-const TimePicker = () => {
-  const dispatch = useDispatch();
-  const day = useSelector(state => state.filters.day);
-  const hour = useSelector(state => state.filters.hour);
-  const minutes = useSelector(state => state.filters.minutes);
-  const meridian = useSelector(state => state.filters.meridian);
-  const setValue = key => val => {
-    dispatch({
-      type: "filters/set",
-      payload: {
-        [key]: val
-      }
-    });
-  };
-  return (
-    <View style={styles.timeContainer}>
-      <Picker
-        selectedValue={day}
-        style={[styles.timePicker, { flex: 2 }]}
-        onValueChange={setValue("day")}
-        itemStyle={{ textAlign: "left" }}
-      >
-        {DAYS.map(val => (
-          <Picker.Item key={val} label={`   ${val}`} value={val} />
-        ))}
-      </Picker>
-      <Picker
-        selectedValue={hour}
-        style={styles.timePicker}
-        onValueChange={setValue("hour")}
-      >
-        {HOURS.map(val => (
-          <Picker.Item key={`${val}`} label={`${val}`} value={val} />
-        ))}
-      </Picker>
-      <Picker
-        selectedValue={minutes}
-        style={styles.timePicker}
-        onValueChange={setValue("minutes")}
-      >
-        {MINUTES.map(val => {
-          const key = `${val}`;
-          const label = val < 10 ? `0${val}` : `${val}`;
-          return <Picker.Item key={key} label={label} value={val} />;
-        })}
-      </Picker>
-      <Picker
-        selectedValue={meridian}
-        onValueChange={setValue("meridian")}
-        style={styles.meridianPicker}
-      >
-        {["AM", "PM"].map(val => (
-          <Picker.Item key={val} label={val} value={val} />
-        ))}
-      </Picker>
-      <View
-        style={{
-          position: "absolute",
-          top: 0,
-          bottom: 0,
-          right: "40%",
-          justifyContent: "center"
-        }}
-        pointerEvents="none"
-      >
-        <Text
-          allowFontScaling={false}
-          style={{
-            fontSize: 16,
-            fontWeight: "600",
-            color: "#000",
-            marginBottom: 1
-          }}
-        >
-          :
-        </Text>
-      </View>
-    </View>
-  );
-};
+import { BLUE, RED } from "../utils/Colors";
+import Input from "./Input";
+import * as Filters from "../store/filters";
+import { WEB } from "../utils/Constants";
 
 export default ({ page }) => {
+  const dispatch = useDispatch();
   const isPage = page === PAGE.WHEN;
   const pointerEvents = isPage ? "auto" : "none";
+  const calendar = useSelector(state => state.events.calendar);
+  const selectedDay = useSelector(state => state.filters.day);
+  const selectedTime = useSelector(state => state.filters.time);
+  const validTime = useSelector(state => state.filters.validTime);
   return (
     <View
       pointerEvents={pointerEvents}
@@ -125,53 +31,171 @@ export default ({ page }) => {
         }
       ]}
     >
-      <Text style={styles.titleText}>{PAGE.WHEN}</Text>
-      <TimePicker />
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.content}>
+        <View style={styles.header}>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.titleText}>{PAGE.WHEN}</Text>
+              <Text style={styles.subText}>Find events by time and day</Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => {
+                dispatch(Filters.resetTime());
+              }}
+              style={styles.button}
+            >
+              <Text style={styles.buttonText}>Now</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={styles.days}>
+          {calendar.map(day => {
+            const dayTextStyle = [styles.dayText];
+            if (selectedDay === day.title) {
+              dayTextStyle.push({
+                color: BLUE
+              });
+            }
+            const eventCount = `${day.data.length}`;
+            return (
+              <View style={styles.day} key={day.title}>
+                <TouchableOpacity
+                  style={styles.dayBtn}
+                  onPress={() => {
+                    dispatch({
+                      type: "filters/set",
+                      payload: {
+                        day: day.title,
+                        time: ""
+                      }
+                    });
+                  }}
+                >
+                  <Text style={dayTextStyle}>{day.title}</Text>
+                  <View style={{ backgroundColor: "rgba(0,0,0,0.05)" }}>
+                    <Text style={styles.dayCountText}>{eventCount}</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            );
+          })}
+        </View>
+        <Text style={styles.instructionText}>
+          {validTime ? null : (
+            <Text style={styles.invalidTimeText}>Invalid Time... </Text>
+          )}
+          Time is optional, formats like 7, 11a, and 10:43pm are cool,{" "}
+          <Text style={{ fontWeight: "700" }}>pm</Text> assumed
+        </Text>
+        <Input
+          value={selectedTime}
+          spellCheck={false}
+          autoCorrect={WEB ? "no" : false}
+          autoCapitalize="none"
+          placeholder="Time"
+          containerStyle={{ marginHorizontal: 10, marginTop: 5 }}
+          backgroundColor="rgba(0,0,0,0.04)"
+          style={{ fontWeight: "600" }}
+          onChangeText={text => {
+            dispatch(Filters.setTime(text));
+          }}
+        />
+        <TouchableOpacity
+          style={[
+            styles.button,
+            {
+              width: 250,
+              alignSelf: "center",
+              marginTop: 35,
+              backgroundColor: validTime ? BLUE : "#ccc"
+            }
+          ]}
+          disabled={!validTime}
+        >
+          <Text style={styles.buttonText}>Search</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
-    paddingBottom: getInset("bottom") + 10
+    ...StyleSheet.absoluteFillObject
+  },
+  content: {
+    width: "100%",
+    maxWidth: 500,
+    alignSelf: "center"
+  },
+  header: {
+    marginLeft: 10,
+    paddingBottom: 10,
+    paddingRight: 10,
+    paddingTop: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(0,0,0,0.05)"
   },
   titleText: {
-    marginTop: 12,
-    marginLeft: 10,
     fontSize: 16,
     color: "#000",
     fontWeight: "700"
   },
-  dayContainer: {
-    marginTop: 15
+  subText: {
+    marginTop: 1,
+    fontSize: 14,
+    color: "#777",
+    fontWeight: "500"
   },
-  dayContent: {
-    paddingHorizontal: 5,
-    paddingVertical: 2.5
+  button: {
+    flexDirection: "row",
+    paddingHorizontal: 15,
+    height: 34,
+    borderRadius: 34 / 2,
+    backgroundColor: BLUE,
+    justifyContent: "center",
+    alignItems: "center"
   },
-  dayButton: {
-    marginHorizontal: 5,
-    marginVertical: 2.5,
-    height: 28,
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    justifyContent: "center"
-  },
-  dayText: {
+  buttonText: {
     fontSize: 16,
-    fontWeight: "600",
-    color: "rgba(0,0,0,0.5)"
+    color: "#fff",
+    fontWeight: "700"
   },
-  timeContainer: {
+  days: {
+    flexDirection: "row",
+    padding: 7,
+    flexWrap: "wrap"
+  },
+  day: {
+    margin: 3,
+    backgroundColor: "rgba(0,0,0,0.04)",
+    borderRadius: 5,
+    overflow: "hidden"
+  },
+  dayBtn: {
     flexDirection: "row"
   },
-  timePicker: {
-    height: "100%",
-    flex: 1
+  dayText: {
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    fontSize: 14,
+    color: "#777",
+    fontWeight: "600"
   },
-  meridianPicker: {
-    height: "100%",
-    flex: 1
+  dayCountText: {
+    padding: 6,
+    color: "#777",
+    fontSize: 14,
+    fontWeight: "600"
+  },
+  invalidTimeText: {
+    fontWeight: "700",
+    color: RED
+  },
+  instructionText: {
+    marginTop: 5,
+    marginHorizontal: 10,
+    fontSize: 12,
+    color: "#777"
   }
 });

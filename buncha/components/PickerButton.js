@@ -7,6 +7,7 @@ import { Entypo } from "@expo/vector-icons";
 import moment from "moment";
 import { WEB } from "../utils/Constants";
 import _ from "lodash";
+import emitter from "tiny-emitter/instance";
 
 const TouchableOpacity = WEB
   ? require("react-native").TouchableOpacity
@@ -61,16 +62,12 @@ const PickerButton = ({
   onPress: pressHandler,
   style = null
 }) => {
-  const dispatch = useDispatch();
   const onPress = () => {
     if (pressHandler) {
       pressHandler();
     }
-    dispatch({
-      type: "filters/set",
-      payload: {
-        page: title
-      }
+    requestAnimationFrame(() => {
+      emitter.emit("filters", title);
     });
   };
   return (

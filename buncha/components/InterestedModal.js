@@ -47,7 +47,7 @@ export default () => {
     emitter.on("interested", handleEvent);
 
     return () => emitter.off("interested", handleEvent);
-  }, [event]);
+  }, []);
   const containerStyle = [
     styles.container,
     {
