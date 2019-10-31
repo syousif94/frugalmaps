@@ -4,10 +4,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { PAGE, resetTime } from "../store/filters";
 import { BLUE } from "../utils/Colors";
 import { Entypo } from "@expo/vector-icons";
-import moment from "moment";
 import { WEB } from "../utils/Constants";
 import _ from "lodash";
 import emitter from "tiny-emitter/instance";
+import { searchTimeSelector } from "../store/events";
 
 const TouchableOpacity = WEB
   ? require("react-native").TouchableOpacity
@@ -17,9 +17,7 @@ const buttonHeight = WEB ? 36 : 44;
 
 const TimePicker = props => {
   const dispatch = useDispatch();
-  const now = useSelector(state => state.events.now);
-  const time = moment(now);
-  const value = time.format("ddd h:mma");
+  const value = useSelector(searchTimeSelector);
   return (
     <PickerButton
       {...props}

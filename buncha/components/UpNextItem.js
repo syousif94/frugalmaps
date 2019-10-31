@@ -12,7 +12,11 @@ import { selectPlaceEvents } from "../store/events";
 import { useSelector } from "react-redux";
 import { RED } from "../utils/Colors";
 import { roundedDistanceTo } from "../utils/Locate";
-import { itemRemaining } from "../utils/Time";
+import {
+  itemRemaining,
+  itemRemainingAtTime,
+  itemTimeForDay
+} from "../utils/Time";
 import ImageGallery from "./ImageGallery";
 import { Entypo, FontAwesome } from "@expo/vector-icons";
 import { useEveryMinute } from "../utils/Hooks";
@@ -39,6 +43,9 @@ const itemWidth = (windowWidth - itemMargin * (columns + 1)) / columns;
 export { columns, itemMargin, itemWidth };
 
 export default memo(({ item, index, style = {}, containerStyle = {} }) => {
+  const day = useSelector(state => state.events.day);
+  const notNow = useSelector(state => state.events.notNow);
+  const now = useSelector(state => state.events.now);
   const [currentTime] = useEveryMinute();
   const onPress = () => {
     navigate("Detail", { id: item._id });
@@ -63,7 +70,17 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
 
   const distance = roundedDistanceTo(item);
 
-  const time = itemRemaining(item);
+  let time;
+
+  if (notNow) {
+    if (day) {
+      time = itemTimeForDay(item, day);
+    } else {
+      time = itemRemainingAtTime(item, now);
+    }
+  } else {
+    time = itemRemaining(item);
+  }
 
   return (
     <Link

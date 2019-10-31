@@ -9,11 +9,13 @@ const currentTime = makeCurrentTime();
 const day = makeReducer("day", currentTime.day);
 const time = makeReducer("time", currentTime.time);
 const validTime = makeReducer("validTime", true);
+const notNow = makeReducer("notNow", false);
 
 export default combineReducers({
   day,
   time,
-  validTime
+  validTime,
+  notNow
 });
 
 export const PAGE = {
@@ -24,7 +26,10 @@ export const PAGE = {
 
 function makeCurrentTime() {
   const now = moment();
-  const day = now.format("dddd");
+  const day = {
+    title: now.format("dddd"),
+    iso: now.weekday()
+  };
   const time = now.format("h:mma");
   return {
     day,
@@ -33,14 +38,29 @@ function makeCurrentTime() {
 }
 
 export function resetTime() {
-  return dispatch =>
+  return dispatch => {
     dispatch({
       type: "filters/set",
       payload: {
         ...makeCurrentTime(),
-        validTime: true
+        validTime: true,
+        notNow: false
       }
     });
+  };
+}
+
+export function setDay(day) {
+  return dispatch => {
+    dispatch({
+      type: "filters/set",
+      payload: {
+        day,
+        time: "",
+        notNow: true
+      }
+    });
+  };
 }
 
 export function setTime(time) {
@@ -48,7 +68,8 @@ export function setTime(time) {
     dispatch({
       type: "filters/set",
       payload: {
-        time
+        time,
+        notNow: true
       }
     });
     let validTime = true;

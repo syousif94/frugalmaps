@@ -3,7 +3,12 @@ import api from "../utils/API";
 import moment from "moment";
 import { makeState } from "./reducers";
 import locate from "../utils/Locate";
-import { groupHours, makeYesterdayISO, timeRemaining } from "../utils/Time";
+import {
+  groupHours,
+  makeYesterdayISO,
+  timeRemaining,
+  detruncateTime
+} from "../utils/Time";
 import { WEB, DEV, IOS } from "../utils/Constants";
 import emitter from "tiny-emitter/instance";
 import _ from "lodash";
@@ -25,14 +30,9 @@ const tags = makeReducer("tags", []);
 const tag = makeReducer("tag", null);
 const text = makeReducer("text", "");
 const selected = makeReducer("selected", null);
-const day = makeReducer("day", null, {
-  set: (state, payload) => {
-    if (state === payload) {
-      return null;
-    }
-    return payload;
-  }
-});
+// if day is set, ignore now
+const notNow = makeReducer("notNow", false);
+const day = makeReducer("day", null);
 
 const data = makeReducer(
   "data",
@@ -70,6 +70,7 @@ export default combineReducers({
   closest,
   newest,
   selected,
+  notNow,
   day,
   tags,
   now,
@@ -137,7 +138,9 @@ export function filter({ tag = null, text = "" }) {
       type: "events/set",
       payload: {
         tag,
-        text
+        text,
+        day: null,
+        notNow: false
       }
     });
 
@@ -154,6 +157,8 @@ export function refresh(bounds = null, refresh = false) {
     dispatch({
       type: "events/set",
       payload: {
+        notNow: false,
+        day: null,
         now: Date.now(),
         text: "",
         tag: null
@@ -346,6 +351,58 @@ export function getEvent(id) {
     }
   };
 }
+
+export function getTime() {
+  return (dispatch, getState) => {
+    const {
+      filters: { day, time, validTime, notNow },
+      events: { calendar, bounds }
+    } = getState();
+
+    if (!validTime) {
+      return;
+    }
+
+    emitter.emit("filters");
+
+    if (!time.trim().length) {
+      dispatch({
+        type: "events/set",
+        payload: {
+          notNow,
+          day,
+          upNext: calendar.find(events => events.iso === day.iso).data
+        }
+      });
+    } else {
+      const expandedTime = detruncateTime(time);
+      const searchTime = moment(`${day.title} ${expandedTime}`, "dddd h:mma");
+      console.log(searchTime.format("ddd h:mma M/D/Y"));
+      dispatch({
+        type: "events/set",
+        payload: {
+          notNow,
+          day: null,
+          now: searchTime.valueOf()
+        }
+      });
+      dispatch(get({ bounds }));
+    }
+  };
+}
+
+export const searchTimeSelector = state => {
+  const day = state.events.day;
+  if (day) {
+    return day.title;
+  }
+
+  const now = state.events.now;
+  const time = moment(now);
+  const value = time.format("ddd h:mma");
+
+  return value;
+};
 
 function getDaysAway(item) {
   const days = item._source.groupedHours[0].days.sort((a, b) => {

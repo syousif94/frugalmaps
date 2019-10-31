@@ -460,6 +460,22 @@ export function itemRemaining(item) {
   };
 }
 
+export function itemTimeForDay(item, day) {
+  return {
+    text: day.title,
+    color: UPCOMING,
+    duration: ""
+  };
+}
+
+export function itemRemainingAtTime(item, time) {
+  return {
+    text: "",
+    color: UPCOMING,
+    duration: ""
+  };
+}
+
 export function itemTime(day, groupedHours, ending, upcoming) {
   const [start, end] = groupedHours.hours
     .split(" ")

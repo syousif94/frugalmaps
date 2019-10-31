@@ -14,6 +14,7 @@ export const topBarHeight = IOS ? 68 + topInset : 72;
 export default ({ style = { paddingLeft: 15 }, containerStyle = {} }) => {
   const [currentTime] = useEveryMinute();
   const now = useSelector(state => state.events.now);
+  const day = useSelector(state => state.events.day);
   const locationText = useSelector(state => {
     const city = state.events.city;
     const locationEnabled = state.permissions.location;
@@ -27,11 +28,16 @@ export default ({ style = { paddingLeft: 15 }, containerStyle = {} }) => {
   });
   const count = useSelector(state => state.events.upNext.length);
 
-  const today = moment(now);
-  const day = today.format("h:mma");
-  const minDiff = Math.ceil((currentTime - now) / 60000);
-  let fromNow = "";
+  let dayText;
+  if (!day) {
+    const today = moment(now);
+    dayText = today.format("h:mma");
+  } else {
+    dayText = day.title;
+  }
 
+  let fromNow = "";
+  const minDiff = Math.ceil((currentTime - now) / 60000);
   if (minDiff < 0) {
   } else if (minDiff >= 60) {
     fromNow = ` ${parseInt(minDiff / 60, 10)}h ${minDiff % 60}m ago`;
@@ -50,7 +56,7 @@ export default ({ style = { paddingLeft: 15 }, containerStyle = {} }) => {
           }}
         >
           <Text allowFontScaling={false} style={styles.titleText}>
-            {day}
+            {dayText}
             <Text style={{ color: "#000" }}>{fromNow}</Text> {locationText}
           </Text>
           {count ? (

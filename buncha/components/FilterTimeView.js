@@ -11,6 +11,7 @@ import { PAGE } from "../store/filters";
 import { BLUE, RED } from "../utils/Colors";
 import Input from "./Input";
 import * as Filters from "../store/filters";
+import * as Events from "../store/events";
 import { WEB } from "../utils/Constants";
 
 export default ({ page }) => {
@@ -51,7 +52,7 @@ export default ({ page }) => {
         <View style={styles.days}>
           {calendar.map(day => {
             const dayTextStyle = [styles.dayText];
-            if (selectedDay === day.title) {
+            if (selectedDay.title === day.title) {
               dayTextStyle.push({
                 color: BLUE
               });
@@ -62,13 +63,7 @@ export default ({ page }) => {
                 <TouchableOpacity
                   style={styles.dayBtn}
                   onPress={() => {
-                    dispatch({
-                      type: "filters/set",
-                      payload: {
-                        day: day.title,
-                        time: ""
-                      }
-                    });
+                    dispatch(Filters.setDay(day));
                   }}
                 >
                   <Text style={dayTextStyle}>{day.title}</Text>
@@ -111,6 +106,9 @@ export default ({ page }) => {
             }
           ]}
           disabled={!validTime}
+          onPress={() => {
+            dispatch(Events.getTime());
+          }}
         >
           <Text style={styles.buttonText}>Search</Text>
         </TouchableOpacity>
