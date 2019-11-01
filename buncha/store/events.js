@@ -139,16 +139,14 @@ export function filter({ tag = null, text = "" }) {
       payload: {
         tag,
         text,
-        now: notNow ? Date.now() : undefined,
-        day: null,
-        notNow: false
+        now: notNow ? Date.now() : undefined
       }
     });
 
     if (text.length || (prevText.length && !tag)) {
-      debouncedGet(dispatch, { bounds, searching: true });
+      debouncedGet(dispatch, { bounds, searching: true, notNow: false });
     } else {
-      dispatch(get({ bounds }));
+      dispatch(get({ bounds, notNow: false }));
     }
   };
 }
@@ -158,18 +156,21 @@ export function refresh(bounds = null, refresh = false) {
     dispatch({
       type: "events/set",
       payload: {
-        notNow: false,
-        day: null,
         now: Date.now(),
         text: "",
         tag: null
       }
     });
-    dispatch(get({ bounds, refresh }));
+    dispatch(get({ bounds, refresh, notNow: false }));
   };
 }
 
-export function get({ bounds = null, refresh = false, searching = false }) {
+export function get({
+  bounds = null,
+  refresh = false,
+  searching = false,
+  notNow
+}) {
   return async (dispatch, getState) => {
     const searchingTime = searching ? Date.now() : null;
 
@@ -279,7 +280,9 @@ export function get({ bounds = null, refresh = false, searching = false }) {
             newest: [],
             tags: [],
             error,
-            city
+            city,
+            notNow,
+            day: null
           }
         });
         return;
@@ -307,7 +310,9 @@ export function get({ bounds = null, refresh = false, searching = false }) {
           markers: res.markers[0].data,
           bounds: filtering ? undefined : res.bounds,
           data: res.data,
-          tags: filtering ? undefined : res.tags
+          tags: filtering ? undefined : res.tags,
+          notNow,
+          day: null
         }
       });
     } catch (error) {
@@ -317,7 +322,9 @@ export function get({ bounds = null, refresh = false, searching = false }) {
         payload: {
           searching: null,
           refreshing: searching ? undefined : false,
-          error: error
+          error: error,
+          notNow,
+          day: null
         }
       });
     }
@@ -382,12 +389,11 @@ export function getTime() {
       dispatch({
         type: "events/set",
         payload: {
-          notNow,
           day: null,
           now: searchTime.valueOf()
         }
       });
-      dispatch(get({ bounds }));
+      dispatch(get({ bounds, notNow }));
     }
   };
 }

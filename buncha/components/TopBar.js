@@ -13,6 +13,7 @@ export const topBarHeight = IOS ? 68 + topInset : 72;
 
 export default ({ style = { paddingLeft: 15 }, containerStyle = {} }) => {
   const [currentTime] = useEveryMinute();
+  const notNow = useSelector(state => state.events.notNow);
   const now = useSelector(state => state.events.now);
   const day = useSelector(state => state.events.day);
   const locationText = useSelector(state => {
@@ -28,21 +29,25 @@ export default ({ style = { paddingLeft: 15 }, containerStyle = {} }) => {
   });
   const count = useSelector(state => state.events.upNext.length);
 
-  let dayText;
-  if (!day) {
+  let dayText = "";
+  if (!notNow) {
     const today = moment(now);
     dayText = today.format("h:mma");
-  } else {
-    dayText = day.title;
   }
 
   let fromNow = "";
-  const minDiff = Math.ceil((currentTime - now) / 60000);
-  if (minDiff < 0) {
-  } else if (minDiff >= 60) {
-    fromNow = ` ${parseInt(minDiff / 60, 10)}h ${minDiff % 60}m ago`;
+  if (!notNow) {
+    const minDiff = Math.ceil((currentTime - now) / 60000);
+    if (minDiff >= 60) {
+      fromNow = ` ${parseInt(minDiff / 60, 10)}h ${minDiff % 60}m ago`;
+    } else if (minDiff >= 0) {
+      fromNow = ` ${minDiff}m ago`;
+    }
+  } else if (day) {
+    fromNow = day.title;
   } else {
-    fromNow = ` ${minDiff}m ago`;
+    const today = moment(now);
+    fromNow = today.format("dddd h:mma");
   }
 
   return (
