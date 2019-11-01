@@ -9,14 +9,17 @@ import {
 import BlurView from "./BlurView";
 import { HEIGHT, WEB } from "../utils/Constants";
 import emitter from "tiny-emitter/instance";
+import { useDispatch } from "react-redux";
 
 import FilterTypeView from "./FilterTypeView";
 import FilterPlaceView from "./FilterPlaceView";
 import FilterTimeView from "./FilterTimeView";
+import { PAGE, resetTime } from "../store/filters";
 
 const panelHeight = WEB ? HEIGHT * 0.8 : HEIGHT * 0.65;
 
 export default () => {
+  const dispatch = useDispatch();
   const [page, setPage] = useState(null);
   const animation = useRef(new Animated.Value(0));
   useEffect(() => {
@@ -27,7 +30,18 @@ export default () => {
           animation.current,
           { toValue: 1, duration: 200, easing: Easing.in(Easing.quad) },
           { useNativeDriver: true }
-        ).start();
+        ).start(() => {
+          switch (page) {
+            case PAGE.WHEN:
+              requestAnimationFrame(() => {
+                dispatch(resetTime());
+              });
+
+              break;
+            default:
+              break;
+          }
+        });
       } else {
         Animated.timing(
           animation.current,

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
-import { PAGE, resetTime } from "../store/filters";
+import { useSelector } from "react-redux";
+import { PAGE } from "../store/filters";
 import { BLUE } from "../utils/Colors";
 import { Entypo } from "@expo/vector-icons";
 import { WEB } from "../utils/Constants";
@@ -16,18 +16,8 @@ const TouchableOpacity = WEB
 const buttonHeight = WEB ? 36 : 44;
 
 const TimePicker = props => {
-  const dispatch = useDispatch();
   const value = useSelector(searchTimeSelector);
-  return (
-    <PickerButton
-      {...props}
-      title={PAGE.WHEN}
-      value={value}
-      onPress={() => {
-        dispatch(resetTime());
-      }}
-    />
-  );
+  return <PickerButton {...props} title={PAGE.WHEN} value={value} />;
 };
 
 const PlacePicker = props => {

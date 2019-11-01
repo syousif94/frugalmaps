@@ -23,7 +23,9 @@ export default ({ to, children, containerStyle = {}, ...props }) => {
           href={to}
           onClick={onClick}
           style={{
-            display: "block",
+            flexDirection: "column",
+            flex: 1,
+            display: "flex",
             textDecoration: "none",
             padding: 0,
             margin: 0

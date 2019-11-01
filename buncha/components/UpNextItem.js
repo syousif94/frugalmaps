@@ -42,6 +42,8 @@ const itemWidth = (windowWidth - itemMargin * (columns + 1)) / columns;
 
 export { columns, itemMargin, itemWidth };
 
+const imageHeight = 95;
+
 export default memo(({ item, index, style = {}, containerStyle = {} }) => {
   const day = useSelector(state => state.events.day);
   const notNow = useSelector(state => state.events.notNow);
@@ -96,7 +98,7 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
       <View style={styles.image}>
         <ImageGallery
           photos={item._source.photos}
-          height={70}
+          height={imageHeight}
           scrollEnabled={false}
         />
         {placeText && (
@@ -123,28 +125,28 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
       </Text>
       <MatchableText
         text={item._source.description}
-        numberOfLines={2}
+        numberOfLines={3}
         match={searchTerm}
         style={styles.descriptionText}
       />
       <View style={styles.actions}>
         <TouchableOpacity
           onPress={() => {
-            navigate("Plan", { eid: item._id });
-          }}
-          style={styles.actionButton}
-        >
-          <Entypo name="calendar" size={16} color={RED} />
-          <Text style={styles.actionText}>Plan</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
             emitter.emit("interested", item);
           }}
-          style={[styles.actionButton, { marginLeft: 10 }]}
+          style={[styles.actionButton]}
         >
           <FontAwesome name="star" size={16} color={"#FFA033"} />
           <Text style={styles.actionText}>Interested</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            navigate("Plan", { eid: item._id });
+          }}
+          style={[styles.actionButton, { marginLeft: 10 }]}
+        >
+          <Entypo name="calendar" size={16} color={RED} />
+          <Text style={styles.actionText}>Plan</Text>
         </TouchableOpacity>
       </View>
     </Link>
@@ -191,10 +193,10 @@ const styles = StyleSheet.create({
   container: {
     width: itemWidth,
     marginLeft: itemMargin,
-    paddingBottom: 7
+    height: "100%"
   },
   image: {
-    height: 70,
+    height: imageHeight,
     width: "100%",
     backgroundColor: "#f4f4f4",
     borderRadius: 6,
@@ -203,9 +205,14 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 15,
-    fontWeight: "600"
+    color: "#000",
+    fontWeight: "700"
   },
-  subText: { fontSize: 10, color: "#aaa", fontWeight: "700" },
+  subText: {
+    fontSize: 10,
+    color: "#999",
+    fontWeight: "700"
+  },
   locationText: {
     fontSize: 13,
     color: "#000",
@@ -213,22 +220,22 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     marginTop: 2,
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "500",
-    color: "#666"
+    color: "#555"
   },
   actions: {
-    flexDirection: "row",
-    alignItems: "center"
+    flexDirection: "row"
   },
   actionButton: {
     flexDirection: "row",
     alignItems: "center",
-    height: 32
+    paddingTop: WEB ? 6 : 4,
+    paddingBottom: WEB ? 5 : 15
   },
   actionText: {
     marginLeft: 6,
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: "600",
     color: "#000"
   },

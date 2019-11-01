@@ -207,6 +207,7 @@ export default ({ intro = false }) => {
                   flexDirection: "row",
                   flexWrap: "wrap",
                   width: "100%",
+                  alignItems: "stretch",
                   paddingHorizontal: width < narrow ? 8 : 10
                 }}
               >
@@ -218,9 +219,11 @@ export default ({ intro = false }) => {
                     containerStyle={{
                       width: width < narrow ? "50%" : "33.33%",
                       paddingHorizontal: width < narrow ? 8 : 10,
-                      marginVertical: width < narrow ? 6 : 8
+                      marginVertical: width < narrow ? 6 : 8,
+                      flexDirection: "column"
                     }}
                     style={{
+                      height: "100%",
                       width: "100%",
                       marginLeft: 0,
                       paddingVertical: 0
