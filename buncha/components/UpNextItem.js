@@ -97,7 +97,7 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
     >
       <View style={styles.image}>
         <ImageGallery
-          photos={item._source.photos}
+          photos={item._source.photos.slice(0, 4)}
           height={imageHeight}
           scrollEnabled={false}
         />
@@ -125,7 +125,7 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
       </Text>
       <MatchableText
         text={item._source.description}
-        numberOfLines={3}
+        numberOfLines={2}
         match={searchTerm}
         style={styles.descriptionText}
       />
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 15,
     color: "#000",
-    fontWeight: "700"
+    fontWeight: "600"
   },
   subText: {
     fontSize: 10,

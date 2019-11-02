@@ -16,6 +16,7 @@ import EventView from "../components/EventView";
 import { roundedDistanceTo } from "../utils/Locate";
 import DetailActions from "./DetailActions";
 import PriceText from "./PriceText";
+import { RED, BLUE } from "../utils/Colors";
 
 let MapView = null;
 if (!WEB) {
@@ -245,7 +246,8 @@ export default memo(({ item, id }) => {
                   <Text style={{ fontWeight: "400" }}>{cityText}</Text>
                 </Text>
                 <Text style={styles.detailText} numberOfLines={1}>
-                  {events.length} event{events.length !== 1 ? "s" : ""}
+                  <Text style={{ color: BLUE }}>{events.length}</Text> event
+                  {events.length !== 1 ? "s" : ""}
                 </Text>
               </View>
             </View>

@@ -72,16 +72,18 @@ export function setTime(time) {
         notNow: true
       }
     });
-    let validTime = true;
-    if (time.trim().length) {
-      const expandedTime = detruncateTime(time);
-      validTime = validateTime(expandedTime);
-    }
-    dispatch({
-      type: "filters/set",
-      payload: {
-        validTime
+    requestAnimationFrame(() => {
+      let validTime = true;
+      if (time.trim().length) {
+        const expandedTime = detruncateTime(time);
+        validTime = validateTime(expandedTime);
       }
+      dispatch({
+        type: "filters/set",
+        payload: {
+          validTime
+        }
+      });
     });
   };
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import {
   View,
   StyleSheet,
@@ -18,10 +18,6 @@ export default ({ page }) => {
   const dispatch = useDispatch();
   const isPage = page === PAGE.WHEN;
   const pointerEvents = isPage ? "auto" : "none";
-  const calendar = useSelector(state => state.events.calendar);
-  const selectedDay = useSelector(state => state.filters.day);
-  const selectedTime = useSelector(state => state.filters.time);
-  const validTime = useSelector(state => state.filters.validTime);
   return (
     <View
       pointerEvents={pointerEvents}
@@ -39,83 +35,117 @@ export default ({ page }) => {
               <Text style={styles.titleText}>{PAGE.WHEN}</Text>
               <Text style={styles.subText}>Find events by time and day</Text>
             </View>
-            <TouchableOpacity
-              onPress={() => {
-                dispatch(Filters.resetTime());
-              }}
-              style={styles.button}
-            >
-              <Text style={styles.buttonText}>Now</Text>
-            </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.days}>
-          {calendar.map(day => {
-            const dayTextStyle = [styles.dayText];
-            if (selectedDay.title === day.title) {
-              dayTextStyle.push({
-                color: BLUE
-              });
-            }
-            const eventCount = `${day.data.length}`;
-            return (
-              <View style={styles.day} key={day.title}>
-                <TouchableOpacity
-                  style={styles.dayBtn}
-                  onPress={() => {
-                    dispatch(Filters.setDay(day));
-                  }}
-                >
-                  <Text style={dayTextStyle}>{day.title}</Text>
-                  <View style={{ backgroundColor: "rgba(0,0,0,0.05)" }}>
-                    <Text style={styles.dayCountText}>{eventCount}</Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            );
-          })}
-        </View>
-        <Text style={styles.instructionText}>
-          {validTime ? null : (
-            <Text style={styles.invalidTimeText}>Invalid Time... </Text>
-          )}
-          Time is optional, formats like 7, 11a, and 10:43pm are cool,{" "}
-          <Text style={{ fontWeight: "700" }}>pm</Text> assumed
-        </Text>
-        <Input
-          value={selectedTime}
-          spellCheck={false}
-          autoCorrect={WEB ? "off" : false}
-          autoCapitalize="none"
-          placeholder="Time"
-          containerStyle={{ marginHorizontal: 10, marginTop: 5 }}
-          backgroundColor="rgba(0,0,0,0.04)"
-          style={{ fontWeight: "600" }}
-          onChangeText={text => {
-            dispatch(Filters.setTime(text));
-          }}
-        />
+        <DayPicker />
+        <TimeInstructions />
+        <TimeInput />
+        <SearchButton />
         <TouchableOpacity
-          style={[
-            styles.button,
-            {
-              width: 250,
-              alignSelf: "center",
-              marginTop: 35,
-              backgroundColor: validTime ? BLUE : "#ccc"
-            }
-          ]}
-          disabled={!validTime}
           onPress={() => {
-            dispatch(Events.getTime());
+            dispatch(Filters.resetTime());
           }}
+          style={styles.button}
         >
-          <Text style={styles.buttonText}>Search</Text>
+          <Text style={styles.buttonText}>Now</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
   );
 };
+
+const TimeInstructions = memo(() => {
+  const validTime = useSelector(state => state.filters.validTime);
+  return (
+    <Text style={styles.instructionText}>
+      {validTime ? null : (
+        <Text style={styles.invalidTimeText}>Invalid Time... </Text>
+      )}
+      Time is optional, formats like 7, 11a, and 10:43pm are cool,{" "}
+      <Text style={{ fontWeight: "700" }}>pm</Text> assumed
+    </Text>
+  );
+});
+
+const SearchButton = memo(() => {
+  const dispatch = useDispatch();
+  const validTime = useSelector(state => state.filters.validTime);
+  return (
+    <TouchableOpacity
+      style={[
+        styles.button,
+        {
+          width: 250,
+          alignSelf: "center",
+          marginTop: 35,
+          backgroundColor: validTime ? BLUE : "#ccc"
+        }
+      ]}
+      disabled={!validTime}
+      onPress={() => {
+        dispatch(Events.getTime());
+      }}
+    >
+      <Text style={styles.buttonText}>Search</Text>
+    </TouchableOpacity>
+  );
+});
+
+const DayPicker = memo(() => {
+  const dispatch = useDispatch();
+  const calendar = useSelector(state =>
+    state.events.calendar.sort((a, b) => a.iso - b.iso)
+  );
+  const selectedDay = useSelector(state => state.filters.day);
+  return (
+    <View style={styles.days}>
+      {calendar.map(day => {
+        const dayTextStyle = [styles.dayText];
+        if (selectedDay.title === day.title) {
+          dayTextStyle.push({
+            color: BLUE
+          });
+        }
+        const eventCount = `${day.data.length}`;
+        return (
+          <View style={styles.day} key={day.title}>
+            <TouchableOpacity
+              style={styles.dayBtn}
+              onPress={() => {
+                dispatch(Filters.setDay(day));
+              }}
+            >
+              <Text style={dayTextStyle}>{day.title}</Text>
+              <View style={{ backgroundColor: "rgba(0,0,0,0.05)" }}>
+                <Text style={styles.dayCountText}>{eventCount}</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        );
+      })}
+    </View>
+  );
+});
+
+const TimeInput = memo(() => {
+  const dispatch = useDispatch();
+  const selectedTime = useSelector(state => state.filters.time);
+  return (
+    <Input
+      value={selectedTime}
+      spellCheck={false}
+      autoCorrect={WEB ? "off" : false}
+      autoCapitalize="none"
+      placeholder="Time"
+      containerStyle={{ marginHorizontal: 10, marginTop: 5 }}
+      backgroundColor="rgba(0,0,0,0.04)"
+      style={{ fontWeight: "600" }}
+      onChangeText={text => {
+        dispatch(Filters.setTime(text));
+      }}
+    />
+  );
+});
 
 const styles = StyleSheet.create({
   container: {

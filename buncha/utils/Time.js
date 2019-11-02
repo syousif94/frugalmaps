@@ -2,10 +2,27 @@ import moment from "moment";
 import { ISO_DAYS, ABBREVIATED_DAYS as DAYS, LONG_DAYS } from "./Constants";
 import { NOW, UPCOMING, NOT_TODAY } from "./Colors";
 
+function isValidVal(i, str) {
+  if (!i) {
+    const val = parseInt(str, 10);
+    return val <= 12 && val > 0;
+  } else if (i === 2) {
+    const val = parseInt(str, 10);
+    return val <= 59 && val >= 0;
+  }
+  return true;
+}
+
 export function validateTime(str) {
+  const validLength = str
+    .split(/(:|am|pm)/gi)
+    .filter(val => val.trim().length)
+    .reduce((prev, cur, i) => {
+      return prev && i < 4 && cur.length < 3 && isValidVal(i, cur);
+    }, true);
   const validTime = str.match(/(\d{1,2}):(\d{2})/g);
   const containsMeridian = str.indexOf("am") > -1 || str.indexOf("pm") > -1;
-  return validTime && containsMeridian;
+  return validLength && validTime && containsMeridian;
 }
 
 const splitStringAt = index => x => [x.slice(0, index), x.slice(index)];

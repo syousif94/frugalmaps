@@ -169,7 +169,11 @@ export default ({ page, setPage, pages }) => {
           for
         </Text>
         <Text style={styles.instructionText}>2. Title</Text>
-        <ConnectedInput field="title" placeholder="What's the event called?" />
+        <ConnectedInput
+          field="title"
+          placeholder="What's the event called?"
+          autoComplete="off"
+        />
         <Text style={styles.instructionText}>3. Days</Text>
         <SubmitDayPicker />
         <View style={styles.row}>

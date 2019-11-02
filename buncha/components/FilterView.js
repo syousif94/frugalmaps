@@ -14,7 +14,6 @@ import { useDispatch } from "react-redux";
 import FilterTypeView from "./FilterTypeView";
 import FilterPlaceView from "./FilterPlaceView";
 import FilterTimeView from "./FilterTimeView";
-import { PAGE, resetTime } from "../store/filters";
 
 const panelHeight = WEB ? HEIGHT * 0.8 : HEIGHT * 0.65;
 
@@ -30,18 +29,7 @@ export default () => {
           animation.current,
           { toValue: 1, duration: 200, easing: Easing.in(Easing.quad) },
           { useNativeDriver: true }
-        ).start(() => {
-          switch (page) {
-            case PAGE.WHEN:
-              requestAnimationFrame(() => {
-                dispatch(resetTime());
-              });
-
-              break;
-            default:
-              break;
-          }
-        });
+        ).start();
       } else {
         Animated.timing(
           animation.current,
