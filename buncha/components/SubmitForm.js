@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import {
   StyleSheet,
   View,
@@ -42,7 +42,7 @@ const MOBILE_PROPS = WEB
       viewIsInsideTabBar: true
     };
 
-const ConnectedInput = ({ field, ...props }) => {
+const ConnectedInput = memo(({ field, ...props }) => {
   const dispatch = useDispatch();
   const value = useSelector(state => state.submission[field]);
   return (
@@ -59,7 +59,7 @@ const ConnectedInput = ({ field, ...props }) => {
       {...props}
     />
   );
-};
+});
 
 const BackButton = () => {
   const [dimensions] = useDimensions();

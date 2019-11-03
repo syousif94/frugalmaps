@@ -1,97 +1,85 @@
-import React, { Component } from "react";
+import React, { memo, useState, useRef } from "react";
 import { TouchableOpacity, TextInput, View, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { WEB } from "../utils/Constants";
 import { BLUE } from "../utils/Colors";
 
-export default class Input extends Component {
-  state = {
-    focused: false
-  };
-
-  _focus = () => {
-    this._input.focus();
-    this.setState({
-      focused: true
-    });
-  };
-
-  _onFocus = () => {
-    this.setState({
-      focused: true
-    });
-    if (this.props.onFocus) {
-      this.props.onFocus();
-    }
-  };
-
-  _onBlur = () => {
-    this.setState({
-      focused: false
-    });
-    if (this.props.onBlur) {
-      this.props.onBlur();
-    }
-  };
-
-  _clear = () => {
-    requestAnimationFrame(() => {
-      this.props.onChangeText("");
-    });
-
-    // this._focus();
-  };
-
-  _renderClear = multiline => {
-    if (!this.props.value || !this.props.value.length) return null;
-
-    const style = [styles.clear];
-    if (multiline) {
-      style.push({
-        height: 40
-      });
-    } else {
-      style.push({
-        bottom: 0
-      });
-    }
-
-    return (
-      <TouchableOpacity style={style} onPress={this._clear}>
-        <Ionicons name="ios-close-circle" size={18} color="rgba(0,0,0,0.4)" />
-      </TouchableOpacity>
-    );
-  };
-
-  _onChange = e => {
-    this.props.onChangeText(e.target.value);
-  };
-
-  _onKeyPress = e => {
-    const keycode = e.keyCode ? e.keyCode : e.which;
-    if (this.props.blurOnSubmit && keycode === 13) {
-      this._input.blur();
-    }
-  };
-
-  render() {
-    const {
-      style = {},
-      render,
-      onChangeText,
-      autoCompleteType,
-      containerStyle = {},
-      backgroundColor = "#f4f4f4",
-      returnKeyType = null,
-      name,
-      multiline,
-      blurOnSubmit,
-      autoCorrect,
-      spellCheck,
-      ...props
-    } = this.props;
-    const { focused } = this.state;
+export default memo(
+  ({
+    style = {},
+    render,
+    onChangeText,
+    autoCompleteType,
+    containerStyle = {},
+    backgroundColor = "#f4f4f4",
+    returnKeyType = null,
+    name,
+    multiline,
+    blurOnSubmit,
+    autoCorrect,
+    spellCheck,
+    ...props
+  }) => {
+    const [focused, setFocused] = useState(false);
+    const inputRef = useRef(null);
     const pointerEvents = focused ? "auto" : "none";
+
+    const _focus = () => {
+      inputRef.current.focus();
+      setFocused(true);
+    };
+
+    const _onFocus = () => {
+      setFocused(true);
+      if (props.onFocus) {
+        props.onFocus();
+      }
+    };
+
+    const _onBlur = () => {
+      setFocused(false);
+      if (props.onBlur) {
+        props.onBlur();
+      }
+    };
+
+    const _clear = () => {
+      requestAnimationFrame(() => {
+        onChangeText("");
+      });
+    };
+
+    const _renderClear = multiline => {
+      if (!props.value || !props.value.length) return null;
+
+      const style = [styles.clear];
+      if (multiline) {
+        style.push({
+          height: 40
+        });
+      } else {
+        style.push({
+          bottom: 0
+        });
+      }
+
+      return (
+        <TouchableOpacity style={style} onPress={_clear}>
+          <Ionicons name="ios-close-circle" size={18} color="rgba(0,0,0,0.4)" />
+        </TouchableOpacity>
+      );
+    };
+
+    const _onChange = e => {
+      onChangeText(e.target.value);
+    };
+
+    const _onKeyPress = e => {
+      const keycode = e.keyCode ? e.keyCode : e.which;
+      if (blurOnSubmit && keycode === 13) {
+        inputRef.current.blur();
+      }
+    };
 
     const container = [
       styles.inputContainer,
@@ -113,7 +101,7 @@ export default class Input extends Component {
               style={{ flexDirection: "row" }}
               onPress={() => {
                 requestAnimationFrame(() => {
-                  this._input.focus();
+                  inputRef.current.focus();
                 });
               }}
             >
@@ -122,7 +110,7 @@ export default class Input extends Component {
           ) : null}
           {multiline ? (
             <textarea
-              ref={ref => (this._input = ref)}
+              ref={inputRef}
               {...props}
               name={name}
               style={{
@@ -140,16 +128,16 @@ export default class Input extends Component {
                 fontFamily:
                   'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif'
               }}
-              onFocus={this._onFocus}
-              onBlur={this._onBlur}
-              onChange={this._onChange}
-              onKeyPress={this._onKeyPress}
+              onFocus={_onFocus}
+              onBlur={_onBlur}
+              onChange={_onChange}
+              onKeyPress={_onKeyPress}
               autoCorrect={correct}
               spellCheck={checkSpelling}
             ></textarea>
           ) : (
             <input
-              ref={ref => (this._input = ref)}
+              ref={inputRef}
               {...props}
               name={name}
               style={{
@@ -164,16 +152,16 @@ export default class Input extends Component {
                 fontFamily:
                   'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif'
               }}
-              onFocus={this._onFocus}
-              onBlur={this._onBlur}
-              onChange={this._onChange}
-              onKeyPress={this._onKeyPress}
+              onFocus={_onFocus}
+              onBlur={_onBlur}
+              onChange={_onChange}
+              onKeyPress={_onKeyPress}
               autoCorrect={correct}
               spellCheck={checkSpelling}
             />
           )}
 
-          {this._renderClear(multiline)}
+          {_renderClear(multiline)}
         </View>
       );
     }
@@ -195,19 +183,19 @@ export default class Input extends Component {
       <View style={container}>
         <TouchableOpacity
           style={styles.btn}
-          onPress={this._focus}
-          disabled={this.state.focused}
+          onPress={_focus}
+          disabled={focused}
           activeOpacity={1}
         >
           {render ? render() : null}
           <TextInput
             pointerEvents={pointerEvents}
-            ref={ref => (this._input = ref)}
+            ref={inputRef}
             {...props}
             returnKeyType={returnKeyType}
             onChangeText={onChangeText || null}
             style={inputStyle}
-            onBlur={this._onBlur}
+            onBlur={_onBlur}
             placeholderTextColor="rgba(0,0,0,0.5)"
             autoCompleteType={autoCompleteType}
             multiline={multiline}
@@ -215,11 +203,11 @@ export default class Input extends Component {
             autoCorrect={autoCorrect}
           />
         </TouchableOpacity>
-        {this._renderClear(multiline)}
+        {_renderClear(multiline)}
       </View>
     );
   }
-}
+);
 
 const styles = StyleSheet.create({
   btn: {
