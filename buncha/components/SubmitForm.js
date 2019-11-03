@@ -159,46 +159,44 @@ export default ({ page, setPage, pages }) => {
         </View>
 
         <HeaderImage />
-
-        <Text style={[styles.instructionText, { marginTop: 0 }]}>
-          1. Location
-        </Text>
+        <Text style={[styles.instructionText, { marginTop: 0 }]}>What</Text>
+        <ConnectedInput
+          field="title"
+          placeholder="What's the event called?"
+          autoComplete="off"
+          name="location"
+        />
+        <Text style={styles.instructionText}>Tags</Text>
+        <SubmitTags />
+        <Text style={styles.instructionText}>Description</Text>
+        <ConnectedInput multiline field="description" placeholder="Optional" />
+        <Text style={styles.instructionText}>Where</Text>
         <SubmitPlacePicker />
         <Text style={styles.subtext}>
           Try including the city and state if you can't find what you're looking
           for
         </Text>
-        <Text style={styles.instructionText}>2. Title</Text>
-        <ConnectedInput
-          field="title"
-          placeholder="What's the event called?"
-          autoComplete="off"
-        />
-        <Text style={styles.instructionText}>3. Days</Text>
+        <Text style={styles.instructionText}>When</Text>
         <SubmitDayPicker />
         <View style={styles.row}>
           <View style={styles.time}>
-            <Text style={styles.instructionText}>4. Starts at</Text>
+            <Text style={styles.instructionText}>Starts at</Text>
             <ConnectedInput field="start" placeholder="Open" />
           </View>
           <View style={{ width: 10 }} />
           <View style={styles.time}>
-            <Text style={styles.instructionText}>5. Ends at</Text>
+            <Text style={styles.instructionText}>Ends at</Text>
             <ConnectedInput field="end" placeholder="Close" />
           </View>
         </View>
         <Text style={styles.subtext}>
           Formats like 7, 11a, or 4:19pm are all valid
         </Text>
-        <Text style={styles.subtext}>Afternoon is assumed by default</Text>
+        <Text style={styles.subtext}>PM is assumed by default</Text>
         <Text style={styles.subtext}>
           Leave blank for opening or closing hours
         </Text>
-        <Text style={styles.instructionText}>6. Description</Text>
-        <ConnectedInput field="description" placeholder="Optional" />
-        <Text style={styles.instructionText}>7. Tags</Text>
-        <SubmitTags />
-        <Text style={styles.instructionText}>8. Admin Code</Text>
+        <Text style={styles.instructionText}>Admin Code</Text>
         <ConnectedInput field="postCode" placeholder="Leave this blank" />
         <TouchableOpacity
           disabled={submitting}

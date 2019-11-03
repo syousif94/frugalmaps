@@ -134,7 +134,7 @@ const TimeInput = memo(() => {
     <Input
       value={selectedTime}
       spellCheck={false}
-      autoCorrect={WEB ? "off" : false}
+      autoCorrect={false}
       autoCapitalize="none"
       placeholder="Time"
       containerStyle={{ marginHorizontal: 10, marginTop: 5 }}

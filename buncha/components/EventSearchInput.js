@@ -27,11 +27,12 @@ export default ({ contentContainerStyle = {} }) => {
         value={query}
         onChangeText={onChangeText}
         placeholder={searchText}
-        autoCorrect={WEB ? "false" : false}
+        autoCorrect={false}
         autoCompleteType="off"
-        spellCheck={WEB ? "false" : false}
+        spellCheck={false}
         autoCapitalize="none"
         returnKeyType="search"
+        blurOnSubmit
         backgroundColor="rgba(180,180,180,0.1)"
         containerStyle={{ flex: 1, borderRadius: 6 }}
         style={styles.input}

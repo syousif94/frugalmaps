@@ -47,7 +47,11 @@ export default () => {
             </Text>
           </View>
           <View style={styles.clear}>
-            <Ionicons name="md-close" size={14} color="#fff" />
+            <Ionicons
+              name="ios-close-circle"
+              size={18}
+              color="rgba(0,0,0,0.4)"
+            />
           </View>
         </TouchableOpacity>
         <Link
@@ -91,9 +95,9 @@ export default () => {
         value={query}
         onChangeText={getQuery}
         placeholder="Type to search"
-        autoCorrect={WEB ? "false" : false}
+        autoCorrect={false}
         autoCompleteType="off"
-        spellCheck={WEB ? "false" : false}
+        spellCheck={false}
         autoCapitalize="words"
         style={{ paddingLeft: 0 }}
         render={() => (
@@ -170,15 +174,10 @@ const styles = StyleSheet.create({
     overflow: "hidden"
   },
   clear: {
-    height: 16,
-    width: 16,
-    borderRadius: 8,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    height: "100%",
+    paddingHorizontal: 12,
     justifyContent: "center",
-    alignItems: "center",
-    paddingTop: 1.5,
-    paddingLeft: 0.5,
-    marginRight: 5
+    alignItems: "center"
   }
 });
 
