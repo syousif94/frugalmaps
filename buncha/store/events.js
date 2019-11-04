@@ -165,6 +165,9 @@ export function refresh(bounds = null, refresh = false) {
   };
 }
 
+export const EMPTY_LOCATION = "We don't have any data for";
+export const UNKNOWN_LOCATION = "We can't determine your location";
+
 export function get({
   bounds = null,
   refresh = false,
@@ -267,8 +270,8 @@ export function get({
 
         const error =
           city && city.text
-            ? `We don't have any event data for ${city.text} yet.`
-            : `We can't determine your location`;
+            ? `${EMPTY_LOCATION} ${city.text} yet.`
+            : UNKNOWN_LOCATION;
         dispatch({
           type: "events/set",
           payload: {
