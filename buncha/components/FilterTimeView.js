@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ScrollView
 } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { PAGE } from "../store/filters";
 import { BLUE, RED } from "../utils/Colors";
 import Input from "./Input";
@@ -87,7 +87,7 @@ const NowButton = () => {
 
 const SearchButton = memo(() => {
   const dispatch = useDispatch();
-  const { validTime } = useSelector(Filters.validTimeSelector);
+  const { validTime } = useSelector(Filters.validTimeSelector, shallowEqual);
   return (
     <TouchableOpacity
       style={styles.button}
@@ -103,8 +103,9 @@ const SearchButton = memo(() => {
 
 const DayPicker = memo(() => {
   const dispatch = useDispatch();
-  const calendar = useSelector(state =>
-    state.events.calendar.sort((a, b) => a.iso - b.iso)
+  const calendar = useSelector(
+    state => state.events.calendar.sort((a, b) => a.iso - b.iso),
+    shallowEqual
   );
   const selectedDay = useSelector(state => state.filters.day);
   return (
@@ -151,7 +152,10 @@ const TimeContainer = memo(({ bottomOffset }) => {
 });
 
 const TimeOverlay = memo(() => {
-  const { validTime, expandedTime } = useSelector(Filters.validTimeSelector);
+  const { validTime, expandedTime } = useSelector(
+    Filters.validTimeSelector,
+    shallowEqual
+  );
   if (!validTime || !expandedTime) {
     return null;
   }

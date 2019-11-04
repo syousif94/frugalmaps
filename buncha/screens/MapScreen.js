@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, shallowEqual } from "react-redux";
 import { StyleSheet, View, ActivityIndicator } from "react-native";
 import MapView from "react-native-maps";
 import TopBar, { topBarHeight } from "../components/TopBar";
@@ -49,9 +49,9 @@ const IndicatorView = () => {
 
 const MarkerMapView = () => {
   const mapView = useRef(null);
-  const bounds = useSelector(state => state.events.bounds);
+  const bounds = useSelector(state => state.events.bounds, shallowEqual);
   const locationEnabled = useSelector(state => state.permissions.location);
-  const markers = useSelector(state => state.events.markers);
+  const markers = useSelector(state => state.events.markers, shallowEqual);
   useEffect(() => {
     if (!bounds) {
       return;

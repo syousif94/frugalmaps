@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { View, ScrollView, TouchableOpacity, Text } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { RED } from "../utils/Colors";
 import _ from "lodash";
 import * as Events from "../store/events";
@@ -48,7 +48,7 @@ const Button = ({ tag: { text, count }, style }) => {
 
 export default memo(
   ({ style = {}, contentContainerStyle = {}, buttonStyle = {} }) => {
-    const tags = useSelector(state => state.events.tags);
+    const tags = useSelector(state => state.events.tags, shallowEqual);
     if (!tags.length) {
       return null;
     }

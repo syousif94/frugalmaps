@@ -9,7 +9,7 @@ import {
 import { navigate } from "../screens";
 import Link from "./Link";
 import { selectPlaceEvents } from "../store/events";
-import { useSelector } from "react-redux";
+import { useSelector, shallowEqual } from "react-redux";
 import { RED } from "../utils/Colors";
 import { roundedDistanceTo } from "../utils/Locate";
 import {
@@ -52,7 +52,7 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
   const onPress = () => {
     navigate("Detail", { id: item._id });
   };
-  const placeEvents = useSelector(selectPlaceEvents(item));
+  const placeEvents = useSelector(selectPlaceEvents(item), shallowEqual);
   const searchTerm = useSelector(state =>
     state.events.text.length
       ? state.events.text

@@ -7,7 +7,7 @@ import {
   Text,
   Animated
 } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, shallowEqual } from "react-redux";
 import { selectPlaceEvents } from "../store/events";
 import { itemRemaining } from "../utils/Time";
 import { WEB } from "../utils/Constants";
@@ -27,7 +27,7 @@ if (!WEB) {
 
 const Item = ({ item, index }) => {
   const [currentTime] = useEveryMinute();
-  const events = useSelector(selectPlaceEvents(item));
+  const events = useSelector(selectPlaceEvents(item), shallowEqual);
   const distance = roundedDistanceTo(item);
   const time = itemRemaining(item);
   const eventsText = `${events.length} event${events.length != 1 ? "s" : ""}`;
@@ -77,7 +77,7 @@ const Item = ({ item, index }) => {
 
 export default () => {
   const listRef = useRef(null);
-  const data = useSelector(state => state.events.upNext);
+  const data = useSelector(state => state.events.upNext, shallowEqual);
 
   const selectedEvent = useSelector(state => {
     const selected = state.events.selected;
@@ -85,7 +85,7 @@ export default () => {
       return null;
     }
     return state.events.data[selected];
-  });
+  }, shallowEqual);
 
   const [keyboardHeight] = useKeyboardHeight(-tabBarHeight);
 

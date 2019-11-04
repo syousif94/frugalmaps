@@ -6,7 +6,7 @@ import {
   FlatList,
   TouchableOpacity
 } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { PAGE } from "../store/filters";
 import CityItem from "./CityItem";
 import { getInset } from "../utils/SafeAreaInsets";
@@ -16,7 +16,10 @@ import { FontAwesome } from "@expo/vector-icons";
 import CityOrderPicker from "./CityOrderPicker";
 
 export default ({ page }) => {
-  const cities = useSelector(state => state.cities[state.cities.list]);
+  const cities = useSelector(
+    state => state.cities[state.cities.list],
+    shallowEqual
+  );
 
   const isPage = page === PAGE.WHERE;
   const pointerEvents = isPage ? "auto" : "none";

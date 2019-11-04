@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { shallowEqual, useSelector, useDispatch } from "react-redux";
 import {
   View,
   StyleSheet,
@@ -33,7 +33,7 @@ if (!WEB) {
 const narrow = 600;
 
 export default ({ intro = false }) => {
-  const data = useSelector(state => state.events.upNext);
+  const data = useSelector(state => state.events.upNext, shallowEqual);
   const refreshing = useSelector(state => state.events.refreshing);
   const error = useSelector(state => state.events.error);
   const locationEnabled = useSelector(state => state.permissions.location);

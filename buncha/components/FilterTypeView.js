@@ -6,7 +6,7 @@ import {
   FlatList,
   TouchableOpacity
 } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { PAGE } from "../store/filters";
 import { getInset } from "../utils/SafeAreaInsets";
 import { RED, BLUE } from "../utils/Colors";
@@ -14,7 +14,7 @@ import * as Events from "../store/events";
 import _ from "lodash";
 
 export default ({ page }) => {
-  const tags = useSelector(state => state.events.tags);
+  const tags = useSelector(state => state.events.tags, shallowEqual);
   const isPage = page === PAGE.TYPE;
   const pointerEvents = isPage ? "auto" : "none";
   return (
