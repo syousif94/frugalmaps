@@ -16,7 +16,7 @@ import { useEveryMinute } from "../utils/Hooks";
 import moment from "moment";
 import { PANEL_HEIGHT } from "./FilterView";
 
-export default ({ page, bottomOffset }) => {
+export default memo(({ page, bottomOffset }) => {
   const isPage = page === PAGE.WHEN;
   const pointerEvents = isPage ? "auto" : "none";
   return (
@@ -52,7 +52,7 @@ export default ({ page, bottomOffset }) => {
       </ScrollView>
     </View>
   );
-};
+});
 
 const TimeInvalid = () => {
   const { validTime } = useSelector(Filters.validTimeSelector);

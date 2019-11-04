@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, memo } from "react";
 import {
   View,
   Animated,
@@ -17,7 +17,7 @@ import { useKeyboardHeight } from "../utils/Hooks";
 
 export const PANEL_HEIGHT = HEIGHT * 0.65;
 
-export default () => {
+export default memo(() => {
   const [keyboard, bottomOffset] = useKeyboardHeight();
   const [page, setPage] = useState(null);
   const animation = useRef(new Animated.Value(0));
@@ -92,7 +92,7 @@ export default () => {
       </Animated.View>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {

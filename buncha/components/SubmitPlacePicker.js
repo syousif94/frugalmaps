@@ -40,7 +40,7 @@ export default () => {
             });
           }}
         >
-          <View style={{ flex: 1 }}>
+          <View style={{ flex: 1, alignSelf: "center" }}>
             <Text style={styles.instructionText}>{place.name}</Text>
             <Text style={[styles.subtext, { marginTop: 2 }]}>
               {place.formatted_address}
@@ -141,8 +141,7 @@ export default () => {
 
 const styles = StyleSheet.create({
   row: {
-    flexDirection: "row",
-    alignItems: "center"
+    flexDirection: "row"
   },
   loading: {
     marginVertical: 20
@@ -174,7 +173,6 @@ const styles = StyleSheet.create({
     overflow: "hidden"
   },
   clear: {
-    height: "100%",
     paddingHorizontal: 12,
     justifyContent: "center",
     alignItems: "center"
