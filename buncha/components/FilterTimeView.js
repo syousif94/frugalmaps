@@ -12,10 +12,11 @@ import { BLUE, RED } from "../utils/Colors";
 import Input from "./Input";
 import * as Filters from "../store/filters";
 import * as Events from "../store/events";
-import { WEB } from "../utils/Constants";
+import { useEveryMinute } from "../utils/Hooks";
+import moment from "moment";
+import { PANEL_HEIGHT } from "./FilterView";
 
-export default ({ page }) => {
-  const dispatch = useDispatch();
+export default ({ page, bottomOffset }) => {
   const isPage = page === PAGE.WHEN;
   const pointerEvents = isPage ? "auto" : "none";
   return (
@@ -33,54 +34,63 @@ export default ({ page }) => {
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <View style={{ flex: 1 }}>
               <Text style={styles.titleText}>{PAGE.WHEN}</Text>
-              <Text style={styles.subText}>Find events by time and day</Text>
+              <Text style={styles.subText}>Sort by time and day</Text>
             </View>
+            <NowButton />
           </View>
         </View>
         <DayPicker />
-        <TimeInstructions />
-        <TimeInput />
-        <SearchButton />
-        <TouchableOpacity
-          onPress={() => {
-            dispatch(Filters.resetTime());
-          }}
-          style={styles.button}
-        >
-          <Text style={styles.buttonText}>Now</Text>
-        </TouchableOpacity>
+        <Text style={styles.instructionText}>
+          Time is optional, formats like 7, 11a, and 10:43pm are cool,{" "}
+          <Text style={{ fontWeight: "700" }}>pm</Text> assumed
+        </Text>
+        <TimeContainer bottomOffset={bottomOffset} />
+        <TimeInvalid />
+        <View style={{ flexDirection: "row", paddingHorizontal: 10 }}>
+          <SearchButton />
+        </View>
       </ScrollView>
     </View>
   );
 };
 
-const TimeInstructions = memo(() => {
-  const validTime = useSelector(state => state.filters.validTime);
+const TimeInvalid = () => {
+  const { validTime } = useSelector(Filters.validTimeSelector);
+  const textStyle = [
+    styles.invalidTimeText,
+    {
+      opacity: validTime ? 0 : 1
+    }
+  ];
   return (
-    <Text style={styles.instructionText}>
-      {validTime ? null : (
-        <Text style={styles.invalidTimeText}>Invalid Time... </Text>
-      )}
-      Time is optional, formats like 7, 11a, and 10:43pm are cool,{" "}
-      <Text style={{ fontWeight: "700" }}>pm</Text> assumed
-    </Text>
+    <View style={styles.invalidTime}>
+      <Text style={textStyle}>Invalid Time... </Text>
+    </View>
   );
-});
+};
+
+const NowButton = () => {
+  const dispatch = useDispatch();
+  const [currentTime] = useEveryMinute();
+  const timeText = moment().format("ddd h:mma");
+  return (
+    <TouchableOpacity
+      onPress={() => {
+        dispatch(Filters.resetTime());
+      }}
+      style={styles.button}
+    >
+      <Text style={styles.buttonText}>{timeText}</Text>
+    </TouchableOpacity>
+  );
+};
 
 const SearchButton = memo(() => {
   const dispatch = useDispatch();
-  const validTime = useSelector(state => state.filters.validTime);
+  const { validTime } = useSelector(Filters.validTimeSelector);
   return (
     <TouchableOpacity
-      style={[
-        styles.button,
-        {
-          width: 250,
-          alignSelf: "center",
-          marginTop: 35,
-          backgroundColor: validTime ? BLUE : "#ccc"
-        }
-      ]}
+      style={styles.button}
       disabled={!validTime}
       onPress={() => {
         dispatch(Events.getTime());
@@ -127,6 +137,31 @@ const DayPicker = memo(() => {
   );
 });
 
+const TimeContainer = memo(({ bottomOffset }) => {
+  const onLayout = e => {
+    const { y, height } = e.nativeEvent.layout;
+    bottomOffset.current = -PANEL_HEIGHT + y + height + 30;
+  };
+  return (
+    <View style={{ marginHorizontal: 10, marginTop: 5 }} onLayout={onLayout}>
+      <TimeInput />
+      <TimeOverlay />
+    </View>
+  );
+});
+
+const TimeOverlay = memo(() => {
+  const { validTime, expandedTime } = useSelector(Filters.validTimeSelector);
+  if (!validTime || !expandedTime) {
+    return null;
+  }
+  return (
+    <View style={styles.timeOverlay} pointerEvents="none">
+      <Text style={styles.timeOverlayText}>{expandedTime}</Text>
+    </View>
+  );
+});
+
 const TimeInput = memo(() => {
   const dispatch = useDispatch();
   const selectedTime = useSelector(state => state.filters.time);
@@ -137,7 +172,6 @@ const TimeInput = memo(() => {
       autoCorrect={false}
       autoCapitalize="none"
       placeholder="Time"
-      containerStyle={{ marginHorizontal: 10, marginTop: 5 }}
       backgroundColor="rgba(0,0,0,0.04)"
       style={{ fontWeight: "600" }}
       onChangeText={text => {
@@ -216,7 +250,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600"
   },
+  invalidTime: {
+    height: 30,
+    paddingTop: 5,
+    marginHorizontal: 10
+  },
   invalidTimeText: {
+    fontSize: 12,
     fontWeight: "700",
     color: RED
   },
@@ -225,5 +265,15 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     fontSize: 12,
     color: "#777"
+  },
+  timeOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    paddingLeft: 11
+  },
+  timeOverlayText: {
+    fontSize: 14,
+    color: "rgba(0,0,0,0.3)",
+    fontWeight: "600"
   }
 });

@@ -9,16 +9,16 @@ import {
 import BlurView from "./BlurView";
 import { HEIGHT, WEB } from "../utils/Constants";
 import emitter from "tiny-emitter/instance";
-import { useDispatch } from "react-redux";
 
 import FilterTypeView from "./FilterTypeView";
 import FilterPlaceView from "./FilterPlaceView";
 import FilterTimeView from "./FilterTimeView";
+import { useKeyboardHeight } from "../utils/Hooks";
 
-const panelHeight = WEB ? HEIGHT * 0.8 : HEIGHT * 0.65;
+export const PANEL_HEIGHT = HEIGHT * 0.65;
 
 export default () => {
-  const dispatch = useDispatch();
+  const [keyboard, bottomOffset] = useKeyboardHeight();
   const [page, setPage] = useState(null);
   const animation = useRef(new Animated.Value(0));
   useEffect(() => {
@@ -46,10 +46,21 @@ export default () => {
     return () => emitter.off("filters", handlePage);
   }, []);
 
+  const panelTranslate = Animated.add(
+    animation.current.interpolate({
+      inputRange: [0, 1],
+      outputRange: [PANEL_HEIGHT, 0]
+    }),
+    keyboard.current
+  );
+
   return (
     <View style={styles.container} pointerEvents={page ? "auto" : "none"}>
       <Animated.View
-        style={{ opacity: animation.current, ...StyleSheet.absoluteFillObject }}
+        style={{
+          opacity: animation.current,
+          ...StyleSheet.absoluteFillObject
+        }}
       >
         <TouchableOpacity
           activeOpacity={1}
@@ -67,10 +78,7 @@ export default () => {
           {
             transform: [
               {
-                translateY: animation.current.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [panelHeight, 0]
-                })
+                translateY: panelTranslate
               }
             ]
           }
@@ -79,7 +87,7 @@ export default () => {
         <BlurView style={styles.blur}>
           <FilterTypeView page={page} />
           <FilterPlaceView page={page} />
-          <FilterTimeView page={page} />
+          <FilterTimeView page={page} bottomOffset={bottomOffset} />
         </BlurView>
       </Animated.View>
     </View>
@@ -101,7 +109,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     width: "100%",
     maxWidth: 600,
-    height: panelHeight,
+    height: PANEL_HEIGHT,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
     overflow: "hidden"

@@ -8,13 +8,11 @@ const makeReducer = makeState("filters");
 const currentTime = makeCurrentTime();
 const day = makeReducer("day", currentTime.day);
 const time = makeReducer("time", currentTime.time);
-const validTime = makeReducer("validTime", true);
 const notNow = makeReducer("notNow", false);
 
 export default combineReducers({
   day,
   time,
-  validTime,
   notNow
 });
 
@@ -43,7 +41,6 @@ export function resetTime() {
       type: "filters/set",
       payload: {
         ...makeCurrentTime(),
-        validTime: true,
         notNow: false
       }
     });
@@ -64,26 +61,30 @@ export function setDay(day) {
 }
 
 export function setTime(time) {
-  return dispatch => {
-    dispatch({
-      type: "filters/set",
-      payload: {
-        time,
-        notNow: true
-      }
-    });
-    requestAnimationFrame(() => {
-      let validTime = true;
-      if (time.trim().length) {
-        const expandedTime = detruncateTime(time);
-        validTime = validateTime(expandedTime);
-      }
-      dispatch({
-        type: "filters/set",
-        payload: {
-          validTime
-        }
-      });
-    });
+  return {
+    type: "filters/set",
+    payload: {
+      time,
+      notNow: true
+    }
   };
 }
+
+export const validTimeSelector = state => {
+  const time = state.filters.time;
+  let validTime = true;
+  let expandedTime = null;
+  if (time.trim().length) {
+    expandedTime = detruncateTime(time);
+    validTime = validateTime(expandedTime);
+    if (
+      validTime &&
+      expandedTime &&
+      !time.match(":") &&
+      time.match(/(a|p)/gi)
+    ) {
+      expandedTime = time.match("m") ? null : `${time}m`;
+    }
+  }
+  return { validTime, expandedTime };
+};

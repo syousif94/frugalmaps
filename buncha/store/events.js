@@ -363,13 +363,9 @@ export function getEvent(id) {
 export function getTime() {
   return (dispatch, getState) => {
     const {
-      filters: { day, time, validTime, notNow },
+      filters: { day, time, notNow },
       events: { calendar, bounds }
     } = getState();
-
-    if (!validTime) {
-      return;
-    }
 
     emitter.emit("filters");
 

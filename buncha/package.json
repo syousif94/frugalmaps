@@ -27,7 +27,7 @@
     "react-native-keyboard-aware-scroll-view": "^0.8.0",
     "react-native-web": "^0.11.4",
     "react-navigation": "^3.11.1",
-    "react-redux": "^7.1.0",
+    "react-redux": "7.1.1",
     "react-router-dom": "^5.0.1",
     "redux": "^4.0.4",
     "redux-logger": "^3.0.6",
