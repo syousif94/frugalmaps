@@ -37,8 +37,6 @@ export default ({ onComplete }) => {
 
   const events = JSON.parse(eventsJSON);
 
-  console.log(events);
-
   return (
     <ScrollView
       pointerEvents={opacity ? "auto" : "none"}

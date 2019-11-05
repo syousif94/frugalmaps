@@ -16,6 +16,8 @@ import { useEveryMinute } from "../utils/Hooks";
 import moment from "moment";
 import { PANEL_HEIGHT } from "./FilterView";
 
+const INVALID_TIME_HEIGHT = 22;
+
 export default memo(({ page, bottomOffset }) => {
   const isPage = page === PAGE.WHEN;
   const pointerEvents = isPage ? "auto" : "none";
@@ -46,7 +48,13 @@ export default memo(({ page, bottomOffset }) => {
         </Text>
         <TimeContainer bottomOffset={bottomOffset} />
         <TimeInvalid />
-        <View style={{ flexDirection: "row", paddingHorizontal: 10 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            paddingHorizontal: 10,
+            justifyContent: "center"
+          }}
+        >
           <SearchButton />
         </View>
       </ScrollView>
@@ -77,6 +85,7 @@ const NowButton = () => {
     <TouchableOpacity
       onPress={() => {
         dispatch(Filters.resetTime());
+        dispatch(Events.getTime());
       }}
       style={styles.button}
     >
@@ -90,7 +99,7 @@ const SearchButton = memo(() => {
   const { validTime } = useSelector(Filters.validTimeSelector, shallowEqual);
   return (
     <TouchableOpacity
-      style={styles.button}
+      style={[styles.button, { minWidth: 200 }]}
       disabled={!validTime}
       onPress={() => {
         dispatch(Events.getTime());
@@ -141,7 +150,7 @@ const DayPicker = memo(() => {
 const TimeContainer = memo(({ bottomOffset }) => {
   const onLayout = e => {
     const { y, height } = e.nativeEvent.layout;
-    bottomOffset.current = -PANEL_HEIGHT + y + height + 30;
+    bottomOffset.current = -PANEL_HEIGHT + y + height + INVALID_TIME_HEIGHT;
   };
   return (
     <View style={{ marginHorizontal: 10, marginTop: 5 }} onLayout={onLayout}>
@@ -255,8 +264,8 @@ const styles = StyleSheet.create({
     fontWeight: "600"
   },
   invalidTime: {
-    height: 30,
-    paddingTop: 5,
+    paddingTop: 3,
+    height: INVALID_TIME_HEIGHT,
     marginHorizontal: 10
   },
   invalidTimeText: {

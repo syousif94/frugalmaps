@@ -12,7 +12,7 @@ const searchText = `Search${WEB ? "" : " for places and activites"}`;
 
 export default ({ contentContainerStyle = {} }) => {
   const dispatch = useDispatch();
-  const query = useSelector(state => state.events.text);
+  const query = useSelector(state => state.events.tag || state.events.text);
   const searching = useSelector(
     state => state.events.searching && !state.events.refreshing
   );
