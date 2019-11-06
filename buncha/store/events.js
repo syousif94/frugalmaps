@@ -384,7 +384,6 @@ export function getTime() {
     } else {
       const expandedTime = detruncateTime(time);
       const searchTime = moment(`${day.title} ${expandedTime}`, "dddd h:mma");
-      console.log(searchTime.format("ddd h:mma M/D/Y"));
       dispatch({
         type: "events/set",
         payload: {

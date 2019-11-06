@@ -309,10 +309,10 @@ const sortDays = (now, away) => (a, b) => {
     aEnd += 2400;
   }
 
-  if (!away && aEnd < now) {
-    aStart += 2400;
-    aEnd += 2400;
-  }
+  // if (!away && aEnd < now) {
+  //   aStart += 2400;
+  //   aEnd += 2400;
+  // }
 
   let bStart = parseInt(b._source.groupedHours[0].start, 10);
   let bEnd = parseInt(b._source.groupedHours[0].end, 10);
@@ -321,19 +321,19 @@ const sortDays = (now, away) => (a, b) => {
     bEnd += 2400;
   }
 
-  if (!away && bEnd < now) {
-    bStart += 2400;
-    bEnd += 2400;
-  }
+  // if (!away && bEnd < now) {
+  //   bStart += 2400;
+  //   bEnd += 2400;
+  // }
 
   let diff;
 
-  const bothNow =
-    !away && (aStart <= now && aEnd > now && bStart <= now && bEnd > now);
+  // const bothNow =
+  //   !away && (aStart <= now && aEnd > now && bStart <= now && bEnd > now);
 
   const sameStart = aStart === bStart;
 
-  if (bothNow || sameStart) {
+  if (/** bothNow  || **/ sameStart) {
     diff = aEnd - bEnd;
   } else {
     diff = aStart - bStart;

@@ -478,14 +478,20 @@ export function itemRemaining(item) {
 }
 
 export function itemTimeForDay(item, day) {
+  const hours = item._source.groupedHours.find(hours =>
+    hours.days.find(d => d.iso === day.iso)
+  );
+  const [start] = truncatedHours(hours);
   return {
-    text: day.title,
+    text: `${start} ${day.title}`,
     color: UPCOMING,
-    duration: ""
+    duration: ` ${hours.duration}hr${hours.duration !== 1 ? "s" : ""}`
   };
 }
 
 export function itemRemainingAtTime(item, time) {
+  const searchTime = moment(time).format("ddd h:mma M/D/Y");
+  console.log({ searchTime });
   return {
     text: "",
     color: UPCOMING,
@@ -493,21 +499,27 @@ export function itemRemainingAtTime(item, time) {
   };
 }
 
-export function itemTime(day, groupedHours, ending, upcoming) {
-  const [start, end] = groupedHours.hours
+function truncateHour(str) {
+  let [hour, minutesAndMeridian] = str.split(":");
+  const minutes = minutesAndMeridian.substring(0, 2);
+  if (minutes !== "00") {
+    hour = `${hour}:${minutesAndMeridian}`;
+  } else {
+    const meridian = minutesAndMeridian.substring(2);
+    hour = `${hour}${meridian}`;
+  }
+  return hour;
+}
+
+function truncatedHours(groupedHours) {
+  return groupedHours.hours
     .split(" ")
     .filter(str => str.length > 5)
-    .map(str => {
-      let [hour, minutesAndMeridian] = str.split(":");
-      const minutes = minutesAndMeridian.substring(0, 2);
-      if (minutes !== "00") {
-        hour = `${hour}:${minutesAndMeridian}`;
-      } else {
-        const meridian = minutesAndMeridian.substring(2);
-        hour = `${hour}${meridian}`;
-      }
-      return hour;
-    });
+    .map(truncateHour);
+}
+
+export function itemTime(day, groupedHours, ending, upcoming) {
+  const [start, end] = truncatedHours(groupedHours);
 
   let span;
   if (ending || upcoming) {
