@@ -138,8 +138,8 @@ export function dayToISO(day) {
   return ISO_DAYS[day];
 }
 
-export function makeISO(days) {
-  const today = moment().weekday();
+export function makeISO(days, searchTime) {
+  const today = moment(searchTime).weekday();
 
   const closestDay = days.sort((_a, _b) => {
     let a = dayToISO(_a) - today;
@@ -156,8 +156,8 @@ export function makeISO(days) {
   return dayToISO(closestDay);
 }
 
-export function makeYesterdayISO(days) {
-  let today = moment().weekday();
+export function makeYesterdayISO(days, searchTime) {
+  let today = moment(searchTime).weekday();
 
   if (today === 0) {
     today = 7;
@@ -490,13 +490,86 @@ export function itemTimeForDay(item, day) {
 }
 
 export function itemRemainingAtTime(item, time) {
-  const searchTime = moment(time).format("ddd h:mma M/D/Y");
-  console.log({ searchTime });
-  return {
-    text: "",
-    color: UPCOMING,
-    duration: ""
+  const day = makeISO(item._source.days, time);
+
+  const yesterday = makeYesterdayISO(item._source.days, time);
+
+  let hours = item._source.groupedHours.find(hours =>
+    hours.days.find(d => d.iso === day)
+  );
+
+  const now = moment(time);
+  const nextOccurring = now.clone().isoWeekday(day);
+
+  if (nextOccurring.isBefore(now)) {
+    nextOccurring.add(7, "d");
+  }
+
+  const dateFormat = "M D Y";
+  const parseFormat = `${dateFormat} HHmm`;
+  const nowDate = nextOccurring.format(dateFormat);
+
+  const start = moment(`${nowDate} ${hours.start}`, parseFormat);
+
+  let end = moment(`${nowDate} ${hours.end}`, parseFormat);
+
+  if (end.isBefore(start)) {
+    end.add(1, "d");
+  }
+
+  let ending = start.isSameOrBefore(now) && end.isSameOrAfter(now);
+
+  if (!ending && yesterday !== undefined) {
+    const yesterdayHours = item._source.groupedHours.find(hours =>
+      hours.days.find(d => d.iso === yesterday)
+    );
+
+    const yesterdayNow = now.clone().subtract(1, "d");
+    const yesterdayDateStr = yesterdayNow.format(dateFormat);
+    const yesterdayStart = moment(
+      `${yesterdayDateStr} ${yesterdayHours.start}`,
+      parseFormat
+    );
+    const yesterdayEnd = moment(
+      `${yesterdayDateStr} ${yesterdayHours.end}`,
+      parseFormat
+    );
+    if (yesterdayEnd.isBefore(yesterdayStart)) {
+      yesterdayEnd.add(1, "d");
+    }
+
+    if (yesterdayEnd.isSameOrAfter(now)) {
+      ending = true;
+      hours = yesterdayHours;
+      end = yesterdayEnd;
+    }
+  }
+
+  let upcoming = start.isAfter(now) && start.weekday() === now.weekday();
+
+  const [startStr, endStr] = truncatedHours(hours);
+
+  let text = "";
+  let color = NOT_TODAY;
+  let duration = "";
+
+  if (ending) {
+    color = NOW;
+    text = `til ${endStr} ${end.format("dddd")}`;
+  } else if (upcoming) {
+    color = UPCOMING;
+    text = `${startStr} ${start.format("dddd")}`;
+  } else {
+    text = `${startStr} ${start.format("dddd")}`;
+  }
+
+  const payload = {
+    text,
+    color,
+    duration
   };
+
+  return payload;
 }
 
 function truncateHour(str) {
