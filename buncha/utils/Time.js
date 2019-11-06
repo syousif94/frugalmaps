@@ -499,6 +499,7 @@ export function itemRemainingAtTime(item, time) {
   );
 
   const now = moment(time);
+
   const nextOccurring = now.clone().isoWeekday(day);
 
   if (nextOccurring.isBefore(now)) {
@@ -509,7 +510,7 @@ export function itemRemainingAtTime(item, time) {
   const parseFormat = `${dateFormat} HHmm`;
   const nowDate = nextOccurring.format(dateFormat);
 
-  const start = moment(`${nowDate} ${hours.start}`, parseFormat);
+  let start = moment(`${nowDate} ${hours.start}`, parseFormat);
 
   let end = moment(`${nowDate} ${hours.end}`, parseFormat);
 
@@ -542,6 +543,32 @@ export function itemRemainingAtTime(item, time) {
       ending = true;
       hours = yesterdayHours;
       end = yesterdayEnd;
+    }
+  }
+
+  if (!ending && end.isSameOrBefore(now)) {
+    const nextDay = _.flatten(
+      item._source.groupedHours.map(group => group.days)
+    )
+      .sort((a, b) => {
+        return a.daysAway - b.daysAway;
+      })
+      .find(day => day.daysAway > 0);
+    if (nextDay) {
+      hours = item._source.groupedHours.find(hours =>
+        hours.days.find(d => d.iso === nextDay.iso)
+      );
+      const nextOccurring = now.clone().isoWeekday(nextDay.iso);
+
+      if (nextOccurring.isBefore(now)) {
+        nextOccurring.add(7, "d");
+      }
+
+      const nowDate = nextOccurring.format(dateFormat);
+
+      start = moment(`${nowDate} ${hours.start}`, parseFormat);
+
+      end = moment(`${nowDate} ${hours.end}`, parseFormat);
     }
   }
 

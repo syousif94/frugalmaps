@@ -78,6 +78,8 @@ function createDate(now, time, iso, start) {
     }
   }
 
+  date.seconds(0);
+
   return date;
 }
 
@@ -131,7 +133,10 @@ function makeDuration(hours) {
 
 function timeRemaining(hours, iso, today) {
   let ending = false;
-  const now = today.clone().utcOffset(today.utcOffset());
+  const now = today
+    .clone()
+    .utcOffset(today.utcOffset())
+    .seconds(0);
   // let now = moment();
   const time = today.valueOf();
   let diff;
@@ -309,10 +314,10 @@ const sortDays = (now, away) => (a, b) => {
     aEnd += 2400;
   }
 
-  if (!away && aEnd < now) {
-    aStart += 2400;
-    aEnd += 2400;
-  }
+  // if (!away && aEnd < now) {
+  //   aStart += 2400;
+  //   aEnd += 2400;
+  // }
 
   let bStart = parseInt(b._source.groupedHours[0].start, 10);
   let bEnd = parseInt(b._source.groupedHours[0].end, 10);
@@ -321,19 +326,19 @@ const sortDays = (now, away) => (a, b) => {
     bEnd += 2400;
   }
 
-  if (!away && bEnd < now) {
-    bStart += 2400;
-    bEnd += 2400;
-  }
+  // if (!away && bEnd < now) {
+  //   bStart += 2400;
+  //   bEnd += 2400;
+  // }
 
   let diff;
 
-  const bothNow =
-    !away && (aStart <= now && aEnd > now && bStart <= now && bEnd > now);
+  // const bothNow =
+  //   !away && (aStart <= now && aEnd > now && bStart <= now && bEnd > now);
 
   const sameStart = aStart === bStart;
 
-  if (bothNow || sameStart) {
+  if (/** bothNow ||  **/ sameStart) {
     diff = aEnd - bEnd;
   } else {
     diff = aStart - bStart;
@@ -483,25 +488,98 @@ function makeMarkers(today, days) {
 }
 
 function makeListData(calendar, time) {
+  const yesterdayCal = calendar[calendar.length - 1];
+  const yesterdayISO = calendar[calendar.length - 1].iso;
+
+  const yesterdayEvents = yesterdayCal.data
+    .reduce((prev, event) => {
+      const iso = yesterdayISO;
+      const hours = event._source.groupedHours.find(group =>
+        group.days.find(day => day.iso === iso)
+      );
+      const { ending } = timeRemaining(hours, iso, time);
+      if (ending) {
+        prev.push({
+          hours,
+          event
+        });
+      }
+      return prev;
+    }, [])
+    .sort((a, b) => {
+      const aStart = parseInt(a.hours.start, 10);
+      let aEnd = parseInt(a.hours.end, 10);
+      if (aStart > aEnd) {
+        aEnd += 2400;
+      }
+      const bStart = parseInt(b.hours.start, 10);
+      let bEnd = parseInt(b.hours.end, 10);
+      if (bStart > bEnd) {
+        bEnd += 2400;
+      }
+      return aEnd - bEnd;
+    })
+    .map(data => data.event);
+
+  const allUpcomingEvents = calendar[0].data.reduce(
+    (prev, event) => {
+      const hours = event._source.groupedHours.find(group =>
+        group.days.find(day => day.iso === calendar[0].iso)
+      );
+      const { ended, ending } = timeRemaining(hours, calendar[0].iso, time);
+      if (ending) {
+        prev[0].push({
+          event,
+          hours
+        });
+      } else if (!ended) {
+        prev[1].push(event);
+      }
+      return prev;
+    },
+    [[], []]
+  );
+
+  const endingUpcomingEvents = allUpcomingEvents[0]
+    .sort((a, b) => {
+      const aStart = parseInt(a.hours.start, 10);
+      let aEnd = parseInt(a.hours.end, 10);
+      if (aStart > aEnd) {
+        aEnd += 2400;
+      }
+      const bStart = parseInt(b.hours.start, 10);
+      let bEnd = parseInt(b.hours.end, 10);
+      if (bStart > bEnd) {
+        bEnd += 2400;
+      }
+      return aEnd - bEnd;
+    })
+    .map(data => data.event);
+
+  const upcomingEvents = allUpcomingEvents[1];
+
   return _.uniqBy(
     [
       // events started yesterday ending today
-      ...calendar[calendar.length - 1].data.filter(event => {
-        const iso = calendar[calendar.length - 1].iso;
-        const hours = event._source.groupedHours.find(group =>
-          group.days.find(day => day.iso === iso)
-        );
-        const { ending } = timeRemaining(hours, iso, time);
-        return ending;
-      }),
+      // ...calendar[calendar.length - 1].data.filter(event => {
+      //   const iso = calendar[calendar.length - 1].iso;
+      //   const hours = event._source.groupedHours.find(group =>
+      //     group.days.find(day => day.iso === iso)
+      //   );
+      //   const { ending } = timeRemaining(hours, iso, time);
+      //   return ending;
+      // }),
+      ...yesterdayEvents,
       // events today that haven't ended
-      ...calendar[0].data.filter(event => {
-        const hours = event._source.groupedHours.find(group =>
-          group.days.find(day => day.iso === calendar[0].iso)
-        );
-        const { ended } = timeRemaining(hours, calendar[0].iso, time);
-        return !ended;
-      }),
+      ...endingUpcomingEvents,
+      ...upcomingEvents,
+      // ...calendar[0].data.filter(event => {
+      //   const hours = event._source.groupedHours.find(group =>
+      //     group.days.find(day => day.iso === calendar[0].iso)
+      //   );
+      //   const { ended } = timeRemaining(hours, calendar[0].iso, time);
+      //   return !ended;
+      // }),
       // remaining events
       ...(calendar.length > 1 ? calendar.slice(1) : calendar).reduce(
         (events, day) => {
