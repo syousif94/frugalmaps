@@ -1,6 +1,7 @@
 import moment from "moment";
 import { ISO_DAYS, ABBREVIATED_DAYS as DAYS, LONG_DAYS } from "./Constants";
 import { NOW, UPCOMING, NOT_TODAY } from "./Colors";
+import _ from "lodash";
 
 function isValidVal(i, str) {
   if (!i) {
