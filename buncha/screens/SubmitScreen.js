@@ -1,14 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
 import SubmitForm, { FORM_WIDTH } from "../components/SubmitForm";
 import SubmissionList from "../components/SubmissionList";
 import PublishedList from "../components/PublishedList";
 import { WEB } from "../utils/Constants";
 import { useDimensions } from "../utils/Hooks";
+import { getPublished, getSubmissions } from "../store/submissions";
+import { useDispatch } from "react-redux";
 
 const NARROW_PAGES = ["Pending", "Published"];
 
-const ALL_PAGES = ["Form", "Pending", "Published"];
+export const ALL_PAGES = ["Form", "Pending", "Published"];
 
 export const NARROW = 820;
 export const SIDEBAR_WIDTH = 250;
@@ -62,8 +64,14 @@ function componentForPage(page, pages, setPage) {
 }
 
 export default () => {
+  const dispatch = useDispatch();
   const [dimensions] = useDimensions();
   const [page, pages, setPage] = usePages(dimensions);
+
+  useEffect(() => {
+    dispatch(getSubmissions());
+    dispatch(getPublished());
+  }, []);
 
   if (WEB && dimensions.width > NARROW) {
     const medium = dimensions.width > MEDIUM;

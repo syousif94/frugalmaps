@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import {
   View,
   StyleSheet,
@@ -13,10 +13,11 @@ import SegmentedControl from "./SegmentedControl";
 import { IOS, WEB } from "../utils/Constants";
 import { getInset } from "../utils/SafeAreaInsets";
 import { FORM_WIDTH } from "./SubmitForm";
+import SubmitSegmentItem from "./SubmitSegmentItem";
 
 export default ({ page, pages, setPage }) => {
   const dispatch = useDispatch();
-  const data = useSelector(state => state.submissions.list);
+  const data = useSelector(state => state.submissions.list, shallowEqual);
 
   useEffect(() => {
     dispatch(getSubmissions());
@@ -56,6 +57,7 @@ export default ({ page, pages, setPage }) => {
             options={pages}
             onPress={setPage}
             selected={page}
+            renderItem={props => <SubmitSegmentItem {...props} />}
           />
         );
       }}

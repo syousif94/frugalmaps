@@ -4,8 +4,7 @@ import {
   View,
   ScrollView,
   Text,
-  TouchableOpacity,
-  Image
+  TouchableOpacity
 } from "react-native";
 import { Helmet } from "react-helmet";
 import Input from "./Input";
@@ -23,6 +22,7 @@ import SubmissionReset from "./SubmissionReset";
 import { submitEvent } from "../store/submission";
 import SegmentedControl from "./SegmentedControl";
 import { useDimensions } from "../utils/Hooks";
+import SubmitSegmentItem from "./SubmitSegmentItem";
 
 export const FORM_WIDTH = 520;
 
@@ -119,7 +119,12 @@ export default ({ page, setPage, pages }) => {
         {...MOBILE_PROPS}
       >
         {pages ? (
-          <SegmentedControl options={pages} selected={page} onPress={setPage} />
+          <SegmentedControl
+            options={pages}
+            selected={page}
+            onPress={setPage}
+            renderItem={props => <SubmitSegmentItem {...props} />}
+          />
         ) : null}
 
         <View
@@ -145,7 +150,11 @@ export default ({ page, setPage, pages }) => {
           name="location"
         />
         <Text style={styles.instructionText}>Description</Text>
-        <ConnectedInput multiline field="description" placeholder="Optional" />
+        <ConnectedInput
+          multiline
+          field="description"
+          placeholder="Optional apart from pertinent information like room numbers and contact information for clubs. Twitter, Instagram, other URLs, and phone numbers supported."
+        />
         <Text style={styles.instructionText}>Tags</Text>
         <SubmitTags />
         <Text style={styles.instructionText}>Location</Text>

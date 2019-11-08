@@ -16,19 +16,29 @@ export default ({
   options = [],
   selected = null,
   onPress = () => {},
-  containerStyle = null
+  containerStyle = null,
+  renderItem
 }) => {
   return (
     <View style={[styles.container, containerStyle]}>
-      {options.map(option => (
-        <TouchableOpacity
-          key={option}
-          onPress={onPress.bind(null, option)}
-          style={[styles.button, backgroundColor(option, selected)]}
-        >
-          <Text style={[styles.buttonText]}>{option}</Text>
-        </TouchableOpacity>
-      ))}
+      {options.map(option =>
+        renderItem ? (
+          renderItem({
+            option,
+            style: { margin: 1, flex: 1, borderRadius: 4 },
+            selected,
+            onPress
+          })
+        ) : (
+          <TouchableOpacity
+            key={option}
+            onPress={onPress.bind(null, option)}
+            style={[styles.button, backgroundColor(option, selected)]}
+          >
+            <Text style={[styles.buttonText]}>{option}</Text>
+          </TouchableOpacity>
+        )
+      )}
     </View>
   );
 };

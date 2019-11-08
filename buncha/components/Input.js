@@ -125,6 +125,7 @@ export default memo(
                 height: 100,
                 ...StyleSheet.flatten(style),
                 paddingTop: 12,
+                paddingRight: 10,
                 fontFamily:
                   'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif'
               }}
@@ -172,6 +173,7 @@ export default memo(
       inputStyle.push({
         height: 100,
         paddingTop: 12,
+        paddingRight: 10,
         textAlignVertical: "top"
       });
     }
