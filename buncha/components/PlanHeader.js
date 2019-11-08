@@ -42,15 +42,23 @@ export default ({ plan, event: selectedEvent }) => {
         <View style={styles.info}>
           <Text style={styles.locationText}>{locationText}</Text>
           <Text style={styles.titleText}>{titleText}</Text>
-          {timeSpans
-            ? timeSpans.map(span => {
+          {timeSpans ? (
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center"
+              }}
+            >
+              {timeSpans.map((span, i) => {
                 return (
-                  <Text key={span} style={styles.spanText}>
-                    {span}
-                  </Text>
+                  <View key={`${i}`} style={{ marginRight: 15 }}>
+                    <Text style={styles.spanText}>{span.days}</Text>
+                    <Text style={styles.spanText}>{span.hours}</Text>
+                  </View>
                 );
-              })
-            : null}
+              })}
+            </View>
+          ) : null}
         </View>
         <BackButton />
         <MoreButton event={event} />

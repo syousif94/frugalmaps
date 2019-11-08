@@ -146,15 +146,24 @@ const EventHeader = ({ event }) => {
       <View style={headerStyles.info}>
         <Text style={headerStyles.locationText}>{locationText}</Text>
         <Text style={headerStyles.titleText}>{titleText}</Text>
-        {timeSpans
-          ? timeSpans.map(span => {
+
+        {timeSpans ? (
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center"
+            }}
+          >
+            {timeSpans.map((span, i) => {
               return (
-                <Text key={span} style={headerStyles.spanText}>
-                  {span}
-                </Text>
+                <View key={`${i}`} style={{ marginRight: 15 }}>
+                  <Text style={headerStyles.spanText}>{span.days}</Text>
+                  <Text style={headerStyles.spanText}>{span.hours}</Text>
+                </View>
               );
-            })
-          : null}
+            })}
+          </View>
+        ) : null}
       </View>
     </View>
   );

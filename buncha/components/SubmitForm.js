@@ -99,26 +99,6 @@ const BackButton = () => {
   );
 };
 
-const HeaderImage = () => {
-  const place = useSelector(state => state.submission.place);
-  const fetchingPlace = useSelector(state => state.submission.fetchingPlace);
-  return place || fetchingPlace ? (
-    <View style={{ height: 40 }} />
-  ) : (
-    <Image
-      pointerEvents="none"
-      style={{
-        marginTop: WEB ? 12 : 8,
-        marginBottom: WEB ? 12 : 6,
-        maxWidth: "100%",
-        height: WEB ? 300 : ((WIDTH - 100) / 453) * 456
-      }}
-      resizeMode="contain"
-      source={require("../assets/add.png")}
-    />
-  );
-};
-
 export default ({ page, setPage, pages }) => {
   const dispatch = useDispatch();
 
@@ -157,26 +137,24 @@ export default ({ page, setPage, pages }) => {
 
           {WEB ? <BackButton /> : null}
         </View>
-
-        <HeaderImage />
-        <Text style={[styles.instructionText, { marginTop: 0 }]}>What</Text>
+        <Text style={styles.instructionText}>Title</Text>
         <ConnectedInput
           field="title"
-          placeholder="What's the event called?"
+          placeholder="Happy Hour, Trivia Night, Karaoke, etc."
           autoComplete="off"
           name="location"
         />
-        <Text style={styles.instructionText}>Tags</Text>
-        <SubmitTags />
         <Text style={styles.instructionText}>Description</Text>
         <ConnectedInput multiline field="description" placeholder="Optional" />
-        <Text style={styles.instructionText}>Where</Text>
+        <Text style={styles.instructionText}>Tags</Text>
+        <SubmitTags />
+        <Text style={styles.instructionText}>Location</Text>
         <SubmitPlacePicker />
         <Text style={styles.subtext}>
           Try including the city and state if you can't find what you're looking
           for
         </Text>
-        <Text style={styles.instructionText}>When</Text>
+        <Text style={styles.instructionText}>Days</Text>
         <SubmitDayPicker />
         <View style={styles.row}>
           <View style={styles.time}>

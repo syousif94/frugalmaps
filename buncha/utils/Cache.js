@@ -24,8 +24,7 @@ const images = [
   require("../assets/pin-upcoming.png"),
   require("../assets/pin-selected.png"),
   require("../assets/pin-now-selected.png"),
-  require("../assets/pin-upcoming-selected.png"),
-  require("../assets/add.png")
+  require("../assets/pin-upcoming-selected.png")
 ];
 
 function cacheImages(images) {

@@ -6,6 +6,8 @@ import { Entypo, FontAwesome, Feather } from "@expo/vector-icons";
 import EventFriends from "./EventFriends";
 import share from "../utils/Share";
 import { useEveryMinute } from "../utils/Hooks";
+import emitter from "tiny-emitter/instance";
+import { navigate } from "../screens";
 
 export default memo(({ item, index = 0, style }) => {
   const [currentTime] = useEveryMinute();
@@ -17,13 +19,16 @@ export default memo(({ item, index = 0, style }) => {
   return (
     <View style={[{ overflow: "hidden" }, style]}>
       <View style={{ paddingHorizontal: 5, paddingTop: 2 }}>
-        {timeSpans.map(span => {
-          return (
-            <Text key={span} style={styles.spanText}>
-              {span}
-            </Text>
-          );
-        })}
+        <View style={styles.row}>
+          {timeSpans.map((span, i) => {
+            return (
+              <View key={`${i}`} style={{ marginRight: 20 }}>
+                <Text style={styles.spanText}>{span.days}</Text>
+                <Text style={styles.spanText}>{span.hours}</Text>
+              </View>
+            );
+          })}
+        </View>
 
         <Text style={styles.titleText}>
           {item._source.title}
@@ -45,13 +50,23 @@ export default memo(({ item, index = 0, style }) => {
           marginTop: 5
         }}
       >
-        <TouchableOpacity style={styles.actionButton}>
-          <Entypo name="calendar" size={16} color={RED} />
-          <Text style={styles.actionText}>Plan</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.actionButton]}>
+        <TouchableOpacity
+          onPress={() => {
+            emitter.emit("interested", item);
+          }}
+          style={styles.actionButton}
+        >
           <FontAwesome name="star" size={16} color={"#FFA033"} />
           <Text style={styles.actionText}>Interested</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            navigate("Plan", { eid: item._id });
+          }}
+          style={[styles.actionButton]}
+        >
+          <Entypo name="calendar" size={16} color={RED} />
+          <Text style={styles.actionText}>Plan</Text>
         </TouchableOpacity>
       </View>
       {/* <View style={{ marginTop: 5, maxWidth: "100%" }}>

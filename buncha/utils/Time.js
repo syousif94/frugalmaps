@@ -362,12 +362,18 @@ function allDaysConsecutive(sortedDays) {
 export function itemSpans(item) {
   const hours = item._source.groupedHours;
   const spans = hours.map(hours => {
-    const hoursText = `${hours.hours}  `;
+    const hoursText = hours.hours;
 
     if (hours.days.length === 1) {
-      return `${hoursText}${hours.days[0].text}`;
+      return {
+        days: hours.days[0].text,
+        hours: hoursText
+      };
     } else if (hours.days.length === 7) {
-      return `${hoursText}Everyday`;
+      return {
+        days: "Everyday",
+        hours: hoursText
+      };
     }
 
     let sortedDays = hours.days.sort((a, b) => a.iso - b.iso);
@@ -377,14 +383,23 @@ export function itemSpans(item) {
     }
 
     if (sortedDays.length === 2) {
-      return `${hoursText}${sortedDays.map(day => day.text).join(" & ")}`;
+      return {
+        days: sortedDays.map(day => day.text).join(" & "),
+        hours: hoursText
+      };
     }
 
     if (allDaysConsecutive(sortedDays)) {
-      return `${hoursText}${sortedDays[0].text} - ${sortedDays[sortedDays.length - 1].text}`;
+      return {
+        days: `${sortedDays[0].text} - ${sortedDays[sortedDays.length - 1].text}`,
+        hours: hoursText
+      };
     }
 
-    return `${hoursText}${sortedDays.map(day => day.text).join(", ")}`;
+    return {
+      days: sortedDays.map(day => day.text).join(", "),
+      hours: hoursText
+    };
   });
 
   return spans;
