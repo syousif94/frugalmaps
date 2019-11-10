@@ -14,6 +14,7 @@ import { AWSCF, ANDROID, WEB } from "../utils/Constants";
 import { selectPlaceEvents } from "../store/events";
 import { itemRemaining } from "../utils/Time";
 import { useAnimateOn } from "../utils/Hooks";
+import { topBarHeight } from "./TopBar";
 
 let tabBarHeight;
 if (!WEB) {
@@ -49,7 +50,7 @@ export default () => {
               {
                 translateY: transform.current.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [height, 0]
+                  outputRange: [-height, 0]
                 })
               }
             ]
@@ -119,7 +120,7 @@ export default () => {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    bottom: tabBarHeight,
+    top: topBarHeight,
     left: 0,
     right: 0,
     height,

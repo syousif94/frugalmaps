@@ -22,6 +22,7 @@ import ListError from "../components/ListError";
 import emitter from "tiny-emitter/instance";
 import FilterView from "../components/FilterView";
 import SortBar from "../components/SortBar";
+import EventSearchInput from "../components/EventSearchInput";
 
 let tabBarHeight;
 let topBarHeight;
@@ -292,18 +293,54 @@ export default ({ intro = false }) => {
 };
 
 const ListHeader = () => (
-  <SortBar
-    style={{ flex: 1 }}
-    contentContainerStyle={{
-      marginTop: 5,
-      paddingHorizontal: 5
-    }}
-    buttonStyle={{
-      paddingVertical: 4,
-      paddingRight: 4,
-      paddingLeft: 6
-    }}
-  />
+  <View>
+    <View
+      style={{
+        marginTop: 10,
+        paddingHorizontal: itemMargin
+      }}
+    >
+      <Text
+        style={{
+          fontSize: 14,
+          color: "#444",
+          fontWeight: "700",
+          textTransform: "uppercase"
+        }}
+      >
+        Austin, Tx · 2m ago
+      </Text>
+      <Text
+        style={{
+          fontSize: 28,
+          color: "#000",
+          fontWeight: "700",
+          paddingBottom: 10
+        }}
+      >
+        Saturday 8:46pm
+      </Text>
+      <EventSearchInput
+        contentContainerStyle={{
+          flexDirection: "row",
+          alignItems: "center"
+        }}
+      />
+    </View>
+
+    <SortBar
+      style={{ flex: 1 }}
+      contentContainerStyle={{
+        paddingHorizontal: itemMargin - 2,
+        marginTop: 5
+      }}
+      buttonStyle={{
+        paddingVertical: 4,
+        paddingRight: 4,
+        paddingLeft: 6
+      }}
+    />
+  </View>
 );
 
 const ListFooter = () => {

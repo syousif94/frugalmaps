@@ -79,34 +79,34 @@ export default () => {
   const listRef = useRef(null);
   const data = useSelector(state => state.events.upNext, shallowEqual);
 
-  const selectedEvent = useSelector(state => {
-    const selected = state.events.selected;
-    if (!selected) {
-      return null;
-    }
-    return state.events.data[selected];
-  }, shallowEqual);
+  // const selectedEvent = useSelector(state => {
+  //   const selected = state.events.selected;
+  //   if (!selected) {
+  //     return null;
+  //   }
+  //   return state.events.data[selected];
+  // }, shallowEqual);
 
   const [keyboardHeight] = useKeyboardHeight(-tabBarHeight);
 
-  const [, transform] = useAnimateOn(selectedEvent);
+  // const [, transform] = useAnimateOn(selectedEvent);
 
-  useEffect(() => {
-    listRef.current.scrollToOffset({
-      animated: false,
-      offset: 0
-    });
-  }, [data]);
+  // useEffect(() => {
+  //   listRef.current.scrollToOffset({
+  //     animated: false,
+  //     offset: 0
+  //   });
+  // }, [data]);
 
   return (
     <Animated.View
       style={[
         styles.container,
         {
-          opacity: transform.current.interpolate({
-            inputRange: [0, 1],
-            outputRange: [1, 0]
-          }),
+          // opacity: transform.current.interpolate({
+          //   inputRange: [0, 1],
+          //   outputRange: [1, 0]
+          // }),
           transform: [{ translateY: keyboardHeight.current }]
         }
       ]}

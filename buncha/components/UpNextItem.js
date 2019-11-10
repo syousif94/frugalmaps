@@ -109,6 +109,42 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
         <View style={styles.index}>
           <Text style={styles.countText}>{index + 1}</Text>
         </View>
+        <View
+          style={{
+            position: "absolute",
+            bottom: 0,
+            right: 0,
+            left: 0,
+            flexDirection: "row",
+            padding: 1.5
+          }}
+        >
+          {item._source.tags.map(tag => {
+            return (
+              <View
+                key={tag}
+                style={{
+                  backgroundColor: "rgba(0,0,0,0.6)",
+                  paddingVertical: 0.5,
+                  paddingHorizontal: 2,
+                  margin: 0.5,
+                  borderRadius: 2
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 8,
+                    fontWeight: "700",
+                    color: "#fff",
+                    textTransform: "uppercase"
+                  }}
+                >
+                  {tag}
+                </Text>
+              </View>
+            );
+          })}
+        </View>
       </View>
       <Text style={styles.locationText}>
         {item._source.location}
@@ -125,7 +161,7 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
       </Text>
       <MatchableText
         text={item._source.description}
-        numberOfLines={2}
+        numberOfLines={3}
         match={searchTerm}
         style={styles.descriptionText}
       />
@@ -214,15 +250,17 @@ const styles = StyleSheet.create({
     fontWeight: "700"
   },
   locationText: {
-    fontSize: 13,
-    color: "#000",
-    fontWeight: "700"
+    fontSize: 10,
+    color: "#666",
+    fontWeight: "700",
+    textTransform: "uppercase"
   },
   descriptionText: {
-    marginTop: 2,
-    fontSize: 13,
+    marginTop: 1,
+    fontSize: 10,
+    lineHeight: 14,
     fontWeight: "500",
-    color: "#555"
+    color: "#666"
   },
   actions: {
     flexDirection: "row"

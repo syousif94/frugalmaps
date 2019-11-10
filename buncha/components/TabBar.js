@@ -42,7 +42,91 @@ export default ({ navigation }) => {
 
   return (
     <BlurView style={styles.container}>
-      <ScrollView
+      <View style={styles.content}>
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity
+            style={[
+              styles.roundBtn,
+              {
+                marginLeft: 2.5,
+                borderTopLeftRadius: 6,
+                borderBottomLeftRadius: 6
+              }
+            ]}
+            onPress={() => {
+              navigate("UpNext");
+            }}
+          >
+            <EvilIcons name="calendar" size={28} color={iC("UpNext")} />
+            <Text
+              allowFontScaling={false}
+              style={[styles.buttonText, { marginTop: -3 }]}
+            >
+              List
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity
+            style={styles.roundBtn}
+            onPress={() => {
+              navigate("Map");
+            }}
+          >
+            <FontAwesome name="map-o" size={16} color={iC("Map")} />
+            <Text
+              allowFontScaling={false}
+              style={[styles.buttonText, { marginTop: 3 }]}
+            >
+              Map
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity
+            style={styles.roundBtn}
+            onPress={() => {
+              navigate("Account");
+            }}
+          >
+            <FontAwesome name="bell-o" size={17} color={iC("Account")} />
+            <Text
+              allowFontScaling={false}
+              style={[styles.buttonText, { marginTop: 2 }]}
+            >
+              Feed
+            </Text>
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{13}</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity
+            style={[
+              styles.roundBtn,
+              {
+                marginRight: 2.5,
+                borderTopRightRadius: 6,
+                borderBottomRightRadius: 6
+              }
+            ]}
+            onPress={() => {
+              navigate("Submit");
+            }}
+          >
+            <Ionicons
+              name="ios-add-circle-outline"
+              size={18}
+              color={iC("Submit")}
+            />
+            <Text allowFontScaling={false} style={styles.buttonText}>
+              Add
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      {/* <ScrollView
         centerContent={width > 600}
         contentContainerStyle={{
           paddingTop: topPadding,
@@ -56,86 +140,9 @@ export default ({ navigation }) => {
         horizontal
         alwaysBounceHorizontal
         showsHorizontalScrollIndicator={false}
-      >
-        <TouchableOpacity
-          style={[
-            styles.roundBtn,
-            {
-              marginLeft: 2.5,
-              borderTopLeftRadius: 6,
-              borderBottomLeftRadius: 6
-            }
-          ]}
-          onPress={() => {
-            navigate("UpNext");
-          }}
-        >
-          <EvilIcons name="calendar" size={28} color={iC("UpNext")} />
-          <Text
-            allowFontScaling={false}
-            style={[styles.buttonText, { marginTop: -3 }]}
-          >
-            List
-          </Text>
-        </TouchableOpacity>
+      > */}
 
-        <TouchableOpacity
-          style={styles.roundBtn}
-          onPress={() => {
-            navigate("Map");
-          }}
-        >
-          <FontAwesome name="map-o" size={16} color={iC("Map")} />
-          <Text
-            allowFontScaling={false}
-            style={[styles.buttonText, { marginTop: 3 }]}
-          >
-            Map
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.roundBtn}
-          onPress={() => {
-            navigate("Account");
-          }}
-        >
-          <FontAwesome name="user-o" size={16} color={iC("Account")} />
-          <Text
-            allowFontScaling={false}
-            style={[styles.buttonText, { marginTop: 3 }]}
-          >
-            Feed
-          </Text>
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>{13}</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[
-            styles.roundBtn,
-            {
-              marginRight: 2.5,
-              borderTopRightRadius: 6,
-              borderBottomRightRadius: 6
-            }
-          ]}
-          onPress={() => {
-            navigate("Submit");
-          }}
-        >
-          <Ionicons
-            name="ios-add-circle-outline"
-            size={18}
-            color={iC("Submit")}
-          />
-          <Text allowFontScaling={false} style={styles.buttonText}>
-            Add
-          </Text>
-        </TouchableOpacity>
-
-        <TagPicker
+      {/* <TagPicker
           style={{
             marginLeft: 2.5,
             borderTopLeftRadius: 6,
@@ -151,8 +158,8 @@ export default ({ navigation }) => {
             borderTopRightRadius: 6,
             borderBottomRightRadius: 6
           }}
-        />
-      </ScrollView>
+        /> */}
+      {/* </ScrollView> */}
     </BlurView>
   );
 };
@@ -169,6 +176,15 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     left: 0
+  },
+  content: {
+    borderTopWidth: topBorderWidth,
+    borderColor: "rgba(0,0,0,0.05)",
+    flexDirection: "row",
+    width: "100%",
+    paddingTop: topPadding,
+    paddingHorizontal: 2.5,
+    paddingBottom: bottomInset
   },
   roundBtn: {
     height: buttonHeight,
@@ -190,7 +206,7 @@ const styles = StyleSheet.create({
   badge: {
     position: "absolute",
     top: 4,
-    right: 4,
+    left: "70%",
     borderRadius: 5,
     height: 10,
     paddingHorizontal: 2,

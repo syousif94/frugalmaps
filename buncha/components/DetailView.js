@@ -120,7 +120,7 @@ export default memo(({ item, id }) => {
   let distanceText;
   const distance = roundedDistanceTo(item);
   if (distance) {
-    distanceText = `${distance} `;
+    distanceText = ` ${distance}`;
   }
 
   const containerStyle = {
@@ -242,8 +242,8 @@ export default memo(({ item, id }) => {
                   numberOfLines={1}
                   style={[styles.detailText, { maxWidth: "80%" }]}
                 >
-                  {distanceText || null}
                   <Text style={{ fontWeight: "400" }}>{cityText}</Text>
+                  {distanceText || null}
                 </Text>
                 <Text style={styles.detailText} numberOfLines={1}>
                   <Text style={{ color: BLUE }}>{events.length}</Text> event
