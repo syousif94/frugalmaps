@@ -1,20 +1,20 @@
 import React from "react";
-import { Text, StyleSheet, View, ScrollView, Dimensions } from "react-native";
+import { Text, StyleSheet, View, Dimensions } from "react-native";
 import { getInset } from "../utils/SafeAreaInsets";
 import { IOS } from "../utils/Constants";
 import { navigate } from "../screens";
 import { BLUE, RED } from "../utils/Colors";
-import { Ionicons, FontAwesome, EvilIcons } from "@expo/vector-icons";
+import {
+  FontAwesome,
+  EvilIcons,
+  MaterialIcons,
+  Feather
+} from "@expo/vector-icons";
 import BlurView from "./BlurView";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import {
-  TimePicker,
-  PlacePicker,
-  buttonHeight,
-  TagPicker
-} from "./PickerButton";
-
-const width = Dimensions.get("window").width;
+import { buttonHeight } from "./PickerButton";
+import { PAGE } from "../store/filters";
+import emitter from "tiny-emitter/instance";
 
 let bottomInset = IOS ? getInset("bottom") : 0;
 
@@ -39,6 +39,8 @@ export default ({ navigation }) => {
   const routeKey = routes[index] && routes[index].key;
 
   const iC = iconColor(routeKey);
+
+  const enableSort = !!routeKey.match(/(upnext|map)/gi);
 
   return (
     <BlurView style={styles.container}>
@@ -89,16 +91,40 @@ export default ({ navigation }) => {
               navigate("Account");
             }}
           >
-            <FontAwesome name="bell-o" size={17} color={iC("Account")} />
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "flex-end",
+                alignItems: "center"
+              }}
+            >
+              <Feather name="activity" size={18} color={iC("Account")} />
+              <Text
+                allowFontScaling={false}
+                style={[styles.buttonText, { marginTop: 3 }]}
+              >
+                Feed
+              </Text>
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{13}</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        </View>
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity
+            style={[styles.roundBtn]}
+            onPress={() => {
+              navigate("Submit");
+            }}
+          >
+            <Feather name="plus" size={20} color={iC("Submit")} />
             <Text
               allowFontScaling={false}
               style={[styles.buttonText, { marginTop: 2 }]}
             >
-              Feed
+              Add
             </Text>
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>{13}</Text>
-            </View>
           </TouchableOpacity>
         </View>
         <View style={{ flex: 1 }}>
@@ -111,55 +137,30 @@ export default ({ navigation }) => {
                 borderBottomRightRadius: 6
               }
             ]}
+            disabled={!enableSort}
             onPress={() => {
-              navigate("Submit");
+              requestAnimationFrame(() => {
+                emitter.emit("filters", PAGE.WHEN);
+              });
             }}
           >
-            <Ionicons
-              name="ios-add-circle-outline"
+            <MaterialIcons
+              name="sort"
               size={18}
-              color={iC("Submit")}
+              color={enableSort ? "#777" : "#ccc"}
             />
-            <Text allowFontScaling={false} style={styles.buttonText}>
-              Add
+            <Text
+              allowFontScaling={false}
+              style={[
+                styles.buttonText,
+                { marginTop: 2, color: enableSort ? "#777" : "#ccc" }
+              ]}
+            >
+              Sort
             </Text>
           </TouchableOpacity>
         </View>
       </View>
-      {/* <ScrollView
-        centerContent={width > 600}
-        contentContainerStyle={{
-          paddingTop: topPadding,
-          paddingHorizontal: 2.5,
-          paddingBottom: bottomInset
-        }}
-        style={{
-          borderTopWidth: topBorderWidth,
-          borderColor: "rgba(0,0,0,0.05)"
-        }}
-        horizontal
-        alwaysBounceHorizontal
-        showsHorizontalScrollIndicator={false}
-      > */}
-
-      {/* <TagPicker
-          style={{
-            marginLeft: 2.5,
-            borderTopLeftRadius: 6,
-            borderBottomLeftRadius: 6
-          }}
-        />
-
-        <TimePicker />
-
-        <PlacePicker
-          style={{
-            marginRight: 2.5,
-            borderTopRightRadius: 6,
-            borderBottomRightRadius: 6
-          }}
-        /> */}
-      {/* </ScrollView> */}
     </BlurView>
   );
 };
@@ -188,12 +189,11 @@ const styles = StyleSheet.create({
   },
   roundBtn: {
     height: buttonHeight,
-    paddingHorizontal: 6,
     alignItems: "center",
     justifyContent: "flex-end",
-    paddingBottom: 5,
-    backgroundColor: "rgba(180,180,180,0.1)",
-    marginHorizontal: 0.5
+    paddingBottom: 5
+    // backgroundColor: "rgba(180,180,180,0.1)",
+    // marginHorizontal: 0.5
   },
   selected: {
     color: BLUE
@@ -205,8 +205,8 @@ const styles = StyleSheet.create({
   },
   badge: {
     position: "absolute",
-    top: 4,
-    left: "70%",
+    top: 1,
+    right: -7,
     borderRadius: 5,
     height: 10,
     paddingHorizontal: 2,

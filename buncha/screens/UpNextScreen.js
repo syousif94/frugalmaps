@@ -7,7 +7,8 @@ import {
   ActivityIndicator,
   ScrollView,
   Text,
-  Dimensions
+  Dimensions,
+  TouchableOpacity
 } from "react-native";
 import { refresh } from "../store/events";
 import * as Cities from "../store/cities";
@@ -23,13 +24,18 @@ import emitter from "tiny-emitter/instance";
 import FilterView from "../components/FilterView";
 import SortBar from "../components/SortBar";
 import EventSearchInput from "../components/EventSearchInput";
+import { getInset } from "../utils/SafeAreaInsets";
+import { PAGE } from "../store/filters";
+import { useEveryMinute } from "../utils/Hooks";
+import moment from "moment";
 
 let tabBarHeight;
-let topBarHeight;
+
 if (!WEB) {
   tabBarHeight = require("../components/TabBar").tabBarHeight;
-  topBarHeight = require("../components/TopBar").topBarHeight;
 }
+
+const topInset = IOS ? getInset("top") : 0;
 
 const narrow = 600;
 
@@ -86,7 +92,7 @@ export default ({ intro = false }) => {
     if (!WEB && !data.length && !refreshing && !error) {
       listRef.current.scrollToOffset({
         animated: false,
-        offset: topBarHeight
+        offset: topInset
       });
       onRefresh();
       dispatch(Cities.get());
@@ -117,7 +123,7 @@ export default ({ intro = false }) => {
       initialLoadCompleted.current = true;
       listRef.current.scrollToOffset({
         animated: false,
-        offset: -topBarHeight
+        offset: -topInset
       });
     }
   }, [refreshing, initialLoadCompleted, data, error]);
@@ -147,7 +153,7 @@ export default ({ intro = false }) => {
         setTimeout(() => {
           listRef.current.scrollToOffset({
             animated: true,
-            offset: -(topBarHeight + 54)
+            offset: -(topInset + 54)
           });
         }, 350);
       } else if (ANDROID) {
@@ -252,16 +258,15 @@ export default ({ intro = false }) => {
               return <UpNextItem {...data} />;
             }}
             contentInset={{
-              top: topBarHeight,
+              top: topInset,
               bottom: tabBarHeight,
               left: 0,
               right: 0
             }}
             contentContainerStyle={{
-              paddingTop: ANDROID ? topBarHeight : null,
               paddingBottom: ANDROID ? tabBarHeight : null
             }}
-            progressViewOffset={topBarHeight}
+            progressViewOffset={70}
             numColumns={columns}
             data={data}
             style={styles.list}
@@ -272,14 +277,6 @@ export default ({ intro = false }) => {
             ListHeaderComponent={ListHeader}
             ListFooterComponent={() => (data.length ? <ListFooter /> : null)}
             ListEmptyComponent={() => (error ? <ListError /> : null)}
-          />
-          <TopBar
-            style={{ paddingHorizontal: itemMargin }}
-            containerStyle={{
-              position: "absolute",
-              top: 0,
-              left: 0
-            }}
           />
         </View>
       )}
@@ -292,14 +289,58 @@ export default ({ intro = false }) => {
   );
 };
 
-const ListHeader = () => (
-  <View>
-    <View
-      style={{
-        marginTop: 10,
-        paddingHorizontal: itemMargin
-      }}
-    >
+const ListHeaderFilterButton = () => {
+  const [currentTime] = useEveryMinute();
+  const notNow = useSelector(state => state.events.notNow);
+  const now = useSelector(state => state.events.now);
+  const day = useSelector(state => state.events.day);
+  const locationText = useSelector(state => {
+    const city = state.events.city;
+    const locationEnabled = state.permissions.location;
+    const locationText =
+      city && city.text.length
+        ? city.text.split(",")[0]
+        : locationEnabled
+        ? "Locating"
+        : "Everywhere";
+    return locationText;
+  });
+  const count = useSelector(state => state.events.upNext.length);
+
+  let dayText = "";
+  if (day) {
+    dayText = day.title;
+  } else {
+    const today = moment(now);
+    dayText = today.format("dddd h:mma");
+  }
+
+  let fromNow = "";
+  if (!notNow) {
+    const minDiff = Math.ceil((currentTime - now) / 60000);
+    if (minDiff >= 60) {
+      fromNow = ` · ${parseInt(minDiff / 60, 10)}h ${minDiff % 60}m ago`;
+    } else if (minDiff >= 1) {
+      fromNow = ` · ${minDiff}m ago`;
+    } else if (minDiff >= 0) {
+      fromNow = " · Now";
+    }
+  } else if (day) {
+    fromNow = ` · ${day.away}d away`;
+  }
+
+  let countText = "";
+  if (count > 0) {
+    countText = ` · ${count} event${count !== 1 ? "s" : ""}`;
+  }
+
+  const onPress = () => {
+    requestAnimationFrame(() => {
+      emitter.emit("filters", PAGE.WHEN);
+    });
+  };
+  return (
+    <TouchableOpacity onPress={onPress}>
       <Text
         style={{
           fontSize: 14,
@@ -308,7 +349,9 @@ const ListHeader = () => (
           textTransform: "uppercase"
         }}
       >
-        Austin, Tx · 2m ago
+        {locationText}
+        {fromNow}
+        {countText}
       </Text>
       <Text
         style={{
@@ -318,8 +361,21 @@ const ListHeader = () => (
           paddingBottom: 10
         }}
       >
-        Saturday 8:46pm
+        {dayText}
       </Text>
+    </TouchableOpacity>
+  );
+};
+
+const ListHeader = () => (
+  <View>
+    <View
+      style={{
+        marginTop: 10,
+        paddingHorizontal: itemMargin
+      }}
+    >
+      <ListHeaderFilterButton />
       <EventSearchInput
         contentContainerStyle={{
           flexDirection: "row",

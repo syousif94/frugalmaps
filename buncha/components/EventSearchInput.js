@@ -63,6 +63,6 @@ const styles = StyleSheet.create({
   },
   input: {
     paddingLeft: 0,
-    height: WEB ? buttonHeight - 2 : 44
+    height: WEB ? buttonHeight - 2 : 40
   }
 });

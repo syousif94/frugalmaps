@@ -9,50 +9,46 @@ import EventSearchInput from "./EventSearchInput";
 import { useEveryMinute } from "../utils/Hooks";
 
 const topInset = getInset("top");
-// export const topBarHeight = IOS ? 52 + topInset : 72;
-
-export const topBarHeight = topInset;
+export const topBarHeight = IOS ? 52 + topInset : 72;
 
 export default ({ style = { paddingLeft: 15 }, containerStyle = {} }) => {
-  // const [currentTime] = useEveryMinute();
-  // const notNow = useSelector(state => state.events.notNow);
-  // const now = useSelector(state => state.events.now);
-  // const day = useSelector(state => state.events.day);
-  // const locationText = useSelector(state => {
-  //   const city = state.events.city;
-  //   const locationEnabled = state.permissions.location;
-  //   const locationText =
-  //     city && city.text.length
-  //       ? city.text.split(",")[0]
-  //       : locationEnabled
-  //       ? "Locating"
-  //       : "Everywhere";
-  //   return locationText;
-  // });
-  // const count = useSelector(state => state.events.upNext.length);
+  const [currentTime] = useEveryMinute();
+  const notNow = useSelector(state => state.events.notNow);
+  const now = useSelector(state => state.events.now);
+  const day = useSelector(state => state.events.day);
+  const locationText = useSelector(state => {
+    const city = state.events.city;
+    const locationEnabled = state.permissions.location;
+    const locationText =
+      city && city.text.length
+        ? city.text.split(",")[0]
+        : locationEnabled
+        ? "Locating"
+        : "Everywhere";
+    return locationText;
+  });
+  const count = useSelector(state => state.events.upNext.length);
 
-  // let dayText = "";
-  // if (!notNow) {
-  //   const today = moment(now);
-  //   dayText = today.format("h:mma");
-  // }
+  let dayText = "";
+  if (!notNow) {
+    const today = moment(now);
+    dayText = today.format("h:mma");
+  }
 
-  // let fromNow = "";
-  // if (!notNow) {
-  //   const minDiff = Math.ceil((currentTime - now) / 60000);
-  //   if (minDiff >= 60) {
-  //     fromNow = ` ${parseInt(minDiff / 60, 10)}h ${minDiff % 60}m ago`;
-  //   } else if (minDiff >= 0) {
-  //     fromNow = ` ${minDiff}m ago`;
-  //   }
-  // } else if (day) {
-  //   fromNow = day.title;
-  // } else {
-  //   const today = moment(now);
-  //   fromNow = today.format("dddd h:mma");
-  // }
-
-  return null;
+  let fromNow = "";
+  if (!notNow) {
+    const minDiff = Math.ceil((currentTime - now) / 60000);
+    if (minDiff >= 60) {
+      fromNow = ` ${parseInt(minDiff / 60, 10)}h ${minDiff % 60}m ago`;
+    } else if (minDiff >= 0) {
+      fromNow = ` ${minDiff}m ago`;
+    }
+  } else if (day) {
+    fromNow = day.title;
+  } else {
+    const today = moment(now);
+    fromNow = today.format("dddd h:mma");
+  }
 
   return (
     <BlurView style={[styles.container, containerStyle]}>
