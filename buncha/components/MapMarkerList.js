@@ -8,16 +8,11 @@ import {
   Animated
 } from "react-native";
 import { useSelector, shallowEqual } from "react-redux";
-import { selectPlaceEvents } from "../store/events";
 import { itemRemaining } from "../utils/Time";
 import { WEB } from "../utils/Constants";
 import { roundedDistanceTo } from "../utils/Locate";
 import emitter from "tiny-emitter/instance";
-import {
-  useEveryMinute,
-  useAnimateOn,
-  useKeyboardHeight
-} from "../utils/Hooks";
+import { useEveryMinute, useKeyboardHeight } from "../utils/Hooks";
 import PriceText from "./PriceText";
 
 let tabBarHeight = 0;
@@ -27,10 +22,8 @@ if (!WEB) {
 
 const Item = ({ item, index }) => {
   const [currentTime] = useEveryMinute();
-  const events = useSelector(selectPlaceEvents(item), shallowEqual);
   const distance = roundedDistanceTo(item);
   const time = itemRemaining(item);
-  const eventsText = `${events.length} event${events.length != 1 ? "s" : ""}`;
   return (
     <View style={styles.item}>
       <TouchableOpacity
@@ -43,7 +36,7 @@ const Item = ({ item, index }) => {
           <Text numberOfLines={1} style={styles.locationText}>
             {item._source.location}
           </Text>
-          <Text numberOfLines={1} style={styles.locationText}>
+          <Text numberOfLines={1} style={styles.itemText}>
             {item._source.title}
           </Text>
           <Text
@@ -62,9 +55,7 @@ const Item = ({ item, index }) => {
             marginTop: 5
           }}
         >
-          <Text style={[styles.locationText, { color: "#666" }]}>
-            {distance}
-          </Text>
+          <Text style={[styles.itemText, { color: "#666" }]}>{distance}</Text>
           <PriceText
             priceLevel={item._source.priceLevel}
             style={{ fontSize: 11, fontWeight: "700" }}
@@ -79,34 +70,13 @@ export default () => {
   const listRef = useRef(null);
   const data = useSelector(state => state.events.upNext, shallowEqual);
 
-  // const selectedEvent = useSelector(state => {
-  //   const selected = state.events.selected;
-  //   if (!selected) {
-  //     return null;
-  //   }
-  //   return state.events.data[selected];
-  // }, shallowEqual);
-
   const [keyboardHeight] = useKeyboardHeight(-tabBarHeight);
-
-  // const [, transform] = useAnimateOn(selectedEvent);
-
-  // useEffect(() => {
-  //   listRef.current.scrollToOffset({
-  //     animated: false,
-  //     offset: 0
-  //   });
-  // }, [data]);
 
   return (
     <Animated.View
       style={[
         styles.container,
         {
-          // opacity: transform.current.interpolate({
-          //   inputRange: [0, 1],
-          //   outputRange: [1, 0]
-          // }),
           transform: [{ translateY: keyboardHeight.current }]
         }
       ]}
@@ -151,13 +121,20 @@ const styles = StyleSheet.create({
     elevation: 3
   },
   button: {
-    paddingTop: 7,
+    paddingTop: 5,
     paddingLeft: 8,
     paddingBottom: 5,
     flex: 1,
     overflow: "hidden"
   },
   locationText: {
+    textTransform: "uppercase",
+    fontSize: 9,
+    fontWeight: "700",
+    color: "#666",
+    marginBottom: 1
+  },
+  itemText: {
     fontSize: 11,
     fontWeight: "600",
     color: "#000"

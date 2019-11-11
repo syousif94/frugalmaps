@@ -20,7 +20,7 @@ import {
 import ImageGallery from "./ImageGallery";
 import { Entypo, FontAwesome } from "@expo/vector-icons";
 import { useEveryMinute } from "../utils/Hooks";
-import { WEB } from "../utils/Constants";
+import { WEB, ABBREVIATED_DAYS } from "../utils/Constants";
 import _ from "lodash";
 import PriceText from "./PriceText";
 import emitter from "tiny-emitter/instance";
@@ -109,42 +109,6 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
         <View style={styles.index}>
           <Text style={styles.countText}>{index + 1}</Text>
         </View>
-        <View
-          style={{
-            position: "absolute",
-            bottom: 0,
-            right: 0,
-            left: 0,
-            flexDirection: "row",
-            padding: 1.5
-          }}
-        >
-          {item._source.tags.map(tag => {
-            return (
-              <View
-                key={tag}
-                style={{
-                  backgroundColor: "rgba(0,0,0,0.6)",
-                  paddingVertical: 0.5,
-                  paddingHorizontal: 2,
-                  margin: 0.5,
-                  borderRadius: 2
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 8,
-                    fontWeight: "700",
-                    color: "#fff",
-                    textTransform: "uppercase"
-                  }}
-                >
-                  {tag}
-                </Text>
-              </View>
-            );
-          })}
-        </View>
       </View>
       <Text style={styles.locationText}>
         {item._source.location}
@@ -161,10 +125,11 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
       </Text>
       <MatchableText
         text={item._source.description}
-        numberOfLines={3}
+        numberOfLines={2}
         match={searchTerm}
         style={styles.descriptionText}
       />
+      <DaysText days={item._source.days} />
       <View style={styles.actions}>
         <TouchableOpacity
           onPress={() => {
@@ -188,6 +153,37 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
     </Link>
   );
 });
+
+const DaysText = ({ days }) => {
+  if (days.length === 1) {
+    return null;
+  }
+
+  let text;
+
+  if (days.length === 7) {
+    text = "EVERYDAY";
+  } else if (days.length === 5 && days[4] === 4) {
+    text = "WEEKDAYS";
+  } else if (days.length === 2 && days[0] === 5 && days[1] === 6) {
+    text = "WEEKENDS";
+  } else {
+    text = days.map(day => ABBREVIATED_DAYS[day]).join(", ");
+  }
+
+  return (
+    <Text
+      style={{
+        fontSize: 10,
+        fontWeight: "700",
+        color: "#999",
+        marginTop: 2
+      }}
+    >
+      {text}
+    </Text>
+  );
+};
 
 const MatchableText = ({ match, text, ...props }) => {
   if (match) {
@@ -240,6 +236,8 @@ const styles = StyleSheet.create({
     marginBottom: 4
   },
   titleText: {
+    marginTop: 0.5,
+    lineHeight: 16.5,
     fontSize: 15,
     color: "#000",
     fontWeight: "600"
@@ -256,9 +254,7 @@ const styles = StyleSheet.create({
     textTransform: "uppercase"
   },
   descriptionText: {
-    marginTop: 1,
-    fontSize: 10,
-    lineHeight: 14,
+    fontSize: 13,
     fontWeight: "500",
     color: "#666"
   },

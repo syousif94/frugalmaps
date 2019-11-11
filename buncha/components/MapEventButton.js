@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useSelector } from "react-redux";
+import React from "react";
+import { useSelector, shallowEqual } from "react-redux";
 import {
   View,
   TouchableOpacity,
@@ -10,16 +10,11 @@ import {
 } from "react-native";
 import { navigate } from "../screens";
 import { Entypo } from "@expo/vector-icons";
-import { AWSCF, ANDROID, WEB } from "../utils/Constants";
+import { AWSCF } from "../utils/Constants";
 import { selectPlaceEvents } from "../store/events";
 import { itemRemaining } from "../utils/Time";
 import { useAnimateOn } from "../utils/Hooks";
 import { topBarHeight } from "./TopBar";
-
-let tabBarHeight;
-if (!WEB) {
-  tabBarHeight = require("./TabBar").tabBarHeight;
-}
 
 const height = 84;
 const imageHeight = height - 30;
@@ -31,11 +26,11 @@ export default () => {
       return null;
     }
     return state.events.data[selected];
-  });
+  }, shallowEqual);
 
   const [event, transform] = useAnimateOn(selectedEvent);
 
-  const events = useSelector(selectPlaceEvents(event));
+  const events = useSelector(selectPlaceEvents(event), shallowEqual);
 
   // const eventCount = events.length;
 

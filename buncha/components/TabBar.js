@@ -179,6 +179,8 @@ const styles = StyleSheet.create({
     left: 0
   },
   content: {
+    maxWidth: 500,
+    alignSelf: "center",
     borderTopWidth: topBorderWidth,
     borderColor: "rgba(0,0,0,0.05)",
     flexDirection: "row",

@@ -317,7 +317,7 @@ const ListHeaderFilterButton = () => {
 
   let fromNow = "";
   if (!notNow) {
-    const minDiff = Math.ceil((currentTime - now) / 60000);
+    const minDiff = Math.round((currentTime - now) / 60000);
     if (minDiff >= 60) {
       fromNow = ` · ${parseInt(minDiff / 60, 10)}h ${minDiff % 60}m ago`;
     } else if (minDiff >= 1) {
@@ -342,8 +342,9 @@ const ListHeaderFilterButton = () => {
   return (
     <TouchableOpacity onPress={onPress}>
       <Text
+        allowFontScaling={false}
         style={{
-          fontSize: 14,
+          fontSize: 16,
           color: "#444",
           fontWeight: "700",
           textTransform: "uppercase"
@@ -354,11 +355,12 @@ const ListHeaderFilterButton = () => {
         {countText}
       </Text>
       <Text
+        allowFontScaling={false}
         style={{
           fontSize: 28,
           color: "#000",
           fontWeight: "700",
-          paddingBottom: 10
+          paddingBottom: 7
         }}
       >
         {dayText}
@@ -371,7 +373,7 @@ const ListHeader = () => (
   <View>
     <View
       style={{
-        marginTop: 10,
+        marginTop: ANDROID ? 7 : 5,
         paddingHorizontal: itemMargin
       }}
     >
