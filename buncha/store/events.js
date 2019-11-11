@@ -126,7 +126,7 @@ export function getCity(city) {
 
 const debouncedGet = _.debounce((dispatch, args) => {
   dispatch(get(args));
-}, 150);
+}, 60);
 
 export function filter({ tag = null, text = "" }) {
   return (dispatch, getState) => {

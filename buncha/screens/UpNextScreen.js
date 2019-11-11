@@ -322,7 +322,7 @@ const ListHeaderFilterButton = () => {
       fromNow = ` · ${parseInt(minDiff / 60, 10)}h ${minDiff % 60}m ago`;
     } else if (minDiff >= 1) {
       fromNow = ` · ${minDiff}m ago`;
-    } else if (minDiff >= 0) {
+    } else {
       fromNow = " · Now";
     }
   } else if (day) {

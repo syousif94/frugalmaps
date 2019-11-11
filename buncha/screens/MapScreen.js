@@ -11,6 +11,7 @@ import { ANDROID } from "../utils/Constants";
 import emitter from "tiny-emitter/instance";
 import MapMarkerList from "../components/MapMarkerList";
 import { itemMargin } from "../components/UpNextItem";
+import SortBar from "../components/SortBar";
 
 export default () => {
   return (
@@ -18,6 +19,20 @@ export default () => {
       <View style={styles.container}>
         <View style={styles.container}>
           <MarkerMapView />
+          <SortBar
+            style={{
+              position: "absolute",
+              backgroundColor: null,
+              left: 0,
+              right: 0,
+              top: topBarHeight
+            }}
+            buttonStyle={{
+              paddingVertical: 3,
+              paddingRight: 3,
+              paddingLeft: 4
+            }}
+          />
           <MapMarkerList />
           <MapEventButton />
           <IndicatorView />
