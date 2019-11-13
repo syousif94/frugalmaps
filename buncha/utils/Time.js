@@ -478,7 +478,7 @@ export function itemRemaining(item) {
 
   const duration = ending
     ? ` ${remaining.value} left`
-    : ` in ${remaining.value}`;
+    : ` ${spanHours.duration}hr${pluralize(spanHours.duration)}`;
 
   return {
     text,
@@ -501,7 +501,7 @@ export function itemTimeForDay(item, day) {
   return {
     text: `${start} ${day.title}`,
     color: UPCOMING,
-    duration: ` ${hours.duration}hr${hours.duration !== 1 ? "s" : ""}`
+    duration: ` ${hours.duration}hr${pluralize(hours.duration)}`
   };
 }
 

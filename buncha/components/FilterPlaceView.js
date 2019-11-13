@@ -14,6 +14,9 @@ import { BLUE } from "../utils/Colors";
 import * as Events from "../store/events";
 import { FontAwesome } from "@expo/vector-icons";
 import CityOrderPicker from "./CityOrderPicker";
+import SegmentedControl from "./SegmentedControl";
+import { WEB } from "../utils/Constants";
+import emitter from "tiny-emitter/instance";
 
 export default ({ page }) => {
   const cities = useSelector(
@@ -40,13 +43,33 @@ export default ({ page }) => {
         renderItem={data => <CityItem {...data} />}
         keyExtractor={(item, index) => `${index}`}
         ItemSeparatorComponent={() => <View style={styles.divider} />}
-        ListHeaderComponent={() => <HeaderView cities={cities} />}
+        ListHeaderComponent={() => <HeaderView cities={cities} page={page} />}
       />
     </View>
   );
 };
 
-const HeaderView = ({ cities }) => {
+const ListPicker = ({ page }) => {
+  if (WEB) {
+    return null;
+  }
+
+  return (
+    <SegmentedControl
+      options={[PAGE.WHEN, PAGE.WHERE]}
+      selected={page}
+      containerStyle={{
+        width: null,
+        marginTop: 10
+      }}
+      onPress={option => {
+        emitter.emit("filters", option);
+      }}
+    />
+  );
+};
+
+const HeaderView = ({ cities, page }) => {
   const dispatch = useDispatch();
 
   const countText = cities.length
@@ -54,7 +77,10 @@ const HeaderView = ({ cities }) => {
     : "Loading..";
   return (
     <View style={styles.header}>
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
+      <ListPicker page={page} />
+      <View
+        style={{ flexDirection: "row", alignItems: "center", marginTop: 12 }}
+      >
         <View style={{ flex: 1 }}>
           <Text style={styles.titleText}>{PAGE.WHERE}</Text>
           <Text style={styles.subText}>{countText}</Text>
@@ -97,7 +123,6 @@ const styles = StyleSheet.create({
   header: {
     marginLeft: 10,
     paddingRight: 10,
-    paddingTop: 12,
     borderBottomWidth: 1,
     borderBottomColor: "rgba(0,0,0,0.05)"
   },

@@ -96,15 +96,10 @@ export default () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    position: "absolute",
-    bottom: tabBarHeight,
-    right: 0,
-    left: 0
-  },
+  container: {},
   list: {},
   listContent: {
-    padding: 4
+    paddingVertical: 4
   },
   item: {
     margin: 4,

@@ -15,6 +15,9 @@ import * as Events from "../store/events";
 import { useEveryMinute } from "../utils/Hooks";
 import moment from "moment";
 import { PANEL_HEIGHT } from "./FilterView";
+import SegmentedControl from "./SegmentedControl";
+import { WEB } from "../utils/Constants";
+import emitter from "tiny-emitter/instance";
 
 const INVALID_TIME_HEIGHT = 22;
 
@@ -32,6 +35,7 @@ export default memo(({ page, bottomOffset }) => {
       ]}
     >
       <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.content}>
+        <ListPicker page={page} />
         <View style={styles.header}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <View style={{ flex: 1 }}>
@@ -61,6 +65,27 @@ export default memo(({ page, bottomOffset }) => {
     </View>
   );
 });
+
+const ListPicker = ({ page }) => {
+  if (WEB) {
+    return null;
+  }
+
+  return (
+    <SegmentedControl
+      options={[PAGE.WHEN, PAGE.WHERE]}
+      selected={page}
+      containerStyle={{
+        marginTop: 10,
+        marginHorizontal: 10,
+        width: null
+      }}
+      onPress={option => {
+        emitter.emit("filters", option);
+      }}
+    />
+  );
+};
 
 const TimeInvalid = () => {
   const { validTime } = useSelector(Filters.validTimeSelector);

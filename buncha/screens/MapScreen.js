@@ -12,6 +12,7 @@ import emitter from "tiny-emitter/instance";
 import MapMarkerList from "../components/MapMarkerList";
 import { itemMargin } from "../components/UpNextItem";
 import SortBar from "../components/SortBar";
+import { tabBarHeight } from "../components/TabBar";
 
 export default () => {
   return (
@@ -19,21 +20,38 @@ export default () => {
       <View style={styles.container}>
         <View style={styles.container}>
           <MarkerMapView />
-          <SortBar
+          <View
             style={{
               position: "absolute",
-              backgroundColor: null,
               left: 0,
               right: 0,
-              top: topBarHeight
+              bottom: tabBarHeight
             }}
-            buttonStyle={{
-              paddingVertical: 3,
-              paddingRight: 3,
-              paddingLeft: 4
-            }}
-          />
-          <MapMarkerList />
+          >
+            <MapMarkerList />
+            <SortBar
+              style={{
+                backgroundColor: null
+              }}
+              contentContainerStyle={{
+                paddingTop: 0,
+                paddingBottom: 8
+              }}
+              buttonStyle={{
+                paddingVertical: 3,
+                paddingRight: 3,
+                paddingLeft: 4,
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 1
+                },
+                shadowOpacity: 0.22,
+                shadowRadius: 2.22,
+                elevation: 3
+              }}
+            />
+          </View>
           <MapEventButton />
           <IndicatorView />
         </View>

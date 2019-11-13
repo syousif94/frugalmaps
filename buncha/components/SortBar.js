@@ -12,37 +12,44 @@ const Button = ({ tag: { text, count }, style }) => {
     dispatch(Events.filter({ tag: selected ? null : text }));
   };
   return (
-    <TouchableOpacity
+    <View
       style={[
         {
           backgroundColor: selected ? "#bbb" : RED,
           borderRadius: 4,
-          alignItems: "center",
-          flexDirection: "row",
           marginHorizontal: 2
         },
         style
       ]}
-      onPress={onPress}
     >
-      <Text style={{ fontSize: 12, color: "#fff", fontWeight: "700" }}>
-        {_.startCase(text)}
-      </Text>
-      <View
-        style={{
-          paddingHorizontal: 3,
-          borderRadius: 3,
-          backgroundColor: "rgba(0,0,0,0.3)",
-          marginLeft: 6,
-          minWidth: 16,
-          alignItems: "center"
-        }}
+      <TouchableOpacity
+        style={[
+          {
+            alignItems: "center",
+            flexDirection: "row"
+          }
+        ]}
+        onPress={onPress}
       >
         <Text style={{ fontSize: 12, color: "#fff", fontWeight: "700" }}>
-          {count}
+          {_.startCase(text)}
         </Text>
-      </View>
-    </TouchableOpacity>
+        <View
+          style={{
+            paddingHorizontal: 3,
+            borderRadius: 3,
+            backgroundColor: "rgba(0,0,0,0.3)",
+            marginLeft: 6,
+            minWidth: 16,
+            alignItems: "center"
+          }}
+        >
+          <Text style={{ fontSize: 12, color: "#fff", fontWeight: "700" }}>
+            {count}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    </View>
   );
 };
 

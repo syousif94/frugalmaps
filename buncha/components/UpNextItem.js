@@ -168,7 +168,10 @@ const DaysText = ({ days }) => {
   } else if (days.length === 2 && days[0] === 5 && days[1] === 6) {
     text = "WEEKENDS";
   } else {
-    text = days.map(day => ABBREVIATED_DAYS[day]).join(", ");
+    text = days
+      .sort()
+      .map(day => ABBREVIATED_DAYS[day])
+      .join(", ");
   }
 
   return (
