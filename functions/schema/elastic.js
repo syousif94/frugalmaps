@@ -5,7 +5,9 @@ const client = require("../elastic");
 const event = require("./event");
 const location = require("./location");
 const user = require("./user");
-const reminder = require("./reminder");
+const contact = require("./contact");
+const friend = require("./friend");
+const interested = require("./interested");
 
 function indexExists(indexName) {
   return client.indices.exists({
@@ -65,7 +67,9 @@ module.exports = {
   events: index(event),
   locations: index(location),
   users: index(user),
-  reminders: index(reminder),
+  friends: index(friend),
+  contacts: index(contact),
+  interesteds: index(interested),
   init: async function() {
     await this.events.map();
     await this.locations.map();

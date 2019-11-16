@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { useSelector, shallowEqual } from "react-redux";
 import { StyleSheet, View, ActivityIndicator } from "react-native";
 import MapView from "react-native-maps";
@@ -20,38 +20,7 @@ export default () => {
       <View style={styles.container}>
         <View style={styles.container}>
           <MarkerMapView />
-          <View
-            style={{
-              position: "absolute",
-              left: 0,
-              right: 0,
-              bottom: tabBarHeight
-            }}
-          >
-            <MapMarkerList />
-            <SortBar
-              style={{
-                backgroundColor: null
-              }}
-              contentContainerStyle={{
-                paddingTop: 0,
-                paddingBottom: 8
-              }}
-              buttonStyle={{
-                paddingVertical: 3,
-                paddingRight: 3,
-                paddingLeft: 4,
-                shadowColor: "#000",
-                shadowOffset: {
-                  width: 0,
-                  height: 1
-                },
-                shadowOpacity: 0.22,
-                shadowRadius: 2.22,
-                elevation: 3
-              }}
-            />
-          </View>
+          <MapListsView />
           <MapEventButton />
           <IndicatorView />
         </View>
@@ -64,6 +33,48 @@ export default () => {
           }}
         />
       </View>
+    </View>
+  );
+};
+
+const MapListsView = () => {
+  const [sortHeight, setSortHeight] = useState(0);
+  return (
+    <View
+      style={{
+        position: "absolute",
+        left: 0,
+        right: 0,
+        bottom: tabBarHeight
+      }}
+    >
+      <MapMarkerList offset={sortHeight} />
+      <SortBar
+        onLayout={e => {
+          const { height } = e.nativeEvent.layout;
+          setSortHeight(height);
+        }}
+        style={{
+          backgroundColor: null
+        }}
+        contentContainerStyle={{
+          paddingTop: 0,
+          paddingBottom: 8
+        }}
+        buttonStyle={{
+          paddingVertical: 3,
+          paddingRight: 3,
+          paddingLeft: 4,
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 1
+          },
+          shadowOpacity: 0.22,
+          shadowRadius: 2.22,
+          elevation: 3
+        }}
+      />
     </View>
   );
 };

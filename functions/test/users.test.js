@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const expect = require("chai").expect;
 const { setup, destroy } = require("./db");
 const faker = require("faker");
+const sh = require("shorthash");
 
 describe("test users", function() {
   let app;
@@ -14,8 +15,12 @@ describe("test users", function() {
   before(async function() {
     app = await server();
     await setup();
+    await elastic.friends.delete();
+    await elastic.contacts.delete();
     await elastic.users.delete();
     await elastic.users.map();
+    await elastic.contacts.map();
+    await elastic.friends.map();
 
     for (let i = 0; i < 5; i++) {
       users.push({
@@ -53,7 +58,7 @@ describe("test users", function() {
         expect(res.body.error).to.not.exist;
         expect(res.body.user).to.equal(null);
         const decodedToken = jwt.verify(res.body.token, process.env.JWT);
-        expect(decodedToken.number).to.equal(process.env.PHONE);
+        expect(decodedToken.id).to.equal(sh.unique(process.env.PHONE));
       });
   });
 
@@ -81,12 +86,15 @@ describe("test users", function() {
         expect(res.body.error).to.not.exist;
         expect(res.body.user).to.exist;
         const decodedToken = jwt.verify(res.body.token, process.env.JWT);
-        expect(decodedToken.number).to.equal(process.env.PHONE);
+        expect(decodedToken.id).to.equal(sh.unique(process.env.PHONE));
       });
   });
 
   it("adds contacts", async function() {
-    const token = jwt.sign({ number: process.env.PHONE }, process.env.JWT);
+    const token = jwt.sign(
+      { id: sh.unique(process.env.PHONE) },
+      process.env.JWT
+    );
 
     await request(app)
       .post("/api/users/contacts")
@@ -95,21 +103,53 @@ describe("test users", function() {
         contacts: users
       })
       .expect(200)
-      .expect({});
+      .then(function(res) {
+        expect(res.body.error).to.not.exist;
+      });
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     await request(app)
       .post("/api/users/contacts")
       .set("Authorization", `bearer ${token}`)
-      .expect(200);
+      .expect(200)
+      .then(function(res) {
+        expect(res.body.error).to.not.exist;
+        expect(res.body.contacts).to.exist;
+        expect(res.body.contacts.length).to.eq(5);
+      });
   });
 
-  // it("adds friends", function() {
-  //   return request(app)
-  //     .post("/api/users/create")
-  //     .expect(200)
-  //     .expect("Content-Type", /text/)
-  //     .expect("FrugalMaps API says hi");
-  // });
+  it("adds friends", async function() {
+    const token = jwt.sign(
+      { id: sh.unique(process.env.PHONE) },
+      process.env.JWT
+    );
+
+    const add = users.slice(0, 2).map(user => sh.unique(user.number));
+
+    await request(app)
+      .post("/api/users/friends")
+      .set("Authorization", `bearer ${token}`)
+      .send({
+        add
+      })
+      .expect(200)
+      .then(function(res) {
+        expect(res.body.error).to.not.exist;
+      });
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    await request(app)
+      .post("/api/users/friends")
+      .set("Authorization", `bearer ${token}`)
+      .expect(200)
+      .then(function(res) {
+        expect(res.body.error).to.not.exist;
+        console.log(res.body);
+      });
+  });
 
   // it("gets plans", function() {
   //   return request(app)

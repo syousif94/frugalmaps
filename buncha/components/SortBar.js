@@ -54,7 +54,12 @@ const Button = ({ tag: { text, count }, style }) => {
 };
 
 export default memo(
-  ({ style = {}, contentContainerStyle = {}, buttonStyle = {} }) => {
+  ({
+    style = {},
+    contentContainerStyle = {},
+    buttonStyle = {},
+    onLayout = null
+  }) => {
     const tags = useSelector(state => state.events.tags, shallowEqual);
     if (!tags.length) {
       return null;
@@ -67,6 +72,7 @@ export default memo(
           },
           style
         ]}
+        onLayout={onLayout}
       >
         <ScrollView
           style={{

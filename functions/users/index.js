@@ -6,6 +6,9 @@ const jwt = require("jsonwebtoken");
 const elastic = require("../elastic");
 const userSchema = require("../schema/user");
 const { contacts, contact } = require("./contacts");
+const { friends } = require("./friends");
+
+const sh = require("shorthash");
 
 const sns = new AWS.SNS();
 
@@ -67,11 +70,13 @@ router.post("/token", async (req, res) => {
 
     validateCode(number, code);
 
-    const token = jwt.sign({ number }, jwtSecret);
+    const id = sh.unique(number);
+
+    const token = jwt.sign({ id }, jwtSecret);
 
     const existingUser = await elastic
       .get({
-        id: number,
+        id,
         index: userSchema.index
       })
       .catch(error => {});
@@ -86,7 +91,7 @@ router.post("/token", async (req, res) => {
 
     await elastic.index({
       index: userSchema.index,
-      id: number,
+      id,
       body: {
         number
       }
@@ -106,6 +111,8 @@ router.post("/token", async (req, res) => {
 router.post("/contacts", contacts);
 
 router.post("/contact", contact);
+
+router.post("/friends", friends);
 
 module.exports = router;
 

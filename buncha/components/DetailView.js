@@ -116,7 +116,9 @@ export default memo(({ item, id }) => {
     }
   }, []);
 
-  const cityText = item._source.neighborhood || item._source.city;
+  const cityText = `${item._source.address.split(",")[0]}, ${
+    item._source.city
+  }`;
   let distanceText;
   const distance = roundedDistanceTo(item);
   if (distance) {
@@ -222,6 +224,9 @@ export default memo(({ item, id }) => {
                       fontWeight: "600"
                     }}
                   />
+                  {distanceText ? (
+                    <Text style={styles.detailText}>{distanceText}</Text>
+                  ) : null}
                 </Text>
                 <View style={styles.rating}>
                   <FontAwesome name="star" size={18} color="#FFA033" />
@@ -232,22 +237,13 @@ export default memo(({ item, id }) => {
               </View>
               <View
                 style={{
-                  overflow: "hidden",
                   marginTop: 2,
-                  flexDirection: "row",
-                  justifyContent: "space-between"
+                  flexDirection: "row"
                 }}
               >
-                <Text
-                  numberOfLines={1}
-                  style={[styles.detailText, { maxWidth: "80%" }]}
-                >
+                <Text numberOfLines={1} style={styles.detailText}>
+                  {events.length} event{events.length !== 1 ? "s " : " "}
                   <Text style={{ fontWeight: "400" }}>{cityText}</Text>
-                  {distanceText || null}
-                </Text>
-                <Text style={styles.detailText} numberOfLines={1}>
-                  <Text style={{ color: BLUE }}>{events.length}</Text> event
-                  {events.length !== 1 ? "s" : ""}
                 </Text>
               </View>
             </View>

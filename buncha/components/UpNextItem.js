@@ -161,17 +161,20 @@ const DaysText = ({ days }) => {
 
   let text;
 
+  const sortedDays = days.sort();
+
   if (days.length === 7) {
     text = "EVERYDAY";
-  } else if (days.length === 5 && days[4] === 4) {
+  } else if (sortedDays.length === 5 && sortedDays[4] === 4) {
     text = "WEEKDAYS";
-  } else if (days.length === 2 && days[0] === 5 && days[1] === 6) {
+  } else if (
+    sortedDays.length === 2 &&
+    sortedDays[0] === 5 &&
+    sortedDays[1] === 6
+  ) {
     text = "WEEKENDS";
   } else {
-    text = days
-      .sort()
-      .map(day => ABBREVIATED_DAYS[day])
-      .join(", ");
+    text = sortedDays.map(day => ABBREVIATED_DAYS[day]).join(", ");
   }
 
   return (

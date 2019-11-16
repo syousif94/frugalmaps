@@ -5,6 +5,7 @@ const user = {
       uid: { type: "keyword" },
       cid: { type: "keyword" },
       name: { type: "text" },
+      number: { enabled: false },
       createdAt: {
         type: "date",
         format: "epoch_millis"

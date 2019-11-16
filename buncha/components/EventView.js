@@ -19,17 +19,6 @@ export default memo(({ item, index = 0, style }) => {
   return (
     <View style={[{ overflow: "hidden" }, style]}>
       <View style={{ paddingHorizontal: 5, paddingTop: 2 }}>
-        <View style={styles.row}>
-          {timeSpans.map((span, i) => {
-            return (
-              <View key={`${i}`} style={{ marginRight: 20 }}>
-                <Text style={styles.spanText}>{span.days}</Text>
-                <Text style={styles.spanText}>{span.hours}</Text>
-              </View>
-            );
-          })}
-        </View>
-
         <Text style={styles.titleText}>
           {item._source.title}
           <Text style={{ color: time.color, fontWeight: "700" }}>
@@ -40,8 +29,6 @@ export default memo(({ item, index = 0, style }) => {
         </Text>
 
         <Text style={styles.descriptionText}>{item._source.description}</Text>
-
-        <Text style={styles.tagText}>{item._source.tags.join(", ")}</Text>
       </View>
       <View
         style={{
@@ -111,7 +98,8 @@ const styles = StyleSheet.create({
   descriptionText: {
     marginTop: 7,
     color: "#000",
-    fontSize: 15
+    fontSize: 16,
+    lineHeight: 22
   },
   spanText: {
     marginBottom: 5,

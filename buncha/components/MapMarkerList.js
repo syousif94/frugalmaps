@@ -66,11 +66,17 @@ const Item = ({ item, index }) => {
   );
 };
 
-export default () => {
+export default ({ offset }) => {
   const listRef = useRef(null);
   const data = useSelector(state => state.events.upNext, shallowEqual);
 
-  const [keyboardHeight] = useKeyboardHeight(-tabBarHeight);
+  const [keyboardHeight, bottomOffset] = useKeyboardHeight(
+    -tabBarHeight - offset
+  );
+
+  useEffect(() => {
+    bottomOffset.current = -tabBarHeight - offset;
+  }, [offset]);
 
   return (
     <Animated.View

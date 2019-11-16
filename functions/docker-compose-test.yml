@@ -7,8 +7,10 @@ services:
     command: sh /home/app/test.sh
     expose:
       - 2000
+      - 9229
     ports:
       - "2000:2000"
+      - "9229:9229"
     volumes:
       - .:/home/app
       - /home/app/node_modules/
