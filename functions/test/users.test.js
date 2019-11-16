@@ -91,10 +91,9 @@ describe("test users", function() {
   });
 
   it("adds contacts", async function() {
-    const token = jwt.sign(
-      { id: sh.unique(process.env.PHONE) },
-      process.env.JWT
-    );
+    const id = sh.unique(process.env.PHONE);
+
+    const token = jwt.sign({ id }, process.env.JWT);
 
     await request(app)
       .post("/api/users/contacts")
@@ -107,7 +106,7 @@ describe("test users", function() {
         expect(res.body.error).to.not.exist;
       });
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await elastic.contacts.refresh();
 
     await request(app)
       .post("/api/users/contacts")
@@ -120,11 +119,12 @@ describe("test users", function() {
       });
   });
 
-  it("adds friends", async function() {
-    const token = jwt.sign(
-      { id: sh.unique(process.env.PHONE) },
-      process.env.JWT
-    );
+  it("handles friends", async function() {
+    this.timeout(0);
+
+    const id = sh.unique(process.env.PHONE);
+
+    const token = jwt.sign({ id }, process.env.JWT);
 
     const add = users.slice(0, 2).map(user => sh.unique(user.number));
 
@@ -139,7 +139,9 @@ describe("test users", function() {
         expect(res.body.error).to.not.exist;
       });
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await elastic.friends.refresh();
+
+    let fid;
 
     await request(app)
       .post("/api/users/friends")
@@ -147,7 +149,70 @@ describe("test users", function() {
       .expect(200)
       .then(function(res) {
         expect(res.body.error).to.not.exist;
-        console.log(res.body);
+
+        fid = res.body.friends[0]._source.fid;
+      });
+
+    const friendToken = jwt.sign({ id: fid }, process.env.JWT);
+
+    await request(app)
+      .post("/api/users/friends")
+      .set("Authorization", `bearer ${friendToken}`)
+      .send({
+        add: [id]
+      })
+      .expect(200)
+      .then(function(res) {
+        expect(res.body.error).to.not.exist;
+      });
+
+    await elastic.friends.refresh();
+
+    await request(app)
+      .post("/api/users/friends")
+      .set("Authorization", `bearer ${friendToken}`)
+      .expect(200)
+      .then(function(res) {
+        expect(res.body.error).to.not.exist;
+        expect(res.body.friends[0]._source.mutual).to.be.true;
+      });
+
+    await request(app)
+      .post("/api/users/friends")
+      .set("Authorization", `bearer ${token}`)
+      .expect(200)
+      .then(function(res) {
+        expect(res.body.error).to.not.exist;
+
+        const mutualFriend = res.body.friends.find(
+          friend => friend._source.fid === fid
+        );
+
+        expect(mutualFriend).to.exist;
+
+        expect(mutualFriend._source.mutual).to.be.true;
+      });
+
+    await request(app)
+      .post("/api/users/friends")
+      .set("Authorization", `bearer ${token}`)
+      .send({
+        remove: add
+      })
+      .expect(200)
+      .then(function(res) {
+        expect(res.body.error).to.not.exist;
+      });
+
+    await elastic.friends.refresh();
+
+    await request(app)
+      .post("/api/users/friends")
+      .set("Authorization", `bearer ${friendToken}`)
+      .expect(200)
+      .then(function(res) {
+        expect(res.body.error).to.not.exist;
+        expect(res.body.friends[0]._source.mutual).to.be.false;
       });
   });
 

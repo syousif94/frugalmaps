@@ -56,10 +56,17 @@ function deleteIndex(indexName) {
     .catch(error => console.log(error));
 }
 
+function refreshIndex(index) {
+  return client.indices
+    .refresh({ index })
+    .then(() => console.log(`refreshed ${index}`));
+}
+
 function index(event) {
   return {
     map: () => initializeIndex(event),
-    delete: () => deleteIndex(event.index)
+    delete: () => deleteIndex(event.index),
+    refresh: () => refreshIndex(event.index)
   };
 }
 
