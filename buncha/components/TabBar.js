@@ -86,6 +86,39 @@ export default ({ navigation }) => {
         </View>
         <View style={{ flex: 1 }}>
           <TouchableOpacity
+            style={[
+              styles.roundBtn,
+              {
+                marginRight: 2.5,
+                borderTopRightRadius: 6,
+                borderBottomRightRadius: 6
+              }
+            ]}
+            disabled={!enableSort}
+            onPress={() => {
+              requestAnimationFrame(() => {
+                emitter.emit("filters", PAGE.WHEN);
+              });
+            }}
+          >
+            <MaterialIcons
+              name="sort"
+              size={19}
+              color={enableSort ? "#777" : "#ccc"}
+            />
+            <Text
+              allowFontScaling={false}
+              style={[
+                styles.buttonText,
+                { marginTop: 3, color: enableSort ? "#777" : "#ccc" }
+              ]}
+            >
+              Sort
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity
             style={styles.roundBtn}
             onPress={() => {
               navigate("Account");
@@ -124,39 +157,6 @@ export default ({ navigation }) => {
               style={[styles.buttonText, { marginTop: 2 }]}
             >
               Add
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View style={{ flex: 1 }}>
-          <TouchableOpacity
-            style={[
-              styles.roundBtn,
-              {
-                marginRight: 2.5,
-                borderTopRightRadius: 6,
-                borderBottomRightRadius: 6
-              }
-            ]}
-            disabled={!enableSort}
-            onPress={() => {
-              requestAnimationFrame(() => {
-                emitter.emit("filters", PAGE.WHEN);
-              });
-            }}
-          >
-            <MaterialIcons
-              name="sort"
-              size={18}
-              color={enableSort ? "#777" : "#ccc"}
-            />
-            <Text
-              allowFontScaling={false}
-              style={[
-                styles.buttonText,
-                { marginTop: 2, color: enableSort ? "#777" : "#ccc" }
-              ]}
-            >
-              Sort
             </Text>
           </TouchableOpacity>
         </View>

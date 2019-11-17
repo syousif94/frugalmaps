@@ -182,7 +182,7 @@ const DaysText = ({ days }) => {
       style={{
         fontSize: 10,
         fontWeight: "700",
-        color: "#999",
+        color: "#444",
         marginTop: 2
       }}
     >
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
   },
   locationText: {
     fontSize: 10,
-    color: "#666",
+    color: "#444",
     fontWeight: "700",
     textTransform: "uppercase"
   },
