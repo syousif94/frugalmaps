@@ -125,7 +125,7 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
       </Text>
       <MatchableText
         text={item._source.description}
-        numberOfLines={2}
+        numberOfLines={3}
         match={searchTerm}
         style={styles.descriptionText}
       />
@@ -254,13 +254,13 @@ const styles = StyleSheet.create({
     fontWeight: "700"
   },
   locationText: {
-    fontSize: 10,
-    color: "#444",
-    fontWeight: "700",
-    textTransform: "uppercase"
+    fontSize: 13,
+    color: "#555",
+    fontWeight: "700"
+    // textTransform: "uppercase"
   },
   descriptionText: {
-    fontSize: 13,
+    fontSize: 15,
     fontWeight: "500",
     color: "#666"
   },

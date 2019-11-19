@@ -112,6 +112,9 @@ const NowButton = () => {
         dispatch(Filters.resetTime());
         dispatch(Events.getTime());
       }}
+      onLongPress={() => {
+        dispatch(Filters.resetTime());
+      }}
       style={styles.button}
     >
       <Text style={styles.buttonText}>{timeText}</Text>

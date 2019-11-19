@@ -391,7 +391,9 @@ export function itemSpans(item) {
 
     if (allDaysConsecutive(sortedDays)) {
       return {
-        days: `${sortedDays[0].text} - ${sortedDays[sortedDays.length - 1].text}`,
+        days: `${sortedDays[0].text} - ${
+          sortedDays[sortedDays.length - 1].text
+        }`,
         hours: hoursText
       };
     }

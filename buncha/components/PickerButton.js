@@ -1,13 +1,13 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
-import { PAGE } from "../store/filters";
+import { useSelector, useDispatch } from "react-redux";
+import { PAGE, resetTime } from "../store/filters";
 import { BLUE } from "../utils/Colors";
 import { Entypo } from "@expo/vector-icons";
 import { WEB } from "../utils/Constants";
 import _ from "lodash";
 import emitter from "tiny-emitter/instance";
-import { searchTimeSelector } from "../store/events";
+import { searchTimeSelector, getTime } from "../store/events";
 
 const TouchableOpacity = WEB
   ? require("react-native").TouchableOpacity
@@ -16,8 +16,21 @@ const TouchableOpacity = WEB
 const buttonHeight = WEB ? 36 : 44;
 
 const TimePicker = props => {
+  const dispatch = useDispatch();
   const value = useSelector(searchTimeSelector);
-  return <PickerButton {...props} title={PAGE.WHEN} value={value} />;
+  return (
+    <PickerButton
+      {...props}
+      title={PAGE.WHEN}
+      value={value}
+      onLongPress={() => {
+        requestAnimationFrame(() => {
+          dispatch(resetTime());
+          dispatch(getTime());
+        });
+      }}
+    />
+  );
 };
 
 const PlacePicker = props => {
@@ -48,6 +61,7 @@ const PickerButton = ({
   title,
   value,
   onPress: pressHandler,
+  onLongPress = null,
   style = null
 }) => {
   const onPress = () => {
@@ -59,7 +73,11 @@ const PickerButton = ({
     });
   };
   return (
-    <TouchableOpacity style={[styles.pickerBtn, style]} onPress={onPress}>
+    <TouchableOpacity
+      style={[styles.pickerBtn, style]}
+      onPress={onPress}
+      onLongPress={onLongPress}
+    >
       <View style={[styles.pickerInfo, style]}>
         <Text allowFontScaling={false} style={styles.pickerTitleText}>
           {title}

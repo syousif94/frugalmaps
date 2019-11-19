@@ -9,14 +9,13 @@ import { useSelector } from "react-redux";
 import { View, StyleSheet, Text, Dimensions, Animated } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { selectPlaceEvents } from "../store/events";
-import ImageGallery from "../components/ImageGallery";
 import { WEB, HEIGHT, ANDROID } from "../utils/Constants";
 import { getInset } from "../utils/SafeAreaInsets";
 import EventView from "../components/EventView";
 import { roundedDistanceTo } from "../utils/Locate";
 import DetailActions from "./DetailActions";
 import PriceText from "./PriceText";
-import { RED, BLUE } from "../utils/Colors";
+import ImageWall from "./ImageWall";
 
 let MapView = null;
 if (!WEB) {
@@ -159,6 +158,7 @@ export default memo(({ item, id }) => {
         <Animated.ScrollView
           style={scrollViewStyle}
           ref={scrollRef}
+          showsVerticalScrollIndicator={false}
           contentInsetAdjustmentBehavior="never"
           contentOffset={{ x: 0, y: initialOffset }}
           {...scrollProps}
@@ -198,12 +198,13 @@ export default memo(({ item, id }) => {
             ]}
           >
             {WEB ? null : <View style={styles.mobileBar} />}
+            <DetailActions item={item} />
             <View
               style={[
                 styles.info,
                 {
                   padding: 10,
-                  paddingBottom: 0
+                  paddingTop: 0
                 }
               ]}
             >
@@ -247,15 +248,13 @@ export default memo(({ item, id }) => {
                 </Text>
               </View>
             </View>
-            <DetailActions item={item} />
-            <ImageGallery photos={item._source.photos} />
             <View style={styles.info}>
               {events.map((item, index) => {
                 return (
                   <EventView
                     description
                     style={{
-                      borderBottomWidth: 1,
+                      borderTopWidth: 1,
                       borderColor: "#f2f2f2",
                       paddingHorizontal: 10,
                       paddingTop: 8,
@@ -268,6 +267,7 @@ export default memo(({ item, id }) => {
                 );
               })}
             </View>
+            <ImageWall photos={item._source.photos} />
           </View>
         </Animated.ScrollView>
       </View>
@@ -315,7 +315,7 @@ export default memo(({ item, id }) => {
 
 const styles = StyleSheet.create({
   content: {
-    paddingBottom: getInset("bottom") + 70,
+    paddingBottom: getInset("bottom"),
     marginTop: WEB ? null : mapViewHeight,
     backgroundColor: "#fff"
   },
