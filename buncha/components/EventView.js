@@ -1,6 +1,6 @@
-import React, { useMemo, memo } from "react";
+import React, { memo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { itemRemaining, itemSpans } from "../utils/Time";
+import { itemRemaining, truncatedHours } from "../utils/Time";
 import { RED } from "../utils/Colors";
 import { Entypo, FontAwesome, Feather } from "@expo/vector-icons";
 import EventFriends from "./EventFriends";
@@ -13,8 +13,6 @@ export default memo(({ item, index = 0, style }) => {
   const [currentTime] = useEveryMinute();
 
   const time = itemRemaining(item);
-
-  const timeSpans = itemSpans(item);
 
   return (
     <View style={[{ overflow: "hidden" }, style]}>
@@ -29,7 +27,9 @@ export default memo(({ item, index = 0, style }) => {
         </Text>
 
         <Text style={styles.descriptionText}>{item._source.description}</Text>
+        <EventSchedule groupedHours={item._source.groupedHours} />
       </View>
+
       <View
         style={{
           flexDirection: "row",
@@ -62,6 +62,66 @@ export default memo(({ item, index = 0, style }) => {
     </View>
   );
 });
+
+const EventSchedule = ({ groupedHours }) => {
+  const hours = groupedHours
+    .reduce((prev, group) => {
+      const [start, end] = truncatedHours(group);
+      return prev.concat(
+        group.days.map(day => {
+          return {
+            ...day,
+            start,
+            end
+          };
+        })
+      );
+    }, [])
+    .sort((a, b) => {
+      const aIso = a.iso || 7;
+      const bIso = b.iso || 7;
+      return aIso - bIso;
+    });
+  return (
+    <View style={{ flexDirection: "row" }}>
+      {hours.map(hour => {
+        return (
+          <View key={hour.text} style={{ marginRight: 15, marginTop: 10 }}>
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: "600",
+                color: "#444"
+              }}
+            >
+              {hour.text}
+            </Text>
+            <Text
+              style={{
+                fontSize: 12,
+                marginTop: 2,
+                color: "#000",
+                fontWeight: "500"
+              }}
+            >
+              {hour.start}
+            </Text>
+            <Text
+              style={{
+                fontSize: 12,
+                color: "#000",
+                marginTop: 2,
+                fontWeight: "500"
+              }}
+            >
+              {hour.end}
+            </Text>
+          </View>
+        );
+      })}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   actionButton: {

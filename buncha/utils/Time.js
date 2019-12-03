@@ -629,7 +629,7 @@ function truncateHour(str) {
   return hour;
 }
 
-function truncatedHours(groupedHours) {
+export function truncatedHours(groupedHours) {
   return groupedHours.hours
     .split(" ")
     .filter(str => str.length > 5)

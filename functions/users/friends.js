@@ -37,11 +37,14 @@ async function updateFriends(uid, add, remove, mute, unmute) {
   ]);
 }
 
-function updateFriendship(id, body) {
-  return elastic.index({
+function updateFriendship(id, doc) {
+  return elastic.update({
     index: friendSchema.index,
     id,
-    body
+    body: {
+      doc,
+      doc_as_upsert: true
+    }
   });
 }
 
@@ -58,20 +61,15 @@ async function addFriend(uid, fid) {
   const friendPromise = updateFriendship(`${uid}_${fid}`, {
     uid,
     fid,
-    mutual
+    mutual,
+    createdAt: Date.now()
   });
 
   const promises = [friendPromise];
 
   if (mutual) {
-    const mutualPromise = elastic.update({
-      index: friendSchema.index,
-      id: friendId,
-      body: {
-        doc: {
-          mutual
-        }
-      }
+    const mutualPromise = updateFriendship(friendId, {
+      mutual
     });
     promises.push(mutualPromise);
   }
@@ -85,17 +83,9 @@ async function removeFriend(uid, fid) {
     id: `${uid}_${fid}`
   });
 
-  const unmutualPromise = elastic
-    .update({
-      index: friendSchema.index,
-      id: `${fid}_${uid}`,
-      body: {
-        doc: {
-          mutual: false
-        }
-      }
-    })
-    .catch(() => {});
+  const unmutualPromise = updateFriendship(`${fid}_${uid}`, {
+    mutual: false
+  });
 
   await Promise.all([deletePromise, unmutualPromise]);
 }
@@ -103,7 +93,7 @@ async function removeFriend(uid, fid) {
 async function muteFriend(uid, fid) {
   const friendId = `${fid}_${uid}`;
 
-  updateFriendship(friendId, {
+  await updateFriendship(friendId, {
     muted: true
   });
 }
@@ -111,7 +101,7 @@ async function muteFriend(uid, fid) {
 async function unmuteFriend(uid, fid) {
   const friendId = `${fid}_${uid}`;
 
-  updateFriendship(friendId, {
+  await updateFriendship(friendId, {
     muted: false
   });
 }

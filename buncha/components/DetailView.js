@@ -248,25 +248,7 @@ export default memo(({ item, id }) => {
                 </Text>
               </View>
             </View>
-            <View style={styles.info}>
-              {events.map((item, index) => {
-                return (
-                  <EventView
-                    description
-                    style={{
-                      borderTopWidth: 1,
-                      borderColor: "#f2f2f2",
-                      paddingHorizontal: 10,
-                      paddingTop: 8,
-                      backgroundColor: item._id === id ? "#fafafa" : "#fff"
-                    }}
-                    item={item}
-                    index={index}
-                    key={item._id}
-                  />
-                );
-              })}
-            </View>
+            <EventsList events={events} id={id} />
             <ImageWall photos={item._source.photos} />
           </View>
         </Animated.ScrollView>
@@ -312,6 +294,30 @@ export default memo(({ item, id }) => {
     </View>
   );
 });
+
+const EventsList = ({ events, id }) => {
+  return (
+    <View style={styles.info}>
+      {events.map((item, index) => {
+        return (
+          <EventView
+            description
+            style={{
+              borderTopWidth: 1,
+              borderColor: "#f2f2f2",
+              paddingHorizontal: 10,
+              paddingTop: 8,
+              backgroundColor: item._id === id ? "#fafafa" : "#fff"
+            }}
+            item={item}
+            index={index}
+            key={item._id}
+          />
+        );
+      })}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   content: {

@@ -7,6 +7,8 @@ const elastic = require("../elastic");
 const userSchema = require("../schema/user");
 const { contacts, contact } = require("./contacts");
 const { friends } = require("./friends");
+const { interested } = require("./interested");
+const feed = require("./feed");
 
 const sh = require("shorthash");
 
@@ -113,6 +115,10 @@ router.post("/contacts", contacts);
 router.post("/contact", contact);
 
 router.post("/friends", friends);
+
+router.post("/interested", interested);
+
+router.post("/feed", feed);
 
 module.exports = router;
 
