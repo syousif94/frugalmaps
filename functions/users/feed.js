@@ -121,10 +121,17 @@ async function getInterested(ids, friendMap) {
     .then(res => res.docs);
 
   return events.map(doc => {
-    const interested = interestedMap[doc._id];
-    const friends = interested.map(
-      i => friendMap.get(i._source.uid)._source.name
-    );
+    let interested = interestedMap[doc._id];
+    const photos = [];
+    const friends = [];
+    interested.forEach(i => {
+      const friend = friendMap.get(i._source.uid);
+      friends.push(friend._source.name.split(" ")[0]);
+      const photo = friend._source.photo;
+      if (photo) {
+        photos.push(photo);
+      }
+    });
     let text;
     switch (friends.length) {
       case 1:
@@ -143,7 +150,7 @@ async function getInterested(ids, friendMap) {
       eid: doc._id,
       title: doc._source.title,
       text,
-      friendIds: [],
+      photos,
       createdAt: interested[0].createdAt
     };
   });

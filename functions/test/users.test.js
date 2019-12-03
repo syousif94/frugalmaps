@@ -276,6 +276,17 @@ describe("test users", function() {
       });
 
     await request(app)
+      .post("/api/users/account")
+      .set("Authorization", `bearer ${token}`)
+      .send({
+        name: "James Testington"
+      })
+      .expect(200)
+      .then(function(res) {
+        expect(res.body.error).to.not.exist;
+      });
+
+    await request(app)
       .post("/api/users/interested")
       .set("Authorization", `bearer ${token}`)
       .send({

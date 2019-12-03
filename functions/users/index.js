@@ -9,6 +9,7 @@ const { contacts, contact } = require("./contacts");
 const { friends } = require("./friends");
 const { interested } = require("./interested");
 const feed = require("./feed");
+const account = require("./account");
 
 const sh = require("shorthash");
 
@@ -119,6 +120,8 @@ router.post("/friends", friends);
 router.post("/interested", interested);
 
 router.post("/feed", feed);
+
+router.post("/account", account);
 
 module.exports = router;
 
