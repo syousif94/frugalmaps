@@ -27,7 +27,6 @@ export default memo(({ item, index = 0, style }) => {
         </Text>
 
         <Text style={styles.descriptionText}>{item._source.description}</Text>
-        <EventSchedule groupedHours={item._source.groupedHours} />
       </View>
 
       <View

@@ -155,24 +155,24 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
 });
 
 const DaysText = ({ days }) => {
-  if (days.length === 1) {
-    return null;
-  }
+  // if (days.length === 7) {
+  //   return null;
+  // }
 
   let text;
 
   const sortedDays = days.sort();
 
   if (days.length === 7) {
-    text = "EVERYDAY";
+    text = "Every Day";
   } else if (sortedDays.length === 5 && sortedDays[4] === 4) {
-    text = "WEEKDAYS";
+    text = "Mon - Fri";
   } else if (
     sortedDays.length === 2 &&
     sortedDays[0] === 5 &&
     sortedDays[1] === 6
   ) {
-    text = "WEEKENDS";
+    text = "Sat & Sun";
   } else {
     text = sortedDays.map(day => ABBREVIATED_DAYS[day]).join(", ");
   }
@@ -242,7 +242,6 @@ const styles = StyleSheet.create({
     marginBottom: 4
   },
   titleText: {
-    marginTop: 0.5,
     lineHeight: 16.5,
     fontSize: 15,
     color: "#000",
@@ -254,15 +253,15 @@ const styles = StyleSheet.create({
     fontWeight: "700"
   },
   locationText: {
-    fontSize: 13,
-    color: "#555",
-    fontWeight: "700"
+    fontSize: 14,
+    color: "#000",
+    fontWeight: "600"
     // textTransform: "uppercase"
   },
   descriptionText: {
-    fontSize: 15,
-    fontWeight: "500",
-    color: "#666"
+    fontSize: 14,
+    color: "#555",
+    fontWeight: "500"
   },
   actions: {
     flexDirection: "row"
