@@ -243,8 +243,8 @@ export function get({
                 .join(", ")
             }
           : bounds
-          ? undefined
-          : null;
+            ? undefined
+            : null;
 
       let searchCompleted = undefined;
       if (searching) {
@@ -432,57 +432,59 @@ function getDaysAway(item) {
 
 export function selectPlaceEvents(item) {
   return state => {
-    return item &&
-      item._source.placeid &&
-      state.events.places[item._source.placeid]
-      ? state.events.places[item._source.placeid]
-          .map(id => state.events.data[id])
-          .sort((_a, _b) => {
-            const aAway = getDaysAway(_a);
+    const otherEvents =
+      item && item._source.placeid && state.events.places[item._source.placeid]
+        ? state.events.places[item._source.placeid]
+            .filter(id => id !== item._id)
+            .map(id => state.events.data[id])
+            .sort((_a, _b) => {
+              const aAway = getDaysAway(_a);
 
-            const bAway = getDaysAway(_b);
+              const bAway = getDaysAway(_b);
 
-            if (aAway !== bAway) {
-              return aAway - bAway;
-            }
+              if (aAway !== bAway) {
+                return aAway - bAway;
+              }
 
-            const aStart = parseInt(_a._source.groupedHours[0].start, 10);
-            const bStart = parseInt(_b._source.groupedHours[0].start, 10);
+              const aStart = parseInt(_a._source.groupedHours[0].start, 10);
+              const bStart = parseInt(_b._source.groupedHours[0].start, 10);
 
-            if (aStart !== bStart) {
-              return aStart - bStart;
-            }
+              if (aStart !== bStart) {
+                return aStart - bStart;
+              }
 
-            return (
-              _a._source.groupedHours[0].duration -
-              _b._source.groupedHours[0].duration
-            );
-          })
-          .sort((_a, _b) => {
-            let a = 0;
-            const aISO = makeYesterdayISO(_a._source.days);
-            if (aISO) {
-              const { ending: aEnding } = timeRemaining(
-                _a._source.groupedHours[_a._source.groupedHours.length - 1],
-                aISO
+              return (
+                _a._source.groupedHours[0].duration -
+                _b._source.groupedHours[0].duration
               );
+            })
+            .sort((_a, _b) => {
+              let a = 0;
+              const aISO = makeYesterdayISO(_a._source.days);
+              if (aISO) {
+                const { ending: aEnding } = timeRemaining(
+                  _a._source.groupedHours[_a._source.groupedHours.length - 1],
+                  aISO
+                );
 
-              a = aEnding ? 1 : 0;
-            }
+                a = aEnding ? 1 : 0;
+              }
 
-            let b = 0;
-            const bISO = makeYesterdayISO(_b._source.days);
-            if (bISO) {
-              const { ending: bEnding } = timeRemaining(
-                _b._source.groupedHours[_b._source.groupedHours.length - 1],
-                bISO
-              );
+              let b = 0;
+              const bISO = makeYesterdayISO(_b._source.days);
+              if (bISO) {
+                const { ending: bEnding } = timeRemaining(
+                  _b._source.groupedHours[_b._source.groupedHours.length - 1],
+                  bISO
+                );
 
-              b = bEnding ? 1 : 0;
-            }
+                b = bEnding ? 1 : 0;
+              }
 
-            return b - a;
-          })
-      : [];
+              return b - a;
+            })
+        : [];
+
+    return [item, ...otherEvents];
   };
 }
