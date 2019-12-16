@@ -20,10 +20,11 @@ import {
 import ImageGallery from "./ImageGallery";
 import { Entypo, FontAwesome } from "@expo/vector-icons";
 import { useEveryMinute } from "../utils/Hooks";
-import { WEB, ABBREVIATED_DAYS } from "../utils/Constants";
-import _ from "lodash";
+import { WEB } from "../utils/Constants";
 import PriceText from "./PriceText";
 import emitter from "tiny-emitter/instance";
+import DaysText from "./DaysText";
+import MatchableText from "./MatchableText";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -53,13 +54,14 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
     navigate("Detail", { id: item._id });
   };
   const placeEvents = useSelector(selectPlaceEvents(item), shallowEqual);
-  const searchTerm = useSelector(state =>
-    state.events.text.length
-      ? state.events.text
-          .split(" ")
-          .map(text => text.trim())
-          .filter(text => text.length)
-      : state.events.tag
+  const searchTerm = useSelector(
+    state =>
+      state.events.text.length
+        ? state.events.text
+            .split(" ")
+            .map(text => text.trim())
+            .filter(text => text.length)
+        : state.events.tag
   );
 
   const hasMoreEvents = placeEvents.length > 1;
@@ -153,79 +155,6 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
     </Link>
   );
 });
-
-const DaysText = ({ days }) => {
-  // if (days.length === 7) {
-  //   return null;
-  // }
-
-  let text;
-
-  const sortedDays = days.sort();
-
-  if (days.length === 7) {
-    text = "Every Day";
-  } else if (sortedDays.length === 5 && sortedDays[4] === 4) {
-    text = "Mon - Fri";
-  } else if (
-    sortedDays.length === 2 &&
-    sortedDays[0] === 5 &&
-    sortedDays[1] === 6
-  ) {
-    text = "Sat & Sun";
-  } else {
-    text = sortedDays.map(day => ABBREVIATED_DAYS[day]).join(", ");
-  }
-
-  return (
-    <Text
-      style={{
-        fontSize: 10,
-        fontWeight: "700",
-        color: "#444",
-        marginTop: 2
-      }}
-    >
-      {text}
-    </Text>
-  );
-};
-
-const MatchableText = ({ match, text, ...props }) => {
-  if (match) {
-    const regexStr = Array.isArray(match) ? `(?:${match.join("|")})` : match;
-    const regex = new RegExp(regexStr, "igm");
-    const matchedTexts = text.replace(regex, match => {
-      return `__*${match}__`;
-    });
-    const splitText = matchedTexts.split("__");
-    return (
-      <Text {...props}>
-        {splitText.map((text, index) => {
-          let key = `${index}${text}`;
-          if (_.startsWith(text, "*")) {
-            return (
-              <Text
-                key={key}
-                style={{
-                  backgroundColor: "yellow",
-                  paddingHorizontal: 1,
-                  borderRadius: 2,
-                  marginHorizontal: -1
-                }}
-              >
-                {text.substr(1)}
-              </Text>
-            );
-          }
-          return <Text key={key}>{text}</Text>;
-        })}
-      </Text>
-    );
-  } else {
-    return <Text {...props}>{text}</Text>;
-  }
-};
 
 const styles = StyleSheet.create({
   container: {

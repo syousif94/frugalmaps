@@ -24,6 +24,8 @@ function Wrapper({ element, history, match, routeMap, closeModal }) {
     // removing empty params from url - every string between /: and ?
     url = url.replace(/\/:(.*?)(?=\/|$)/g, "");
 
+    historyLength += 1;
+
     history.push(url);
   };
 
@@ -132,11 +134,27 @@ let _navigator;
 
 function setTopLevelNavigator(navigatorRef) {
   _navigator = navigatorRef;
+
+  _navigator.history.pop = to => {
+    if (historyLength) {
+      _navigator.history.goBack();
+    } else {
+      navigate(to);
+    }
+  };
 }
 
 export function getHistory() {
   return _navigator && _navigator.history;
 }
+
+let historyLength = 0;
+
+window.addEventListener("popstate", () => {
+  if (historyLength) {
+    historyLength -= 1;
+  }
+});
 
 export function navigate(to, params) {
   let url = routeMap[to].path;
@@ -149,6 +167,8 @@ export function navigate(to, params) {
   }
   // removing empty params from url - every string between /: and ?
   url = url.replace(/\/:(.*?)(?=\/|$)/g, "");
+
+  historyLength += 1;
 
   _navigator.history.push(url);
 }

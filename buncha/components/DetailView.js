@@ -6,7 +6,7 @@ import React, {
   useLayoutEffect
 } from "react";
 import { useSelector } from "react-redux";
-import { View, StyleSheet, Text, Dimensions, Animated } from "react-native";
+import { View, StyleSheet, Text, Animated } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { selectPlaceEvents } from "../store/events";
 import { WEB, HEIGHT, ANDROID } from "../utils/Constants";
@@ -16,6 +16,7 @@ import { roundedDistanceTo } from "../utils/Locate";
 import DetailActions from "./DetailActions";
 import PriceText from "./PriceText";
 import ImageWall from "./ImageWall";
+import { useDimensions } from "../utils/Hooks";
 
 let MapView = null;
 if (!WEB) {
@@ -46,7 +47,7 @@ export default memo(({ item, id }) => {
   const events = useSelector(selectPlaceEvents(item));
   const iframeRef = useRef(null);
   const [iframeReady, setIframeReady] = useState(false);
-  const [dimensions, setDimensions] = useState(Dimensions.get("window"));
+  const [dimensions] = useDimensions();
   const prevDimensions = useRef(null);
   if (WEB) {
     initialOffset =
@@ -58,52 +59,49 @@ export default memo(({ item, id }) => {
     scrollRef.current.getNode().scrollTo({ y: initialOffset, animated: false });
   };
 
-  useEffect(() => {
-    if (iframeRef.current && !iframeRef.current.onload) {
-      iframeRef.current.onload = () => {
-        setIframeReady(true);
-      };
-    }
-  }, [item]);
-
-  useEffect(() => {
-    if (iframeReady && item) {
-      requestAnimationFrame(() => {
-        iframeRef.current.contentWindow.postMessage(
-          JSON.stringify(item),
-          window.location.origin
-        );
-      });
-    }
-  }, [iframeReady, item]);
-
-  useEffect(() => {
-    if (WEB) {
-      const onChange = ({ window }) => {
-        setDimensions(window);
-      };
-
-      Dimensions.addEventListener("change", onChange);
-
-      return () => {
-        Dimensions.removeEventListener("change", onChange);
-      };
-    }
-  }, []);
-
-  useLayoutEffect(() => {
-    if (WEB) {
-      if (prevDimensions.current) {
-        const width = dimensions.width;
-        const prevWidth = prevDimensions.current.width;
-        if (width < 800 && prevWidth >= 800) {
-          scrollToTop();
-        }
+  useEffect(
+    () => {
+      if (iframeRef.current && !iframeRef.current.onload) {
+        iframeRef.current.onload = () => {
+          setIframeReady(true);
+        };
       }
+    },
+    [item]
+  );
 
-      prevDimensions.current = dimensions;
-    }
-  }, [dimensions]);
+  useEffect(
+    () => {
+      if (iframeReady && item) {
+        requestAnimationFrame(() => {
+          iframeRef.current.contentWindow.postMessage(
+            JSON.stringify(item),
+            window.location.origin
+          );
+        });
+      }
+    },
+    [iframeReady, item]
+  );
+
+  useLayoutEffect(
+    () => {
+      if (WEB) {
+        if (prevDimensions.current) {
+          const width = dimensions.width;
+          const prevWidth = prevDimensions.current.width;
+          if (width < 800 && prevWidth >= 800) {
+            scrollToTop();
+          } else if (width > 800 && prevWidth <= 800) {
+            scrollRef.current.getNode().scrollTo({ y: 0, animated: false });
+          }
+        }
+
+        prevDimensions.current = dimensions;
+      }
+    },
+    [dimensions]
+  );
 
   const narrow = dimensions.width < 800;
 
@@ -192,8 +190,8 @@ export default memo(({ item, id }) => {
                   WEB && narrow
                     ? dimensions.height * 0.8
                     : !WEB
-                    ? contentMinHeight
-                    : null
+                      ? contentMinHeight
+                      : null
               }
             ]}
           >
@@ -203,8 +201,10 @@ export default memo(({ item, id }) => {
               style={[
                 styles.info,
                 {
-                  padding: 10,
-                  paddingTop: 0
+                  paddingBottom: 10,
+                  paddingHorizontal: 15,
+                  borderBottomWidth: 1,
+                  borderColor: "#f4f4f4"
                 }
               ]}
             >
@@ -243,7 +243,8 @@ export default memo(({ item, id }) => {
                 }}
               >
                 <Text numberOfLines={1} style={styles.detailText}>
-                  {events.length} event{events.length !== 1 ? "s " : " "}
+                  {events.length} event
+                  {events.length !== 1 ? "s " : " "}
                   <Text style={{ fontWeight: "400" }}>{cityText}</Text>
                 </Text>
               </View>
@@ -297,13 +298,13 @@ export default memo(({ item, id }) => {
 
 const EventsList = ({ events, id }) => {
   return (
-    <View style={[styles.info]}>
+    <View style={[styles.info, { marginBottom: 8, marginTop: 5 }]}>
       {events.map((item, index) => {
         return (
           <EventView
             description
             style={{
-              paddingHorizontal: 10,
+              paddingHorizontal: 15,
               paddingTop: 8
             }}
             item={item}

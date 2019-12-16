@@ -80,13 +80,7 @@ const BackButton = () => {
         to="/"
         onPress={() => {
           const history = getHistory();
-          if (history) {
-            if (history.length > 2) {
-              history.goBack();
-            } else {
-              navigate("UpNext");
-            }
-          }
+          history.pop("UpNext");
         }}
         style={{
           paddingTop: 2,
