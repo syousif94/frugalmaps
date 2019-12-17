@@ -8,8 +8,7 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 
 RUN apk add --update --no-cache gcc g++ make libc6-compat python
 RUN apk add vips-dev fftw-dev build-base --no-cache \
-  --repository http://dl-3.alpinelinux.org/alpine/edge/community/ \
-  --repository http://dl-3.alpinelinux.org/alpine/edge/main
+  --repository https://alpine.global.ssl.fastly.net/alpine/v3.10/community
 
 
 ENV HOME=/home/app

@@ -87,7 +87,7 @@ export default () => {
         <Animated.View style={modalStyle} onLayout={onLayout}>
           <EventHeader event={event} />
           <View style={{ paddingHorizontal: 15 }}>
-            <Text style={styles.titleText}>Interested</Text>
+            <Text style={styles.titleText}>When are you interested?</Text>
             <SegmentedControl
               options={["Always", "Dates", "Never"]}
               selected={mode}
@@ -96,14 +96,7 @@ export default () => {
               }}
             />
             <CalendarView expanded={mode === "Dates"} event={event} />
-            <Input
-              placeholder="Time"
-              containerStyle={{ marginTop: 10 }}
-              returnKeyType="done"
-            />
-            <Text style={styles.timeText}>
-              Time is optional, formats like 7, 7a, 7:45pm are cool
-            </Text>
+            <TimeInput expanded={mode !== "Never"} />
             <View style={styles.actions}>
               <View style={styles.cancelButton}>
                 <TouchableOpacity
@@ -126,6 +119,43 @@ export default () => {
           </View>
         </Animated.View>
       </ScrollView>
+    </Animated.View>
+  );
+};
+
+const TimeInput = ({ expanded }) => {
+  const [height, setHeight] = useState(0);
+  const animation = useRef(new Animated.Value(0));
+  useEffect(
+    () => {
+      const toValue = expanded ? height : 0;
+      Animated.timing(
+        animation.current,
+        { toValue, duration: 150 },
+        { useNativeDriver: true }
+      ).start();
+    },
+    [expanded, height]
+  );
+
+  const inputStyle = {
+    marginTop: 10,
+    height: !height ? null : animation.current,
+    overflow: "hidden"
+  };
+  return (
+    <Animated.View
+      style={inputStyle}
+      onLayout={e => {
+        if (!height) {
+          setHeight(e.nativeEvent.layout.height);
+        }
+      }}
+    >
+      <Input placeholder="Time" returnKeyType="done" />
+      <Text style={styles.timeText}>
+        Optional, formats like 7, 7a, 7:45pm are cool
+      </Text>
     </Animated.View>
   );
 };

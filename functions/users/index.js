@@ -7,7 +7,7 @@ const elastic = require("../elastic");
 const userSchema = require("../schema/user");
 const { contacts, contact } = require("./contacts");
 const { friends } = require("./friends");
-const { interested } = require("./interested");
+const { interested, interestedFriends } = require("./interested");
 const feed = require("./feed");
 const account = require("./account");
 
@@ -22,7 +22,7 @@ const minWait = 1000 * 60;
 const jwtSecret = process.env.JWT;
 
 router.use(
-  jwtMiddleware.unless({ path: ["/api/users/login", "/api/users/token"] })
+  jwtMiddleware.unless({ path: ["/api/user/login", "/api/user/token"] })
 );
 
 router.use(function(err, req, res, next) {
@@ -118,6 +118,8 @@ router.post("/contact", contact);
 router.post("/friends", friends);
 
 router.post("/interested", interested);
+
+router.post("/interested/event", interestedFriends);
 
 router.post("/feed", feed);
 

@@ -24,11 +24,12 @@ export default ({ days }) => {
   return (
     <Text
       style={{
-        fontSize: 10,
-        fontWeight: "700",
+        fontSize: 11,
+        fontWeight: "600",
         color: "#444",
         marginTop: 2
       }}
+      allowFontScaling={false}
     >
       {text}
     </Text>

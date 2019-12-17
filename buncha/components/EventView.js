@@ -18,7 +18,9 @@ export default memo(({ item, index = 0, style }) => {
 
   return (
     <View style={[{ overflow: "hidden" }, style]}>
-      <Text style={styles.titleText}>
+      <DaysText days={item._source.days} />
+
+      <Text style={[styles.titleText, { marginTop: 4 }]}>
         {item._source.title}{" "}
         <Text style={{ color: time.color, fontWeight: "700" }}>
           {time.text}
@@ -34,8 +36,6 @@ export default memo(({ item, index = 0, style }) => {
       >
         {item._source.description}
       </Text>
-
-      <DaysText days={item._source.days} />
 
       <View
         style={{
@@ -70,7 +70,8 @@ const styles = StyleSheet.create({
   actionButton: {
     flexDirection: "row",
     alignItems: "center",
-    height: 38,
+    paddingBottom: 4,
+    height: 32,
     marginRight: 5,
     paddingRight: 10
   },
@@ -91,7 +92,6 @@ const styles = StyleSheet.create({
   descriptionText: {
     color: "#000",
     marginTop: 5,
-    marginBottom: 7,
     fontSize: 17,
     lineHeight: 24,
     color: "#444"

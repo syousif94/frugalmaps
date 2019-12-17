@@ -42,7 +42,7 @@ app.post("/api/bulk", require("./bulk"));
 app.post("/api/backup", require("./backupAll"));
 app.get("/api/stats", require("./stats"));
 
-app.use("/api/users", require("./users"));
+app.use("/api/user", require("./users"));
 
 async function server() {
   try {

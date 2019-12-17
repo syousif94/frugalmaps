@@ -11,7 +11,7 @@ async function interested(req, res) {
       await updateInterested(uid, event);
       res.send({});
     } else {
-      const interested = getInterested(uid);
+      const interested = await getOwnInterests(uid);
       res.send({
         interested
       });
@@ -65,7 +65,7 @@ async function updateInterested(uid, event) {
   }
 }
 
-async function getInterested(uid) {
+function getOwnInterests(uid) {
   return elastic
     .search({
       index: interestedSchema.index,
@@ -78,9 +78,62 @@ async function getInterested(uid) {
     .then(res => res.hits.hits);
 }
 
-async function interestedFriends(req, res) {}
+function getFriendsInterests(ids) {
+  return elastic
+    .search({
+      index: interestedSchema.index,
+      body: {
+        query: {
+          bool: {
+            must: [
+              {
+                terms: {
+                  uid: ids
+                }
+              }
+            ],
+            must_not: [
+              {
+                range: {
+                  date: {
+                    lt: "now"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        sort: [{ createdAt: "desc" }],
+        size: 1000
+      }
+    })
+    .then(res => res.hits.hits);
+}
+
+async function getInterestedFriendsForEvent(eid, uid) {
+  return [];
+}
+
+async function interestedFriends(req, res) {
+  const { id: uid } = req.user;
+
+  const { eid } = req.body;
+
+  try {
+    const interestedFriends = await getInterestedFriendsForEvent(eid, uid);
+    res.send({
+      interestedFriends
+    });
+  } catch (error) {
+    console.log(error.stack);
+    res.send({
+      error: error.message
+    });
+  }
+}
 
 module.exports = {
   interested,
+  getFriendsInterests,
   interestedFriends
 };

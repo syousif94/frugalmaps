@@ -298,14 +298,17 @@ export default memo(({ item, id }) => {
 
 const EventsList = ({ events, id }) => {
   return (
-    <View style={[styles.info, { marginBottom: 8, marginTop: 5 }]}>
+    <View style={[styles.info, { marginBottom: 5, marginTop: 3 }]}>
       {events.map((item, index) => {
         return (
           <EventView
             description
             style={{
-              paddingHorizontal: 15,
-              paddingTop: 8
+              marginLeft: 15,
+              paddingRight: 15,
+              paddingTop: 6,
+              borderTopWidth: index ? 1 : 0,
+              borderColor: "#f4f4f4"
             }}
             item={item}
             index={index}

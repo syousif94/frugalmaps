@@ -22,6 +22,7 @@ export default ({ to, children, containerStyle = {}, ...props }) => {
         <a
           href={to}
           onClick={onClick}
+          draggable={false}
           style={{
             flexDirection: "column",
             flex: 1,

@@ -39,14 +39,17 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "eslint": "^5",
-    "eslint-plugin-mocha": "^6.2.0",
-    "eslint-plugin-node": "^8",
+    "eslint": "5",
+    "eslint-plugin-mocha": "^6.2.2",
+    "eslint-plugin-node": "^10.0.0",
     "faker": "^4.1.0",
     "mocha": "^6.2.2",
     "nodemon": "^1.19.4",
     "sinon": "^7.5.0",
     "supertest": "^4.0.2"
+  },
+  "engines": {
+    "node": ">=12.0.0"
   },
   "private": true
 }

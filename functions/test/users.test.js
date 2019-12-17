@@ -5,7 +5,7 @@ const event = require("../schema/event");
 const esClient = require("../elastic");
 const jwt = require("jsonwebtoken");
 const expect = require("chai").expect;
-const { setup, destroy } = require("./db");
+const { setup: setupDB, destroy } = require("./db");
 const faker = require("faker");
 const sh = require("shorthash");
 
@@ -16,7 +16,7 @@ describe("test users", function() {
 
   before(async function() {
     app = await server();
-    await setup();
+    await setupDB();
     await elastic.friends.delete();
     await elastic.contacts.delete();
     await elastic.users.delete();
@@ -40,7 +40,7 @@ describe("test users", function() {
 
   it("sends a login code", function() {
     return request(app)
-      .post("/api/users/login")
+      .post("/api/user/login")
       .send({
         number: process.env.PHONE
       })
@@ -51,7 +51,7 @@ describe("test users", function() {
 
   it("logs in a new user", function() {
     return request(app)
-      .post("/api/users/token")
+      .post("/api/user/token")
       .send({
         number: process.env.PHONE,
         code: "123456"
@@ -68,7 +68,7 @@ describe("test users", function() {
 
   it("sends another login code", function() {
     return request(app)
-      .post("/api/users/login")
+      .post("/api/user/login")
       .send({
         number: process.env.PHONE
       })
@@ -79,7 +79,7 @@ describe("test users", function() {
 
   it("logs in an existing user", function() {
     return request(app)
-      .post("/api/users/token")
+      .post("/api/user/token")
       .send({
         number: process.env.PHONE,
         code: "123456"
@@ -100,7 +100,7 @@ describe("test users", function() {
     const token = jwt.sign({ id }, process.env.JWT);
 
     await request(app)
-      .post("/api/users/contacts")
+      .post("/api/user/contacts")
       .set("Authorization", `bearer ${token}`)
       .send({
         contacts: users
@@ -113,7 +113,7 @@ describe("test users", function() {
     await elastic.contacts.refresh();
 
     await request(app)
-      .post("/api/users/contacts")
+      .post("/api/user/contacts")
       .set("Authorization", `bearer ${token}`)
       .expect(200)
       .then(function(res) {
@@ -133,7 +133,7 @@ describe("test users", function() {
     const add = users.slice(0, 2).map(user => sh.unique(user.number));
 
     await request(app)
-      .post("/api/users/friends")
+      .post("/api/user/friends")
       .set("Authorization", `bearer ${token}`)
       .send({
         add
@@ -148,7 +148,7 @@ describe("test users", function() {
     let fid;
 
     await request(app)
-      .post("/api/users/friends")
+      .post("/api/user/friends")
       .set("Authorization", `bearer ${token}`)
       .expect(200)
       .then(function(res) {
@@ -160,7 +160,7 @@ describe("test users", function() {
     const friendToken = jwt.sign({ id: fid }, process.env.JWT);
 
     await request(app)
-      .post("/api/users/friends")
+      .post("/api/user/friends")
       .set("Authorization", `bearer ${friendToken}`)
       .send({
         add: [id]
@@ -171,7 +171,7 @@ describe("test users", function() {
       });
 
     await request(app)
-      .post("/api/users/friends")
+      .post("/api/user/friends")
       .set("Authorization", `bearer ${token}`)
       .send({
         mute: [fid]
@@ -181,7 +181,7 @@ describe("test users", function() {
     await elastic.friends.refresh();
 
     await request(app)
-      .post("/api/users/friends")
+      .post("/api/user/friends")
       .set("Authorization", `bearer ${friendToken}`)
       .expect(200)
       .then(function(res) {
@@ -192,7 +192,7 @@ describe("test users", function() {
       });
 
     await request(app)
-      .post("/api/users/friends")
+      .post("/api/user/friends")
       .set("Authorization", `bearer ${token}`)
       .expect(200)
       .then(function(res) {
@@ -208,7 +208,7 @@ describe("test users", function() {
       });
 
     await request(app)
-      .post("/api/users/friends")
+      .post("/api/user/friends")
       .set("Authorization", `bearer ${token}`)
       .send({
         remove: add
@@ -221,7 +221,7 @@ describe("test users", function() {
     await elastic.friends.refresh();
 
     await request(app)
-      .post("/api/users/friends")
+      .post("/api/user/friends")
       .set("Authorization", `bearer ${friendToken}`)
       .expect(200)
       .then(function(res) {
@@ -232,7 +232,7 @@ describe("test users", function() {
 
   // it("handles plans", function() {
   //   return request(app)
-  //     .post("/api/users/plans")
+  //     .post("/api/user/plans")
   //     .expect(200)
   //     .expect("Content-Type", /json/)
   //     .expect({});
@@ -245,9 +245,8 @@ describe("test users", function() {
 
     const token = jwt.sign({ id }, process.env.JWT);
 
-    const friendId = sh.unique(users[0].number);
-
-    const friendToken = jwt.sign({ id: friendId }, process.env.JWT);
+    const friendIds = users.map(user => sh.unique(user.number));
+    const friendTokens = friendIds.map(id => jwt.sign({ id }, process.env.JWT));
 
     await elastic.events.refresh();
 
@@ -260,23 +259,34 @@ describe("test users", function() {
       })
       .then(res => res.hits.hits);
 
-    // set up friendship
-    // add interest for user
-    // check interest from friend
-
     await request(app)
-      .post("/api/users/friends")
+      .post("/api/user/friends")
       .set("Authorization", `bearer ${token}`)
       .send({
-        add: [friendId]
+        add: friendIds
       })
       .expect(200)
       .then(function(res) {
         expect(res.body.error).to.not.exist;
       });
 
+    await Promise.all(
+      users.map((user, index) => {
+        return request(app)
+          .post("/api/user/friends")
+          .set("Authorization", `bearer ${friendTokens[index]}`)
+          .send({
+            add: [id, ...friendIds.filter((id, i) => i !== index)]
+          })
+          .expect(200)
+          .then(function(res) {
+            expect(res.body.error).to.not.exist;
+          });
+      })
+    );
+
     await request(app)
-      .post("/api/users/account")
+      .post("/api/user/account")
       .set("Authorization", `bearer ${token}`)
       .send({
         name: "James Testington"
@@ -286,8 +296,23 @@ describe("test users", function() {
         expect(res.body.error).to.not.exist;
       });
 
+    await Promise.all(
+      users.map((user, index) => {
+        return request(app)
+          .post("/api/user/account")
+          .set("Authorization", `bearer ${friendTokens[index]}`)
+          .send({
+            name: user.name
+          })
+          .expect(200)
+          .then(function(res) {
+            expect(res.body.error).to.not.exist;
+          });
+      })
+    );
+
     await request(app)
-      .post("/api/users/interested")
+      .post("/api/user/interested")
       .set("Authorization", `bearer ${token}`)
       .send({
         event: {
@@ -300,15 +325,33 @@ describe("test users", function() {
         expect(res.body.error).to.not.exist;
       });
 
+    await Promise.all(
+      users.map((user, index) => {
+        return request(app)
+          .post("/api/user/interested")
+          .set("Authorization", `bearer ${friendTokens[index]}`)
+          .send({
+            event: {
+              eid: events[0]._id,
+              always: true
+            }
+          })
+          .expect(200)
+          .then(function(res) {
+            expect(res.body.error).to.not.exist;
+          });
+      })
+    );
+
     await elastic.friends.refresh();
     await elastic.interesteds.refresh();
 
     await request(app)
-      .post("/api/users/feed")
-      .set("Authorization", `bearer ${friendToken}`)
+      .post("/api/user/feed")
+      .set("Authorization", `bearer ${friendTokens[0]}`)
       .expect(200)
       .then(function(res) {
-        console.log(res.body.interested);
+        console.log(res.body);
         expect(res.body.error).to.not.exist;
       });
   });

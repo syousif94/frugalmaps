@@ -1,4 +1,5 @@
 const friendSchema = require("../schema/friend");
+const userSchema = require("../schema/user");
 const elastic = require("../elastic");
 
 async function friends(req, res) {
@@ -14,7 +15,7 @@ async function friends(req, res) {
     }
 
     res.send({
-      friends: await getFriends(uid)
+      friends: await getOwnFriendships(uid)
     });
   } catch (error) {
     res.send({
@@ -106,7 +107,7 @@ async function unmuteFriend(uid, fid) {
   });
 }
 
-async function getFriends(uid) {
+async function getOwnFriendships(uid) {
   const friends = await elastic
     .search({
       index: friendSchema.index,
@@ -121,7 +122,55 @@ async function getFriends(uid) {
   return friends;
 }
 
+async function getExternalFriendships(uid) {
+  const friendships = await elastic
+    .search({
+      index: friendSchema.index,
+      body: {
+        query: {
+          bool: {
+            must: [
+              {
+                term: {
+                  fid: uid
+                }
+              }
+            ],
+            must_not: [
+              {
+                term: {
+                  muted: true
+                }
+              }
+            ]
+          }
+        },
+        sort: [{ createdAt: "desc" }],
+        size: 1000
+      }
+    })
+    .then(res => res.hits.hits);
+
+  return friendships;
+}
+
+async function getExternalFriends(ids) {
+  const friends = await elastic
+    .mget({
+      index: userSchema.index,
+      body: {
+        ids
+      },
+      _source_excludes: ["number"]
+    })
+    .then(res => res.docs);
+
+  return friends;
+}
+
 module.exports = {
   friends,
-  getFriends
+  getOwnFriendships,
+  getExternalFriendships,
+  getExternalFriends
 };

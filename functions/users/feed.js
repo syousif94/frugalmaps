@@ -1,7 +1,6 @@
-const friendSchema = require("../schema/friend");
-const interestedSchema = require("../schema/interested");
-const userSchema = require("../schema/user");
 const eventSchema = require("../schema/event");
+const { getExternalFriendships, getExternalFriends } = require("./friends");
+const { getFriendsInterests } = require("./interested");
 const elastic = require("../elastic");
 const _ = require("lodash");
 
@@ -13,7 +12,7 @@ async function getFeed(req, res) {
 
     const interested = await getInterested(ids, friendMap);
 
-    res.send({ interested });
+    res.send({ interested, nonmutual, friends: Object.fromEntries(friendMap) });
   } catch (error) {
     console.log(error.stack);
     res.send({
@@ -23,33 +22,7 @@ async function getFeed(req, res) {
 }
 
 async function getFriends(uid) {
-  const friendships = await elastic
-    .search({
-      index: friendSchema.index,
-      body: {
-        query: {
-          bool: {
-            must: [
-              {
-                term: {
-                  fid: uid
-                }
-              }
-            ],
-            must_not: [
-              {
-                term: {
-                  muted: true
-                }
-              }
-            ]
-          }
-        },
-        sort: [{ createdAt: "desc" }],
-        size: 1000
-      }
-    })
-    .then(res => res.hits.hits);
+  const friendships = await getExternalFriendships(uid);
 
   const friendMap = new Map();
   const ids = [];
@@ -58,18 +31,11 @@ async function getFriends(uid) {
   friendships.forEach(friend => {
     ids.push(friend._source.uid);
     if (!friend._source.mutual) {
-      nonmutual.push(friend._source.uid);
+      nonmutual.push(friend);
     }
   });
 
-  const friends = await elastic
-    .mget({
-      index: userSchema.index,
-      body: {
-        ids
-      }
-    })
-    .then(res => res.docs);
+  const friends = await getExternalFriends(ids);
 
   friends.forEach(friend => {
     friendMap.set(friend._id, friend);
@@ -78,36 +44,10 @@ async function getFriends(uid) {
   return [ids, nonmutual, friendMap];
 }
 
+async function getPlans(ids) {}
+
 async function getInterested(ids, friendMap) {
-  const interested = await elastic
-    .search({
-      index: interestedSchema.index,
-      body: {
-        query: {
-          bool: {
-            must: [
-              {
-                terms: {
-                  uid: ids
-                }
-              }
-            ],
-            must_not: [
-              {
-                range: {
-                  date: {
-                    lt: "now"
-                  }
-                }
-              }
-            ]
-          }
-        },
-        sort: [{ createdAt: "desc" }],
-        size: 1000
-      }
-    })
-    .then(res => res.hits.hits);
+  const interested = await getFriendsInterests(ids);
 
   const interestedMap = _.groupBy(interested, "_source.eid");
 
@@ -132,16 +72,14 @@ async function getInterested(ids, friendMap) {
         photos.push(photo);
       }
     });
+
     let text;
     switch (friends.length) {
       case 1:
         text = `${friends[0]} is interested.`;
         break;
-      case 2:
-        text = `${friends[0]} and ${friends[1]} are interested.`;
-        break;
       default:
-        text = `${friends.slice(-1).join(", ")}, and ${
+        text = `${friends.slice(0, -1).join(", ")} and ${
           friends[friends.length - 1]
         } are interested`;
     }
@@ -151,7 +89,7 @@ async function getInterested(ids, friendMap) {
       title: doc._source.title,
       text,
       photos,
-      createdAt: interested[0].createdAt
+      createdAt: interested[0]._source.createdAt
     };
   });
 }

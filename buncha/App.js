@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Provider } from "react-redux";
 import { AppLoading } from "expo";
-import { StatusBar } from "react-native";
+import { StatusBar, Text, TextInput } from "react-native";
 import store from "./store";
 import cache from "./utils/Cache";
 import Navigator from "./screens";
