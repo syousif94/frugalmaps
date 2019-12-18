@@ -28,6 +28,7 @@ export default ({ page, pages, setPage }) => {
       style={styles.list}
       contentContainerStyle={styles.content}
       data={data}
+      keyExtractor={(item, index) => `${item.title}${index}`}
       renderItem={({ item, index }) => {
         const { id: fid, ...event } = item;
         event.fid = fid;
@@ -57,7 +58,9 @@ export default ({ page, pages, setPage }) => {
             options={pages}
             onPress={setPage}
             selected={page}
-            renderItem={props => <SubmitSegmentItem {...props} />}
+            renderItem={props => (
+              <SubmitSegmentItem key={props.option} {...props} />
+            )}
           />
         );
       }}

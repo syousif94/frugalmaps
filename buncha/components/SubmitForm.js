@@ -9,11 +9,11 @@ import {
 import { Helmet } from "react-helmet";
 import Input from "./Input";
 import { Entypo } from "@expo/vector-icons";
-import { IOS, WEB, WIDTH } from "../utils/Constants";
+import { IOS, WEB } from "../utils/Constants";
 import { getInset } from "../utils/SafeAreaInsets";
 import Link from "./Link";
 import { BLUE } from "../utils/Colors";
-import { navigate, getHistory } from "../screens";
+import { getHistory } from "../screens";
 import SubmitTags from "./SubmitTags";
 import SubmitDayPicker from "./SubmitDayPicker";
 import SubmitPlacePicker from "./SubmitPlacePicker";
@@ -23,6 +23,7 @@ import { submitEvent } from "../store/submission";
 import SegmentedControl from "./SegmentedControl";
 import { useDimensions } from "../utils/Hooks";
 import SubmitSegmentItem from "./SubmitSegmentItem";
+import TimeInput from "./TimeInput";
 
 export const FORM_WIDTH = 520;
 
@@ -47,6 +48,25 @@ const ConnectedInput = memo(({ field, ...props }) => {
   const value = useSelector(state => state.submission[field]);
   return (
     <Input
+      value={value}
+      onChangeText={text => {
+        dispatch({
+          type: "submission/set",
+          payload: {
+            [field]: text
+          }
+        });
+      }}
+      {...props}
+    />
+  );
+});
+
+const ConnectedTimeInput = memo(({ field, ...props }) => {
+  const dispatch = useDispatch();
+  const value = useSelector(state => state.submission[field]);
+  return (
+    <TimeInput
       value={value}
       onChangeText={text => {
         dispatch({
@@ -147,7 +167,7 @@ export default ({ page, setPage, pages }) => {
         <ConnectedInput
           multiline
           field="description"
-          placeholder="Optional apart from pertinent information like room numbers and contact information for clubs. Twitter, Instagram, other URLs, and phone numbers supported."
+          placeholder="Please include any information that can't be found online. Websites and location details are encouraged."
         />
         <Text style={styles.instructionText}>Tags</Text>
         <SubmitTags />
@@ -162,18 +182,25 @@ export default ({ page, setPage, pages }) => {
         <View style={styles.row}>
           <View style={styles.time}>
             <Text style={styles.instructionText}>Starts at</Text>
-            <ConnectedInput field="start" placeholder="Open" />
+            <ConnectedTimeInput
+              name="timeStartSearch"
+              field="start"
+              placeholder="Open"
+            />
           </View>
           <View style={{ width: 10 }} />
           <View style={styles.time}>
             <Text style={styles.instructionText}>Ends at</Text>
-            <ConnectedInput field="end" placeholder="Close" />
+            <ConnectedTimeInput
+              name="timeEndSearch"
+              field="end"
+              placeholder="Close"
+            />
           </View>
         </View>
         <Text style={styles.subtext}>
-          Formats like 7, 11a, or 4:19pm are all valid
+          Formats like 7, 11a, or 4:20pm are all valid
         </Text>
-        <Text style={styles.subtext}>PM is assumed by default</Text>
         <Text style={styles.subtext}>
           Leave blank for opening or closing hours
         </Text>
