@@ -10,9 +10,11 @@ async function getFeed(req, res) {
   try {
     const [ids, nonmutual, friendMap] = await getFriends(uid);
 
-    const interested = await getInterested(ids, friendMap);
+    const [interested, events] = await getInterested(ids, friendMap);
 
-    res.send({ interested, nonmutual, friends: Object.fromEntries(friendMap) });
+    const feed = _.orderBy([...interested, ...nonmutual], "createdAt", "desc");
+
+    res.send({ feed, friends: Object.fromEntries(friendMap), events });
   } catch (error) {
     console.log(error.stack);
     res.send({
@@ -31,7 +33,11 @@ async function getFriends(uid) {
   friendships.forEach(friend => {
     ids.push(friend._source.uid);
     if (!friend._source.mutual) {
-      nonmutual.push(friend);
+      nonmutual.push({
+        type: "newFriend",
+        createdAt: friend._source.createdAt,
+        id: friend._source.uid
+      });
     }
   });
 
@@ -60,17 +66,14 @@ async function getInterested(ids, friendMap) {
     })
     .then(res => res.docs);
 
-  return events.map(doc => {
+  const list = events.map(doc => {
     let interested = interestedMap[doc._id];
-    const photos = [];
+    const ids = [];
     const friends = [];
     interested.forEach(i => {
       const friend = friendMap.get(i._source.uid);
       friends.push(friend._source.name.split(" ")[0]);
-      const photo = friend._source.photo;
-      if (photo) {
-        photos.push(photo);
-      }
+      ids.push(friend._id);
     });
 
     let text;
@@ -86,12 +89,13 @@ async function getInterested(ids, friendMap) {
     return {
       type: "interested",
       eid: doc._id,
-      title: doc._source.title,
       text,
-      photos,
+      ids,
       createdAt: interested[0]._source.createdAt
     };
   });
+
+  return [list, events];
 }
 
 module.exports = getFeed;

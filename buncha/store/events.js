@@ -291,6 +291,10 @@ export function get({
         return;
       }
 
+      if (searching && searchCompleted === undefined) {
+        return;
+      }
+
       if (bounds && IOS && !searching) {
         await new Promise(resolve => {
           setTimeout(resolve, 1500);
