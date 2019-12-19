@@ -8,7 +8,7 @@ module.exports = {
         format: "epoch_millis"
       },
       always: { type: "boolean" },
-      day: { type: "integer" },
+      days: { type: "integer" },
       time: { enabled: false },
       uid: { type: "keyword" },
       createdAt: {

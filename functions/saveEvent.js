@@ -6,17 +6,7 @@ const { saveLocations: indexLocations } = require("./saveLocations");
 const { db } = require("./firebase.js");
 const { processImages } = require("./processImages");
 const { backup } = require("./backupToS3");
-
-function formatTime(str) {
-  const date = moment(str, ["h:ma", "H:m"]);
-  const isValid = date.isValid();
-  if (isValid) {
-    const str = date.format("HHmm");
-    return str;
-  } else {
-    throw new Error("Invalid Time");
-  }
-}
+const { formatTo2400: formatTime } = require("./time");
 
 async function createEvent(req, res) {
   const {

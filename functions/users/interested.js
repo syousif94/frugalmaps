@@ -1,5 +1,8 @@
 const interestedSchema = require("../schema/interested");
+const eventSchema = require("../schema/event");
 const elastic = require("../elastic");
+const { formatTo2400, makeHours } = require("../time");
+const moment = require("moment");
 
 async function interested(req, res) {
   const { id: uid } = req.user;
@@ -17,7 +20,7 @@ async function interested(req, res) {
       });
     }
   } catch (error) {
-    console.log(error.stack);
+    console.log(error.stack, req.body);
     res.send({
       error: error.message
     });
@@ -25,14 +28,10 @@ async function interested(req, res) {
 }
 
 async function updateInterested(uid, event) {
-  const {
-    eid,
-    always = false,
-    date = null,
-    day = null,
-    time = null,
-    never = false
-  } = event;
+  const { eid, always = false, dates = [], utc = null, never = false } = event;
+
+  let { time = null, days = [] } = event;
+  time = time ? formatTo2400(time) : time;
 
   const docId = `${uid}_${eid}`;
   if (never) {
@@ -52,16 +51,72 @@ async function updateInterested(uid, event) {
         createdAt: Date.now()
       }
     });
-  } else if (date || day) {
-    try {
-      const eventDoc = await elastic.get({
-        index: interestedSchema.index,
-        id: docId
-      });
-      console.log({ eventDoc });
-    } catch (error) {
-      console.log(error);
+  } else if ((dates.length && utc !== null) || days.length) {
+    const eventDoc = await elastic
+      .get({
+        index: eventSchema.index,
+        id: eid
+      })
+      .catch(err => {});
+
+    if (!eventDoc) {
+      throw new Error("Event could be found");
     }
+
+    if (dates.length) {
+      days = dates.map(date => {
+        const dateMoment = moment(date).utcOffset(utc);
+        let day = dateMoment.weekday();
+        day = !day ? 6 : day - 1;
+        return day;
+      });
+    }
+
+    validateTimesForEvent(eventDoc, time, days);
+
+    // const body = {
+    //   eid,
+    //   uid,
+    // }
+
+    // if (dates) {
+
+    // }
+
+    // await elastic.index({
+    //   index: interestedSchema.index,
+    //   id: docId,
+    //   body
+    // })
+  } else {
+    throw new Error("Invalid options for event");
+  }
+}
+
+function validateTimesForEvent(event, time = null, days = []) {
+  if (!days.length) {
+    throw new Error("Invalid days for event");
+  }
+
+  const validDays = days.reduce((valid, day) => {
+    const hasDay = event._source.days.includes(day);
+    let validTime = true;
+    if (time) {
+      const { start, end } = makeHours({ item: event._source, day });
+      const startInt = parseInt(start, 10);
+      const endInt = parseInt(end, 10);
+      const timeInt = parseInt(time, 10);
+      if (startInt < endInt) {
+        validTime = timeInt >= startInt && timeInt <= endInt;
+      } else {
+        validTime = timeInt >= startInt || timeInt <= endInt;
+      }
+    }
+    return valid && hasDay && validTime;
+  }, true);
+
+  if (!validDays) {
+    throw new Error("Invalid days for event");
   }
 }
 

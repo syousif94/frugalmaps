@@ -1,11 +1,5 @@
 import React, { memo } from "react";
-import {
-  StyleSheet,
-  View,
-  ScrollView,
-  Text,
-  TouchableOpacity
-} from "react-native";
+import { StyleSheet, View, ScrollView, Text } from "react-native";
 import { Helmet } from "react-helmet";
 import Input from "./Input";
 import { Entypo } from "@expo/vector-icons";
@@ -19,11 +13,13 @@ import SubmitDayPicker from "./SubmitDayPicker";
 import SubmitPlacePicker from "./SubmitPlacePicker";
 import { useSelector, useDispatch } from "react-redux";
 import SubmissionReset from "./SubmissionReset";
-import { submitEvent } from "../store/submission";
 import SegmentedControl from "./SegmentedControl";
 import { useDimensions } from "../utils/Hooks";
 import SubmitSegmentItem from "./SubmitSegmentItem";
 import TimeInput from "./TimeInput";
+import SubmitFormButton from "./SubmitFormButton";
+import SubmitDeleteButton from "./SubmitDeleteButton";
+import SubmitResetButton from "./SubmitResetButton";
 
 export const FORM_WIDTH = 520;
 
@@ -114,11 +110,6 @@ const BackButton = () => {
 };
 
 export default ({ page, setPage, pages }) => {
-  const dispatch = useDispatch();
-
-  const saving = useSelector(state => state.submission.saving);
-  const deleting = useSelector(state => state.submission.saving);
-  const submitting = saving || deleting;
   return (
     <View style={styles.container}>
       <Helmet>
@@ -206,18 +197,9 @@ export default ({ page, setPage, pages }) => {
         </Text>
         <Text style={styles.instructionText}>Admin Code</Text>
         <ConnectedInput field="postCode" placeholder="Leave this blank" />
-        <TouchableOpacity
-          disabled={submitting}
-          style={[
-            styles.submitButton,
-            { backgroundColor: submitting ? "#ccc" : BLUE }
-          ]}
-          onPress={() => {
-            dispatch(submitEvent());
-          }}
-        >
-          <Text style={styles.submitText}>Post</Text>
-        </TouchableOpacity>
+        <SubmitFormButton />
+        <SubmitDeleteButton />
+        <SubmitResetButton />
       </ScrollComponent>
       <SubmissionReset />
     </View>
@@ -262,20 +244,5 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 16,
     color: "#333"
-  },
-  submitButton: {
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: BLUE,
-    alignSelf: "center",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 40,
-    width: 180
-  },
-  submitText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "700"
   }
 });

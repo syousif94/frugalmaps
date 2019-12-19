@@ -5,6 +5,17 @@ const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const ISO_DAYS = [1, 2, 3, 4, 5, 6, 0];
 
+function formatTo2400(str) {
+  const date = moment(str, ["h:ma", "H:m"]);
+  const isValid = date.isValid();
+  if (isValid) {
+    const str = date.format("HHmm");
+    return str;
+  } else {
+    throw new Error("Invalid Time");
+  }
+}
+
 function formatTime(time) {
   let hours = parseInt(time.substring(0, 2), 10);
   const meridian = hours > 11 ? "pm" : "am";
@@ -221,13 +232,20 @@ function timeRemaining(hours, iso, today) {
   return { remaining, ending, ended };
 }
 
-function makeHours(item, iso) {
+// days is the non standard day int converted to iso day int
+// iso is preconverted
+function makeHours({ item, iso, day: rawDay }) {
   // good place to include documentation
   let hours;
   let start;
   let end;
 
-  let day = iso !== undefined ? iso : ISO_DAYS[item.days[0]];
+  let day =
+    iso !== undefined
+      ? iso
+      : rawDay !== undefined
+        ? rawDay
+        : ISO_DAYS[item.days[0]];
 
   if (item.start && item.end) {
     hours = formatHours([item.start, item.end]);
@@ -282,7 +300,7 @@ function groupHours(source, time) {
         daysAway
       };
 
-      const { hours, start, end } = makeHours(source, iso);
+      const { hours, start, end } = makeHours({ item: source, iso });
 
       const matchingHours = acc.find(val => val.hours === hours);
 
@@ -613,8 +631,10 @@ function makeListData(calendar, time) {
 }
 
 module.exports = {
+  makeHours,
   groupHours,
   makeEvents,
   makeMarkers,
-  makeListData
+  makeListData,
+  formatTo2400
 };

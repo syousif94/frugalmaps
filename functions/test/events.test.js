@@ -47,6 +47,7 @@ describe("test events", function() {
         placeid,
         title: "Trivia Night",
         description: "Prizes for 1st - 3rd",
+        start: "9:00pm",
         days: [3],
         tags: ["trivia"]
       })
@@ -65,12 +66,14 @@ describe("test events", function() {
         placeid,
         title: "Trivia Night",
         description: "Prizes for 1st - 3rd",
+        start: "9:00pm",
         days: [3],
         tags: ["trivia"]
       })
       .expect(res => {
         expect(res.body.error).to.not.exist;
         expect(res.body.event).to.exist;
+        expect(res.body.event._source.start).to.eq("2100");
       });
 
     expect(processImagesStub.getCall(0).args[0].place_id).to.equal(placeid);
@@ -87,6 +90,7 @@ describe("test events", function() {
         placeid: "ChIJYVhBRv8f3YARk6AVMfD1arU",
         title: "Trivia Night",
         description: "Prizes for 1st - 3rd",
+        start: "9:00pm",
         days: [3],
         tags: ["trivia", "happy hour"]
       })

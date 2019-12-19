@@ -239,7 +239,87 @@ describe("test users", function() {
   //     .expect({});
   // });
 
-  it("handles interests", async function() {
+  it("creates interests", async function() {
+    this.timeout(0);
+
+    const id = sh.unique(process.env.PHONE);
+
+    const token = jwt.sign({ id }, process.env.JWT);
+
+    await elastic.events.refresh();
+
+    const events = await esClient
+      .search({
+        index: event.index,
+        body: {
+          query: { match_all: {} }
+        }
+      })
+      .then(res => res.hits.hits);
+
+    const time = "3:30pm";
+
+    await request(app)
+      .post("/api/user/interested")
+      .set("Authorization", `bearer ${token}`)
+      .send({
+        event: {
+          eid: events[0]._id,
+          time,
+          days: [0, 1]
+        }
+      })
+      .expect(200)
+      .then(function(res) {
+        expect(res.body.error).to.not.exist;
+      });
+
+    const interestedDate = moment();
+
+    interestedDate
+      .day(3)
+      .hour(15)
+      .minute(30);
+
+    if (interestedDate.isSameOrBefore(moment())) {
+      interestedDate.add(7, "d");
+    }
+
+    console.log("interested date", interestedDate.format("h:mm a ddd M/D"));
+
+    await request(app)
+      .post("/api/user/interested")
+      .set("Authorization", `bearer ${token}`)
+      .send({
+        event: {
+          eid: events[0]._id,
+          dates: [interestedDate.valueOf()],
+          utc: interestedDate.utcOffset(),
+          time
+        }
+      })
+      .expect(200)
+      .then(function(res) {
+        expect(res.body.error).to.not.exist;
+      });
+
+    await request(app)
+      .post("/api/user/interested")
+      .set("Authorization", `bearer ${token}`)
+      .send({
+        event: {
+          eid: events[0]._id,
+          dates: [interestedDate.valueOf()],
+          time
+        }
+      })
+      .expect(200)
+      .then(function(res) {
+        expect(res.body.error).to.exist;
+      });
+  });
+
+  it("builds a friend feed", async function() {
     this.timeout(0);
 
     const id = sh.unique(process.env.PHONE);
@@ -312,8 +392,6 @@ describe("test users", function() {
       })
     );
 
-    console.log(events[0]);
-
     await request(app)
       .post("/api/user/interested")
       .set("Authorization", `bearer ${token}`)
@@ -328,37 +406,37 @@ describe("test users", function() {
         expect(res.body.error).to.not.exist;
       });
 
-    // await Promise.all(
-    //   users.map((user, index) => {
-    //     return request(app)
-    //       .post("/api/user/interested")
-    //       .set("Authorization", `bearer ${friendTokens[index]}`)
-    //       .send({
-    //         event: {
-    //           eid: events[0]._id,
-    //           always: true
-    //         }
-    //       })
-    //       .expect(200)
-    //       .then(function(res) {
-    //         expect(res.body.error).to.not.exist;
-    //       });
-    //   })
-    // );
+    await Promise.all(
+      users.map((user, index) => {
+        return request(app)
+          .post("/api/user/interested")
+          .set("Authorization", `bearer ${friendTokens[index]}`)
+          .send({
+            event: {
+              eid: events[0]._id,
+              always: true
+            }
+          })
+          .expect(200)
+          .then(function(res) {
+            expect(res.body.error).to.not.exist;
+          });
+      })
+    );
 
-    // await elastic.friends.refresh();
-    // await elastic.interesteds.refresh();
+    await elastic.friends.refresh();
+    await elastic.interesteds.refresh();
 
-    // await request(app)
-    //   .post("/api/user/feed")
-    //   .set("Authorization", `bearer ${friendTokens[0]}`)
-    //   .expect(200)
-    //   .then(function(res) {
-    //     console.log(res.body);
-    //     expect(Object.keys(res.body.friends).length).to.eq(5);
-    //     expect(res.body.feed.length).to.eq(2);
-    //     expect(res.body.events[0]._id).to.eq(events[0]._id);
-    //     expect(res.body.error).to.not.exist;
-    //   });
+    await request(app)
+      .post("/api/user/feed")
+      .set("Authorization", `bearer ${friendTokens[0]}`)
+      .expect(200)
+      .then(function(res) {
+        console.log(res.body);
+        expect(Object.keys(res.body.friends).length).to.eq(5);
+        expect(res.body.feed.length).to.eq(2);
+        expect(res.body.events[0]._id).to.eq(events[0]._id);
+        expect(res.body.error).to.not.exist;
+      });
   });
 });
