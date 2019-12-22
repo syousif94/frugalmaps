@@ -9,7 +9,8 @@ export default ({
   onChangeText,
   placeholder,
   containerStyle = {},
-  name
+  name,
+  ...props
 }) => {
   let valid = true;
   let expandedTime = null;
@@ -28,8 +29,9 @@ export default ({
           onChangeText={onChangeText}
           placeholder={placeholder}
           name={name}
+          {...props}
         />
-        <TimeOverlay value={expandedTime} valid={valid} />
+        <TimeOverlay actual={value} value={expandedTime} valid={valid} />
       </View>
       <TimeInvalid valid={valid} />
     </View>
@@ -48,13 +50,16 @@ const TimeInvalid = ({ valid }) => {
   );
 };
 
-const TimeOverlay = ({ value, valid }) => {
+const TimeOverlay = ({ actual, value, valid }) => {
   if (!valid || !value) {
     return null;
   }
   return (
     <View style={styles.timeOverlay} pointerEvents="none">
-      <Text style={styles.timeOverlayText}>{value}</Text>
+      <Text style={styles.timeOverlayText}>
+        <Text style={{ color: "rgba(0,0,0,0)" }}>{actual}</Text>
+        {value.replace(actual, "")}
+      </Text>
     </View>
   );
 };

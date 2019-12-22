@@ -64,15 +64,16 @@ async function updateInterested(uid, event) {
     }
 
     if (dates.length) {
-      days = dates.map(date => {
-        const dateMoment = moment(date).utcOffset(utc);
-        let day = dateMoment.weekday();
-        day = !day ? 6 : day - 1;
-        return day;
-      });
+      validateDatesForEvent(eventDoc, dates, utc, time);
+      // days = dates.map(date => {
+      //   const dateMoment = moment(date).utcOffset(utc);
+      //   let day = dateMoment.weekday();
+      //   day = !day ? 6 : day - 1;
+      //   return day;
+      // });
+    } else if (days.length) {
+      validateDaysForEvent(eventDoc, time, days);
     }
-
-    validateTimesForEvent(eventDoc, time, days);
 
     // const body = {
     //   eid,
@@ -93,11 +94,21 @@ async function updateInterested(uid, event) {
   }
 }
 
-function validateTimesForEvent(event, time = null, days = []) {
-  if (!days.length) {
-    throw new Error("Invalid days for event");
-  }
+function validateDatesForEvent(event, dates, utc, time) {
+  return dates.reduce((valid, date) => {
+    const dateMoment = moment(date).utcOffset(utc);
+    let day = dateMoment.weekday();
+    day = !day ? 6 : day - 1;
+    const hasDay = event._source.days.includes(day);
+    if (!hasDay && time) {
+      const previousDay = !day ? 6 : day - 1;
+      const hasPreviousDay = event._source.days.includes(previousDay);
+      const { start, end } = makeHours({ item: event._source, day });
+    }
+  }, true);
+}
 
+function validateDaysForEvent(event, time = null, days = []) {
   const validDays = days.reduce((valid, day) => {
     const hasDay = event._source.days.includes(day);
     let validTime = true;

@@ -154,20 +154,6 @@ export default ({ page, setPage, pages }) => {
           autoComplete="off"
           name="location"
         />
-        <Text style={styles.instructionText}>Description</Text>
-        <ConnectedInput
-          multiline
-          field="description"
-          placeholder="Please include any information that can't be found online. Websites and location details are encouraged."
-        />
-        <Text style={styles.instructionText}>Tags</Text>
-        <SubmitTags />
-        <Text style={styles.instructionText}>Location</Text>
-        <SubmitPlacePicker />
-        <Text style={styles.subtext}>
-          Try including the city and state if you can't find what you're looking
-          for
-        </Text>
         <Text style={styles.instructionText}>Days</Text>
         <SubmitDayPicker />
         <View style={styles.row}>
@@ -194,6 +180,20 @@ export default ({ page, setPage, pages }) => {
         </Text>
         <Text style={styles.subtext}>
           Leave blank for opening or closing hours
+        </Text>
+        <Text style={styles.instructionText}>Description</Text>
+        <ConnectedInput
+          multiline
+          field="description"
+          placeholder="Please include any information that can't be found online. Websites and location details are encouraged."
+        />
+        <Text style={styles.instructionText}>Tags</Text>
+        <SubmitTags />
+        <Text style={styles.instructionText}>Location</Text>
+        <SubmitPlacePicker />
+        <Text style={styles.subtext}>
+          Try including the city and state if you can't find what you're looking
+          for
         </Text>
         <Text style={styles.instructionText}>Admin Code</Text>
         <ConnectedInput field="postCode" placeholder="Leave this blank" />

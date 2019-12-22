@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import {
   Animated,
   View,
@@ -10,44 +10,32 @@ import {
   ScrollView
 } from "react-native";
 import { AWSCF, HEIGHT } from "../utils/Constants";
-import emitter from "tiny-emitter/instance";
 import { BLUE } from "../utils/Colors";
 import SegmentedControl from "./SegmentedControl";
-import Input from "./Input";
-import { useKeyboardHeight } from "../utils/Hooks";
+import { useKeyboardHeight, useAnimateOn } from "../utils/Hooks";
 import CalendarView from "./CalendarView";
 import { itemSpans } from "../utils/Time";
+import TimeInput from "./TimeInput";
+import * as Interested from "../store/interested";
 
 export default () => {
-  const [event, setEvent] = useState(null);
-  const [mode, setMode] = useState("Always");
-  const animation = useRef(new Animated.Value(0));
+  const dispatch = useDispatch();
+  const selectedEvent = useSelector(
+    state => state.interested.event,
+    shallowEqual
+  );
+  const mode = useSelector(state => state.interested.mode, shallowEqual);
+  const selectedDays = useSelector(state => state.interested.selected);
+  const selectedDate = useSelector(state => state.interested.selectedDate);
+
+  const expandedTimeInput =
+    mode === Interested.MODES[0] ||
+    (mode === Interested.MODES[1] && selectedDate);
+
+  const [event, animation] = useAnimateOn(selectedEvent);
+
   const [keyboard, bottomOffset] = useKeyboardHeight();
-  useEffect(() => {
-    const handleEvent = event => {
-      if (event) {
-        setEvent(event);
-        setMode("Always");
-        Animated.timing(
-          animation.current,
-          { toValue: 1, duration: 150 },
-          { useNativeDriver: true }
-        ).start();
-      } else {
-        Animated.timing(
-          animation.current,
-          { toValue: 0, duration: 150 },
-          { useNativeDriver: true }
-        ).start(() => {
-          setEvent(null);
-        });
-      }
-    };
 
-    emitter.on("interested", handleEvent);
-
-    return () => emitter.off("interested", handleEvent);
-  }, []);
   const containerStyle = [
     styles.container,
     {
@@ -89,19 +77,36 @@ export default () => {
           <View style={{ paddingHorizontal: 15 }}>
             <Text style={styles.titleText}>When are you interested?</Text>
             <SegmentedControl
-              options={["Always", "Dates", "Never"]}
+              options={Interested.MODES}
               selected={mode}
               onPress={option => {
-                setMode(option);
+                dispatch({
+                  type: "interested/set",
+                  payload: {
+                    mode: option
+                  }
+                });
               }}
             />
-            <CalendarView expanded={mode === "Dates"} event={event} />
-            <TimeInput expanded={mode !== "Never"} />
+            <CalendarView
+              expanded={mode === "Dates"}
+              event={event}
+              selected={selectedDays}
+              onSelect={id => {
+                dispatch(Interested.select({ id }));
+              }}
+            />
+            <TimeInputView expanded={expandedTimeInput} />
             <View style={styles.actions}>
               <View style={styles.cancelButton}>
                 <TouchableOpacity
                   onPress={() => {
-                    emitter.emit("interested", null);
+                    dispatch({
+                      type: "interested/set",
+                      payload: {
+                        event: null
+                      }
+                    });
                   }}
                   style={styles.button}
                 >
@@ -123,20 +128,22 @@ export default () => {
   );
 };
 
-const TimeInput = ({ expanded }) => {
+const TimeInputView = ({ expanded }) => {
+  const dispatch = useDispatch();
+  const value = useSelector(Interested.getTime);
+  const onChangeText = text => {
+    dispatch(Interested.setTime({ text }));
+  };
   const [height, setHeight] = useState(0);
   const animation = useRef(new Animated.Value(0));
-  useEffect(
-    () => {
-      const toValue = expanded ? height : 0;
-      Animated.timing(
-        animation.current,
-        { toValue, duration: 150 },
-        { useNativeDriver: true }
-      ).start();
-    },
-    [expanded, height]
-  );
+  useEffect(() => {
+    const toValue = expanded ? height : 0;
+    Animated.timing(
+      animation.current,
+      { toValue, duration: 150 },
+      { useNativeDriver: true }
+    ).start();
+  }, [expanded, height]);
 
   const inputStyle = {
     marginTop: 10,
@@ -152,10 +159,12 @@ const TimeInput = ({ expanded }) => {
         }
       }}
     >
-      <Input placeholder="Time" returnKeyType="done" />
-      <Text style={styles.timeText}>
-        Optional, formats like 7, 7a, 7:45pm are cool
-      </Text>
+      <TimeInput
+        value={value}
+        onChangeText={onChangeText}
+        placeholder="Time"
+        returnKeyType="done"
+      />
     </Animated.View>
   );
 };
@@ -224,12 +233,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#000",
     fontWeight: "600"
-  },
-  timeText: {
-    marginTop: 5,
-    marginBottom: 20,
-    fontSize: 12,
-    color: "#777"
   },
   actions: {
     height: 44,

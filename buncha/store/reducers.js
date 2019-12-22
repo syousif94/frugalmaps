@@ -6,6 +6,7 @@ import cities from "./cities";
 import submission from "./submission";
 import submissions from "./submissions";
 import filters from "./filters";
+import interested from "./interested";
 
 export default combineReducers({
   events,
@@ -14,7 +15,8 @@ export default combineReducers({
   submission,
   submissions,
   filters,
-  plans: require("./plans").default
+  plans: require("./plans").default,
+  interested
 });
 
 export function makeState(prefix) {

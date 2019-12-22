@@ -9,7 +9,7 @@ import {
 import { navigate } from "../screens";
 import Link from "./Link";
 import { selectPlaceEvents } from "../store/events";
-import { useSelector, shallowEqual } from "react-redux";
+import { useSelector, shallowEqual, useDispatch } from "react-redux";
 import { RED } from "../utils/Colors";
 import { roundedDistanceTo } from "../utils/Locate";
 import {
@@ -22,9 +22,9 @@ import { Entypo, FontAwesome } from "@expo/vector-icons";
 import { useEveryMinute } from "../utils/Hooks";
 import { WEB } from "../utils/Constants";
 import PriceText from "./PriceText";
-import emitter from "tiny-emitter/instance";
 import DaysText from "./DaysText";
 import MatchableText from "./MatchableText";
+import * as Interested from "../store/interested";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -46,6 +46,7 @@ export { columns, itemMargin, itemWidth };
 const imageHeight = 95;
 
 export default memo(({ item, index, style = {}, containerStyle = {} }) => {
+  const dispatch = useDispatch();
   const day = useSelector(state => state.events.day);
   const notNow = useSelector(state => state.events.notNow);
   const now = useSelector(state => state.events.now);
@@ -54,14 +55,13 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
     navigate("Detail", { id: item._id });
   };
   const placeEvents = useSelector(selectPlaceEvents(item), shallowEqual);
-  const searchTerm = useSelector(
-    state =>
-      state.events.text.length
-        ? state.events.text
-            .split(" ")
-            .map(text => text.trim())
-            .filter(text => text.length)
-        : state.events.tag
+  const searchTerm = useSelector(state =>
+    state.events.text.length
+      ? state.events.text
+          .split(" ")
+          .map(text => text.trim())
+          .filter(text => text.length)
+      : state.events.tag
   );
 
   const hasMoreEvents = placeEvents.length > 1;
@@ -135,7 +135,7 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
       <View style={styles.actions}>
         <TouchableOpacity
           onPress={() => {
-            emitter.emit("interested", item);
+            dispatch(Interested.show({ event: item }));
           }}
           style={[styles.actionButton]}
         >

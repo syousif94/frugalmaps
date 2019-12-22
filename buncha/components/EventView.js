@@ -6,11 +6,13 @@ import { Entypo, FontAwesome, Feather } from "@expo/vector-icons";
 import EventFriends from "./EventFriends";
 import share from "../utils/Share";
 import { useEveryMinute, useDimensions } from "../utils/Hooks";
-import emitter from "tiny-emitter/instance";
 import { navigate } from "../screens";
 import DaysText from "./DaysText";
+import { useDispatch } from "react-redux";
+import * as Interested from "../store/interested";
 
 export default memo(({ item, index = 0, style }) => {
+  const dispatch = useDispatch();
   const [currentTime] = useEveryMinute();
   const [dimensions] = useDimensions();
 
@@ -45,7 +47,7 @@ export default memo(({ item, index = 0, style }) => {
       >
         <TouchableOpacity
           onPress={() => {
-            emitter.emit("interested", item);
+            dispatch(Interested.show({ event: item }));
           }}
           style={styles.actionButton}
         >

@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import moment from "moment";
 import { BLUE, RED } from "../utils/Colors";
-import { Ionicons } from "@expo/vector-icons";
 import _ from "lodash";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -35,11 +34,11 @@ export default ({
   expanded,
   style,
   singleDay = false,
-  animatedValue = new Animated.Value(0)
+  animatedValue = new Animated.Value(0),
+  selected = new Set(),
+  onSelect = id => {}
 }) => {
   const [now, setNow] = useState(moment());
-
-  const [selected, setSelected] = useState(new Set());
 
   const animation = useRef(animatedValue);
 
@@ -98,7 +97,6 @@ export default ({
     if (event) {
       animation.current.setValue(0);
       setNow(moment());
-      setSelected(new Set());
     }
   }, [event]);
 
@@ -112,19 +110,6 @@ export default ({
       })
     }
   ];
-
-  const onSelect = id => {
-    if (selected.has(id)) {
-      selected.delete(id);
-    } else {
-      if (singleDay) {
-        setSelected(new Set([id]));
-        return;
-      }
-      selected.add(id);
-    }
-    setSelected(new Set(selected));
-  };
 
   let allowedDays;
   if (event) {
@@ -174,7 +159,7 @@ export default ({
                   (y <= year && m <= month && day < date) ||
                   (allowedDays && !allowedDays.has(index));
 
-                const id = `${y}-${m}-${day}`;
+                const id = `${y}-${m + 1}-${day}`;
 
                 const isSelected = selected.has(id) || selected.has(index);
                 if (isSelected) {
@@ -264,12 +249,12 @@ const styles = StyleSheet.create({
   },
   dayNameText: {
     fontSize: 10,
-    color: "rgba(0,0,0,0.4)",
+    color: "#333",
     fontWeight: "600"
   },
   dayText: {
     fontSize: 14,
-    color: "rgba(0,0,0,0.4)",
+    color: "#333",
     fontWeight: "500"
   },
   monthText: {
