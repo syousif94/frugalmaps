@@ -4,11 +4,15 @@ import {
   TouchableOpacity,
   StyleSheet,
   Text,
-  Animated
+  Animated,
+  ScrollView
 } from "react-native";
 import moment from "moment";
 import { BLUE, RED } from "../utils/Colors";
 import _ from "lodash";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
+import { formatTime } from "../utils/Time";
+import { Entypo } from "@expo/vector-icons";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS = [
@@ -27,7 +31,6 @@ const MONTHS = [
 ];
 
 const rowHeight = 36;
-const height = rowHeight * 6 + 20;
 
 export default ({
   event,
@@ -40,6 +43,7 @@ export default ({
 }) => {
   const [now, setNow] = useState(moment());
 
+  const height = useRef(0);
   const animation = useRef(animatedValue);
 
   const date = now.date();
@@ -106,7 +110,7 @@ export default ({
     {
       height: animation.current.interpolate({
         inputRange: [0, 1],
-        outputRange: [0, height]
+        outputRange: [0, height.current]
       })
     }
   ];
@@ -121,7 +125,12 @@ export default ({
 
   return (
     <Animated.View style={containerStyle}>
-      <View style={{ height, paddingTop: 10 }}>
+      <View
+        style={{ paddingTop: 10 }}
+        onLayout={e => {
+          height.current = e.nativeEvent.layout.height;
+        }}
+      >
         <View style={styles.row}>
           {DAYS.map((day, index) => {
             const textStyle = [styles.dayNameText];
@@ -206,8 +215,142 @@ export default ({
             </View>
           );
         })}
+        {singleDay ? null : (
+          <DateEditPicker selected={selected} event={event} />
+        )}
       </View>
     </Animated.View>
+  );
+};
+
+const DateEditButton = ({ id, event }) => {
+  const animation = useRef(new Animated.Value(0));
+  const dispatch = useDispatch();
+
+  const selected = useSelector(state => {
+    return state.interested.editingDate === id;
+  }, shallowEqual);
+
+  const timeText = useSelector(state => {
+    return state.interested.selectedTimes[id];
+  }, shallowEqual);
+
+  let text;
+  let iso;
+  if (typeof id === "string") {
+    const date = moment(id, ["Y-M-D"]);
+    text = date.format("ddd M/D");
+    iso = date.weekday();
+  } else {
+    text = DAYS[id];
+    iso = id;
+  }
+
+  useEffect(() => {
+    Animated.timing(
+      animation.current,
+      { toValue: selected ? 1 : 0, duration: 150 },
+      { useNativeDriver: true }
+    ).start();
+  }, [selected]);
+
+  const subtext =
+    timeText ||
+    (event &&
+      formatTime(
+        event._source.groupedHours.find(group =>
+          group.days.find(day => day.iso === iso)
+        ).start
+      ));
+
+  const iconStyle = {
+    transform: [
+      {
+        rotate: animation.current.interpolate({
+          inputRange: [0, 1],
+          outputRange: ["0deg", "180deg"]
+        })
+      }
+    ]
+  };
+
+  return (
+    <View
+      style={{
+        margin: 2,
+        borderRadius: 5,
+        backgroundColor: "#fff",
+        borderWidth: 1,
+        borderColor: selected ? BLUE : "#fff"
+      }}
+    >
+      <TouchableOpacity
+        style={{
+          flex: 1,
+          alignItems: "center",
+          paddingLeft: 8,
+          paddingRight: 5,
+          flexDirection: "row"
+        }}
+        onPress={() => {
+          dispatch({
+            type: "interested/set",
+            payload: {
+              editingDate: selected ? null : id
+            }
+          });
+        }}
+      >
+        <View style={{ marginRight: 5 }}>
+          <Text style={{ fontSize: 10, fontWeight: "700", color: "#666" }}>
+            {text}
+          </Text>
+          <Text style={{ fontSize: 12, color: "#333", fontWeight: "500" }}>
+            {subtext}
+          </Text>
+        </View>
+        <Animated.View style={iconStyle}>
+          <Entypo name="chevron-small-down" size={14} color={BLUE} />
+        </Animated.View>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const DateEditPicker = ({ selected, event }) => {
+  const list = [...selected].map(id => (
+    <DateEditButton key={id} event={event} id={id} />
+  ));
+
+  return (
+    <View
+      style={{
+        height: 44,
+        backgroundColor: "#f4f4f4",
+        borderRadius: 8,
+        marginTop: 8
+      }}
+    >
+      {list.length ? (
+        <ScrollView
+          horizontal
+          alwaysBounceHorizontal
+          style={{ flex: 1 }}
+          contentContainerStyle={{ padding: 2 }}
+          showsHorizontalScrollIndicator={false}
+        >
+          {list}
+        </ScrollView>
+      ) : (
+        <View
+          style={{ justifyContent: "center", alignItems: "center", flex: 1 }}
+        >
+          <Text style={{ color: "#999", fontSize: 12, fontWeight: "600" }}>
+            Please select at least one date
+          </Text>
+        </View>
+      )}
+    </View>
   );
 };
 

@@ -26,11 +26,11 @@ export default () => {
   );
   const mode = useSelector(state => state.interested.mode, shallowEqual);
   const selectedDays = useSelector(state => state.interested.selected);
-  const selectedDate = useSelector(state => state.interested.selectedDate);
+  const editingDate = useSelector(state => state.interested.editingDate);
 
   const expandedTimeInput =
     mode === Interested.MODES[0] ||
-    (mode === Interested.MODES[1] && selectedDate);
+    (mode === Interested.MODES[1] && editingDate);
 
   const [event, animation] = useAnimateOn(selectedEvent);
 

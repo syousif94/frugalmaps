@@ -12,20 +12,20 @@ const event = makeReducer("event", null);
 const mode = makeReducer("mode", MODES[0]);
 const selected = makeReducer("selected", new Set());
 const selectedTimes = makeReducer("selectedTimes", {});
-const selectedDate = makeReducer("selectedDate", null);
+const editingDate = makeReducer("editingDate", null);
 
 export default combineReducers({
   event,
   mode,
   selected,
   selectedTimes,
-  selectedDate
+  editingDate
 });
 
 export function setTime({ text }) {
   return (dispatch, getState) => {
     const {
-      interested: { mode, selectedDate, selectedTimes }
+      interested: { mode, editingDate, selectedTimes }
     } = getState();
 
     if (mode === MODES[0]) {
@@ -38,13 +38,13 @@ export function setTime({ text }) {
           }
         }
       });
-    } else if (selectedDate) {
+    } else if (editingDate) {
       dispatch({
         type: "interested/set",
         payload: {
           selectedTimes: {
             ...selectedTimes,
-            [selectedDate]: text
+            [editingDate]: text
           }
         }
       });
@@ -54,13 +54,13 @@ export function setTime({ text }) {
 
 export function getTime(state) {
   const {
-    interested: { mode, selectedDate, selectedTimes }
+    interested: { mode, editingDate, selectedTimes }
   } = state;
 
   if (mode === MODES[0]) {
     return selectedTimes[mode] || "";
-  } else if (selectedDate) {
-    return selectedTimes[selectedDate] || "";
+  } else if (editingDate) {
+    return selectedTimes[editingDate] || "";
   }
   return "";
 }
@@ -125,16 +125,21 @@ export function show({ event }) {
 
 export function select({ id }) {
   return (dispatch, getState) => {
-    const selected = getState().interested.selected;
+    const {
+      interested: { selected, editingDate }
+    } = getState();
+    let editing;
     if (selected.has(id)) {
       selected.delete(id);
+      editing = editingDate === id ? null : undefined;
     } else {
       selected.add(id);
     }
     dispatch({
       type: "interested/set",
       payload: {
-        selected: new Set(selected)
+        selected: new Set(selected),
+        editingDate: editing
       }
     });
   };
