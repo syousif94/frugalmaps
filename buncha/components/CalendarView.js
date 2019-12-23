@@ -11,8 +11,9 @@ import moment from "moment";
 import { BLUE, RED } from "../utils/Colors";
 import _ from "lodash";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
-import { formatTime } from "../utils/Time";
+import { formatTime, detruncateTime } from "../utils/Time";
 import { Entypo } from "@expo/vector-icons";
+import emitter from "tiny-emitter/instance";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS = [
@@ -43,7 +44,12 @@ export default ({
 }) => {
   const [now, setNow] = useState(moment());
 
-  const height = useRef(0);
+  let height = rowHeight * 6 + 10;
+  if (singleDay) {
+    height += 10;
+  } else {
+    height += 44 + 8;
+  }
   const animation = useRef(animatedValue);
 
   const date = now.date();
@@ -90,6 +96,13 @@ export default ({
   );
 
   useEffect(() => {
+    if (event) {
+      animation.current.setValue(0);
+      setNow(moment());
+    }
+  }, [event]);
+
+  useEffect(() => {
     Animated.timing(
       animation.current,
       { toValue: expanded ? 1 : 0, duration: 150 },
@@ -97,20 +110,13 @@ export default ({
     ).start();
   }, [expanded]);
 
-  useEffect(() => {
-    if (event) {
-      animation.current.setValue(0);
-      setNow(moment());
-    }
-  }, [event]);
-
   const containerStyle = [
     styles.container,
     style,
     {
       height: animation.current.interpolate({
         inputRange: [0, 1],
-        outputRange: [0, height.current]
+        outputRange: [0, height]
       })
     }
   ];
@@ -125,12 +131,7 @@ export default ({
 
   return (
     <Animated.View style={containerStyle}>
-      <View
-        style={{ paddingTop: 10 }}
-        onLayout={e => {
-          height.current = e.nativeEvent.layout.height;
-        }}
-      >
+      <View style={{ paddingTop: 10 }}>
         <View style={styles.row}>
           {DAYS.map((day, index) => {
             const textStyle = [styles.dayNameText];
@@ -251,17 +252,22 @@ const DateEditButton = ({ id, event }) => {
       animation.current,
       { toValue: selected ? 1 : 0, duration: 150 },
       { useNativeDriver: true }
-    ).start();
+    ).start(() => {
+      if (selected) {
+        emitter.emit("focus-interested");
+      }
+    });
   }, [selected]);
 
-  const subtext =
-    timeText ||
-    (event &&
-      formatTime(
-        event._source.groupedHours.find(group =>
-          group.days.find(day => day.iso === iso)
-        ).start
-      ));
+  let subtext;
+  if (timeText) {
+    subtext = detruncateTime(timeText);
+  } else if (event) {
+    const hours = event._source.groupedHours.find(group =>
+      group.days.find(day => day.iso === iso)
+    );
+    subtext = formatTime(hours.start);
+  }
 
   const iconStyle = {
     transform: [
@@ -293,6 +299,10 @@ const DateEditButton = ({ id, event }) => {
           flexDirection: "row"
         }}
         onPress={() => {
+          if (selected) {
+            emitter.emit("blur-interested");
+            return;
+          }
           dispatch({
             type: "interested/set",
             payload: {
@@ -338,6 +348,7 @@ const DateEditPicker = ({ selected, event }) => {
           style={{ flex: 1 }}
           contentContainerStyle={{ padding: 2 }}
           showsHorizontalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
           {list}
         </ScrollView>

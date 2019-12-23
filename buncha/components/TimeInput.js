@@ -4,39 +4,43 @@ import { View, Text, StyleSheet } from "react-native";
 import { detruncateTime, validateTime } from "../utils/Time";
 import { RED } from "../utils/Colors";
 
-export default ({
-  value,
-  onChangeText,
-  placeholder,
-  containerStyle = {},
-  name,
-  ...props
-}) => {
-  let valid = true;
-  let expandedTime = null;
-  if (value.trim().length) {
-    expandedTime = detruncateTime(value);
-    valid = validateTime(expandedTime);
-    if (valid && expandedTime && !value.match(":") && value.match(/(a|p)/gi)) {
-      expandedTime = value.match("m") ? null : `${value}m`;
+export default React.forwardRef(
+  (
+    { value, onChangeText, placeholder, containerStyle = {}, name, ...props },
+    ref
+  ) => {
+    let valid = true;
+    let expandedTime = null;
+    if (value.trim().length) {
+      expandedTime = detruncateTime(value);
+      valid = validateTime(expandedTime);
+      if (
+        valid &&
+        expandedTime &&
+        !value.match(":") &&
+        value.match(/(a|p)/gi)
+      ) {
+        expandedTime = value.match("m") ? null : `${value}m`;
+      }
     }
-  }
-  return (
-    <View style={containerStyle}>
-      <View>
-        <TimeInput
-          value={value}
-          onChangeText={onChangeText}
-          placeholder={placeholder}
-          name={name}
-          {...props}
-        />
-        <TimeOverlay actual={value} value={expandedTime} valid={valid} />
+    return (
+      <View style={containerStyle}>
+        <View>
+          <TimeInput
+            value={value}
+            onChangeText={onChangeText}
+            placeholder={placeholder}
+            name={name}
+            ref={ref}
+            {...props}
+          />
+          <TimeOverlay actual={value} value={expandedTime} valid={valid} />
+        </View>
+        <TimeInvalid valid={valid} />
       </View>
-      <TimeInvalid valid={valid} />
-    </View>
-  );
-};
+    );
+  }
+);
 
 const TimeInvalid = ({ valid }) => {
   return (
@@ -64,19 +68,23 @@ const TimeOverlay = ({ actual, value, valid }) => {
   );
 };
 
-const TimeInput = ({ value, onChangeText, placeholder, name }) => {
-  return (
-    <Input
-      value={value}
-      spellCheck={false}
-      autoCorrect={false}
-      autoCapitalize="none"
-      placeholder={placeholder}
-      onChangeText={onChangeText}
-      name={name}
-    />
-  );
-};
+const TimeInput = React.forwardRef(
+  ({ value, onChangeText, placeholder, name, ...props }, ref) => {
+    return (
+      <Input
+        value={value}
+        spellCheck={false}
+        autoCorrect={false}
+        autoCapitalize="none"
+        placeholder={placeholder}
+        onChangeText={onChangeText}
+        name={name}
+        ref={ref}
+        {...props}
+      />
+    );
+  }
+);
 
 const styles = StyleSheet.create({
   timeOverlay: {

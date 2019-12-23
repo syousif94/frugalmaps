@@ -99,8 +99,6 @@ export function show({ event }) {
   const startHours = Math.floor(startInt / 100);
   const startMinutes = startInt % 100;
 
-  const endInt = parseInt(day.hours.end, 10);
-
   selectedDate = nextDate
     .day(day.iso)
     .hour(startHours)
@@ -118,7 +116,8 @@ export function show({ event }) {
       event,
       mode: MODES[0],
       selected: new Set([selectedId]),
-      selectedTimes: {}
+      selectedTimes: {},
+      editingDate: null
     }
   };
 }

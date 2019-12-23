@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   ScrollView
 } from "react-native";
-import { AWSCF, HEIGHT } from "../utils/Constants";
+import { AWSCF, HEIGHT, WEB } from "../utils/Constants";
 import { BLUE } from "../utils/Colors";
 import SegmentedControl from "./SegmentedControl";
 import { useKeyboardHeight, useAnimateOn } from "../utils/Hooks";
@@ -17,6 +17,7 @@ import CalendarView from "./CalendarView";
 import { itemSpans } from "../utils/Time";
 import TimeInput from "./TimeInput";
 import * as Interested from "../store/interested";
+import emitter from "tiny-emitter/instance";
 
 export default () => {
   const dispatch = useDispatch();
@@ -71,6 +72,7 @@ export default () => {
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         alwaysBounceVertical
+        keyboardShouldPersistTaps="handled"
       >
         <Animated.View style={modalStyle} onLayout={onLayout}>
           <EventHeader event={event} />
@@ -80,6 +82,7 @@ export default () => {
               options={Interested.MODES}
               selected={mode}
               onPress={option => {
+                emitter.emit("blur-interested");
                 dispatch({
                   type: "interested/set",
                   payload: {
@@ -101,6 +104,7 @@ export default () => {
               <View style={styles.cancelButton}>
                 <TouchableOpacity
                   onPress={() => {
+                    emitter.emit("blur-interested");
                     dispatch({
                       type: "interested/set",
                       payload: {
@@ -130,6 +134,7 @@ export default () => {
 
 const TimeInputView = ({ expanded }) => {
   const dispatch = useDispatch();
+  const inputRef = useRef(null);
   const value = useSelector(Interested.getTime);
   const onChangeText = text => {
     dispatch(Interested.setTime({ text }));
@@ -144,6 +149,32 @@ const TimeInputView = ({ expanded }) => {
       { useNativeDriver: true }
     ).start();
   }, [expanded, height]);
+
+  useEffect(() => {
+    const onMouseDown = e => {
+      e.preventDefault();
+    };
+    const onFocus = () => {
+      inputRef.current.focus();
+      if (WEB) {
+        window.addEventListener("mousedown", onMouseDown);
+      }
+    };
+    const onBlur = () => {
+      inputRef.current.blur();
+      if (WEB) {
+        window.removeEventListener("mousedown", onMouseDown);
+      }
+    };
+
+    emitter.on("focus-interested", onFocus);
+    emitter.on("blur-interested", onBlur);
+
+    return () => {
+      emitter.off("focus-interested", onFocus);
+      emitter.off("blur-interested", onBlur);
+    };
+  }, []);
 
   const inputStyle = {
     marginTop: 10,
@@ -160,10 +191,19 @@ const TimeInputView = ({ expanded }) => {
       }}
     >
       <TimeInput
+        ref={inputRef}
         value={value}
         onChangeText={onChangeText}
         placeholder="Time"
         returnKeyType="done"
+        onBlur={() => {
+          dispatch({
+            type: "interested/set",
+            payload: {
+              editingDate: null
+            }
+          });
+        }}
       />
     </Animated.View>
   );

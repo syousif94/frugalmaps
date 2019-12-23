@@ -112,7 +112,10 @@ export function useKeyboardHeight(bottomOffset = 0) {
       Animated.timing(
         heightRef.current,
         {
-          toValue: -(e.endCoordinates.height + bottomOffsetRef.current),
+          toValue: Math.min(
+            -(e.endCoordinates.height + bottomOffsetRef.current),
+            0
+          ),
           duration: e.duration,
           easing: KEYBOARD_EASING
         },
