@@ -215,13 +215,15 @@ const EventHeader = ({ event }) => {
   const timeSpans = event && itemSpans(event);
   return (
     <View style={headerStyles.container}>
-      <Image
-        source={{
-          uri: event && `${AWSCF}${event._source.photos[0].thumb.key}`
-        }}
-        resizeMode="cover"
-        style={headerStyles.image}
-      />
+      {event ? (
+        <Image
+          source={{
+            uri: `${AWSCF}${event._source.photos[0].thumb.key}`
+          }}
+          resizeMode="cover"
+          style={headerStyles.image}
+        />
+      ) : null}
       <View style={headerStyles.info}>
         <Text style={headerStyles.locationText}>{locationText}</Text>
         <Text style={headerStyles.titleText}>{titleText}</Text>

@@ -243,8 +243,8 @@ export function get({
                 .join(", ")
             }
           : bounds
-            ? undefined
-            : null;
+          ? undefined
+          : null;
 
       let searchCompleted = undefined;
       if (searching) {

@@ -1,12 +1,11 @@
 {
   "expo": {
     "name": "Buncha",
-    "description": "Buncha is a calendar of fun and affordable stuff to do, both every where and nearby.",
     "slug": "litcal",
     "privacy": "public",
-    "sdkVersion": "33.0.0",
+    "sdkVersion": "36.0.0",
     "platforms": ["ios", "android", "web"],
-    "version": "2.1.1",
+    "version": "2.1.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -30,11 +29,16 @@
     },
     "android": {
       "package": "me.syousif.LitCal",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyD48G-KOfsTutqndIIWlJONkwe4bTL1UZQ"
+        }
+      },
       "adaptiveIcon": {
         "backgroundColor": "#FF94CD",
         "foregroundImage": "./assets/foreground.png"
       },
-      "versionCode": 17,
+      "versionCode": 18,
       "permissions": [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
