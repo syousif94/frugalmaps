@@ -82,14 +82,12 @@ function createDate(now, time, iso, start) {
     date.add(1, "d");
   }
 
-  if (date.isBefore(now)) {
+  if (date.isSameOrBefore(now, "minute")) {
     date = date.add(7, "d");
-    if (date.isBefore(now)) {
+    if (date.isSameOrBefore(now, "minute")) {
       date = date.add(7, "d");
     }
   }
-
-  date.seconds(0);
 
   return date;
 }
@@ -144,20 +142,17 @@ function makeDuration(hours) {
 
 function timeRemaining(hours, iso, today) {
   let ending = false;
-  const now = today
-    .clone()
-    .utcOffset(today.utcOffset())
-    .seconds(0);
-  // let now = moment();
-  const time = today.valueOf();
+  const now = today.clone().utcOffset(today.utcOffset());
+
+  const time = now.valueOf();
   let diff;
   let remaining = null;
   const start = createDate(now, hours.start, iso);
   const end = createDate(now, hours.end, iso, hours.start);
-  if (now.isBefore(end) && end.isBefore(start)) {
+  if (now.isBefore(end, "minute") && end.isBefore(start, "minute")) {
     ending = true;
     diff = end.valueOf() - time;
-  } else if (now.isBefore(start)) {
+  } else if (now.isBefore(start, "minute")) {
     diff = start.valueOf() - time;
     if (hours.today && hours.days.length > 1) {
       const nextDay = hours.days.find(day => day.daysAway > 0);
@@ -226,8 +221,8 @@ function timeRemaining(hours, iso, today) {
   const ended =
     !ending &&
     hours.today &&
-    end.isAfter(start) &&
-    start.isAfter(now.endOf("day"));
+    end.isAfter(start, "minute") &&
+    start.isAfter(now.endOf("day"), "minute");
 
   return { remaining, ending, ended };
 }
@@ -244,8 +239,8 @@ function makeHours({ item, iso, day: rawDay }) {
     iso !== undefined
       ? iso
       : rawDay !== undefined
-        ? rawDay
-        : ISO_DAYS[item.days[0]];
+      ? rawDay
+      : ISO_DAYS[item.days[0]];
 
   if (item.start && item.end) {
     hours = formatHours([item.start, item.end]);
