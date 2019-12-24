@@ -11,11 +11,13 @@ import moment from "moment";
 import { BLUE, RED } from "../utils/Colors";
 import _ from "lodash";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
-import { formatTime, detruncateTime } from "../utils/Time";
+import { formatTime } from "../utils/Time";
 import { Entypo } from "@expo/vector-icons";
 import emitter from "tiny-emitter/instance";
+import * as Interested from "../store/interested";
+import { ISO_ABBREVIATED_DAYS } from "../utils/Constants";
 
-const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const DAYS = ISO_ABBREVIATED_DAYS;
 const MONTHS = [
   "Jan",
   "Feb",
@@ -232,9 +234,10 @@ const DateEditButton = ({ id, event }) => {
     return state.interested.editingDate === id;
   }, shallowEqual);
 
-  const timeText = useSelector(state => {
-    return state.interested.selectedTimes[id];
-  }, shallowEqual);
+  const validated = useSelector(
+    Interested.getValidated(event, id),
+    shallowEqual
+  );
 
   let text;
   let iso;
@@ -247,21 +250,12 @@ const DateEditButton = ({ id, event }) => {
     iso = id;
   }
 
-  useEffect(() => {
-    Animated.timing(
-      animation.current,
-      { toValue: selected ? 1 : 0, duration: 150 },
-      { useNativeDriver: true }
-    ).start(() => {
-      if (selected) {
-        emitter.emit("focus-interested");
-      }
-    });
-  }, [selected]);
-
   let subtext;
-  if (timeText) {
-    subtext = detruncateTime(timeText);
+  let validTime = true;
+  if (validated.expanded) {
+    subtext = validated.expanded;
+    validTime = validated.inRange;
+    subtext = validTime ? subtext : "--";
   } else if (event) {
     const hours = event._source.groupedHours.find(group =>
       group.days.find(day => day.iso === iso)
@@ -280,6 +274,18 @@ const DateEditButton = ({ id, event }) => {
     ]
   };
 
+  useEffect(() => {
+    Animated.timing(
+      animation.current,
+      { toValue: selected ? 1 : 0, duration: 150 },
+      { useNativeDriver: true }
+    ).start(() => {
+      if (selected) {
+        emitter.emit("focus-interested");
+      }
+    });
+  }, [selected]);
+
   return (
     <View
       style={{
@@ -287,7 +293,7 @@ const DateEditButton = ({ id, event }) => {
         borderRadius: 5,
         backgroundColor: "#fff",
         borderWidth: 1,
-        borderColor: selected ? BLUE : "#fff"
+        borderColor: validTime ? (selected ? BLUE : "#fff") : RED
       }}
     >
       <TouchableOpacity
@@ -315,12 +321,22 @@ const DateEditButton = ({ id, event }) => {
           <Text style={{ fontSize: 10, fontWeight: "700", color: "#666" }}>
             {text}
           </Text>
-          <Text style={{ fontSize: 12, color: "#333", fontWeight: "500" }}>
+          <Text
+            style={{
+              fontSize: 12,
+              color: validTime ? "#333" : RED,
+              fontWeight: "500"
+            }}
+          >
             {subtext}
           </Text>
         </View>
         <Animated.View style={iconStyle}>
-          <Entypo name="chevron-small-down" size={14} color={BLUE} />
+          <Entypo
+            name="chevron-small-down"
+            size={14}
+            color={validTime ? BLUE : RED}
+          />
         </Animated.View>
       </TouchableOpacity>
     </View>
@@ -357,7 +373,7 @@ const DateEditPicker = ({ selected, event }) => {
           style={{ justifyContent: "center", alignItems: "center", flex: 1 }}
         >
           <Text style={{ color: "#999", fontSize: 12, fontWeight: "600" }}>
-            Please select at least one date
+            Please select at least one day or date
           </Text>
         </View>
       )}

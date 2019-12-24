@@ -2,7 +2,7 @@ import React, { memo, useState, useRef } from "react";
 import { TouchableOpacity, TextInput, View, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { WEB, IOS, ANDROID } from "../utils/Constants";
-import { BLUE } from "../utils/Colors";
+import { BLUE, RED } from "../utils/Colors";
 
 export default memo(
   React.forwardRef(
@@ -20,6 +20,7 @@ export default memo(
         blurOnSubmit,
         autoCorrect,
         spellCheck,
+        invalid = false,
         ...props
       },
       ref
@@ -98,7 +99,7 @@ export default memo(
         {
           backgroundColor: focused ? "#fff" : backgroundColor,
           borderWidth: 1,
-          borderColor: focused ? BLUE : "rgba(0,0,0,0)"
+          borderColor: invalid ? RED : focused ? BLUE : "rgba(0,0,0,0)"
         }
       ];
 

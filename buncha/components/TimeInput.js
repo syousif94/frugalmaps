@@ -6,12 +6,23 @@ import { RED } from "../utils/Colors";
 
 export default React.forwardRef(
   (
-    { value, onChangeText, placeholder, containerStyle = {}, name, ...props },
+    {
+      value,
+      validated,
+      onChangeText,
+      placeholder,
+      containerStyle = {},
+      name,
+      ...props
+    },
     ref
   ) => {
     let valid = true;
     let expandedTime = null;
-    if (value.trim().length) {
+    if (validated) {
+      expandedTime = validated.expanded;
+      valid = validated.inRange;
+    } else if (value.trim().length) {
       expandedTime = detruncateTime(value);
       valid = validateTime(expandedTime);
       if (
@@ -32,24 +43,36 @@ export default React.forwardRef(
             placeholder={placeholder}
             name={name}
             ref={ref}
+            invalid={!valid}
             {...props}
           />
-          <TimeOverlay actual={value} value={expandedTime} valid={valid} />
+          <TimeOverlay
+            actual={value}
+            value={expandedTime}
+            valid={validated ? validated.valid : valid}
+          />
         </View>
-        <TimeInvalid valid={valid} />
+        <TimeInvalid valid={valid} range={validated && validated.range} />
       </View>
     );
   }
 );
 
-const TimeInvalid = ({ valid }) => {
+const TimeInvalid = ({ valid, range }) => {
   return (
     <View style={styles.invalid}>
-      <Text
-        style={[styles.invalidText, { color: valid ? "rgba(0,0,0,0)" : RED }]}
-      >
-        Invalid Time
-      </Text>
+      {range ? (
+        <Text style={styles.invalidText}>
+          <Text style={{ color: "#555" }}>{range}</Text>
+          {valid ? null : <Text style={{ color: RED }}> Invalid Time</Text>}
+        </Text>
+      ) : (
+        <Text
+          style={[styles.invalidText, { color: valid ? "rgba(0,0,0,0)" : RED }]}
+        >
+          Invalid Time
+        </Text>
+      )}
     </View>
   );
 };
@@ -101,6 +124,7 @@ const styles = StyleSheet.create({
     height: 18
   },
   invalidText: {
-    fontSize: 13
+    fontSize: 10,
+    fontWeight: "600"
   }
 });

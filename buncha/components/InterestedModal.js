@@ -14,7 +14,7 @@ import { BLUE } from "../utils/Colors";
 import SegmentedControl from "./SegmentedControl";
 import { useKeyboardHeight, useAnimateOn } from "../utils/Hooks";
 import CalendarView from "./CalendarView";
-import { itemSpans } from "../utils/Time";
+import { itemSpans, validateTimeForEvent } from "../utils/Time";
 import TimeInput from "./TimeInput";
 import * as Interested from "../store/interested";
 import emitter from "tiny-emitter/instance";
@@ -31,7 +31,7 @@ export default () => {
 
   const expandedTimeInput =
     mode === Interested.MODES[0] ||
-    (mode === Interested.MODES[1] && editingDate);
+    (mode === Interested.MODES[1] && editingDate !== null);
 
   const [event, animation] = useAnimateOn(selectedEvent);
 
@@ -64,7 +64,7 @@ export default () => {
   const pointerEvents = event ? "auto" : "none";
   const onLayout = e => {
     const modalHeight = e.nativeEvent.layout.height;
-    bottomOffset.current = (HEIGHT - modalHeight) / -2 - 58;
+    bottomOffset.current = (HEIGHT - modalHeight) / -2 - 54;
   };
   return (
     <Animated.View style={containerStyle} pointerEvents={pointerEvents}>
@@ -99,7 +99,7 @@ export default () => {
                 dispatch(Interested.select({ id }));
               }}
             />
-            <TimeInputView expanded={expandedTimeInput} />
+            <TimeInputView event={event} expanded={expandedTimeInput} />
             <View style={styles.actions}>
               <View style={styles.cancelButton}>
                 <TouchableOpacity
@@ -132,10 +132,11 @@ export default () => {
   );
 };
 
-const TimeInputView = ({ expanded }) => {
+const TimeInputView = ({ expanded, event }) => {
   const dispatch = useDispatch();
   const inputRef = useRef(null);
   const value = useSelector(Interested.getTime);
+  const validated = useSelector(Interested.getValidated(event), shallowEqual);
   const onChangeText = text => {
     dispatch(Interested.setTime({ text }));
   };
@@ -178,6 +179,7 @@ const TimeInputView = ({ expanded }) => {
 
   const inputStyle = {
     marginTop: 10,
+    marginBottom: 10,
     height: !height ? null : animation.current,
     overflow: "hidden"
   };
@@ -196,6 +198,7 @@ const TimeInputView = ({ expanded }) => {
         onChangeText={onChangeText}
         placeholder="Time"
         returnKeyType="done"
+        validated={validated}
         onBlur={() => {
           dispatch({
             type: "interested/set",

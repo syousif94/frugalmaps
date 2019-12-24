@@ -14,6 +14,11 @@ export const ABBREVIATED_DAYS = [
   "Sun"
 ];
 
+export const ISO_ABBREVIATED_DAYS = [
+  ABBREVIATED_DAYS[6],
+  ...ABBREVIATED_DAYS.slice(0, -1)
+];
+
 export const LONG_DAYS = {
   Mon: "Monday",
   Tue: "Tuesday",
