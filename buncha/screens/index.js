@@ -18,6 +18,7 @@ import Updater from "../components/Updater";
 import FilterView from "../components/FilterView";
 import InterestedModal from "../components/InterestedModal";
 import PlanScreen from "./PlanScreen";
+import Browser from "../components/Browser";
 
 const TabScreen = createBottomTabNavigator(
   {
@@ -87,6 +88,7 @@ export default () => {
   return (
     <View style={styles.container}>
       <AppContainer ref={setTopLevelNavigator} />
+      <Browser />
       <FilterView />
       <InterestedModal />
       <Updater />

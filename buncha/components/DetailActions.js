@@ -8,12 +8,15 @@ import {
   TouchableOpacity
 } from "react-native";
 import Link from "./Link";
+import { useDispatch } from "react-redux";
 import { FontAwesome, Entypo, Ionicons } from "@expo/vector-icons";
 import { RED, BLUE, NOW } from "../utils/Colors";
 import { WEB, ANDROID } from "../utils/Constants";
 import { getHistory, navigate, pop } from "../screens";
+import * as Browser from "../store/browser";
 
 export default ({ item }) => {
+  const dispatch = useDispatch();
   return (
     <View style={styles.container}>
       <ScrollView
@@ -43,7 +46,14 @@ export default ({ item }) => {
             if (WEB) {
               window.open(item._source.website, "_blank");
             } else {
-              Linking.openURL(item._source.website);
+              dispatch({
+                type: "browser/set",
+                payload: {
+                  url: item._source.website,
+                  mode: Browser.MODES[0]
+                }
+              });
+              // Linking.openURL(item._source.website);
             }
           }}
         >

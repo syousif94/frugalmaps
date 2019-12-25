@@ -140,7 +140,7 @@ export default ({ page, setPage, pages }) => {
         >
           <View style={{ flex: 1 }}>
             <Text style={[styles.headerText]}>Add Fun Stuff</Text>
-            <Text style={styles.subtext}>
+            <Text style={[styles.subtext, { marginBottom: 0 }]}>
               Fill out the form to add fun things to Buncha
             </Text>
           </View>
@@ -154,11 +154,33 @@ export default ({ page, setPage, pages }) => {
           autoComplete="off"
           name="location"
         />
+        <Text style={[styles.instructionText, { marginBottom: 0 }]}>
+          Location
+        </Text>
+        <Text style={styles.subtext}>
+          May need to include city or state in search
+        </Text>
+        <SubmitPlacePicker />
         <Text style={styles.instructionText}>Days</Text>
         <SubmitDayPicker />
         <View style={styles.row}>
           <View style={styles.time}>
-            <Text style={styles.instructionText}>Starts at</Text>
+            <Text style={[styles.instructionText, { marginBottom: 0 }]}>
+              Starts at
+            </Text>
+          </View>
+          <View style={{ width: 10 }} />
+          <View style={styles.time}>
+            <Text style={[styles.instructionText, { marginBottom: 0 }]}>
+              Ends at
+            </Text>
+          </View>
+        </View>
+        <Text style={styles.subtext}>
+          Leave blank for opening or closing hours
+        </Text>
+        <View style={styles.row}>
+          <View style={styles.time}>
             <ConnectedTimeInput
               name="timeStartSearch"
               field="start"
@@ -167,7 +189,6 @@ export default ({ page, setPage, pages }) => {
           </View>
           <View style={{ width: 10 }} />
           <View style={styles.time}>
-            <Text style={styles.instructionText}>Ends at</Text>
             <ConnectedTimeInput
               name="timeEndSearch"
               field="end"
@@ -175,13 +196,10 @@ export default ({ page, setPage, pages }) => {
             />
           </View>
         </View>
-        <Text style={styles.subtext}>
-          Formats like 7, 11a, or 4:20pm are all valid
+
+        <Text style={[styles.instructionText, { marginTop: 22 }]}>
+          Description
         </Text>
-        <Text style={styles.subtext}>
-          Leave blank for opening or closing hours
-        </Text>
-        <Text style={styles.instructionText}>Description</Text>
         <ConnectedInput
           multiline
           field="description"
@@ -189,12 +207,6 @@ export default ({ page, setPage, pages }) => {
         />
         <Text style={styles.instructionText}>Tags</Text>
         <SubmitTags />
-        <Text style={styles.instructionText}>Location</Text>
-        <SubmitPlacePicker />
-        <Text style={styles.subtext}>
-          Try including the city and state if you can't find what you're looking
-          for
-        </Text>
         <Text style={styles.instructionText}>Admin Code</Text>
         <ConnectedInput field="postCode" placeholder="Leave this blank" />
         <SubmitFormButton />
@@ -241,8 +253,9 @@ const styles = StyleSheet.create({
     marginTop: 40
   },
   subtext: {
-    marginTop: 6,
-    fontSize: 16,
-    color: "#333"
+    marginTop: 2,
+    marginBottom: 8,
+    fontSize: 13,
+    color: "#555"
   }
 });

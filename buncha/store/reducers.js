@@ -7,6 +7,7 @@ import submission from "./submission";
 import submissions from "./submissions";
 import filters from "./filters";
 import interested from "./interested";
+import browser from "./browser";
 
 export default combineReducers({
   events,
@@ -16,7 +17,8 @@ export default combineReducers({
   submissions,
   filters,
   plans: require("./plans").default,
-  interested
+  interested,
+  browser
 });
 
 export function makeState(prefix) {
