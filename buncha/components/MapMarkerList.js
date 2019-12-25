@@ -8,7 +8,11 @@ import {
   Animated
 } from "react-native";
 import { useSelector, shallowEqual } from "react-redux";
-import { itemRemaining } from "../utils/Time";
+import {
+  itemRemaining,
+  itemTimeForDay,
+  itemRemainingAtTime
+} from "../utils/Time";
 import { WEB } from "../utils/Constants";
 import { roundedDistanceTo } from "../utils/Locate";
 import emitter from "tiny-emitter/instance";
@@ -22,8 +26,21 @@ if (!WEB) {
 
 const Item = ({ item, index }) => {
   const [currentTime] = useEveryMinute();
+  const day = useSelector(state => state.events.day);
+  const notNow = useSelector(state => state.events.notNow);
+  const now = useSelector(state => state.events.now);
   const distance = roundedDistanceTo(item);
-  const time = itemRemaining(item);
+  let time;
+
+  if (notNow) {
+    if (day) {
+      time = itemTimeForDay(item, day);
+    } else {
+      time = itemRemainingAtTime(item, now);
+    }
+  } else {
+    time = itemRemaining(item);
+  }
   return (
     <View style={styles.item}>
       <TouchableOpacity

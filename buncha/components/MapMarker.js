@@ -5,6 +5,7 @@ import MapView from "react-native-maps";
 import { selectEvent, deselectEvent } from "../store/events";
 import { ANDROID } from "../utils/Constants";
 import emitter from "tiny-emitter/instance";
+import { UPCOMING, NOW } from "../utils/Colors";
 
 const redSelectedPin = require("../assets/pin-selected.png");
 const greenSelectedPin = require("../assets/pin-now-selected.png");
@@ -31,7 +32,7 @@ class MapMarker extends Component {
     return (
       this.state.selected !== nextState.selected ||
       nextProps.data._id !== this.props.data._id ||
-      nextProps.ending !== this.props.ending
+      nextProps.color !== this.props.color
     );
   }
 
@@ -81,8 +82,7 @@ class MapMarker extends Component {
   render() {
     const {
       data: { _source: item },
-      ending,
-      upcoming
+      color
     } = this.props;
 
     const coordinate = {
@@ -102,11 +102,17 @@ class MapMarker extends Component {
     const spotStyle = [styles.spot];
     const spotTextStyle = [styles.spotText];
     let offset = MapMarker.offset;
-    const pinSource = ending
-      ? greenSelectedPin
-      : upcoming
-      ? orangeSelectedPin
-      : redSelectedPin;
+    let pinSource;
+    switch (color) {
+      case NOW:
+        pinSource = greenSelectedPin;
+        break;
+      case UPCOMING:
+        pinSource = orangeSelectedPin;
+        break;
+      default:
+        pinSource = redSelectedPin;
+    }
 
     if (this.state.selected) {
       markerStyle.push(styles.selectedMarker);
@@ -141,13 +147,10 @@ class MapMarker extends Component {
   }
 }
 
-export default connect(
-  null,
-  {
-    selectEvent,
-    deselectEvent
-  }
-)(MapMarker);
+export default connect(null, {
+  selectEvent,
+  deselectEvent
+})(MapMarker);
 
 const styles = StyleSheet.create({
   marker: {

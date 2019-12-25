@@ -4,7 +4,11 @@ import { StyleSheet, View, ActivityIndicator } from "react-native";
 import MapView from "react-native-maps";
 import TopBar, { topBarHeight } from "../components/TopBar";
 import Marker from "../components/MapMarker";
-import { timeRemaining, makeISO, makeYesterdayISO } from "../utils/Time";
+import {
+  itemTimeForDay,
+  itemRemainingAtTime,
+  itemRemaining
+} from "../utils/Time";
 import { useEveryMinute } from "../utils/Hooks";
 import MapEventButton from "../components/MapEventButton";
 import { ANDROID } from "../utils/Constants";
@@ -96,6 +100,9 @@ const MarkerMapView = () => {
   const bounds = useSelector(state => state.events.bounds, shallowEqual);
   const locationEnabled = useSelector(state => state.permissions.location);
   const markers = useSelector(state => state.events.markers, shallowEqual);
+  const day = useSelector(state => state.events.day);
+  const notNow = useSelector(state => state.events.notNow);
+  const now = useSelector(state => state.events.now);
   useEffect(() => {
     if (!bounds) {
       return;
@@ -145,39 +152,31 @@ const MarkerMapView = () => {
       showsUserLocation={locationEnabled}
       {...androidMapProps}
     >
-      {markers.map(data => {
-        const { _id, _source: item } = data;
+      {markers.reduce((markers, data) => {
+        const { _id } = data;
 
-        const iso = makeISO(item.days);
+        let time;
 
-        const hours = item.groupedHours.find(group =>
-          group.days.find(day => day.iso === iso)
-        );
-
-        let { ending, ended } = timeRemaining(hours, iso);
-
-        if (!ending && item.groupedHours.length > 1) {
-          const yesterdayISO = makeYesterdayISO(item.days);
-          const hours = item.groupedHours.find(group =>
-            group.days.find(day => day.iso === yesterdayISO)
-          );
-          if (hours) {
-            const { ending: endingYesterday } = timeRemaining(
-              hours,
-              yesterdayISO
-            );
-            ending = endingYesterday;
+        if (notNow) {
+          if (day) {
+            try {
+              time = itemTimeForDay(data, day);
+            } catch (error) {
+              return markers;
+            }
+          } else {
+            time = itemRemainingAtTime(data, now);
           }
+        } else {
+          time = itemRemaining(data);
         }
 
-        const upcoming = hours.today && !ended && !ending;
+        const key = `${_id}${time.color}`;
 
-        const key = `${upcoming}${ending}${_id}`;
+        markers.push(<Marker color={time.color} data={data} key={key} />);
 
-        return (
-          <Marker upcoming={upcoming} ending={ending} data={data} key={key} />
-        );
-      })}
+        return markers;
+      }, [])}
     </MapView>
   );
 };

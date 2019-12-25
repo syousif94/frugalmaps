@@ -34,7 +34,11 @@ export default memo(({ page, bottomOffset }) => {
         }
       ]}
     >
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.content}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+      >
         <ListPicker page={page} />
         <View style={styles.header}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>

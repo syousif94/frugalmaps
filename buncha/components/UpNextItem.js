@@ -116,6 +116,12 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
         {item._source.location}
         <PriceText prefix=" " priceLevel={item._source.priceLevel} />
         <Text style={styles.subText}> {distance}</Text>
+        {item._source.neighborhood ? (
+          <Text style={[styles.subText, { color: "#555" }]}>
+            {" "}
+            {item._source.neighborhood.split(",")[0]}
+          </Text>
+        ) : null}
       </Text>
       <Text style={styles.titleText}>
         {item._source.title}

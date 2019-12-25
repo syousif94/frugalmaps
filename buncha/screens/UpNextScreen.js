@@ -291,6 +291,7 @@ export default ({ intro = false }) => {
 
 const ListHeaderFilterButton = () => {
   const [currentTime] = useEveryMinute();
+  const refreshing = useSelector(state => state.events.refreshing);
   const notNow = useSelector(state => state.events.notNow);
   const now = useSelector(state => state.events.now);
   const day = useSelector(state => state.events.day);
@@ -316,21 +317,36 @@ const ListHeaderFilterButton = () => {
   }
 
   let fromNow = "";
-  if (!notNow) {
+  if (refreshing) {
+    fromNow = `Refreshing`;
+  } else if (!notNow) {
     const minDiff = Math.round((currentTime - now) / 60000);
     if (minDiff >= 60) {
-      fromNow = ` · ${parseInt(minDiff / 60, 10)}h ${minDiff % 60}m ago`;
+      fromNow = `Refreshed ${parseInt(minDiff / 60, 10)}h ${minDiff % 60}m ago`;
     } else if (minDiff >= 1) {
-      fromNow = ` · ${minDiff}m ago`;
+      fromNow = `Refreshed ${minDiff}m ago`;
     } else {
-      fromNow = " · Now";
+      fromNow = `Refreshed Just Now`;
     }
   } else if (day) {
-    fromNow = ` · ${day.away}d away`;
+    fromNow = day.away ? `${day.away}d away` : "Today";
+  } else {
+    const minDiff = Math.round(Math.abs(now - currentTime) / 60000);
+    if (minDiff >= 60) {
+      const totalHours = parseInt(minDiff / 60, 10);
+      const days = Math.floor(totalHours / 24);
+      if (days) {
+        fromNow += `${days}d `;
+      }
+      const hours = totalHours % 24;
+      fromNow += `${hours}h ${minDiff % 60}m away`;
+    } else if (minDiff >= 0) {
+      fromNow = `${minDiff}m away`;
+    }
   }
 
   let countText = "";
-  if (count > 0) {
+  if (!refreshing && count > 0) {
     countText = ` · ${count} event${count !== 1 ? "s" : ""}`;
   }
 
@@ -344,26 +360,37 @@ const ListHeaderFilterButton = () => {
       <Text
         allowFontScaling={false}
         style={{
-          fontSize: 16,
-          color: "#444",
-          fontWeight: "700",
-          textTransform: "uppercase"
+          fontSize: 30,
+          color: "#000",
+          fontWeight: "800"
         }}
       >
-        {locationText}
-        {fromNow}
-        {countText}
+        {dayText}
       </Text>
       <Text
         allowFontScaling={false}
         style={{
-          fontSize: 28,
-          color: "#000",
-          fontWeight: "700",
-          paddingBottom: 7
+          fontSize: 13,
+          color: "#999",
+          fontWeight: "500",
+          textTransform: "uppercase"
         }}
       >
-        {dayText}
+        {fromNow}
+      </Text>
+      <Text
+        allowFontScaling={false}
+        style={{
+          fontSize: 20,
+          color: "#777",
+          fontWeight: "800",
+          textTransform: "uppercase",
+          marginTop: 6,
+          paddingBottom: 15
+        }}
+      >
+        {locationText}
+        {countText}
       </Text>
     </TouchableOpacity>
   );
@@ -373,7 +400,7 @@ const ListHeader = () => (
   <View>
     <View
       style={{
-        marginTop: ANDROID ? 7 : 5,
+        marginTop: ANDROID ? 7 : 10,
         paddingHorizontal: itemMargin
       }}
     >
@@ -390,12 +417,13 @@ const ListHeader = () => (
       style={{ flex: 1 }}
       contentContainerStyle={{
         paddingHorizontal: itemMargin - 2,
-        marginTop: 5
+        marginTop: 3
       }}
       buttonStyle={{
-        paddingVertical: 4,
+        paddingVertical: 6,
         paddingRight: 4,
-        paddingLeft: 6
+        paddingLeft: 6,
+        borderRadius: 5
       }}
     />
   </View>
