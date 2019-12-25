@@ -10,6 +10,7 @@ import { navigate } from "../screens";
 import DaysText from "./DaysText";
 import { useDispatch } from "react-redux";
 import * as Interested from "../store/interested";
+import { ANDROID } from "../utils/Constants";
 
 export default memo(({ item, index = 0, style }) => {
   const dispatch = useDispatch();
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
   actionText: {
     marginLeft: 8,
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: ANDROID ? "700" : "600",
     color: "#000"
   },
   row: {
@@ -89,7 +90,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 16,
-    fontWeight: "600"
+    fontWeight: ANDROID ? "700" : "600"
   },
   descriptionText: {
     color: "#000",

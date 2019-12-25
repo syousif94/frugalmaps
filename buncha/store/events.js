@@ -124,9 +124,9 @@ export function getCity(city) {
   };
 }
 
-const debouncedGet = _.debounce((dispatch, args) => {
-  dispatch(get(args));
-}, 60);
+const debouncedSetEvent = _.debounce((dispatch, args) => {
+  dispatch(setEvents(args));
+}, 100);
 
 export function filter({ tag = null, text = "" }) {
   return (dispatch, getState) => {
@@ -143,11 +143,7 @@ export function filter({ tag = null, text = "" }) {
       }
     });
 
-    if (text.length || (prevText.length && !tag)) {
-      debouncedGet(dispatch, { bounds, searching: true, notNow: false });
-    } else {
-      dispatch(get({ bounds, notNow: false }));
-    }
+    dispatch(get({ bounds, searching: true, notNow: false }));
   };
 }
 
@@ -190,6 +186,23 @@ export function get({
       }
     });
 
+    const payload = {
+      bounds,
+      searching,
+      notNow,
+      searchingTime
+    };
+
+    if (searching) {
+      debouncedSetEvent(dispatch, payload);
+    } else {
+      dispatch(setEvents(payload));
+    }
+  };
+}
+
+function setEvents({ bounds, searching, notNow, searchingTime }) {
+  return async (dispatch, getState) => {
     const {
       permissions: { location: locationEnabled },
       events: { now, tag, text }

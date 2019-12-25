@@ -12,7 +12,7 @@ import { useDispatch } from "react-redux";
 import { FontAwesome, Entypo, Ionicons } from "@expo/vector-icons";
 import { RED, BLUE, NOW } from "../utils/Colors";
 import { WEB, ANDROID } from "../utils/Constants";
-import { getHistory, navigate, pop } from "../screens";
+import { getHistory, pop } from "../screens";
 import * as Browser from "../store/browser";
 
 export default ({ item }) => {
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 14,
-    fontWeight: "600"
+    fontWeight: ANDROID ? "700" : "600"
   },
   link: {
     borderRadius: 8,

@@ -1,8 +1,8 @@
 import React, { memo } from "react";
-import { View, FlatList, StyleSheet, Image } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 import { AWSCF } from "../utils/Constants";
 
-const ImageItem = memo(({ item, height }) => {
+const ImageItem = ({ item, height }) => {
   if (!item.thumb) {
     return null;
   }
@@ -27,40 +27,26 @@ const ImageItem = memo(({ item, height }) => {
       }}
     />
   );
-});
+};
 
-const ImageGallery = ({ photos, height = 170, scrollEnabled = true }) => {
+const ImageGallery = ({ photos, height = 170 }) => {
   return (
     <View
-      style={{ height, width: "100%" }}
-      pointerEvents={scrollEnabled ? "auto" : "none"}
+      style={{
+        height,
+        width: "100%",
+        flexDirection: "row",
+        overflow: "hidden"
+      }}
     >
-      <FlatList
-        horizontal
-        data={photos}
-        renderItem={data => <ImageItem {...data} height={height} />}
-        keyExtractor={(item, index) => {
-          if (item.thumb) {
-            return `${item.thumb.key}${index}`;
-          } else {
-            return `${item.url}${index}`;
-          }
-        }}
-        getItemLayout={(data, index) => {
-          const image = data[index];
-          let imageHeight = image.thumb.height;
-          let width = image.thumb.width;
-          const imageWidth = (height / imageHeight) * width;
-          return {
-            length: imageWidth,
-            offset: (imageWidth + 2) * index,
-            index
-          };
-        }}
-        scrollEnabled={scrollEnabled}
-        ItemSeparatorComponent={() => <View style={styles.divider} />}
-        showsHorizontalScrollIndicator={false}
-      />
+      {photos.map((photo, index) => {
+        return (
+          <React.Fragment key={`${index}`}>
+            {index ? <View style={styles.divider} /> : null}
+            <ImageItem item={photo} height={height} />
+          </React.Fragment>
+        );
+      })}
     </View>
   );
 };

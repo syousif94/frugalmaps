@@ -20,7 +20,7 @@ import {
 import ImageGallery from "./ImageGallery";
 import { Entypo, FontAwesome } from "@expo/vector-icons";
 import { useEveryMinute } from "../utils/Hooks";
-import { WEB } from "../utils/Constants";
+import { WEB, ANDROID } from "../utils/Constants";
 import PriceText from "./PriceText";
 import DaysText from "./DaysText";
 import MatchableText from "./MatchableText";
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     lineHeight: 16.5,
     fontSize: 15,
     color: "#000",
-    fontWeight: "600"
+    fontWeight: ANDROID ? "700" : "600"
   },
   subText: {
     fontSize: 10,
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
   locationText: {
     fontSize: 14,
     color: "#000",
-    fontWeight: "600"
+    fontWeight: ANDROID ? "700" : "600"
     // textTransform: "uppercase"
   },
   descriptionText: {
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
   actionText: {
     marginLeft: 6,
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: ANDROID ? "700" : "600",
     color: "#000"
   },
   index: {

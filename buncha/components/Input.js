@@ -1,7 +1,13 @@
-import React, { memo, useState, useRef } from "react";
-import { TouchableOpacity, TextInput, View, StyleSheet } from "react-native";
+import React, { memo, useState, useRef, useEffect } from "react";
+import {
+  TouchableOpacity,
+  TextInput,
+  View,
+  StyleSheet,
+  Keyboard
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { WEB, IOS, ANDROID } from "../utils/Constants";
+import { WEB, ANDROID, IOS } from "../utils/Constants";
 import { BLUE, RED } from "../utils/Colors";
 
 export default memo(
@@ -29,13 +35,35 @@ export default memo(
       const inputRef = ref || useRef(null);
       const pointerEvents = focused ? "auto" : "none";
 
+      useEffect(() => {
+        if (ANDROID) {
+          const onHide = () => {
+            if (focused) {
+              inputRef.current.blur();
+            }
+          };
+          if (focused) {
+            Keyboard.addListener("keyboardDidHide", onHide);
+          } else {
+            Keyboard.removeListener("keyboardDidHide", onHide);
+          }
+
+          return () => {
+            Keyboard.removeListener("keyboardDidHide", onHide);
+          };
+        }
+      }, [focused]);
+
       const _focus = () => {
         inputRef.current.focus();
         setFocused(true);
+        if (!ref && props.onFocus) {
+          props.onFocus();
+        }
       };
 
       const _onFocus = () => {
-        if (!ref && !WEB) {
+        if (!ref && IOS) {
           return;
         }
         setFocused(true);

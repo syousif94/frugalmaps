@@ -7,8 +7,7 @@ import {
   ActivityIndicator,
   ScrollView,
   Text,
-  Dimensions,
-  TouchableOpacity
+  Dimensions
 } from "react-native";
 import { refresh } from "../store/events";
 import * as Cities from "../store/cities";
@@ -23,11 +22,8 @@ import ListError from "../components/ListError";
 import emitter from "tiny-emitter/instance";
 import FilterView from "../components/FilterView";
 import SortBar from "../components/SortBar";
-import EventSearchInput from "../components/EventSearchInput";
 import { getInset } from "../utils/SafeAreaInsets";
-import { PAGE } from "../store/filters";
-import { useEveryMinute } from "../utils/Hooks";
-import moment from "moment";
+import EventListHeader from "../components/EventListHeader";
 
 let tabBarHeight;
 
@@ -112,21 +108,6 @@ export default ({ intro = false }) => {
   }, [locationEnabled, data, refreshing, error]);
 
   const initialLoadCompleted = useRef(false);
-
-  useEffect(() => {
-    if (
-      IOS &&
-      !refreshing &&
-      !initialLoadCompleted.current &&
-      (data.length || error)
-    ) {
-      initialLoadCompleted.current = true;
-      listRef.current.scrollToOffset({
-        animated: false,
-        offset: -topInset
-      });
-    }
-  }, [refreshing, initialLoadCompleted, data, error]);
 
   const [width, setWidth] = useState(Dimensions.get("window").width);
 
@@ -266,6 +247,7 @@ export default ({ intro = false }) => {
             contentContainerStyle={{
               paddingBottom: ANDROID ? tabBarHeight : null
             }}
+            keyboardShouldPersistTaps="handled"
             progressViewOffset={70}
             numColumns={columns}
             data={data}
@@ -274,7 +256,7 @@ export default ({ intro = false }) => {
             keyExtractor={item => item._id}
             refreshing={refreshing}
             onRefresh={onRefresh}
-            ListHeaderComponent={ListHeader}
+            ListHeaderComponent={EventListHeader}
             ListFooterComponent={() => (data.length ? <ListFooter /> : null)}
             ListEmptyComponent={() => (error ? <ListError /> : null)}
           />
@@ -288,146 +270,6 @@ export default ({ intro = false }) => {
     </View>
   );
 };
-
-const ListHeaderFilterButton = () => {
-  const [currentTime] = useEveryMinute();
-  const refreshing = useSelector(state => state.events.refreshing);
-  const notNow = useSelector(state => state.events.notNow);
-  const now = useSelector(state => state.events.now);
-  const day = useSelector(state => state.events.day);
-  const locationText = useSelector(state => {
-    const city = state.events.city;
-    const locationEnabled = state.permissions.location;
-    const locationText =
-      city && city.text.length
-        ? city.text.split(",")[0]
-        : locationEnabled
-        ? "Locating"
-        : "Everywhere";
-    return locationText;
-  });
-  const count = useSelector(state => state.events.upNext.length);
-
-  let dayText = "";
-  if (day) {
-    dayText = day.title;
-  } else {
-    const today = moment(now);
-    dayText = today.format("dddd h:mma");
-  }
-
-  let fromNow = "";
-  if (refreshing) {
-    fromNow = `Refreshing`;
-  } else if (!notNow) {
-    const minDiff = Math.round((currentTime - now) / 60000);
-    if (minDiff >= 60) {
-      fromNow = `Refreshed ${parseInt(minDiff / 60, 10)}h ${minDiff % 60}m ago`;
-    } else if (minDiff >= 1) {
-      fromNow = `Refreshed ${minDiff}m ago`;
-    } else {
-      fromNow = `Refreshed Just Now`;
-    }
-  } else if (day) {
-    fromNow = day.away ? `${day.away}d away` : "Today";
-  } else {
-    const minDiff = Math.round(Math.abs(now - currentTime) / 60000);
-    if (minDiff >= 60) {
-      const totalHours = parseInt(minDiff / 60, 10);
-      const days = Math.floor(totalHours / 24);
-      if (days) {
-        fromNow += `${days}d `;
-      }
-      const hours = totalHours % 24;
-      fromNow += `${hours}h ${minDiff % 60}m away`;
-    } else if (minDiff >= 0) {
-      fromNow = `${minDiff}m away`;
-    }
-  }
-
-  let countText = "";
-  if (!refreshing && count > 0) {
-    countText = ` · ${count} event${count !== 1 ? "s" : ""}`;
-  }
-
-  const onPress = () => {
-    requestAnimationFrame(() => {
-      emitter.emit("filters", PAGE.WHEN);
-    });
-  };
-  return (
-    <TouchableOpacity onPress={onPress}>
-      <Text
-        allowFontScaling={false}
-        style={{
-          fontSize: 30,
-          color: "#000",
-          fontWeight: "800"
-        }}
-      >
-        {dayText}
-      </Text>
-      <Text
-        allowFontScaling={false}
-        style={{
-          fontSize: 13,
-          color: "#999",
-          fontWeight: "500",
-          textTransform: "uppercase"
-        }}
-      >
-        {fromNow}
-      </Text>
-      <Text
-        allowFontScaling={false}
-        style={{
-          fontSize: 20,
-          color: "#777",
-          fontWeight: "800",
-          textTransform: "uppercase",
-          marginTop: 6,
-          paddingBottom: 15
-        }}
-      >
-        {locationText}
-        {countText}
-      </Text>
-    </TouchableOpacity>
-  );
-};
-
-const ListHeader = () => (
-  <View>
-    <View
-      style={{
-        marginTop: ANDROID ? 7 : 10,
-        paddingHorizontal: itemMargin
-      }}
-    >
-      <ListHeaderFilterButton />
-      <EventSearchInput
-        contentContainerStyle={{
-          flexDirection: "row",
-          alignItems: "center"
-        }}
-      />
-    </View>
-
-    <SortBar
-      style={{ flex: 1 }}
-      contentContainerStyle={{
-        paddingHorizontal: itemMargin - 2,
-        marginTop: 3
-      }}
-      buttonStyle={{
-        paddingVertical: 6,
-        paddingRight: 4,
-        paddingLeft: 6,
-        borderRadius: 5
-      }}
-    />
-  </View>
-);
 
 const ListFooter = () => {
   return (

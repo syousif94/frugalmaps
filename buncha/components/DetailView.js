@@ -59,49 +59,40 @@ export default memo(({ item, id }) => {
     scrollRef.current.getNode().scrollTo({ y: initialOffset, animated: false });
   };
 
-  useEffect(
-    () => {
-      if (iframeRef.current && !iframeRef.current.onload) {
-        iframeRef.current.onload = () => {
-          setIframeReady(true);
-        };
-      }
-    },
-    [item]
-  );
+  useEffect(() => {
+    if (iframeRef.current && !iframeRef.current.onload) {
+      iframeRef.current.onload = () => {
+        setIframeReady(true);
+      };
+    }
+  }, [item]);
 
-  useEffect(
-    () => {
-      if (iframeReady && item) {
-        requestAnimationFrame(() => {
-          iframeRef.current.contentWindow.postMessage(
-            JSON.stringify(item),
-            window.location.origin
-          );
-        });
-      }
-    },
-    [iframeReady, item]
-  );
+  useEffect(() => {
+    if (iframeReady && item) {
+      requestAnimationFrame(() => {
+        iframeRef.current.contentWindow.postMessage(
+          JSON.stringify(item),
+          window.location.origin
+        );
+      });
+    }
+  }, [iframeReady, item]);
 
-  useLayoutEffect(
-    () => {
-      if (WEB) {
-        if (prevDimensions.current) {
-          const width = dimensions.width;
-          const prevWidth = prevDimensions.current.width;
-          if (width < 800 && prevWidth >= 800) {
-            scrollToTop();
-          } else if (width > 800 && prevWidth <= 800) {
-            scrollRef.current.getNode().scrollTo({ y: 0, animated: false });
-          }
+  useLayoutEffect(() => {
+    if (WEB) {
+      if (prevDimensions.current) {
+        const width = dimensions.width;
+        const prevWidth = prevDimensions.current.width;
+        if (width < 800 && prevWidth >= 800) {
+          scrollToTop();
+        } else if (width > 800 && prevWidth <= 800) {
+          scrollRef.current.getNode().scrollTo({ y: 0, animated: false });
         }
-
-        prevDimensions.current = dimensions;
       }
-    },
-    [dimensions]
-  );
+
+      prevDimensions.current = dimensions;
+    }
+  }, [dimensions]);
 
   const narrow = dimensions.width < 800;
 
@@ -190,8 +181,8 @@ export default memo(({ item, id }) => {
                   WEB && narrow
                     ? dimensions.height * 0.8
                     : !WEB
-                      ? contentMinHeight
-                      : null
+                    ? contentMinHeight
+                    : null
               }
             ]}
           >
@@ -341,12 +332,12 @@ const styles = StyleSheet.create({
   },
   locationText: {
     fontSize: 22,
-    fontWeight: "600",
+    fontWeight: ANDROID ? "700" : "600",
     maxWidth: "85%"
   },
   detailText: {
     fontSize: 13,
-    fontWeight: "600",
+    fontWeight: ANDROID ? "700" : "600",
     color: "#444"
   },
   rating: {
@@ -356,7 +347,7 @@ const styles = StyleSheet.create({
   ratingText: {
     color: "#000",
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: ANDROID ? "700" : "600",
     marginLeft: 5
   },
   additional: {
