@@ -4,21 +4,11 @@ import { getInset } from "../utils/SafeAreaInsets";
 import { IOS } from "../utils/Constants";
 import { navigate } from "../screens";
 import { BLUE, RED } from "../utils/Colors";
-import {
-  FontAwesome,
-  EvilIcons,
-  MaterialIcons,
-  Feather
-} from "@expo/vector-icons";
+import { FontAwesome, EvilIcons, Feather } from "@expo/vector-icons";
 import BlurView from "./BlurView";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { buttonHeight } from "./PickerButton";
 import * as Filters from "../store/filters";
-import * as Events from "../store/events";
-import { useDispatch } from "react-redux";
-import emitter from "tiny-emitter/instance";
-
-const PAGE = Filters.PAGE;
 
 let bottomInset = IOS ? getInset("bottom") : 0;
 
@@ -88,7 +78,6 @@ export default ({ navigation }) => {
             </Text>
           </TouchableOpacity>
         </View>
-        <SortButton enableSort={enableSort} />
         <View style={{ flex: 1 }}>
           <TouchableOpacity
             style={styles.roundBtn}
@@ -134,51 +123,6 @@ export default ({ navigation }) => {
         </View>
       </View>
     </BlurView>
-  );
-};
-
-const SortButton = ({ enableSort }) => {
-  const dispatch = useDispatch();
-  return (
-    <View style={{ flex: 1 }}>
-      <TouchableOpacity
-        style={[
-          styles.roundBtn,
-          {
-            marginRight: 2.5,
-            borderTopRightRadius: 6,
-            borderBottomRightRadius: 6
-          }
-        ]}
-        disabled={!enableSort}
-        onPress={() => {
-          requestAnimationFrame(() => {
-            emitter.emit("filters", PAGE.WHEN);
-          });
-        }}
-        onLongPress={() => {
-          requestAnimationFrame(() => {
-            dispatch(Filters.resetTime());
-            dispatch(Events.getTime());
-          });
-        }}
-      >
-        <MaterialIcons
-          name="sort"
-          size={19}
-          color={enableSort ? "#777" : "#ccc"}
-        />
-        <Text
-          allowFontScaling={false}
-          style={[
-            styles.buttonText,
-            { marginTop: 3, color: enableSort ? "#777" : "#ccc" }
-          ]}
-        >
-          Sort
-        </Text>
-      </TouchableOpacity>
-    </View>
   );
 };
 

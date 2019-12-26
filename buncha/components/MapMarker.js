@@ -82,7 +82,9 @@ class MapMarker extends Component {
   render() {
     const {
       data: { _source: item },
-      color
+      color,
+      time,
+      day
     } = this.props;
 
     const coordinate = {
@@ -90,12 +92,18 @@ class MapMarker extends Component {
       longitude: item.coordinates[0]
     };
 
-    const location = item.location
-      .replace(/^(the |a )/gi, "")
-      .replace(" ", "")
-      .toUpperCase();
-
-    const spot = `${location.slice(0, 2)}\n${location.slice(2, 4)}`;
+    let spot;
+    let location;
+    if (time) {
+      spot = time;
+      location = item.location.replace(/^(the |a )/gi, "").substr(0, 4);
+    } else {
+      const text = item.location
+        .replace(/^(the |a )/gi, "")
+        .substr(0, 4)
+        .toUpperCase();
+      spot = `${text.substr(0, 2)}\n${text.substr(2, 4)}`;
+    }
 
     const markerStyle = [styles.marker];
     const imageStyle = [styles.image];
@@ -139,7 +147,9 @@ class MapMarker extends Component {
         <View style={markerStyle}>
           <Image source={pinSource} style={imageStyle} />
           <View style={spotStyle}>
+            {time ? <Text style={styles.indexText}>{location}</Text> : null}
             <Text style={spotTextStyle}>{spot}</Text>
+            {day ? <Text style={styles.indexText}>{day}</Text> : null}
           </View>
         </View>
       </MapView.Marker>
@@ -168,19 +178,30 @@ const styles = StyleSheet.create({
   },
   spot: {
     position: "absolute",
-    top: 8,
+    top: 9,
     width: 36,
     left: 0,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "transparent"
   },
+  indexText: {
+    paddingLeft: 3,
+    textAlign: "center",
+    fontSize: 9,
+    lineHeight: 9,
+    fontWeight: "700",
+    color: "#fff",
+    backgroundColor: "transparent"
+  },
   spotText: {
+    marginVertical: -1,
     paddingLeft: 3,
     lineHeight: 12,
     fontSize: 12,
     textAlign: "center",
     color: "#fff",
-    fontWeight: "700"
+    fontWeight: "700",
+    backgroundColor: "transparent"
   }
 });

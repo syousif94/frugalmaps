@@ -1,12 +1,6 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useState } from "react";
 import EventSearchInput from "./EventSearchInput";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Animated
-} from "react-native";
+import { View, Text, TouchableOpacity, Animated } from "react-native";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { ANDROID } from "../utils/Constants";
 import { useEveryMinute, useAnimateOn } from "../utils/Hooks";
@@ -14,7 +8,8 @@ import moment from "moment";
 import emitter from "tiny-emitter/instance";
 import { PAGE } from "../store/filters";
 import { itemMargin } from "./UpNextItem";
-import { RED } from "../utils/Colors";
+import { RED, BLUE } from "../utils/Colors";
+import { Entypo } from "@expo/vector-icons";
 import _ from "lodash";
 import * as Events from "../store/events";
 
@@ -217,27 +212,46 @@ const ListHeaderFilterButton = () => {
   };
   return (
     <TouchableOpacity onPress={onPress}>
-      <Text
-        allowFontScaling={false}
-        style={{
-          fontSize: 30,
-          color: "#000",
-          fontWeight: ANDROID ? "700" : "800"
-        }}
-      >
-        {dayText}
-      </Text>
-      <Text
-        allowFontScaling={false}
-        style={{
-          fontSize: 13,
-          color: "#999",
-          fontWeight: "500",
-          textTransform: "uppercase"
-        }}
-      >
-        {fromNow}
-      </Text>
+      <View style={{ flexDirection: "row" }}>
+        <View style={{ flex: 1 }}>
+          <Text
+            allowFontScaling={false}
+            style={{
+              fontSize: 30,
+              color: "#000",
+              fontWeight: ANDROID ? "700" : "800"
+            }}
+          >
+            {dayText}
+          </Text>
+          <Text
+            allowFontScaling={false}
+            style={{
+              fontSize: 13,
+              color: "#999",
+              fontWeight: "500",
+              textTransform: "uppercase"
+            }}
+          >
+            {fromNow}
+          </Text>
+        </View>
+        <View
+          style={{
+            alignItems: "center",
+            marginRight: 7,
+            paddingTop: 5
+          }}
+        >
+          <Entypo
+            name="chevron-up"
+            color={BLUE}
+            size={17}
+            style={{ marginBottom: -8 }}
+          />
+          <Entypo name="chevron-down" color={BLUE} size={17} />
+        </View>
+      </View>
       <Text
         allowFontScaling={false}
         style={{

@@ -24,7 +24,7 @@ export default () => {
       <View style={styles.container}>
         <View style={styles.container}>
           <MarkerMapView />
-          <MapListsView />
+          {/* <MapListsView /> */}
           <MapEventButton />
           <IndicatorView />
         </View>
@@ -171,9 +171,40 @@ const MarkerMapView = () => {
           time = itemRemaining(data);
         }
 
+        const texts = time.text.split(" ");
+
+        let foundIndex;
+
+        const timeText = texts
+          .find((text, index) => {
+            const match = text.match(/(a|p)m/gi);
+            if (match) {
+              foundIndex = index;
+            }
+            return match;
+          })
+          .replace("m", "")
+          .substr(0, 4);
+
+        let day;
+        if (foundIndex < texts.length - 1) {
+          day = texts[texts.length - 1].substr(0, 2);
+          if (day === "to") {
+            day = null;
+          }
+        }
+
         const key = `${_id}${time.color}`;
 
-        markers.push(<Marker color={time.color} data={data} key={key} />);
+        markers.push(
+          <Marker
+            color={time.color}
+            data={data}
+            key={key}
+            time={timeText}
+            day={day}
+          />
+        );
 
         return markers;
       }, [])}
