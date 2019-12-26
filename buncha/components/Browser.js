@@ -5,20 +5,29 @@ import {
   View,
   StyleSheet,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  Linking
 } from "react-native";
 import { WebView } from "react-native-webview";
 import { useAnimateOn } from "../utils/Hooks";
-import { HEIGHT, WIDTH } from "../utils/Constants";
+import { HEIGHT, WIDTH, ANDROID } from "../utils/Constants";
 import { getInset } from "../utils/SafeAreaInsets";
 import { BLUE } from "../utils/Colors";
-import { Entypo } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import * as Browser from "../store/browser";
 
-const height = HEIGHT - getInset("top");
+let height = HEIGHT - getInset("top");
+if (ANDROID) {
+  height += 20;
+}
 
 export default () => {
   const progress = useRef(new Animated.Value(0));
+  const webViewRef = useRef(null);
+  const [navDirections, setNavDirections] = useState({
+    pop: false,
+    push: false
+  });
   const [title, setTitle] = useState(null);
   const url = useSelector(state => state.browser.url, shallowEqual);
   const [uri, transform] = useAnimateOn(url, 250);
@@ -74,10 +83,12 @@ export default () => {
         </View>
         {uri ? (
           <WebView
+            ref={webViewRef}
             source={{ uri }}
             style={styles.webView}
             allowsBackForwardNavigationGestures
             allowsInlineMediaPlayback
+            decelerationRate="normal"
             onLoadStart={() => {
               progress.current.setValue(0.1);
             }}
@@ -86,18 +97,31 @@ export default () => {
               progress.current.setValue(nativeEvent.progress);
             }}
             onLoadEnd={({ nativeEvent }) => {
-              setTitle(nativeEvent.title);
+              setTitle(nativeEvent.title || "No Title");
               progress.current.setValue(0);
+            }}
+            onNavigationStateChange={({
+              canGoBack: pop,
+              canGoForward: push
+            }) => {
+              setNavDirections({
+                pop,
+                push
+              });
             }}
           />
         ) : null}
-        <BottomBar />
+        <BottomBar
+          url={uri}
+          webViewRef={webViewRef}
+          navDirections={navDirections}
+        />
       </Animated.View>
     </View>
   );
 };
 
-const BottomBar = () => {
+const BottomBar = ({ navDirections, webViewRef, url }) => {
   const dispatch = useDispatch();
   const mode = useSelector(state => state.browser.mode, shallowEqual);
   switch (mode) {
@@ -107,16 +131,39 @@ const BottomBar = () => {
           <TouchableOpacity
             style={styles.bottombarButton}
             onPress={() => {
-              dispatch({
-                type: "browser/set",
-                payload: {
-                  url: null
-                }
-              });
+              webViewRef.current.goBack();
+            }}
+            disabled={!navDirections.pop}
+          >
+            <Feather
+              name="chevron-left"
+              color={navDirections.pop ? BLUE : "#ccc"}
+              size={24}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.bottombarButton}
+            onPress={() => {
+              webViewRef.current.goForward();
+            }}
+            disabled={!navDirections.push}
+          >
+            <Feather
+              name="chevron-right"
+              color={navDirections.push ? BLUE : "#ccc"}
+              size={24}
+            />
+          </TouchableOpacity>
+          <View style={{ flex: 1 }} />
+          <TouchableOpacity
+            style={styles.bottombarButton}
+            onPress={async () => {
+              await Linking.openURL(url);
             }}
           >
-            <Entypo name="chevron-left" color={BLUE} size={24} />
+            <Feather name="share" color={BLUE} size={20} />
           </TouchableOpacity>
+          <View style={{ flex: 1 }} />
           <TouchableOpacity
             style={styles.bottombarButton}
             onPress={() => {
@@ -128,20 +175,16 @@ const BottomBar = () => {
               });
             }}
           >
-            <Entypo name="chevron-down" color={BLUE} size={24} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.bottombarButton}
-            onPress={() => {
-              dispatch({
-                type: "browser/set",
-                payload: {
-                  url: null
-                }
-              });
-            }}
-          >
-            <Entypo name="chevron-right" color={BLUE} size={24} />
+            <Text
+              style={{
+                color: BLUE,
+                fontSize: 14,
+                fontWeight: "500",
+                marginLeft: 8
+              }}
+            >
+              Done
+            </Text>
           </TouchableOpacity>
         </View>
       );
@@ -186,14 +229,14 @@ const styles = StyleSheet.create({
     height: getInset("bottom") + 44,
     paddingBottom: getInset("bottom"),
     flexDirection: "row",
-    justifyContent: "space-between",
     backgroundColor: "#f4f4f4",
     borderTopWidth: 0.5,
     borderColor: "rgba(0,0,0,0.1)"
   },
   bottombarButton: {
     height: 44,
-    width: 44,
+    paddingHorizontal: 20,
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center"
   },

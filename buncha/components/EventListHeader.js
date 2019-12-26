@@ -37,10 +37,14 @@ export default () => {
           }}
           ref={inputRef}
           onFocus={() => {
-            setSearchFocused(true);
+            requestAnimationFrame(() => {
+              setSearchFocused(true);
+            });
           }}
           onBlur={() => {
-            setSearchFocused(false);
+            requestAnimationFrame(() => {
+              setSearchFocused(false);
+            });
           }}
         />
       </View>
