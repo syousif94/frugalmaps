@@ -202,7 +202,9 @@ const TimeOverlay = memo(() => {
   }
   return (
     <View style={styles.timeOverlay} pointerEvents="none">
-      <Text style={styles.timeOverlayText}>{expandedTime}</Text>
+      <Text allowFontScaling={false} style={styles.timeOverlayText}>
+        {expandedTime}
+      </Text>
     </View>
   );
 });
@@ -317,7 +319,7 @@ const styles = StyleSheet.create({
     paddingLeft: 11
   },
   timeOverlayText: {
-    fontSize: 14,
+    fontSize: 16,
     color: "rgba(0,0,0,0.3)",
     fontWeight: "600"
   }

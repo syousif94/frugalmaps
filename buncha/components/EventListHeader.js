@@ -24,7 +24,7 @@ export default () => {
           paddingHorizontal: itemMargin
         }}
       >
-        <ListHeaderFilterButton />
+        <ListHeaderFilterButton searchFocused={searchFocused} />
         <EventSearchInput
           contentContainerStyle={{
             flexDirection: "row",
@@ -144,7 +144,7 @@ const Button = ({ tag: { text, count }, inputRef }) => {
   );
 };
 
-const ListHeaderFilterButton = () => {
+const ListHeaderFilterButton = ({ searchFocused }) => {
   const [currentTime] = useEveryMinute();
   const refreshing = useSelector(state => state.events.refreshing);
   const notNow = useSelector(state => state.events.notNow);
@@ -211,7 +211,7 @@ const ListHeaderFilterButton = () => {
     });
   };
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={onPress} disabled={searchFocused}>
       <View style={{ flexDirection: "row" }}>
         <View style={{ flex: 1 }}>
           <Text

@@ -231,6 +231,7 @@ export default memo(
           >
             {render ? render() : null}
             <TextInput
+              allowFontScaling={false}
               pointerEvents={pointerEvents}
               ref={inputRef}
               {...props}
@@ -263,7 +264,8 @@ const styles = StyleSheet.create({
     padding: 0,
     margin: 0,
     paddingLeft: 10,
-    flex: 1
+    flex: 1,
+    fontSize: 16
   },
   inputContainer: {
     flexDirection: "row",

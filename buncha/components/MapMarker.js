@@ -13,7 +13,8 @@ const orangeSelectedPin = require("../assets/pin-upcoming-selected.png");
 
 class MapMarker extends Component {
   static imageHeight = 150;
-  static offset = { x: 0, y: -14 };
+  static miniScale = 0.65;
+  static offset = { x: 0, y: -28 * MapMarker.miniScale };
 
   state = {
     selected: false
@@ -147,9 +148,19 @@ class MapMarker extends Component {
         <View style={markerStyle}>
           <Image source={pinSource} style={imageStyle} />
           <View style={spotStyle}>
-            {time ? <Text style={styles.indexText}>{location}</Text> : null}
-            <Text style={spotTextStyle}>{spot}</Text>
-            {day ? <Text style={styles.indexText}>{day}</Text> : null}
+            {time ? (
+              <Text allowFontScaling={false} style={styles.indexText}>
+                {location}
+              </Text>
+            ) : null}
+            <Text allowFontScaling={false} style={spotTextStyle}>
+              {spot}
+            </Text>
+            {day ? (
+              <Text allowFontScaling={false} style={styles.indexText}>
+                {day}
+              </Text>
+            ) : null}
           </View>
         </View>
       </MapView.Marker>
@@ -166,7 +177,7 @@ const styles = StyleSheet.create({
   marker: {
     width: 40,
     height: 56,
-    transform: [{ scale: 0.5 }]
+    transform: [{ scale: MapMarker.miniScale }]
   },
   selectedMarker: {
     zIndex: 2,
@@ -178,7 +189,7 @@ const styles = StyleSheet.create({
   },
   spot: {
     position: "absolute",
-    top: 9,
+    top: 8,
     width: 36,
     left: 0,
     justifyContent: "center",
@@ -195,7 +206,6 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent"
   },
   spotText: {
-    marginVertical: -1,
     paddingLeft: 3,
     lineHeight: 12,
     fontSize: 12,

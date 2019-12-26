@@ -5,19 +5,17 @@ import {
   TouchableOpacity,
   StyleSheet,
   Text,
-  Animated,
-  Image
+  Animated
 } from "react-native";
 import { navigate } from "../screens";
-import { Entypo } from "@expo/vector-icons";
-import { AWSCF } from "../utils/Constants";
 import { selectPlaceEvents } from "../store/events";
 import { itemRemaining } from "../utils/Time";
 import { useAnimateOn } from "../utils/Hooks";
 import { topBarHeight } from "./TopBar";
+import ImageGallery from "./ImageGallery";
+import DaysText from "./DaysText";
 
-const height = 84;
-const imageHeight = height - 30;
+const height = 165;
 
 export default () => {
   const selectedEvent = useSelector(state => {
@@ -32,7 +30,7 @@ export default () => {
 
   const events = useSelector(selectPlaceEvents(event), shallowEqual);
 
-  // const eventCount = events.length;
+  const eventCount = `${events.length} event${events.length !== 1 ? "s" : ""}`;
 
   return (
     <View style={styles.container} pointerEvents="box-none">
@@ -62,47 +60,70 @@ export default () => {
           }}
         >
           {!event ? null : (
-            <View style={styles.row}>
-              <Image
-                source={{ uri: `${AWSCF}${event._source.photos[0].thumb.key}` }}
-                style={styles.image}
-                resizeMode="cover"
+            <View style={{ flex: 1 }}>
+              <ImageGallery
+                photos={event._source.photos.slice(0, 6)}
+                height={60}
               />
               <View
-                style={{ flex: 1, justifyContent: "center", paddingLeft: 8 }}
+                style={{ flex: 1, paddingVertical: 5, paddingHorizontal: 10 }}
               >
                 <Text
                   numberOfLines={1}
-                  style={{ fontSize: 14, fontWeight: "600", color: "#000" }}
+                  style={{ fontSize: 16, fontWeight: "700", color: "#000" }}
+                  allowFontScaling={false}
                 >
                   {event._source.location}{" "}
-                  <Text
-                    style={{ fontSize: 12, fontWeight: "600", color: "#888" }}
-                  >
-                    {event._source.city}
-                  </Text>
                 </Text>
                 <Text
-                  numberOfLines={2}
-                  style={{ fontSize: 12, marginTop: 2, color: "#000" }}
+                  style={{ fontSize: 13 }}
+                  numberOfLines={1}
+                  allowFontScaling={false}
                 >
-                  {events.map((e, index) => {
-                    const time = itemRemaining(e);
-                    const dotText = index === 0 ? "" : " · ";
-                    let nameText = `${dotText}${e._source.title} `;
-                    return (
-                      <React.Fragment key={`${index}`}>
-                        <Text>{nameText}</Text>
-                        <Text style={{ color: time.color, fontWeight: "600" }}>
-                          {time.text}
-                        </Text>
-                      </React.Fragment>
-                    );
-                  })}
+                  <Text style={{ color: "#666", fontWeight: "700" }}>
+                    {eventCount}
+                  </Text>
+                  <Text style={{ color: "#aaa" }}>
+                    {" "}
+                    {event._source.address}
+                  </Text>
                 </Text>
-              </View>
-              <View style={{ paddingHorizontal: 8, justifyContent: "center" }}>
-                <Entypo name="chevron-right" size={22} color="#ccc" />
+                {events.map((e, index) => {
+                  const time = itemRemaining(e);
+                  let nameText = e._source.title;
+                  return (
+                    <View style={{ marginTop: 3 }} key={`${index}`}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "600",
+                          color: "#000"
+                        }}
+                        numberOfLines={1}
+                        allowFontScaling={false}
+                      >
+                        {nameText}
+                        <Text style={{ color: time.color, fontWeight: "700" }}>
+                          {" "}
+                          {time.text}{" "}
+                        </Text>
+                        <DaysText days={event._source.days} />
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 13,
+                          fontWeight: "500",
+                          color: "#666",
+                          marginTop: 1
+                        }}
+                        numberOfLines={1}
+                        allowFontScaling={false}
+                      >
+                        {event._source.description}
+                      </Text>
+                    </View>
+                  );
+                })}
               </View>
             </View>
           )}
@@ -139,18 +160,12 @@ const styles = StyleSheet.create({
     elevation: 3
   },
   button: {
-    flex: 1
+    flex: 1,
+    borderRadius: 8,
+    overflow: "hidden"
   },
   row: {
     flexDirection: "row",
     flex: 1
-  },
-  image: {
-    height: imageHeight,
-    width: imageHeight,
-    backgroundColor: "#f2f2f2",
-    marginLeft: 9,
-    borderRadius: 4,
-    alignSelf: "center"
   }
 });

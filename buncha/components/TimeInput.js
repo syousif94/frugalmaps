@@ -3,6 +3,7 @@ import Input from "./Input";
 import { View, Text, StyleSheet } from "react-native";
 import { detruncateTime, validateTime } from "../utils/Time";
 import { RED } from "../utils/Colors";
+import { WEB } from "../utils/Constants";
 
 export default React.forwardRef(
   (
@@ -83,7 +84,7 @@ const TimeOverlay = ({ actual, value, valid }) => {
   }
   return (
     <View style={styles.timeOverlay} pointerEvents="none">
-      <Text style={styles.timeOverlayText}>
+      <Text style={styles.timeOverlayText} allowFontScaling={false}>
         <Text style={{ color: "rgba(0,0,0,0)" }}>{actual}</Text>
         {value.replace(actual, "")}
       </Text>
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
     paddingLeft: 11
   },
   timeOverlayText: {
-    fontSize: 14,
+    fontSize: WEB ? 14 : 16,
     color: "rgba(0,0,0,0.5)"
   },
   invalid: {

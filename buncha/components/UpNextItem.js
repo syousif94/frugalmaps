@@ -112,18 +112,18 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
           <Text style={styles.countText}>{index + 1}</Text>
         </View>
       </View>
-      <Text style={styles.locationText}>
+      <Text style={styles.locationText} allowFontScaling={false}>
         {item._source.location}
         <PriceText prefix=" " priceLevel={item._source.priceLevel} />
         <Text style={styles.subText}> {distance}</Text>
         {item._source.neighborhood ? (
-          <Text style={[styles.subText, { color: "#555" }]}>
+          <Text style={[styles.subText, { color: "#555", fontWeight: "600" }]}>
             {" "}
             {item._source.neighborhood.split(",")[0]}
           </Text>
         ) : null}
       </Text>
-      <Text style={styles.titleText}>
+      <Text style={styles.titleText} allowFontScaling={false}>
         {item._source.title}
         <Text style={{ color: time.color, fontWeight: "700" }}>
           {" "}
@@ -134,6 +134,7 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
       <MatchableText
         text={item._source.description}
         numberOfLines={3}
+        allowFontScaling={false}
         match={searchTerm}
         style={styles.descriptionText}
       />
@@ -145,8 +146,15 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
           }}
           style={[styles.actionButton]}
         >
-          <FontAwesome name="star" size={16} color={"#FFA033"} />
-          <Text style={styles.actionText}>Interested</Text>
+          <FontAwesome
+            allowFontScaling={false}
+            name="star"
+            size={WEB ? 16 : 17}
+            color={"#FFA033"}
+          />
+          <Text allowFontScaling={false} style={styles.actionText}>
+            Interested
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
@@ -154,8 +162,15 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
           }}
           style={[styles.actionButton, { marginLeft: 10 }]}
         >
-          <Entypo name="calendar" size={16} color={RED} />
-          <Text style={styles.actionText}>Plan</Text>
+          <Entypo
+            allowFontScaling={false}
+            name="calendar"
+            size={WEB ? 16 : 17}
+            color={RED}
+          />
+          <Text allowFontScaling={false} style={styles.actionText}>
+            Plan
+          </Text>
         </TouchableOpacity>
       </View>
     </Link>
@@ -177,25 +192,27 @@ const styles = StyleSheet.create({
     marginBottom: 4
   },
   titleText: {
-    lineHeight: 16.5,
-    fontSize: 15,
+    fontSize: WEB ? 16 : 17,
     color: "#000",
-    fontWeight: ANDROID ? "700" : "600"
+    fontWeight: ANDROID ? "700" : "600",
+    marginVertical: WEB ? 1 : null
   },
   subText: {
-    fontSize: 10,
+    fontSize: 11,
     color: "#999",
     fontWeight: "700"
   },
   locationText: {
-    fontSize: 14,
+    fontSize: WEB ? 14 : 15,
     color: "#000",
     fontWeight: ANDROID ? "700" : "600"
     // textTransform: "uppercase"
   },
   descriptionText: {
-    fontSize: 14,
-    color: "#555",
+    marginVertical: 2,
+    lineHeight: 17,
+    fontSize: 13,
+    color: "#666",
     fontWeight: "500"
   },
   actions: {
@@ -209,7 +226,7 @@ const styles = StyleSheet.create({
   },
   actionText: {
     marginLeft: 6,
-    fontSize: 14,
+    fontSize: WEB ? 13 : 15,
     fontWeight: ANDROID ? "700" : "600",
     color: "#000"
   },
