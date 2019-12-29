@@ -89,6 +89,11 @@ export default memo(() => {
   const panelStyle = wideOrWeb
     ? {
         opacity: animation.current,
+        alignSelf: "center",
+        overflow: "hidden",
+        borderRadius: 8,
+        width: "100%",
+        maxWidth: 360,
         transform: [
           {
             translateY: animation.current.interpolate({
@@ -103,14 +108,21 @@ export default memo(() => {
           {
             translateY: panelTranslate
           }
-        ]
+        ],
+        borderTopLeftRadius: 8,
+        borderTopRightRadius: 8,
+        overflow: "hidden",
+        position: "absolute",
+        bottom: 0,
+        right: 0,
+        left: 0
       };
 
   return (
     <View
       style={[
         styles.container,
-        { justifyContent: wideOrWeb ? "center" : "flex-end" }
+        { justifyContent: wideOrWeb ? "center" : null }
       ]}
       pointerEvents={page ? "auto" : "none"}
     >
@@ -125,38 +137,17 @@ export default memo(() => {
           }}
         />
       </Animated.View>
-      <Animated.View
-        style={[
-          {
-            borderRadius: wideOrWeb ? 8 : null,
-            height: wideOrWeb ? null : panelHeight,
-            maxWidth: wideOrWeb ? 360 : null
-          },
-          styles.panel,
-          panelStyle
-        ]}
-      >
-        <View
-          style={
-            wideOrWeb
-              ? null
-              : {
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0
-                }
-          }
-          onLayout={e => {
-            if (!wideOrWeb) {
-              setPanelHeight(e.nativeEvent.layout.height);
-            }
-          }}
-        >
-          <BlurView
+      <Animated.View style={panelStyle}>
+        <BlurView>
+          <View
             style={{
               paddingTop: 10,
               paddingBottom: wideOrWeb ? 20 : getInset("bottom") + 10
+            }}
+            onLayout={e => {
+              if (!wideOrWeb) {
+                setPanelHeight(e.nativeEvent.layout.height);
+              }
             }}
           >
             <FilterPlaceView />
@@ -164,8 +155,8 @@ export default memo(() => {
               bottomOffset={bottomOffset}
               panelHeight={panelHeight}
             />
-          </BlurView>
-        </View>
+          </View>
+        </BlurView>
       </Animated.View>
     </View>
   );
@@ -175,18 +166,10 @@ const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
     top: WEB ? 48 : 0,
-
     paddingHorizontal: WEB ? 12 : null
   },
   dismiss: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.6)"
-  },
-  panel: {
-    alignSelf: "center",
-    width: "100%",
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
-    overflow: "hidden"
   }
 });
