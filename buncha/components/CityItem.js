@@ -39,12 +39,13 @@ export default ({ item, index }) => {
 const styles = StyleSheet.create({
   item: {
     borderRadius: 4,
-    margin: 2,
+    marginTop: 6,
+    marginHorizontal: 3,
     paddingVertical: 2,
     paddingHorizontal: 4,
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "rgba(0,0,0,0.03)"
+    backgroundColor: "rgba(0,0,0,0.04)"
   },
   titleText: {
     fontSize: 12,

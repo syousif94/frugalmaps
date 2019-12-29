@@ -11,7 +11,9 @@ import TimeInput from "./TimeInput";
 export default ({ bottomOffset, panelHeight }) => {
   return (
     <React.Fragment>
+      <Text style={styles.subText}>Day</Text>
       <DayPicker />
+      <Text style={styles.subText}>Time</Text>
       <TimeContainer bottomOffset={bottomOffset} panelHeight={panelHeight} />
       <View
         style={{
@@ -105,13 +107,13 @@ const TimeContainer = ({ bottomOffset, panelHeight }) => {
     bottomOffset.current = -panelHeight + y + height;
   };
   return (
-    <View style={{ marginHorizontal: 10, marginTop: 5 }} onLayout={onLayout}>
+    <View style={{ marginHorizontal: 10 }} onLayout={onLayout}>
       <TimeInput
         value={value}
         onChangeText={text => {
           dispatch(Filters.setTime(text));
         }}
-        placeholder="Time"
+        placeholder="After"
         name="time"
         backgroundColor="rgba(0,0,0,0.04)"
       />
@@ -134,10 +136,12 @@ const styles = StyleSheet.create({
     fontWeight: "700"
   },
   subText: {
-    marginTop: 1,
-    fontSize: 14,
-    color: "#777",
-    fontWeight: "500"
+    marginLeft: 20,
+    marginTop: 12,
+    marginBottom: 8,
+    fontSize: 12,
+    color: "#444",
+    fontWeight: "600"
   },
   button: {
     flexDirection: "row",
@@ -157,7 +161,7 @@ const styles = StyleSheet.create({
   },
   day: {
     flex: 1,
-    margin: 3,
+    marginHorizontal: 3,
     backgroundColor: "rgba(0,0,0,0.04)",
     borderRadius: 5,
     overflow: "hidden"

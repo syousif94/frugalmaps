@@ -30,6 +30,8 @@ export default memo(() => {
 
   const wideScreen = dimensions.width > 500;
 
+  const wideOrWeb = wideScreen || WEB;
+
   useEffect(() => {
     const handlePage = page => {
       if (page) {
@@ -37,7 +39,7 @@ export default memo(() => {
         Animated.timing(
           animation.current,
           {
-            toValue: WEB ? 1 : 0,
+            toValue: wideOrWeb ? 1 : 0,
             duration: 200,
             easing: Easing.in(Easing.quad)
           },
@@ -47,7 +49,7 @@ export default memo(() => {
         Animated.timing(
           animation.current,
           {
-            toValue: WEB ? 0 : panelHeight,
+            toValue: wideOrWeb ? 0 : panelHeight,
             duration: 200,
             easing: Easing.out(Easing.quad)
           },
@@ -61,7 +63,7 @@ export default memo(() => {
     emitter.on("filters", handlePage);
 
     return () => emitter.off("filters", handlePage);
-  }, [panelHeight]);
+  }, [panelHeight, wideOrWeb]);
 
   useLayoutEffect(() => {
     if (!page) {
@@ -71,7 +73,7 @@ export default memo(() => {
 
   const panelTranslate = Animated.add(animation.current, keyboard.current);
 
-  const dismissStyle = WEB
+  const dismissStyle = wideOrWeb
     ? {
         ...StyleSheet.absoluteFillObject,
         opacity: animation.current
@@ -84,7 +86,7 @@ export default memo(() => {
         ...StyleSheet.absoluteFillObject
       };
 
-  const panelStyle = WEB
+  const panelStyle = wideOrWeb
     ? {
         opacity: animation.current,
         transform: [
@@ -105,7 +107,13 @@ export default memo(() => {
       };
 
   return (
-    <View style={styles.container} pointerEvents={page ? "auto" : "none"}>
+    <View
+      style={[
+        styles.container,
+        { justifyContent: wideOrWeb ? "center" : "flex-end" }
+      ]}
+      pointerEvents={page ? "auto" : "none"}
+    >
       <Animated.View style={dismissStyle}>
         <TouchableOpacity
           activeOpacity={1}
@@ -120,8 +128,9 @@ export default memo(() => {
       <Animated.View
         style={[
           {
-            borderRadius: wideScreen || WEB ? 8 : null,
-            height: WEB ? null : panelHeight
+            borderRadius: wideOrWeb ? 8 : null,
+            height: wideOrWeb ? null : panelHeight,
+            maxWidth: wideOrWeb ? 360 : null
           },
           styles.panel,
           panelStyle
@@ -129,7 +138,7 @@ export default memo(() => {
       >
         <View
           style={
-            WEB
+            wideOrWeb
               ? null
               : {
                   position: "absolute",
@@ -139,7 +148,7 @@ export default memo(() => {
                 }
           }
           onLayout={e => {
-            if (!WEB) {
+            if (!wideOrWeb) {
               setPanelHeight(e.nativeEvent.layout.height);
             }
           }}
@@ -147,7 +156,7 @@ export default memo(() => {
           <BlurView
             style={{
               paddingTop: 10,
-              paddingBottom: wideScreen ? 10 : getInset("bottom") + 10
+              paddingBottom: wideOrWeb ? 20 : getInset("bottom") + 10
             }}
           >
             <FilterPlaceView />
@@ -166,7 +175,7 @@ const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
     top: WEB ? 48 : 0,
-    justifyContent: WEB ? "center" : "flex-end",
+
     paddingHorizontal: WEB ? 12 : null
   },
   dismiss: {
@@ -176,7 +185,6 @@ const styles = StyleSheet.create({
   panel: {
     alignSelf: "center",
     width: "100%",
-    maxWidth: 416,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
     overflow: "hidden"
