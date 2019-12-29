@@ -1,9 +1,10 @@
 import React, { useCallback } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useDispatch } from "react-redux";
-import { RED } from "../utils/Colors";
+import { BLUE } from "../utils/Colors";
 import * as Events from "../store/events";
 import { WEB } from "../utils/Constants";
+import { roundedDistanceTo } from "../utils/Locate";
 
 const TouchableOpacity = WEB
   ? require("react-native").TouchableOpacity
@@ -15,18 +16,21 @@ export default ({ item, index }) => {
     dispatch(Events.getCity(item));
   }, [item]);
   const [city, state] = item._source.name.split(",");
+  const subtext = state.trim();
+  const distance = roundedDistanceTo(item);
   return (
     <TouchableOpacity style={styles.item} onPress={onPress}>
-      <View style={{ flex: 1 }}>
+      <View>
         <Text style={styles.titleText}>
-          {index + 1}. {city}
+          {city}
+          <Text style={styles.countText}> {item._source.count}</Text>
         </Text>
-        <Text style={styles.subtitleText}>{state.trim()}</Text>
-      </View>
-      <View style={{ justifyContent: "center", alignItems: "center" }}>
-        <View style={styles.count}>
-          <Text style={styles.countText}>{item._source.count}</Text>
-        </View>
+        <Text style={styles.subtitleText}>
+          {subtext}
+          {distance ? (
+            <Text style={styles.distanceText}> {distance}</Text>
+          ) : null}
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -34,29 +38,34 @@ export default ({ item, index }) => {
 
 const styles = StyleSheet.create({
   item: {
-    padding: 10,
-    flexDirection: "row"
+    borderRadius: 4,
+    margin: 2,
+    paddingVertical: 2,
+    paddingHorizontal: 4,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    backgroundColor: "rgba(0,0,0,0.03)"
   },
   titleText: {
-    fontSize: 14,
+    fontSize: 12,
+    color: "rgba(0,0,0,0.7)",
     fontWeight: "600"
   },
   subtitleText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "500",
     marginTop: 1,
     color: "#777"
   },
+  distanceText: {
+    fontWeight: "600",
+    color: "#666"
+  },
   count: {
-    height: 24,
-    justifyContent: "center",
-    paddingHorizontal: 6,
-    borderRadius: 12,
-    backgroundColor: RED
+    justifyContent: "center"
   },
   countText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#fff"
+    fontWeight: "700",
+    color: BLUE
   }
 });

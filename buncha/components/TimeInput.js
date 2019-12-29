@@ -3,7 +3,7 @@ import Input from "./Input";
 import { View, Text, StyleSheet } from "react-native";
 import { detruncateTime, validateTime } from "../utils/Time";
 import { RED } from "../utils/Colors";
-import { WEB } from "../utils/Constants";
+import { WEB, IOS } from "../utils/Constants";
 
 export default React.forwardRef(
   (
@@ -41,13 +41,13 @@ export default React.forwardRef(
           <TimeInput
             value={value}
             onChangeText={onChangeText}
-            placeholder={placeholder}
             name={name}
             ref={ref}
             invalid={!valid}
             {...props}
           />
           <TimeOverlay
+            placeholder={placeholder}
             actual={value}
             value={expandedTime}
             valid={validated ? validated.valid : valid}
@@ -78,15 +78,20 @@ const TimeInvalid = ({ valid, range }) => {
   );
 };
 
-const TimeOverlay = ({ actual, value, valid }) => {
-  if (!valid || !value) {
-    return null;
-  }
+const TimeOverlay = ({ actual, value, valid, placeholder }) => {
+  const showExpanded = valid && value;
+  const showPlaceholder = !actual || !actual.length;
+  const transparentText = showExpanded ? actual : "";
+  const filledText = showExpanded
+    ? value.replace(actual, "")
+    : showPlaceholder
+    ? placeholder
+    : "";
   return (
     <View style={styles.timeOverlay} pointerEvents="none">
       <Text style={styles.timeOverlayText} allowFontScaling={false}>
-        <Text style={{ color: "rgba(0,0,0,0)" }}>{actual}</Text>
-        {value.replace(actual, "")}
+        <Text style={{ color: "rgba(0,0,0,0)" }}>{transparentText}</Text>
+        {filledText}
       </Text>
     </View>
   );
@@ -102,6 +107,7 @@ const TimeInput = React.forwardRef(
         autoCapitalize="none"
         placeholder={placeholder}
         onChangeText={onChangeText}
+        keyboardType={IOS ? "numbers-and-punctuation" : null}
         name={name}
         ref={ref}
         {...props}

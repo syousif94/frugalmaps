@@ -14,8 +14,15 @@ import { useAnimateOn } from "../utils/Hooks";
 import { topBarHeight } from "./TopBar";
 import ImageGallery from "./ImageGallery";
 import DaysText from "./DaysText";
+import { WIDTH } from "../utils/Constants";
+import { tabBarHeight } from "./TabBar";
+import PriceText from "./PriceText";
 
 const height = 165;
+
+const WIDESCREEN = WIDTH > 500;
+
+const translateY = WIDESCREEN ? height : -height;
 
 export default () => {
   const selectedEvent = useSelector(state => {
@@ -43,7 +50,7 @@ export default () => {
               {
                 translateY: transform.current.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [-height, 0]
+                  outputRange: [translateY, 0]
                 })
               }
             ]
@@ -62,7 +69,7 @@ export default () => {
           {!event ? null : (
             <View style={{ flex: 1 }}>
               <ImageGallery
-                photos={event._source.photos.slice(0, 6)}
+                photos={event._source.photos.slice(0, 7)}
                 height={60}
               />
               <View
@@ -74,6 +81,7 @@ export default () => {
                   allowFontScaling={false}
                 >
                   {event._source.location}{" "}
+                  <PriceText priceLevel={event._source.priceLevel} />
                 </Text>
                 <Text
                   style={{ fontSize: 13 }}
@@ -105,7 +113,10 @@ export default () => {
                         {nameText}
                         <Text style={{ color: time.color, fontWeight: "700" }}>
                           {" "}
-                          {time.text}{" "}
+                          {time.text}
+                          <Text style={{ fontSize: 11, color: "#888" }}>
+                            {time.duration}{" "}
+                          </Text>
                         </Text>
                         <DaysText days={event._source.days} />
                       </Text>
@@ -113,7 +124,7 @@ export default () => {
                         style={{
                           fontSize: 13,
                           fontWeight: "500",
-                          color: "#666",
+                          color: "#444",
                           marginTop: 1
                         }}
                         numberOfLines={1}
@@ -136,15 +147,19 @@ export default () => {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: topBarHeight,
+    top: WIDESCREEN ? null : topBarHeight,
+    bottom: WIDESCREEN ? tabBarHeight : null,
     left: 0,
     right: 0,
     height,
-    overflow: "hidden"
+    overflow: "hidden",
+    paddingHorizontal: 8
   },
   slider: {
+    alignSelf: "center",
+    width: "100%",
+    maxWidth: 420,
     flex: 1,
-    marginHorizontal: 8,
     marginTop: 4,
     marginBottom: 8,
     backgroundColor: "#fff",

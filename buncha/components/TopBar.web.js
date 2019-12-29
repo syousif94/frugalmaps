@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
-import { TimePicker, PlacePicker, buttonHeight } from "./PickerButton";
+import PickerButton, { buttonHeight } from "./PickerButton";
 import { navigate } from "../screens";
 import { Ionicons } from "@expo/vector-icons";
 import { BLUE } from "../utils/Colors";
@@ -38,8 +38,7 @@ export default ({ style = {}, contentContainerStyle = {}, width }) => {
   return (
     <div style={containerStyle}>
       <View style={contentStyle}>
-        <TimePicker />
-        <PlacePicker />
+        <PickerButton />
         <EventSearchInput
           contentContainerStyle={{
             flex: 1,

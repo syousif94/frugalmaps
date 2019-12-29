@@ -21,6 +21,7 @@ export default memo(
         containerStyle = {},
         backgroundColor = "#f4f4f4",
         returnKeyType = null,
+        keyboardType = null,
         name,
         multiline,
         blurOnSubmit,
@@ -235,6 +236,7 @@ export default memo(
               pointerEvents={pointerEvents}
               ref={inputRef}
               {...props}
+              keyboardType={keyboardType}
               returnKeyType={returnKeyType}
               onChangeText={onChangeText || null}
               style={inputStyle}

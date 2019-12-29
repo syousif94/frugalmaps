@@ -15,26 +15,12 @@ const TouchableOpacity = WEB
 
 const buttonHeight = WEB ? 36 : 44;
 
-const TimePicker = props => {
-  const dispatch = useDispatch();
-  const value = useSelector(searchTimeSelector);
-  return (
-    <PickerButton
-      {...props}
-      title={PAGE.WHEN}
-      value={value}
-      onLongPress={() => {
-        requestAnimationFrame(() => {
-          dispatch(resetTime());
-          dispatch(getTime());
-        });
-      }}
-    />
-  );
-};
+export { buttonHeight };
 
-const PlacePicker = props => {
-  const value = useSelector(state => {
+export default () => {
+  const dispatch = useDispatch();
+  const time = useSelector(searchTimeSelector);
+  const place = useSelector(state => {
     const city = state.events.city;
     const locationEnabled = state.permissions.location;
     const locationText =
@@ -45,61 +31,67 @@ const PlacePicker = props => {
         : "Everywhere";
     return locationText;
   });
-
-  return <PickerButton {...props} title={PAGE.WHERE} value={value} />;
-};
-
-const TagPicker = props => {
-  const value = useSelector(state => _.startCase(state.events.tag || "All"));
-
-  return <PickerButton {...props} {...props} title={PAGE.TYPE} value={value} />;
-};
-
-export { TimePicker, PlacePicker, TagPicker, buttonHeight };
-
-const PickerButton = ({
-  title,
-  value,
-  onPress: pressHandler,
-  onLongPress = null,
-  style = null
-}) => {
   const onPress = () => {
-    if (pressHandler) {
-      pressHandler();
-    }
     requestAnimationFrame(() => {
-      emitter.emit("filters", title);
+      emitter.emit("filters", PAGE.WHEN);
+    });
+  };
+  const onLongPress = () => {
+    requestAnimationFrame(() => {
+      dispatch(resetTime());
+      dispatch(getTime());
     });
   };
   return (
     <TouchableOpacity
-      style={[styles.pickerBtn, style]}
+      style={styles.pickerBtn}
       onPress={onPress}
       onLongPress={onLongPress}
     >
-      <View style={[styles.pickerInfo, style]}>
-        <Text allowFontScaling={false} style={styles.pickerTitleText}>
-          {title}
-        </Text>
-        <Text allowFontScaling={false} style={styles.pickerValueText}>
-          {value}
-        </Text>
+      <View
+        style={[
+          styles.pickerInfo,
+          { borderTopLeftRadius: 6, borderBottomLeftRadius: 6 }
+        ]}
+      >
+        <View style={{ flex: 1, paddingHorizontal: 8 }}>
+          <Text allowFontScaling={false} style={styles.pickerTitleText}>
+            {PAGE.WHEN}
+          </Text>
+          <Text allowFontScaling={false} style={styles.pickerValueText}>
+            {time}
+          </Text>
+        </View>
       </View>
-      <PickerIcon />
+      <View
+        style={[
+          styles.pickerInfo,
+          {
+            borderTopRightRadius: 6,
+            borderBottomRightRadius: 6
+          }
+        ]}
+      >
+        <View style={{ flex: 1, paddingLeft: 3, paddingRight: 10 }}>
+          <Text allowFontScaling={false} style={styles.pickerTitleText}>
+            {PAGE.WHERE}
+          </Text>
+          <Text allowFontScaling={false} style={styles.pickerValueText}>
+            {place}
+          </Text>
+        </View>
+        <PickerIcon />
+      </View>
     </TouchableOpacity>
   );
 };
-
-export default PickerButton;
 
 const PickerIcon = () => {
   return (
     <View
       style={{
         alignItems: "center",
-        marginRight: 8,
-        marginLeft: 3
+        marginRight: 10
       }}
     >
       <Entypo name="chevron-up" size={10} color={BLUE} />
@@ -116,11 +108,8 @@ const PickerIcon = () => {
 const styles = StyleSheet.create({
   pickerBtn: {
     flexDirection: "row",
-    alignItems: "center",
     overflow: "hidden",
-    backgroundColor: "rgba(180,180,180,0.1)",
-    marginHorizontal: WEB ? 2.5 : 0.5,
-    borderRadius: WEB ? 6 : null
+    marginHorizontal: 2.5
   },
   buttonText: {
     fontSize: 10,
@@ -128,10 +117,10 @@ const styles = StyleSheet.create({
     color: "#777"
   },
   pickerInfo: {
-    paddingHorizontal: 8,
-    justifyContent: "space-between",
-    height: buttonHeight,
-    paddingVertical: WEB ? 3 : 5
+    backgroundColor: "rgba(180,180,180,0.1)",
+    flexDirection: "row",
+    alignItems: "center",
+    height: buttonHeight
   },
   pickerTitleText: {
     fontSize: 10,

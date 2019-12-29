@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, memo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  memo,
+  useLayoutEffect
+} from "react";
 import {
   View,
   Animated,
@@ -7,33 +13,44 @@ import {
   Easing
 } from "react-native";
 import BlurView from "./BlurView";
-import { HEIGHT, WEB } from "../utils/Constants";
+import { WEB } from "../utils/Constants";
 import emitter from "tiny-emitter/instance";
 
-import FilterTypeView from "./FilterTypeView";
 import FilterPlaceView from "./FilterPlaceView";
 import FilterTimeView from "./FilterTimeView";
-import { useKeyboardHeight } from "../utils/Hooks";
-
-export const PANEL_HEIGHT = HEIGHT * 0.65;
+import { useKeyboardHeight, useDimensions } from "../utils/Hooks";
+import { getInset } from "../utils/SafeAreaInsets";
 
 export default memo(() => {
-  const [keyboard, bottomOffset] = useKeyboardHeight();
   const [page, setPage] = useState(null);
+  const [panelHeight, setPanelHeight] = useState(0);
+  const [keyboard, bottomOffset] = useKeyboardHeight();
+  const [dimensions] = useDimensions();
   const animation = useRef(new Animated.Value(0));
+
+  const wideScreen = dimensions.width > 500;
+
   useEffect(() => {
     const handlePage = page => {
       if (page) {
         setPage(page);
         Animated.timing(
           animation.current,
-          { toValue: 1, duration: 200, easing: Easing.in(Easing.quad) },
+          {
+            toValue: WEB ? 1 : 0,
+            duration: 200,
+            easing: Easing.in(Easing.quad)
+          },
           { useNativeDriver: true }
         ).start();
       } else {
         Animated.timing(
           animation.current,
-          { toValue: 0, duration: 200, easing: Easing.out(Easing.quad) },
+          {
+            toValue: WEB ? 0 : panelHeight,
+            duration: 200,
+            easing: Easing.out(Easing.quad)
+          },
           { useNativeDriver: true }
         ).start(() => {
           setPage(null);
@@ -44,24 +61,52 @@ export default memo(() => {
     emitter.on("filters", handlePage);
 
     return () => emitter.off("filters", handlePage);
-  }, []);
+  }, [panelHeight]);
 
-  const panelTranslate = Animated.add(
-    animation.current.interpolate({
-      inputRange: [0, 1],
-      outputRange: [PANEL_HEIGHT, 0]
-    }),
-    keyboard.current
-  );
+  useLayoutEffect(() => {
+    if (!page) {
+      animation.current.setValue(panelHeight);
+    }
+  }, [panelHeight, page]);
+
+  const panelTranslate = Animated.add(animation.current, keyboard.current);
+
+  const dismissStyle = WEB
+    ? {
+        ...StyleSheet.absoluteFillObject,
+        opacity: animation.current
+      }
+    : {
+        opacity: animation.current.interpolate({
+          inputRange: [0, panelHeight],
+          outputRange: [1, 0]
+        }),
+        ...StyleSheet.absoluteFillObject
+      };
+
+  const panelStyle = WEB
+    ? {
+        opacity: animation.current,
+        transform: [
+          {
+            translateY: animation.current.interpolate({
+              inputRange: [0, 1],
+              outputRange: [60, 0]
+            })
+          }
+        ]
+      }
+    : {
+        transform: [
+          {
+            translateY: panelTranslate
+          }
+        ]
+      };
 
   return (
     <View style={styles.container} pointerEvents={page ? "auto" : "none"}>
-      <Animated.View
-        style={{
-          opacity: animation.current,
-          ...StyleSheet.absoluteFillObject
-        }}
-      >
+      <Animated.View style={dismissStyle}>
         <TouchableOpacity
           activeOpacity={1}
           style={styles.dismiss}
@@ -74,21 +119,44 @@ export default memo(() => {
       </Animated.View>
       <Animated.View
         style={[
-          styles.panel,
           {
-            transform: [
-              {
-                translateY: panelTranslate
-              }
-            ]
-          }
+            borderRadius: wideScreen || WEB ? 8 : null,
+            height: WEB ? null : panelHeight
+          },
+          styles.panel,
+          panelStyle
         ]}
       >
-        <BlurView style={styles.blur}>
-          <FilterTypeView page={page} />
-          <FilterPlaceView page={page} />
-          <FilterTimeView page={page} bottomOffset={bottomOffset} />
-        </BlurView>
+        <View
+          style={
+            WEB
+              ? null
+              : {
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0
+                }
+          }
+          onLayout={e => {
+            if (!WEB) {
+              setPanelHeight(e.nativeEvent.layout.height);
+            }
+          }}
+        >
+          <BlurView
+            style={{
+              paddingTop: 10,
+              paddingBottom: wideScreen ? 10 : getInset("bottom") + 10
+            }}
+          >
+            <FilterPlaceView />
+            <FilterTimeView
+              bottomOffset={bottomOffset}
+              panelHeight={panelHeight}
+            />
+          </BlurView>
+        </View>
       </Animated.View>
     </View>
   );
@@ -97,24 +165,20 @@ export default memo(() => {
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    top: WEB ? 48 : 0
+    top: WEB ? 48 : 0,
+    justifyContent: WEB ? "center" : "flex-end",
+    paddingHorizontal: WEB ? 12 : null
   },
   dismiss: {
-    flex: 1,
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.6)"
   },
   panel: {
-    position: "absolute",
-    bottom: 0,
     alignSelf: "center",
     width: "100%",
-    maxWidth: 600,
-    height: PANEL_HEIGHT,
+    maxWidth: 416,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
     overflow: "hidden"
-  },
-  blur: {
-    flex: 1
   }
 });

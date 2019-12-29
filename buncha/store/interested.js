@@ -53,6 +53,51 @@ export function setTime({ text }) {
   };
 }
 
+export function saveInterests() {
+  return async (dispatch, getState) => {
+    try {
+      const {
+        interests: { event, mode, selected: selectedDates, selectedTimes }
+      } = getState();
+
+      let payload;
+
+      if (mode === MODES[0]) {
+        payload = {
+          event: {
+            eid: event._id,
+            always: true
+          }
+        };
+      } else if (mode === MODES[2]) {
+        payload = {
+          event: {
+            eid: event._id,
+            never: true
+          }
+        };
+      } else {
+        const selected = [...selectedDates];
+
+        if (!selected.length) {
+          throw new Error("No dates selected");
+        }
+      }
+
+      await api("user/interested", payload);
+    } catch (error) {
+      console.log(error);
+    }
+
+    dispatch({
+      type: "interested/set",
+      payload: {
+        event: null
+      }
+    });
+  };
+}
+
 export function getTime(state) {
   const {
     interested: { mode, editingDate, selectedTimes }
@@ -215,9 +260,8 @@ export function show({ event }) {
       return a.daysAway - b.daysAway;
     });
 
-  const nextDate = moment();
+  const selectedDate = moment();
 
-  let selectedDate;
   let day = days[0];
 
   let ended;
@@ -233,13 +277,26 @@ export function show({ event }) {
   const startHours = Math.floor(startInt / 100);
   const startMinutes = startInt % 100;
 
-  selectedDate = nextDate
+  const endInt = parseInt(day.hours.end, 10);
+  const endHours = Math.floor(endInt / 100);
+  const endMinutes = endInt % 100;
+
+  selectedDate
     .day(day.iso)
     .hour(startHours)
     .minute(startMinutes);
 
-  if (ended && !days.length) {
-    selectedDate.add(1, "w");
+  const endDate = selectedDate
+    .clone()
+    .hour(endHours)
+    .minute(endMinutes);
+
+  if (endDate.isBefore(selectedDate, "minute")) {
+    endDate.add(1, "d");
+  }
+
+  if (endDate.isBefore(moment(), "minute")) {
+    selectedDate.add(7, "d");
   }
 
   const selectedId = selectedDate.format("Y-M-D");

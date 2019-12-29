@@ -401,6 +401,9 @@ export function getTime() {
     } else {
       const expandedTime = detruncateTime(time);
       const searchTime = moment(`${day.title} ${expandedTime}`, "dddd h:mma");
+      if (searchTime.isBefore(moment(), "minute")) {
+        searchTime.add("7", "d");
+      }
       dispatch({
         type: "events/set",
         payload: {

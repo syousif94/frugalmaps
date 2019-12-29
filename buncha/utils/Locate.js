@@ -2,10 +2,14 @@ import * as Location from "expo-location";
 import { ANDROID, WEB } from "./Constants";
 
 export default function locate() {
-  return Location.getCurrentPositionAsync({
-    enableHighAccuracy: ANDROID || WEB,
-    maximumAge: 15 * 60 * 1000
-  });
+  if (WEB) {
+    return Location.getCurrentPositionAsync({
+      enableHighAccuracy: false,
+      maximumAge: 15 * 60 * 1000
+    });
+  } else {
+    return Location.getLastKnownPositionAsync();
+  }
 }
 
 export function distanceTo(item) {

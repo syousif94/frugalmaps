@@ -11,7 +11,7 @@ import moment from "moment";
 import { BLUE, RED } from "../utils/Colors";
 import _ from "lodash";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
-import { formatTime } from "../utils/Time";
+import { formatTime, timeRemaining } from "../utils/Time";
 import { Entypo } from "@expo/vector-icons";
 import emitter from "tiny-emitter/instance";
 import * as Interested from "../store/interested";
@@ -167,9 +167,30 @@ export default ({
             <View style={styles.row} key={`${index}`}>
               {row.map(({ day, month: m, year: y }, index) => {
                 const dayTextStyle = [styles.dayText];
-                const disabled =
+                const today = date === day && m === month && y === year;
+
+                let disabled =
                   (y <= year && m <= month && day < date) ||
                   (allowedDays && !allowedDays.has(index));
+
+                if (today && event) {
+                  const day = event._source.groupedHours
+                    .reduce((groups, group) => {
+                      const days = group.days.map(day => {
+                        return {
+                          ...day,
+                          hours: group
+                        };
+                      });
+
+                      return [...groups, ...days];
+                    }, [])
+                    .sort((a, b) => {
+                      return a.daysAway - b.daysAway;
+                    })[0];
+                  const remaining = timeRemaining(day.hours, day.iso);
+                  disabled = disabled || remaining.ended;
+                }
 
                 const id = `${y}-${m + 1}-${day}`;
 
@@ -185,7 +206,7 @@ export default ({
                     color: "rgba(0,0,0,0.1)"
                   });
                 }
-                const today = date === day && m === month && y === year;
+
                 return (
                   <View style={styles.day} key={`${index}`}>
                     {today ? (

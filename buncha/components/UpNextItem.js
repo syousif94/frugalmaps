@@ -112,12 +112,13 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
           <Text style={styles.countText}>{index + 1}</Text>
         </View>
       </View>
+      <DaysText days={item._source.days} />
       <Text style={styles.locationText} allowFontScaling={false}>
         {item._source.location}
         <PriceText prefix=" " priceLevel={item._source.priceLevel} />
-        <Text style={styles.subText}> {distance}</Text>
+        <Text style={styles.distanceText}> {distance}</Text>
         {item._source.neighborhood ? (
-          <Text style={[styles.subText, { color: "#555", fontWeight: "600" }]}>
+          <Text style={styles.subText}>
             {" "}
             {item._source.neighborhood.split(",")[0]}
           </Text>
@@ -138,7 +139,6 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
         match={searchTerm}
         style={styles.descriptionText}
       />
-      <DaysText days={item._source.days} />
       <View style={styles.actions}>
         <TouchableOpacity
           onPress={() => {
@@ -197,12 +197,18 @@ const styles = StyleSheet.create({
     fontWeight: ANDROID ? "700" : "600",
     marginVertical: WEB ? 1 : null
   },
-  subText: {
+  distanceText: {
     fontSize: 11,
     color: "#999",
     fontWeight: "700"
   },
+  subText: {
+    fontSize: 11,
+    color: "#444",
+    fontWeight: ANDROID ? "700" : "600"
+  },
   locationText: {
+    marginTop: WEB ? 1 : null,
     fontSize: WEB ? 14 : 15,
     color: "#000",
     fontWeight: ANDROID ? "700" : "600"
@@ -212,7 +218,7 @@ const styles = StyleSheet.create({
     marginVertical: 2,
     lineHeight: 17,
     fontSize: 13,
-    color: "#666",
+    color: "#444",
     fontWeight: "500"
   },
   actions: {
