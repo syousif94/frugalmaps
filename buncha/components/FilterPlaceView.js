@@ -8,11 +8,17 @@ import {
   StyleSheet
 } from "react-native";
 import { useSelector, shallowEqual } from "react-redux";
-import CityItem from "./CityItem";
+import CityItem, { itemHeight } from "./CityItem";
+import { Entypo } from "@expo/vector-icons";
+import { BLUE } from "../utils/Colors";
+
+const rowCount = 3;
+const rowMarginTop = 6;
+const rowHeight = itemHeight + rowMarginTop;
+const rowsHeight = rowCount * rowHeight;
 
 export default () => {
   const [expanded, setExpanded] = useState(false);
-  const [height, setHeight] = useState(false);
   const animation = useRef(new Animated.Value(0));
 
   const cities = useSelector(
@@ -22,10 +28,10 @@ export default () => {
 
   const rows = cities.reduce(
     (row, city, index) => {
-      row[index % 3].push({ index, item: city });
+      row[index % rowCount].push({ index, item: city });
       return row;
     },
-    [[], [], []]
+    Array.apply(null, Array(rowCount)).map(() => [])
   );
 
   useEffect(() => {
@@ -38,18 +44,12 @@ export default () => {
 
   return (
     <View>
-      <CityButton
-        onPress={() => {
-          setExpanded(!expanded);
-        }}
-        animation={animation}
-      />
       <Animated.View
         style={{
           overflow: "hidden",
           height: animation.current.interpolate({
             inputRange: [0, 1],
-            outputRange: [0, height]
+            outputRange: [0, rowsHeight]
           })
         }}
       >
@@ -57,20 +57,14 @@ export default () => {
           horizontal
           showsHorizontalScrollIndicator={false}
           alwaysBounceHorizontal={true}
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0
-          }}
-          onLayout={e => {
-            setHeight(e.nativeEvent.layout.height);
-          }}
         >
           <View style={{ paddingHorizontal: 7 }}>
             {rows.map((row, index) => {
               return (
-                <View key={`${index}`} style={{ flexDirection: "row" }}>
+                <View
+                  key={`${index}`}
+                  style={{ flexDirection: "row", marginBottom: rowMarginTop }}
+                >
                   {row.map((data, index) => (
                     <CityItem key={`${index}`} {...data} />
                   ))}
@@ -80,6 +74,12 @@ export default () => {
           </View>
         </ScrollView>
       </Animated.View>
+      <CityButton
+        onPress={() => {
+          setExpanded(!expanded);
+        }}
+        animation={animation}
+      />
     </View>
   );
 };
@@ -101,9 +101,30 @@ const CityButton = ({ onPress, animation }) => {
     <View style={styles.cityButton}>
       <TouchableOpacity
         onPress={onPress}
-        style={{ flex: 1, paddingHorizontal: 10, justifyContent: "center" }}
+        style={{
+          flex: 1,
+          paddingLeft: 10,
+          paddingRight: 13,
+          alignItems: "center",
+          flexDirection: "row",
+          justifyContent: "space-between"
+        }}
       >
         <Text>{value}</Text>
+        <Animated.View
+          style={{
+            transform: [
+              {
+                rotate: animation.current.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: ["0deg", "180deg"]
+                })
+              }
+            ]
+          }}
+        >
+          <Entypo name="chevron-down" size={14} color={BLUE} />
+        </Animated.View>
       </TouchableOpacity>
     </View>
   );

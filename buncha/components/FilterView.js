@@ -122,7 +122,7 @@ export default memo(() => {
     <View
       style={[
         styles.container,
-        { justifyContent: wideOrWeb ? "center" : null }
+        { paddingTop: wideOrWeb ? dimensions.height * 0.1 : null }
       ]}
       pointerEvents={page ? "auto" : "none"}
     >

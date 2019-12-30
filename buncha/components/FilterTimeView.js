@@ -7,6 +7,7 @@ import * as Events from "../store/events";
 import { useEveryMinute } from "../utils/Hooks";
 import moment from "moment";
 import TimeInput from "./TimeInput";
+import { getInset } from "../utils/SafeAreaInsets";
 
 export default ({ bottomOffset, panelHeight }) => {
   return (
@@ -83,7 +84,7 @@ const TimeContainer = ({ bottomOffset, panelHeight }) => {
   const value = useSelector(state => state.filters.time);
   const onLayout = e => {
     const { y, height } = e.nativeEvent.layout;
-    bottomOffset.current = -panelHeight + y + height;
+    bottomOffset.current = -panelHeight + y + height + getInset("bottom") + 10;
   };
   return (
     <View
