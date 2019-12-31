@@ -104,6 +104,7 @@ export default memo(() => {
         ]
       }
     : {
+        opacity: page ? 1 : 0,
         transform: [
           {
             translateY: panelTranslate

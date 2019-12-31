@@ -123,10 +123,10 @@ const MarkerMapView = () => {
       mapView.current.fitToCoordinates(coords, {
         animated: false,
         edgePadding: {
-          top: 50,
-          left: 50,
-          right: 50,
-          bottom: 50
+          top: 120,
+          left: 20,
+          right: 20,
+          bottom: 0
         }
       });
     });

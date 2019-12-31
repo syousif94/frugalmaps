@@ -111,138 +111,158 @@ export function getTime(state) {
   return "";
 }
 
-export function getValidated(event, selected) {
-  return state => {
-    let valid = true;
-    let expanded = null;
-    let inRange = valid;
-    let range = "";
+export const enableSubmitSelector = event => state => {
+  const {
+    interested: { mode, selected }
+  } = state;
 
-    if (!event) {
-      return {
-        expanded,
-        valid,
-        inRange,
-        range
-      };
+  if (mode === MODES[2]) {
+    return true;
+  }
+
+  if (mode === MODES[0]) {
+    return getValidated(event)(state).inRange;
+  }
+
+  return [...selected].reduce((valid, id) => {
+    if (id === MODES[0]) {
+      return valid;
     }
 
-    const {
-      interested: { mode, selectedTimes }
-    } = state;
+    return valid && getValidated(event, id)(state).inRange;
+  }, true);
+};
 
-    const id = selected !== undefined ? selected : state.interested.editingDate;
+export const getValidated = (event, selected) => state => {
+  let valid = true;
+  let expanded = null;
+  let inRange = valid;
+  let range = "";
 
-    let value;
-    if (mode === MODES[0]) {
-      value = selectedTimes[mode] || "";
-    } else if (id) {
-      value = selectedTimes[id] || "";
-    }
-
-    let iso = null;
-    if (typeof id === "string") {
-      const date = moment(id, ["Y-M-D"]);
-      iso = date.weekday();
-    } else {
-      iso = id;
-    }
-
-    let hours;
-    if (iso !== null) {
-      const group = event._source.groupedHours.find(group =>
-        group.days.find(day => day.iso === iso)
-      );
-
-      const start = parseInt(group.start, 10);
-      let end = parseInt(group.end, 10);
-      if (end < start) {
-        end += 2400;
-      }
-
-      hours = {
-        start,
-        end
-      };
-
-      range = `${ISO_ABBREVIATED_DAYS[iso]} ${group.hours}`;
-    } else {
-      let startStr;
-      let endStr;
-      hours = event._source.groupedHours.reduce(
-        (hours, group, index) => {
-          const start = parseInt(group.start, 10);
-          let end = parseInt(group.end, 10);
-          if (end < start) {
-            end += 2400;
-          }
-
-          const splitTime = group.hours.split(" - ");
-
-          if (!index) {
-            startStr = splitTime[0];
-            endStr = splitTime[1];
-            return {
-              start,
-              end
-            };
-          }
-
-          if (start > hours.start) {
-            startStr = splitTime[0];
-            hours.start = start;
-          }
-          if (end < hours.end) {
-            endStr = splitTime[1];
-            hours.end = end;
-          }
-
-          return hours;
-        },
-        {
-          start: 0,
-          end: 0
-        }
-      );
-
-      range = `${startStr} - ${endStr}`;
-    }
-
-    if (!value || !value.trim().length) {
-      return {
-        expanded,
-        valid,
-        inRange,
-        range
-      };
-    }
-
-    expanded = detruncateTime(value);
-    valid = validateTime(expanded);
-    if (valid && expanded && !value.match(":") && value.match(/(a|p)/gi)) {
-      expanded = value.match("m") ? null : `${value}m`;
-    }
-
-    inRange = valid;
-    if (valid) {
-      let time = parseInt(moment(expanded, ["h:ma", "H:m"]).format("HHmm"));
-      const today = time >= hours.start && time < hours.end;
-      let tomorrow = false;
-      if (time < hours.start && time <= 1200) {
-        time += 2400;
-        tomorrow = time < hours.end;
-      }
-      inRange = today || tomorrow;
-    }
-
+  if (!event) {
     return {
       expanded,
       valid,
       inRange,
       range
     };
+  }
+
+  const {
+    interested: { mode, selectedTimes }
+  } = state;
+
+  const id = selected !== undefined ? selected : state.interested.editingDate;
+
+  let value;
+  if (mode === MODES[0]) {
+    value = selectedTimes[mode] || "";
+  } else if (id) {
+    value = selectedTimes[id] || "";
+  }
+
+  let iso = null;
+  if (typeof id === "string") {
+    const date = moment(id, ["Y-M-D"]);
+    iso = date.weekday();
+  } else {
+    iso = id;
+  }
+
+  let hours;
+  if (iso !== null) {
+    const group = event._source.groupedHours.find(group =>
+      group.days.find(day => day.iso === iso)
+    );
+
+    const start = parseInt(group.start, 10);
+    let end = parseInt(group.end, 10);
+    if (end < start) {
+      end += 2400;
+    }
+
+    hours = {
+      start,
+      end
+    };
+
+    range = `${ISO_ABBREVIATED_DAYS[iso]} ${group.hours}`;
+  } else {
+    let startStr;
+    let endStr;
+    hours = event._source.groupedHours.reduce(
+      (hours, group, index) => {
+        const start = parseInt(group.start, 10);
+        let end = parseInt(group.end, 10);
+        if (end < start) {
+          end += 2400;
+        }
+
+        const splitTime = group.hours.split(" - ");
+
+        if (!index) {
+          startStr = splitTime[0];
+          endStr = splitTime[1];
+          return {
+            start,
+            end
+          };
+        }
+
+        if (start > hours.start) {
+          startStr = splitTime[0];
+          hours.start = start;
+        }
+        if (end < hours.end) {
+          endStr = splitTime[1];
+          hours.end = end;
+        }
+
+        return hours;
+      },
+      {
+        start: 0,
+        end: 0
+      }
+    );
+
+    range = `${startStr} - ${endStr}`;
+  }
+
+  if (!value || !value.trim().length) {
+    return {
+      expanded,
+      valid,
+      inRange,
+      range
+    };
+  }
+
+  expanded = detruncateTime(value);
+  valid = validateTime(expanded);
+  if (valid && expanded && !value.match(":") && value.match(/(a|p)/gi)) {
+    expanded = value.match("m") ? null : `${value}m`;
+  }
+
+  inRange = valid;
+  if (valid) {
+    let time = parseInt(moment(expanded, ["h:ma", "H:m"]).format("HHmm"));
+    const today = time >= hours.start && time < hours.end;
+    let tomorrow = false;
+    if (time < hours.start && time <= 1200) {
+      time += 2400;
+      tomorrow = time < hours.end;
+    }
+    inRange = today || tomorrow;
+  }
+
+  return {
+    expanded,
+    valid,
+    inRange,
+    range
   };
-}
+};
 
 export function show({ event }) {
   const days = event._source.groupedHours

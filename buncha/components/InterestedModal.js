@@ -14,7 +14,7 @@ import { BLUE } from "../utils/Colors";
 import SegmentedControl from "./SegmentedControl";
 import { useKeyboardHeight, useAnimateOn } from "../utils/Hooks";
 import CalendarView from "./CalendarView";
-import { itemSpans, validateTimeForEvent } from "../utils/Time";
+import { itemSpans } from "../utils/Time";
 import TimeInput from "./TimeInput";
 import * as Interested from "../store/interested";
 import emitter from "tiny-emitter/instance";
@@ -117,18 +117,25 @@ export default () => {
                   <Text style={styles.buttonText}>Cancel</Text>
                 </TouchableOpacity>
               </View>
-              <View style={styles.saveButton}>
-                <TouchableOpacity style={styles.button}>
-                  <Text style={[styles.buttonText, { color: "#fff" }]}>
-                    Save
-                  </Text>
-                </TouchableOpacity>
-              </View>
+              <SaveButton event={event} />
             </View>
           </View>
         </Animated.View>
       </ScrollView>
     </Animated.View>
+  );
+};
+
+const SaveButton = ({ event }) => {
+  const enabled = useSelector(Interested.enableSubmitSelector(event));
+  return (
+    <View
+      style={[styles.saveButton, { backgroundColor: enabled ? BLUE : "#ccc" }]}
+    >
+      <TouchableOpacity style={styles.button}>
+        <Text style={[styles.buttonText, { color: "#fff" }]}>Save</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 
