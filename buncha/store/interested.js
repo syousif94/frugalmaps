@@ -179,7 +179,13 @@ export const enableSubmitSelector = event => state => {
     return getValidated(event)(state).inRange;
   }
 
-  return [...selected].reduce((valid, id) => {
+  const selectedArr = [...selected];
+
+  if (!selectedArr.length) {
+    return false;
+  }
+
+  return selectedArr.reduce((valid, id) => {
     return valid && getValidated(event, id)(state).inRange;
   }, true);
 };
