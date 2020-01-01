@@ -170,7 +170,9 @@ export default ({
                 const today = date === day && m === month && y === year;
 
                 let disabled =
-                  (y <= year && m <= month && day < date) ||
+                  y < year ||
+                  m < month ||
+                  (m === month && day < date) ||
                   (allowedDays && !allowedDays.has(index));
 
                 if (today && event) {

@@ -4,6 +4,7 @@ import moment from "moment";
 import { makeState } from "./reducers";
 import { timeRemaining, detruncateTime, validateTime } from "../utils/Time";
 import { ISO_ABBREVIATED_DAYS } from "../utils/Constants";
+import _ from "lodash";
 
 const makeReducer = makeState("interested");
 
@@ -57,16 +58,21 @@ export function saveInterests() {
   return async (dispatch, getState) => {
     try {
       const {
-        interests: { event, mode, selected: selectedDates, selectedTimes }
+        interested: { event, mode, selected: selectedDates, selectedTimes }
       } = getState();
 
       let payload;
 
       if (mode === MODES[0]) {
+        const time = selectedTimes[mode];
         payload = {
           event: {
             eid: event._id,
-            always: true
+            always: true,
+            time:
+              time && time.trim().length
+                ? { [MODES[0]]: detruncateTime(time) }
+                : null
           }
         };
       } else if (mode === MODES[2]) {
@@ -79,22 +85,71 @@ export function saveInterests() {
       } else {
         const selected = [...selectedDates];
 
+        const days = [];
+
+        const dates = [];
+
+        selected.forEach(id => {
+          if (id === MODES[0]) {
+            return;
+          }
+
+          if (typeof id === "string") {
+            const date = moment(id, ["Y-M-D"]);
+            const iso = date.weekday();
+            const day = event._source.groupedHours.find(group =>
+              group.days.find(day => day.iso === iso)
+            );
+
+            const startInt = parseInt(day.start, 10);
+
+            const endInt = parseInt(day.end, 10);
+            const endHours = Math.floor(endInt / 100);
+            const endMinutes = endInt % 100;
+
+            date.hour(endHours).minutes(endMinutes);
+
+            if (endInt < startInt) {
+              date.add(1, "d");
+            }
+
+            dates.push(date.valueOf());
+          } else {
+            days.push(id);
+          }
+        });
+
+        const time = _.mapValues(selectedTimes, val => detruncateTime(val));
+
+        delete time[MODES[0]];
+
+        payload = {
+          event: {
+            eid: event._id,
+            days,
+            dates,
+            time
+          }
+        };
+
         if (!selected.length) {
           throw new Error("No dates selected");
         }
       }
 
-      await api("user/interested", payload);
+      console.log({ payload });
+
+      // await api("user/interested", payload);
     } catch (error) {
       console.log(error);
     }
 
-    dispatch({
-      type: "interested/set",
-      payload: {
-        event: null
-      }
-    });
+    // dispatch({
+    //   type: "interested/set",
+    //   payload: {
+    //     event: null
+    //   }
+    // });
   };
 }
 
@@ -125,10 +180,6 @@ export const enableSubmitSelector = event => state => {
   }
 
   return [...selected].reduce((valid, id) => {
-    if (id === MODES[0]) {
-      return valid;
-    }
-
     return valid && getValidated(event, id)(state).inRange;
   }, true);
 };
@@ -265,68 +316,68 @@ export const getValidated = (event, selected) => state => {
 };
 
 export function show({ event }) {
-  const days = event._source.groupedHours
-    .reduce((groups, group) => {
-      const days = group.days.map(day => {
-        return {
-          ...day,
-          hours: group
-        };
-      });
+  // const days = event._source.groupedHours
+  //   .reduce((groups, group) => {
+  //     const days = group.days.map(day => {
+  //       return {
+  //         ...day,
+  //         hours: group
+  //       };
+  //     });
 
-      return [...groups, ...days];
-    }, [])
-    .sort((a, b) => {
-      return a.daysAway - b.daysAway;
-    });
+  //     return [...groups, ...days];
+  //   }, [])
+  //   .sort((a, b) => {
+  //     return a.daysAway - b.daysAway;
+  //   });
 
-  const selectedDate = moment();
+  // const selectedDate = moment();
 
-  let day = days[0];
+  // let day = days[0];
 
-  let ended;
-  if (!day.daysAway) {
-    const remaining = timeRemaining(day.hours, day.iso);
-    ended = remaining.ended;
-    if (ended && days[1]) {
-      day = days[1];
-    }
-  }
+  // let ended;
+  // if (!day.daysAway) {
+  //   const remaining = timeRemaining(day.hours, day.iso);
+  //   ended = remaining.ended;
+  //   if (ended && days[1]) {
+  //     day = days[1];
+  //   }
+  // }
 
-  const startInt = parseInt(day.hours.start, 10);
-  const startHours = Math.floor(startInt / 100);
-  const startMinutes = startInt % 100;
+  // const startInt = parseInt(day.hours.start, 10);
+  // const startHours = Math.floor(startInt / 100);
+  // const startMinutes = startInt % 100;
 
-  const endInt = parseInt(day.hours.end, 10);
-  const endHours = Math.floor(endInt / 100);
-  const endMinutes = endInt % 100;
+  // const endInt = parseInt(day.hours.end, 10);
+  // const endHours = Math.floor(endInt / 100);
+  // const endMinutes = endInt % 100;
 
-  selectedDate
-    .day(day.iso)
-    .hour(startHours)
-    .minute(startMinutes);
+  // selectedDate
+  //   .day(day.iso)
+  //   .hour(startHours)
+  //   .minute(startMinutes);
 
-  const endDate = selectedDate
-    .clone()
-    .hour(endHours)
-    .minute(endMinutes);
+  // const endDate = selectedDate
+  //   .clone()
+  //   .hour(endHours)
+  //   .minute(endMinutes);
 
-  if (endDate.isBefore(selectedDate, "minute")) {
-    endDate.add(1, "d");
-  }
+  // if (endDate.isBefore(selectedDate, "minute")) {
+  //   endDate.add(1, "d");
+  // }
 
-  if (endDate.isBefore(moment(), "minute")) {
-    selectedDate.add(7, "d");
-  }
+  // if (endDate.isBefore(moment(), "minute")) {
+  //   selectedDate.add(7, "d");
+  // }
 
-  const selectedId = selectedDate.format("Y-M-D");
+  // const selectedId = selectedDate.format("Y-M-D");
 
   return {
     type: "interested/set",
     payload: {
       event,
       mode: MODES[0],
-      selected: new Set([selectedId]),
+      selected: new Set(),
       selectedTimes: {},
       editingDate: null
     }

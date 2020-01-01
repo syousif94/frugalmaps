@@ -44,7 +44,7 @@ function makeNarrowWebMapOffset(dimensions) {
 }
 
 export default memo(({ item, id }) => {
-  const events = useSelector(selectPlaceEvents(item));
+  const events = useSelector(selectPlaceEvents(item, true));
   const iframeRef = useRef(null);
   const [iframeReady, setIframeReady] = useState(false);
   const [dimensions] = useDimensions();

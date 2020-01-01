@@ -3,7 +3,7 @@ module.exports = {
   body: {
     properties: {
       eid: { type: "keyword" },
-      date: {
+      dates: {
         type: "date",
         format: "epoch_millis"
       },

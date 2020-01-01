@@ -128,11 +128,18 @@ export default () => {
 
 const SaveButton = ({ event }) => {
   const enabled = useSelector(Interested.enableSubmitSelector(event));
+  const dispatch = useDispatch();
   return (
     <View
       style={[styles.saveButton, { backgroundColor: enabled ? BLUE : "#ccc" }]}
     >
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity
+        style={styles.button}
+        disabled={!enabled}
+        onPress={() => {
+          dispatch(Interested.saveInterests());
+        }}
+      >
         <Text style={[styles.buttonText, { color: "#fff" }]}>Save</Text>
       </TouchableOpacity>
     </View>

@@ -151,19 +151,41 @@ function getFriendsInterests(ids) {
       body: {
         query: {
           bool: {
-            must: [
+            should: [
               {
-                terms: {
-                  uid: ids
+                bool: {
+                  must: [
+                    {
+                      terms: {
+                        uid: ids
+                      }
+                    },
+                    {
+                      range: {
+                        dates: {
+                          gte: "now"
+                        }
+                      }
+                    }
+                  ]
                 }
-              }
-            ],
-            must_not: [
+              },
               {
-                range: {
-                  date: {
-                    lt: "now"
-                  }
+                bool: {
+                  must: [
+                    {
+                      terms: {
+                        uid: ids
+                      }
+                    }
+                  ],
+                  must_not: [
+                    {
+                      exists: {
+                        field: "dates"
+                      }
+                    }
+                  ]
                 }
               }
             ]

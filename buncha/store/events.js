@@ -450,12 +450,12 @@ function getDaysAway(item) {
   return away;
 }
 
-export function selectPlaceEvents(item) {
+export function selectPlaceEvents(item, putItemFirst = false) {
   return state => {
     const otherEvents =
       item && item._source.placeid && state.events.places[item._source.placeid]
         ? state.events.places[item._source.placeid]
-            .filter(id => id !== item._id)
+            .filter(id => !(putItemFirst && id === item._id))
             .map(id => state.events.data[id])
             .sort((_a, _b) => {
               const aAway = getDaysAway(_a);
@@ -505,6 +505,6 @@ export function selectPlaceEvents(item) {
             })
         : [];
 
-    return [item, ...otherEvents];
+    return putItemFirst ? [item, ...otherEvents] : otherEvents;
   };
 }
