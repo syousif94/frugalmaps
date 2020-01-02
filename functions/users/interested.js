@@ -3,6 +3,7 @@ const eventSchema = require("../schema/event");
 const elastic = require("../elastic");
 const { formatTo2400, makeHours } = require("../time");
 const moment = require("moment");
+const _ = require("lodash");
 
 async function interested(req, res) {
   const { id: uid } = req.user;
@@ -31,7 +32,8 @@ async function updateInterested(uid, event) {
   const { eid, always = false, dates = [], utc = null, never = false } = event;
 
   let { time = null, days = [] } = event;
-  time = time ? formatTo2400(time) : time;
+
+  time = time ? _.mapValues(time, formatTo2400) : time;
 
   const docId = `${uid}_${eid}`;
   if (never) {
@@ -62,72 +64,8 @@ async function updateInterested(uid, event) {
     if (!eventDoc) {
       throw new Error("Event could be found");
     }
-
-    if (dates.length) {
-      validateDatesForEvent(eventDoc, dates, utc, time);
-      // days = dates.map(date => {
-      //   const dateMoment = moment(date).utcOffset(utc);
-      //   let day = dateMoment.weekday();
-      //   day = !day ? 6 : day - 1;
-      //   return day;
-      // });
-    } else if (days.length) {
-      validateDaysForEvent(eventDoc, time, days);
-    }
-
-    // const body = {
-    //   eid,
-    //   uid,
-    // }
-
-    // if (dates) {
-
-    // }
-
-    // await elastic.index({
-    //   index: interestedSchema.index,
-    //   id: docId,
-    //   body
-    // })
   } else {
     throw new Error("Invalid options for event");
-  }
-}
-
-function validateDatesForEvent(event, dates, utc, time) {
-  return dates.reduce((valid, date) => {
-    const dateMoment = moment(date).utcOffset(utc);
-    let day = dateMoment.weekday();
-    day = !day ? 6 : day - 1;
-    const hasDay = event._source.days.includes(day);
-    if (!hasDay && time) {
-      const previousDay = !day ? 6 : day - 1;
-      const hasPreviousDay = event._source.days.includes(previousDay);
-      const { start, end } = makeHours({ item: event._source, day });
-    }
-  }, true);
-}
-
-function validateDaysForEvent(event, time = null, days = []) {
-  const validDays = days.reduce((valid, day) => {
-    const hasDay = event._source.days.includes(day);
-    let validTime = true;
-    if (time) {
-      const { start, end } = makeHours({ item: event._source, day });
-      const startInt = parseInt(start, 10);
-      const endInt = parseInt(end, 10);
-      const timeInt = parseInt(time, 10);
-      if (startInt < endInt) {
-        validTime = timeInt >= startInt && timeInt <= endInt;
-      } else {
-        validTime = timeInt >= startInt || timeInt <= endInt;
-      }
-    }
-    return valid && hasDay && validTime;
-  }, true);
-
-  if (!validDays) {
-    throw new Error("Invalid days for event");
   }
 }
 

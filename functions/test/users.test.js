@@ -257,7 +257,13 @@ describe("test users", function() {
       })
       .then(res => res.hits.hits);
 
-    const time = "3:30pm";
+    const days = [0, 1];
+
+    const daysTime = {};
+
+    days.forEach(day => {
+      daysTime[day] = "3:30pm";
+    });
 
     await request(app)
       .post("/api/user/interested")
@@ -265,8 +271,8 @@ describe("test users", function() {
       .send({
         event: {
           eid: events[0]._id,
-          time,
-          days: [0, 1]
+          time: daysTime,
+          days
         }
       })
       .expect(200)
@@ -285,7 +291,13 @@ describe("test users", function() {
       interestedDate.add(7, "d");
     }
 
+    console.log(events[0]);
+
     console.log("interested date", interestedDate.format("h:mm a ddd M/D"));
+
+    const interestedTime = {
+      [interestedDate.format("Y-M-D")]: interestedDate.format("h:mma")
+    };
 
     await request(app)
       .post("/api/user/interested")
@@ -295,7 +307,7 @@ describe("test users", function() {
           eid: events[0]._id,
           dates: [interestedDate.valueOf()],
           utc: interestedDate.utcOffset(),
-          time
+          time: interestedTime
         }
       })
       .expect(200)
@@ -310,7 +322,7 @@ describe("test users", function() {
         event: {
           eid: events[0]._id,
           dates: [interestedDate.valueOf()],
-          time
+          time: interestedTime
         }
       })
       .expect(200)
