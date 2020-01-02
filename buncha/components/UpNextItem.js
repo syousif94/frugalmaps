@@ -113,6 +113,14 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
         </View>
       </View>
       <DaysText days={item._source.days} />
+      <Text style={styles.titleText} allowFontScaling={false}>
+        {item._source.title}
+        <Text style={{ color: time.color, fontWeight: "700" }}>
+          {" "}
+          {time.text}
+        </Text>
+        <Text style={styles.subText}>{time.duration}</Text>
+      </Text>
       <Text style={styles.locationText} allowFontScaling={false}>
         {item._source.location}
         <PriceText prefix=" " priceLevel={item._source.priceLevel} />
@@ -124,14 +132,7 @@ export default memo(({ item, index, style = {}, containerStyle = {} }) => {
           </Text>
         ) : null}
       </Text>
-      <Text style={styles.titleText} allowFontScaling={false}>
-        {item._source.title}
-        <Text style={{ color: time.color, fontWeight: "700" }}>
-          {" "}
-          {time.text}
-        </Text>
-        <Text style={styles.subText}>{time.duration}</Text>
-      </Text>
+
       <MatchableText
         text={item._source.description}
         numberOfLines={3}
@@ -208,7 +209,7 @@ const styles = StyleSheet.create({
     fontWeight: ANDROID ? "700" : "600"
   },
   locationText: {
-    marginTop: WEB ? 1 : null,
+    marginBottom: WEB ? 1 : null,
     fontSize: WEB ? 14 : 15,
     color: "#000",
     fontWeight: ANDROID ? "700" : "600"
