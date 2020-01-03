@@ -1,26 +1,16 @@
 import { combineReducers } from "redux";
 
-import events from "./events";
-import permissions from "./permissions";
-import cities from "./cities";
-import submission from "./submission";
-import submissions from "./submissions";
-import filters from "./filters";
-import interested from "./interested";
-import browser from "./browser";
-import user from "./user";
-
 export default combineReducers({
-  events,
-  permissions,
-  cities,
-  submission,
-  submissions,
-  filters,
+  events: require("./events").default,
+  permissions: require("./permissions").default,
+  cities: require("./cities").default,
+  submission: require("./submission").default,
+  submissions: require("./submissions").default,
+  filters: require("./filters").default,
   plans: require("./plans").default,
-  interested,
-  browser,
-  user
+  interested: require("./interested").default,
+  browser: require("./browser").default,
+  user: require("./user").default
 });
 
 export function makeState(prefix) {
