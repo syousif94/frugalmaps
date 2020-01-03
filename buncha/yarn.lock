@@ -4124,6 +4124,11 @@ expo-permissions@~8.0.0:
   resolved "https://registry.yarnpkg.com/expo-permissions/-/expo-permissions-8.0.0.tgz#5a45e8451dd7ff37c9e6ce5e2447818372547813"
   integrity sha512-GHTRmwh1rd1b0FcibluPFu93NNQyl9b1anBBDVPmomoo9Prz7kDcO5p2hFqM99r896yvAUSe0fPloPKUq4g/1A==
 
+expo-secure-store@~8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/expo-secure-store/-/expo-secure-store-8.0.0.tgz#09b0a3faf83569fe0160464ec33455576606c6a1"
+  integrity sha512-IzzCZ6S1PfIFhpZf5imjGU8uslGyFZz80neuuJCOv8N1hugwYl6ncqrokuOK8d1ftrxVSEfGfwsN+8+m0iTZGA==
+
 expo-sqlite@~8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/expo-sqlite/-/expo-sqlite-8.0.0.tgz#293b45c78d612ab25400c8c579bd7d73f06ccb6f"

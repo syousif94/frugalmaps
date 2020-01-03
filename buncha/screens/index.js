@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
   createAppContainer,
   createStackNavigator,
@@ -19,6 +19,7 @@ import FilterView from "../components/FilterView";
 import InterestedModal from "../components/InterestedModal";
 import PlanScreen from "./PlanScreen";
 import Browser from "../components/Browser";
+import User from "../utils/User";
 
 const TabScreen = createBottomTabNavigator(
   {
@@ -44,50 +45,53 @@ const TabScreen = createBottomTabNavigator(
   }
 );
 
-const MainRouter = createSwitchNavigator(
-  {
-    Intro: {
-      screen: IntroScreen
+function makeAppContainer() {
+  const MainRouter = createSwitchNavigator(
+    {
+      Intro: {
+        screen: IntroScreen
+      },
+      Tabs: {
+        screen: TabScreen
+      }
     },
-    Tabs: {
-      screen: TabScreen
+    {
+      initialRouteName: User.needsIntro ? "Intro" : "Tabs"
     }
-  },
-  {
-    initialRouteName: "Tabs"
-  }
-);
+  );
 
-const RootScreen = createStackNavigator(
-  {
-    Main: {
-      screen: MainRouter,
-      path: ""
+  const RootScreen = createStackNavigator(
+    {
+      Main: {
+        screen: MainRouter,
+        path: ""
+      },
+      Detail: {
+        screen: DetailScreen,
+        path: "e/:id"
+      },
+      Plan: {
+        screen: PlanScreen,
+        path: "plan/:eid"
+      },
+      Planned: {
+        screen: PlanScreen,
+        path: "p/:id"
+      }
     },
-    Detail: {
-      screen: DetailScreen,
-      path: "e/:id"
-    },
-    Plan: {
-      screen: PlanScreen,
-      path: "plan/:eid"
-    },
-    Planned: {
-      screen: PlanScreen,
-      path: "p/:id"
+    {
+      headerMode: "none"
     }
-  },
-  {
-    headerMode: "none"
-  }
-);
+  );
 
-const AppContainer = createAppContainer(RootScreen);
+  return createAppContainer(RootScreen);
+}
 
 export default () => {
+  const AppContainer = useRef(makeAppContainer());
   return (
     <View style={styles.container}>
-      <AppContainer ref={setTopLevelNavigator} />
+      <AppContainer.current ref={setTopLevelNavigator} />
       <Browser />
       <FilterView />
       <InterestedModal />

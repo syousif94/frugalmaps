@@ -8,6 +8,7 @@ import {
   EvilIcons,
   Feather
 } from "@expo/vector-icons";
+import User from "./User";
 
 const fonts = [
   Entypo,
@@ -46,5 +47,5 @@ export default async function cache() {
 
   const fontAssets = cacheFonts(fonts);
 
-  await Promise.all([...imageAssets, ...fontAssets]);
+  await Promise.all([...imageAssets, ...fontAssets, User.init()]);
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View } from "react-native";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import UpNextScreen from "./UpNextScreen";
@@ -10,6 +10,8 @@ import SubmitScreen from "./SubmitScreen";
 import InterestedModal from "../components/InterestedModal";
 import PlanScreen from "./PlanScreen";
 import NotFoundScreen from "./NotFoundScreen";
+import User from "../utils/User";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
 
 function Wrapper({ element, history, match, routeMap, closeModal }) {
   const navigate = (to, params) => {
@@ -104,7 +106,22 @@ const WebRoutesGenerator = ({ routeMap }) => {
 };
 
 export default () => {
-  const [intro, setIntro] = useState(!localStorage["intro"]);
+  const intro = useSelector(state => state.user.needsIntro, shallowEqual);
+  const dispatch = useDispatch();
+
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    if (!ready) {
+      User.init().then(() => {
+        setReady(true);
+      });
+    }
+  }, [ready]);
+
+  if (!ready) {
+    return <View style={{ flex: 1, backgroundColor: "#fff" }} />;
+  }
 
   return (
     <Router ref={setTopLevelNavigator}>
@@ -114,7 +131,12 @@ export default () => {
           <IntroScreen
             onComplete={() => {
               localStorage["intro"] = "complete";
-              setIntro(false);
+              dispatch({
+                type: "user/set",
+                payload: {
+                  needsIntro: false
+                }
+              });
             }}
           />
         ) : null}
