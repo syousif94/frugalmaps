@@ -69,7 +69,7 @@ export function saveInterests() {
           event: {
             eid: event._id,
             always: true,
-            time:
+            times:
               time && time.trim().length
                 ? { [MODES[0]]: detruncateTime(time) }
                 : null
@@ -85,13 +85,22 @@ export function saveInterests() {
       } else {
         const selected = [...selectedDates];
 
-        const days = [];
+        const times = {};
 
+        const days = [];
         const dates = [];
 
         selected.forEach(id => {
           if (id === MODES[0]) {
             return;
+          }
+
+          const time = selectedTimes[id];
+
+          if (time) {
+            times[id] = detruncateTime(time);
+          } else {
+            times[id] = null;
           }
 
           if (typeof id === "string") {
@@ -119,16 +128,13 @@ export function saveInterests() {
           }
         });
 
-        const time = _.mapValues(selectedTimes, val => detruncateTime(val));
-
-        delete time[MODES[0]];
-
         payload = {
           event: {
             eid: event._id,
+            times,
+            utc: moment().utcOffset(),
             days,
-            dates,
-            time
+            dates
           }
         };
 

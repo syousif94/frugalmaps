@@ -1,5 +1,5 @@
 module.exports = {
-  index: "interesteds",
+  index: "interests",
   body: {
     properties: {
       eid: { type: "keyword" },
@@ -9,7 +9,7 @@ module.exports = {
       },
       always: { type: "boolean" },
       days: { type: "integer" },
-      time: { enabled: false },
+      times: { enabled: false },
       uid: { type: "keyword" },
       createdAt: {
         type: "date",

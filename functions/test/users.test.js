@@ -231,14 +231,6 @@ describe("test users", function() {
       });
   });
 
-  // it("handles plans", function() {
-  //   return request(app)
-  //     .post("/api/user/plans")
-  //     .expect(200)
-  //     .expect("Content-Type", /json/)
-  //     .expect({});
-  // });
-
   it("creates interests", async function() {
     this.timeout(0);
 
@@ -271,7 +263,7 @@ describe("test users", function() {
       .send({
         event: {
           eid: events[0]._id,
-          time: daysTime,
+          times: daysTime,
           days
         }
       })
@@ -291,10 +283,6 @@ describe("test users", function() {
       interestedDate.add(7, "d");
     }
 
-    console.log(events[0]);
-
-    console.log("interested date", interestedDate.format("h:mm a ddd M/D"));
-
     const interestedTime = {
       [interestedDate.format("Y-M-D")]: interestedDate.format("h:mma")
     };
@@ -306,8 +294,7 @@ describe("test users", function() {
         event: {
           eid: events[0]._id,
           dates: [interestedDate.valueOf()],
-          utc: interestedDate.utcOffset(),
-          time: interestedTime
+          times: interestedTime
         }
       })
       .expect(200)
@@ -321,8 +308,7 @@ describe("test users", function() {
       .send({
         event: {
           eid: events[0]._id,
-          dates: [interestedDate.valueOf()],
-          time: interestedTime
+          dates: [interestedDate.valueOf()]
         }
       })
       .expect(200)
@@ -404,20 +390,6 @@ describe("test users", function() {
       })
     );
 
-    await request(app)
-      .post("/api/user/interested")
-      .set("Authorization", `bearer ${token}`)
-      .send({
-        event: {
-          eid: events[0]._id,
-          always: true
-        }
-      })
-      .expect(200)
-      .then(function(res) {
-        expect(res.body.error).to.not.exist;
-      });
-
     await Promise.all(
       users.map((user, index) => {
         return request(app)
@@ -444,11 +416,22 @@ describe("test users", function() {
       .set("Authorization", `bearer ${friendTokens[0]}`)
       .expect(200)
       .then(function(res) {
-        console.log(res.body);
         expect(Object.keys(res.body.friends).length).to.eq(5);
         expect(res.body.feed.length).to.eq(2);
         expect(res.body.events[0]._id).to.eq(events[0]._id);
         expect(res.body.error).to.not.exist;
+      });
+
+    await request(app)
+      .post(`/api/user/interested/${events[0]._id}`)
+      .set("Authorization", `bearer ${friendTokens[0]}`)
+      .expect(200)
+      .then(function(res) {
+        expect(res.body.error).to.not.exist;
+        expect(res.body.interested.length).to.eq(5);
+        res.body.interested.forEach(i => {
+          expect(res.body.friends[i._source.uid]).to.exist;
+        });
       });
   });
 });

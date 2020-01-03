@@ -227,7 +227,7 @@ function timeRemaining(hours, iso, today) {
   return { remaining, ending, ended };
 }
 
-// days is the non standard day int converted to iso day int
+// day is the non standard day int converted to iso day int
 // iso is preconverted
 function makeHours({ item, iso, day: rawDay }) {
   // good place to include documentation
@@ -573,27 +573,9 @@ function makeListData(calendar, time) {
 
   return _.uniqBy(
     [
-      // events started yesterday ending today
-      // ...calendar[calendar.length - 1].data.filter(event => {
-      //   const iso = calendar[calendar.length - 1].iso;
-      //   const hours = event._source.groupedHours.find(group =>
-      //     group.days.find(day => day.iso === iso)
-      //   );
-      //   const { ending } = timeRemaining(hours, iso, time);
-      //   return ending;
-      // }),
       ...yesterdayEvents,
-      // events today that haven't ended
       ...endingUpcomingEvents,
       ...upcomingEvents,
-      // ...calendar[0].data.filter(event => {
-      //   const hours = event._source.groupedHours.find(group =>
-      //     group.days.find(day => day.iso === calendar[0].iso)
-      //   );
-      //   const { ended } = timeRemaining(hours, calendar[0].iso, time);
-      //   return !ended;
-      // }),
-      // remaining events
       ...(calendar.length > 1 ? calendar.slice(1) : calendar).reduce(
         (events, day) => {
           let data = day.data;

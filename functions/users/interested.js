@@ -1,8 +1,9 @@
 const interestedSchema = require("../schema/interested");
 const eventSchema = require("../schema/event");
 const elastic = require("../elastic");
-const { formatTo2400, makeHours } = require("../time");
+const { formatTo2400, makeHours, groupHours } = require("../time");
 const moment = require("moment");
+const { getExternalFriendships, getExternalFriends } = require("./friends");
 const _ = require("lodash");
 
 async function interested(req, res) {
@@ -29,11 +30,9 @@ async function interested(req, res) {
 }
 
 async function updateInterested(uid, event) {
-  const { eid, always = false, dates = [], utc = null, never = false } = event;
+  const { eid, always = false, never = false, dates = [], days = [] } = event;
 
-  let { time = null, days = [] } = event;
-
-  time = time ? _.mapValues(time, formatTo2400) : time;
+  let { times = {} } = event;
 
   const docId = `${uid}_${eid}`;
   if (never) {
@@ -48,12 +47,15 @@ async function updateInterested(uid, event) {
       body: {
         eid,
         always: true,
-        time,
+        times,
         uid,
         createdAt: Date.now()
       }
     });
-  } else if ((dates.length && utc !== null) || days.length) {
+  } else if (
+    (days.length || dates.length) &&
+    days.length + dates.length === _.size(times)
+  ) {
     const eventDoc = await elastic
       .get({
         index: eventSchema.index,
@@ -64,6 +66,19 @@ async function updateInterested(uid, event) {
     if (!eventDoc) {
       throw new Error("Event could be found");
     }
+
+    await elastic.index({
+      index: interestedSchema.index,
+      id: docId,
+      body: {
+        eid,
+        days: days.length ? days : null,
+        dates: dates.length ? dates : null,
+        times,
+        uid,
+        createdAt: Date.now()
+      }
+    });
   } else {
     throw new Error("Invalid options for event");
   }
@@ -136,19 +151,81 @@ function getFriendsInterests(ids) {
     .then(res => res.hits.hits);
 }
 
-async function getInterestedFriendsForEvent(eid, uid) {
-  return [];
+async function getInterestedFriendsForEvent(eid, fids) {
+  const interested = await elastic
+    .search({
+      index: interestedSchema.index,
+      body: {
+        query: {
+          bool: {
+            should: [
+              {
+                bool: {
+                  must: [
+                    {
+                      term: { eid }
+                    },
+                    {
+                      terms: {
+                        uid: fids
+                      }
+                    },
+                    {
+                      range: {
+                        dates: {
+                          gte: "now"
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                bool: {
+                  must: [
+                    {
+                      term: { eid }
+                    },
+                    {
+                      terms: {
+                        uid: fids
+                      }
+                    }
+                  ],
+                  must_not: [
+                    {
+                      exists: {
+                        field: "dates"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      }
+    })
+    .then(res => res.hits.hits);
+
+  return interested;
 }
 
 async function interestedFriends(req, res) {
   const { id: uid } = req.user;
 
-  const { eid } = req.body;
+  const { eid } = req.params;
 
   try {
-    const interestedFriends = await getInterestedFriendsForEvent(eid, uid);
+    const friendships = await getExternalFriendships(uid);
+    const fids = friendships.map(f => f._source.uid);
+    const [interested, friends] = await Promise.all([
+      getInterestedFriendsForEvent(eid, fids),
+      getExternalFriends(fids)
+    ]);
     res.send({
-      interestedFriends
+      interested,
+      friends: _.keyBy(friends, "_id")
     });
   } catch (error) {
     console.log(error.stack);

@@ -119,7 +119,7 @@ router.post("/friends", friends);
 
 router.post("/interested", interested);
 
-router.post("/interested/event", interestedFriends);
+router.post("/interested/:eid", interestedFriends);
 
 router.post("/feed", feed);
 
