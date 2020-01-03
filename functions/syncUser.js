@@ -1,10 +1,10 @@
 const elastic = require("./elastic");
 const user = require("./schema/user");
-const { backup } = require("./backupToS3");
+// const { backup } = require("./backupToS3");
 
 module.exports = async function syncUser(req, res) {
   try {
-    const { token, location, postCode } = req.body;
+    const { postCode } = req.body;
 
     if (postCode === process.env.POSTCODE) {
       const users = await elastic
@@ -21,25 +21,25 @@ module.exports = async function syncUser(req, res) {
       return;
     }
 
-    if (!token || !location) {
-      throw new Error("Invalid request");
-    }
+    // if (!token || !location) {
+    //   throw new Error("Invalid request");
+    // }
 
-    const body = {
-      pushtoken: token,
-      coordinates: location
-    };
+    // const body = {
+    //   pushtoken: token,
+    //   coordinates: location
+    // };
 
-    await elastic.index({
-      index: user.index,
-      type: user.type,
-      id: token,
-      body
-    });
+    // await elastic.index({
+    //   index: user.index,
+    //   type: user.type,
+    //   id: token,
+    //   body
+    // });
 
     res.send({});
 
-    backup(`user/${token}`, body);
+    // backup(`user/${token}`, body);
   } catch (error) {
     res.send({
       error: error.message

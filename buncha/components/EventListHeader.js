@@ -8,7 +8,7 @@ import moment from "moment";
 import emitter from "tiny-emitter/instance";
 import { PAGE } from "../store/filters";
 import { itemMargin } from "./UpNextItem";
-import { RED, BLUE } from "../utils/Colors";
+import { BLUE, RED } from "../utils/Colors";
 import { Entypo } from "@expo/vector-icons";
 import _ from "lodash";
 import * as Events from "../store/events";
@@ -75,7 +75,7 @@ const TagsList = ({ searchFocused, inputRef }) => {
           top: 0,
           left: 0,
           right: 0,
-          paddingHorizontal: itemMargin - 2
+          paddingHorizontal: itemMargin - 4
         }}
         onLayout={e => {
           const height = e.nativeEvent.layout.height;
@@ -105,40 +105,36 @@ const Button = ({ tag: { text, count }, inputRef }) => {
     <View
       style={[
         {
-          backgroundColor: selected ? "#bbb" : RED,
-          borderRadius: 4,
-          marginTop: 5,
-          marginHorizontal: 2
+          backgroundColor: selected ? "#f4f4f4" : "#fafafa",
+          borderRadius: 8,
+          marginTop: 8,
+          marginHorizontal: 4
         }
       ]}
     >
       <TouchableOpacity
         style={[
           {
-            alignItems: "center",
-            flexDirection: "row",
-            padding: 6
+            paddingHorizontal: 6,
+            paddingTop: 5,
+            paddingBottom: 4
           }
         ]}
         onPress={onPress}
       >
-        <Text style={{ fontSize: 12, color: "#fff", fontWeight: "700" }}>
+        <Text style={{ fontSize: 14, color: "#000", fontWeight: "600" }}>
           {_.startCase(text)}
         </Text>
-        <View
+        <Text
           style={{
-            paddingHorizontal: 3,
-            borderRadius: 3,
-            backgroundColor: "rgba(0,0,0,0.3)",
-            marginLeft: 6,
-            minWidth: 16,
-            alignItems: "center"
+            fontSize: 9,
+            color: BLUE,
+            marginTop: -0.5,
+            fontWeight: "700"
           }}
         >
-          <Text style={{ fontSize: 12, color: "#fff", fontWeight: "700" }}>
-            {count}
-          </Text>
-        </View>
+          {count} event{count !== 1 ? "s" : ""}
+        </Text>
       </TouchableOpacity>
     </View>
   );

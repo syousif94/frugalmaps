@@ -6,6 +6,7 @@
     "ios": "cd buncha && expo build:ios",
     "android": "cd buncha && expo build:android",
     "start": "cd frugalapp && expo start",
+    "dev:api": "chmod a+x ./scripts/dev-api.sh && ./scripts/dev-api.sh",
     "test:api": "chmod a+x ./scripts/test-api.sh && ./scripts/test-api.sh",
     "deploy:api": "chmod a+x ./scripts/deploy-api.sh && ./scripts/deploy-api.sh",
     "server": "cd functions && npm run serve",

@@ -80,5 +80,9 @@ module.exports = {
   init: async function() {
     await this.events.map();
     await this.locations.map();
+    await this.users.map();
+    await this.friends.map();
+    await this.contacts.map();
+    await this.interesteds.map();
   }
 };
