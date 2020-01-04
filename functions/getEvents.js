@@ -216,9 +216,9 @@ module.exports = async function getEvents(req, res) {
         };
 
         return results.hits.hits.map(doc => {
-          doc._source.photos = _(doc._source.photos)
-            .shuffle()
-            .value();
+          // doc._source.photos = _(doc._source.photos)
+          //   .shuffle()
+          //   .value();
 
           const hit = _.cloneDeep(doc);
 
