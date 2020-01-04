@@ -1,3 +1,5 @@
+import User from "./User";
+
 export const url = "https://frugal.ideakeg.xyz/api/";
 
 function api(endpoint, payload) {
@@ -6,12 +8,18 @@ function api(endpoint, payload) {
       reject("Request timed out..");
     }, 20000);
 
+    const headers = {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    };
+
+    if (User.token) {
+      headers["Authorization"] = `bearer ${User.token}`;
+    }
+
     const res = await fetch(`${url}${endpoint}`, {
       method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
+      headers,
       body: JSON.stringify(payload)
     }).catch(error => {
       clearTimeout(timeout);

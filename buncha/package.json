@@ -28,6 +28,7 @@
     "react-native-gesture-handler": "~1.5.0",
     "react-native-keyboard-aware-scroll-view": "^0.8.0",
     "react-native-maps": "0.26.1",
+    "react-native-swiper": "^1.6.0-nightly.5",
     "react-native-web": "~0.11.7",
     "react-native-webview": "7.4.3",
     "react-navigation": "^3.11.1",
