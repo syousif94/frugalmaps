@@ -480,7 +480,7 @@ export function itemRemaining(item) {
 
   const duration = ending
     ? ` ${remaining.value} left`
-    : ` ${spanHours.duration}hr${pluralize(spanHours.duration)}`;
+    : ` til ${end}`; /**  ` ${spanHours.duration}hr${pluralize(spanHours.duration)}`*/
 
   return {
     text,

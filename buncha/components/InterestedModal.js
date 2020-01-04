@@ -35,7 +35,7 @@ export default () => {
 
   const [event, animation] = useAnimateOn(selectedEvent);
 
-  const [keyboard, bottomOffset] = useKeyboardHeight();
+  const [keyboard, setBottomOffset] = useKeyboardHeight();
 
   const containerStyle = [
     styles.container,
@@ -64,7 +64,7 @@ export default () => {
   const pointerEvents = event ? "auto" : "none";
   const onLayout = e => {
     const modalHeight = e.nativeEvent.layout.height;
-    bottomOffset.current = (HEIGHT - modalHeight) / -2 - 54;
+    setBottomOffset((HEIGHT - modalHeight) / -2 - 54);
   };
   return (
     <Animated.View style={containerStyle} pointerEvents={pointerEvents}>

@@ -103,19 +103,16 @@ const KEYBOARD_EASING = ANDROID
   ? Easing.linear
   : Easing.bezier(0.17, 0.59, 0.4, 0.77);
 
-export function useKeyboardHeight(bottomOffset = 0) {
+export function useKeyboardHeight() {
   const heightRef = useRef(new Animated.Value(0));
-  const bottomOffsetRef = useRef(bottomOffset);
+  const [bottomOffset, setBottomOffset] = useState(0);
 
   useEffect(() => {
     const onShow = e => {
       Animated.timing(
         heightRef.current,
         {
-          toValue: Math.min(
-            -(e.endCoordinates.height + bottomOffsetRef.current),
-            0
-          ),
+          toValue: Math.min(-(e.endCoordinates.height + bottomOffset), 0),
           duration: e.duration,
           easing: KEYBOARD_EASING
         },
@@ -143,7 +140,7 @@ export function useKeyboardHeight(bottomOffset = 0) {
       Keyboard.removeListener(KEYBOARD_EVENTS[0], onShow);
       Keyboard.removeListener(KEYBOARD_EVENTS[1], onHide);
     };
-  }, []);
+  }, [bottomOffset]);
 
-  return [heightRef, bottomOffsetRef];
+  return [heightRef, setBottomOffset];
 }

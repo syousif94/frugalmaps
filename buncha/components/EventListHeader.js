@@ -129,8 +129,7 @@ const Button = ({ tag: { text, count }, inputRef }) => {
           style={{
             fontSize: 9,
             color: BLUE,
-            marginTop: -0.5,
-            fontWeight: "700"
+            fontWeight: "600"
           }}
         >
           {count} event{count !== 1 ? "s" : ""}

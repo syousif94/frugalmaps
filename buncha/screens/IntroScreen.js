@@ -4,7 +4,7 @@ import Swiper from "react-native-swiper";
 import { BLUE, RED } from "../utils/Colors";
 import { navigate } from ".";
 import { getInset } from "../utils/SafeAreaInsets";
-import { HEIGHT, WIDTH } from "../utils/Constants";
+import { HEIGHT, WIDTH, ANDROID } from "../utils/Constants";
 import { Entypo, FontAwesome, Ionicons } from "@expo/vector-icons";
 import UpNextItem, { itemMargin } from "../components/UpNextItem";
 
@@ -21,7 +21,7 @@ export default () => {
             <View
               style={{
                 position: "absolute",
-                bottom: getInset("bottom"),
+                bottom: getInset("bottom") + 15,
                 alignSelf: "center",
                 flexDirection: "row"
               }}
@@ -56,47 +56,52 @@ export default () => {
               style={{ transform: [{ scale: 0.7 }, { rotate: "6deg" }] }}
             />
           </View>
-          <Text style={styles.titleText} allowFontScaling={false}>
-            Welcome to Buncha
-          </Text>
-          <Text style={styles.subText} allowFontScaling={false}>
-            Buncha is a curated social calendar featuring the best local
-            specials, brunches, game nights, and more.
-          </Text>
+          <View style={styles.body}>
+            <Text style={styles.titleText} allowFontScaling={false}>
+              Welcome to Buncha
+            </Text>
+            <Text style={styles.subText} allowFontScaling={false}>
+              Buncha is a curated social calendar featuring the best local
+              specials, brunches, game nights, and more.
+            </Text>
+          </View>
         </View>
         <View style={[styles.page, { justifyContent: "flex-end" }]}>
-          <Text style={styles.titleText} allowFontScaling={false}>
-            Events
-          </Text>
-          <View style={styles.subtitle}>
-            <FontAwesome
-              allowFontScaling={false}
-              name="star"
-              size={18}
-              color={"#FFA033"}
-            />
-            <Text allowFontScaling={false} style={styles.subtitleText}>
-              Interested
+          <View style={styles.body}>
+            <Text style={styles.titleText} allowFontScaling={false}>
+              Events
+            </Text>
+            <View style={styles.subtitle}>
+              <FontAwesome
+                allowFontScaling={false}
+                name="star"
+                size={18}
+                color={"#FFA033"}
+              />
+              <Text allowFontScaling={false} style={styles.subtitleText}>
+                Interested
+              </Text>
+            </View>
+            <Text allowFontScaling={false} style={styles.subText}>
+              Contacts you've selected can see what you're interested in and
+              when.
+            </Text>
+            <View style={styles.subtitle}>
+              <Entypo
+                allowFontScaling={false}
+                name="calendar"
+                size={18}
+                color={RED}
+              />
+              <Text allowFontScaling={false} style={styles.subtitleText}>
+                Plans
+              </Text>
+            </View>
+            <Text style={styles.subText} allowFontScaling={false}>
+              Invite your friends and keep track of who's going. Works even if
+              they don't have Buncha.
             </Text>
           </View>
-          <Text allowFontScaling={false} style={styles.subText}>
-            Contacts you've selected can see what you're interested in and when.
-          </Text>
-          <View style={styles.subtitle}>
-            <Entypo
-              allowFontScaling={false}
-              name="calendar"
-              size={18}
-              color={RED}
-            />
-            <Text allowFontScaling={false} style={styles.subtitleText}>
-              Plans
-            </Text>
-          </View>
-          <Text style={styles.subText} allowFontScaling={false}>
-            Invite your friends and keep track of who's going. Works even if
-            they don't have Buncha.
-          </Text>
           <View style={{ marginTop: 30 }}>
             <View
               pointerEvents="none"
@@ -126,54 +131,59 @@ export default () => {
             </View>
           </View>
         </View>
-        <View style={styles.page}>
-          <Text style={styles.titleText} allowFontScaling={false}>
-            Permissions
-          </Text>
-          <View style={{ flex: 1 }} />
-          <View style={styles.subtitle}>
-            <FontAwesome
-              allowFontScaling={false}
-              name="location-arrow"
-              size={18}
-              color={BLUE}
-            />
-            <Text allowFontScaling={false} style={styles.subtitleText}>
-              Location
+        <View style={[styles.page, { justifyContent: "center" }]}>
+          <View style={styles.body}>
+            <Text style={styles.titleText} allowFontScaling={false}>
+              Permissions
+            </Text>
+            <Text style={styles.subText} allowFontScaling={false}>
+              For the best experience, please allow to following permissions
+              when prompted.
+            </Text>
+            <View style={[styles.subtitle, { marginTop: 60 }]}>
+              <FontAwesome
+                allowFontScaling={false}
+                name="location-arrow"
+                size={18}
+                color={BLUE}
+              />
+              <Text allowFontScaling={false} style={styles.subtitleText}>
+                Location
+              </Text>
+            </View>
+            <Text style={styles.subText} allowFontScaling={false}>
+              Used to determine which events are nearby.
+            </Text>
+            <View style={styles.subtitle}>
+              <Ionicons
+                allowFontScaling={false}
+                name="ios-contacts"
+                style={{ marginTop: 1 }}
+                size={22}
+                color={BLUE}
+              />
+              <Text allowFontScaling={false} style={styles.subtitleText}>
+                Contacts
+              </Text>
+            </View>
+            <Text allowFontScaling={false} style={styles.subText}>
+              Required to send invites and share your interests.
+            </Text>
+            <View style={styles.subtitle}>
+              <Ionicons
+                allowFontScaling={false}
+                name="md-notifications"
+                size={20}
+                color={BLUE}
+              />
+              <Text allowFontScaling={false} style={styles.subtitleText}>
+                Notifications
+              </Text>
+            </View>
+            <Text allowFontScaling={false} style={styles.subText}>
+              Required for alerts.
             </Text>
           </View>
-          <Text style={styles.subText} allowFontScaling={false}>
-            Used to determine which events are nearby.
-          </Text>
-          <View style={styles.subtitle}>
-            <Ionicons
-              allowFontScaling={false}
-              name="ios-contacts"
-              style={{ marginTop: 1 }}
-              size={22}
-              color={BLUE}
-            />
-            <Text allowFontScaling={false} style={styles.subtitleText}>
-              Contacts
-            </Text>
-          </View>
-          <Text allowFontScaling={false} style={styles.subText}>
-            Required to send invites and share your interests.
-          </Text>
-          <View style={styles.subtitle}>
-            <Ionicons
-              allowFontScaling={false}
-              name="md-notifications"
-              size={20}
-              color={BLUE}
-            />
-            <Text allowFontScaling={false} style={styles.subtitleText}>
-              Notifications
-            </Text>
-          </View>
-          <Text allowFontScaling={false} style={styles.subText}>
-            Required for alerts.
-          </Text>
         </View>
         <View style={styles.page}>
           <View style={{ justifyContent: "flex-start" }}>
@@ -181,17 +191,19 @@ export default () => {
               Account
             </Text>
             <TouchableOpacity
-              style={{ position: "absolute", top: 0, right: 0 }}
+              style={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+                padding: 5
+              }}
               onPress={() => {
                 navigate("UpNext");
               }}
             >
-              <Ionicons
-                allowFontScaling={false}
-                name="ios-close"
-                size={34}
-                color={"#ddd"}
-              />
+              <Text style={{ fontSize: 14, color: "#eee", fontWeight: "700" }}>
+                Skip
+              </Text>
             </TouchableOpacity>
           </View>
           <View style={{ flex: 1 }} />
@@ -230,6 +242,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     flex: 1
   },
+  body: {
+    maxWidth: 500,
+    width: "100%",
+    alignSelf: "center"
+  },
   titleText: {
     fontSize: 28,
     fontWeight: "700"
@@ -242,13 +259,14 @@ const styles = StyleSheet.create({
   subtitleText: {
     marginLeft: 10,
     fontSize: 19,
-    fontWeight: "600"
+    fontWeight: ANDROID ? "700" : "600"
   },
   subText: {
     marginTop: 8,
     fontSize: 19,
     lineHeight: 26,
-    color: "#666"
+    color: "#666",
+    maxWidth: 400
   }
 });
 

@@ -33,17 +33,17 @@ let itemMargin;
 
 if (windowWidth > 600) {
   columns = 3;
-  itemMargin = 16;
+  itemMargin = 20;
 } else {
   columns = 2;
-  itemMargin = 11;
+  itemMargin = 15;
 }
 
 const itemWidth = (windowWidth - itemMargin * (columns + 1)) / columns;
 
 export { columns, itemMargin, itemWidth };
 
-const imageHeight = 95;
+const imageHeight = 80;
 
 export default memo(
   ({ item, index, style = {}, containerStyle = {}, demo }) => {
@@ -125,9 +125,9 @@ export default memo(
         <Text style={styles.locationText} allowFontScaling={false}>
           {item._source.location}
           <PriceText prefix=" " priceLevel={item._source.priceLevel} />
-          <Text style={styles.distanceText}> {distance}</Text>
+          <Text style={styles.subText}> {distance}</Text>
           {item._source.neighborhood ? (
-            <Text style={styles.subText}>
+            <Text style={styles.distanceText}>
               {" "}
               {item._source.neighborhood.split(",")[0]}
             </Text>
@@ -152,7 +152,7 @@ export default memo(
               <FontAwesome
                 allowFontScaling={false}
                 name="star"
-                size={WEB ? 16 : 17}
+                size={WEB ? 16 : 15}
                 color={"#FFA033"}
               />
               <Text allowFontScaling={false} style={styles.actionText}>
@@ -168,7 +168,7 @@ export default memo(
               <Entypo
                 allowFontScaling={false}
                 name="calendar"
-                size={WEB ? 16 : 17}
+                size={WEB ? 16 : 15}
                 color={RED}
               />
               <Text allowFontScaling={false} style={styles.actionText}>
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
   distanceText: {
     fontSize: 11,
     color: "#999",
-    fontWeight: "700"
+    fontWeight: ANDROID ? "700" : "600"
   },
   subText: {
     fontSize: 11,
@@ -236,9 +236,9 @@ const styles = StyleSheet.create({
     paddingBottom: WEB ? 5 : 15
   },
   actionText: {
-    marginLeft: 6,
-    fontSize: WEB ? 13 : 15,
-    fontWeight: ANDROID ? "700" : "600",
+    marginLeft: 5,
+    fontSize: 14,
+    fontWeight: ANDROID ? "700" : "500",
     color: "#000"
   },
   index: {

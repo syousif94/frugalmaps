@@ -9,13 +9,16 @@ import moment from "moment";
 import TimeInput from "./TimeInput";
 import { getInset } from "../utils/SafeAreaInsets";
 
-export default ({ bottomOffset, panelHeight }) => {
+export default ({ setBottomOffset, panelHeight }) => {
   return (
     <React.Fragment>
       <Text style={styles.subText}>Day</Text>
       <DayPicker />
       <Text style={styles.subText}>Time</Text>
-      <TimeContainer bottomOffset={bottomOffset} panelHeight={panelHeight} />
+      <TimeContainer
+        setBottomOffset={setBottomOffset}
+        panelHeight={panelHeight}
+      />
       <View
         style={{
           flexDirection: "row",
@@ -79,12 +82,12 @@ const DayPicker = () => {
   );
 };
 
-const TimeContainer = ({ bottomOffset, panelHeight }) => {
+const TimeContainer = ({ setBottomOffset, panelHeight }) => {
   const dispatch = useDispatch();
   const value = useSelector(state => state.filters.time);
   const onLayout = e => {
     const { y, height } = e.nativeEvent.layout;
-    bottomOffset.current = -panelHeight + y + height + getInset("bottom") + 10;
+    setBottomOffset(-panelHeight + y + height + getInset("bottom") + 10);
   };
   return (
     <View

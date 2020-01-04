@@ -24,7 +24,7 @@ import { getInset } from "../utils/SafeAreaInsets";
 export default memo(() => {
   const [page, setPage] = useState(null);
   const [panelHeight, setPanelHeight] = useState(0);
-  const [keyboard, bottomOffset] = useKeyboardHeight();
+  const [keyboard, setBottomOffset] = useKeyboardHeight();
   const [dimensions] = useDimensions();
   const animation = useRef(new Animated.Value(0));
 
@@ -153,7 +153,7 @@ export default memo(() => {
           >
             <FilterPlaceView />
             <FilterTimeView
-              bottomOffset={bottomOffset}
+              setBottomOffset={setBottomOffset}
               panelHeight={panelHeight}
             />
           </View>
