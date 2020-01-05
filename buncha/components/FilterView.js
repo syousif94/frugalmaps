@@ -140,7 +140,7 @@ export default memo(() => {
       </Animated.View>
       <KeyboardAvoidingView
         behavior="position"
-        pointerEvents="box-none"
+        pointerEvents={page ? "box-none" : "none"}
         style={
           wideOrWeb
             ? null
