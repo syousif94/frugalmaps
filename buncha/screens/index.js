@@ -21,11 +21,23 @@ import InterestedModal from "../components/InterestedModal";
 import PlanScreen from "./PlanScreen";
 import Browser from "../components/Browser";
 import User from "../utils/User";
-import { WIDTH } from "../utils/Constants";
+import { WIDTH, HEIGHT } from "../utils/Constants";
 
-if (WIDTH > 500) {
-  ScreenOrientation.unlockAsync();
+async function lockOrientation() {
+  const portraitNarrow = WIDTH < HEIGHT && WIDTH <= 500;
+  const landscapeNarrow = HEIGHT < WIDTH && HEIGHT <= 500;
+  if (portraitNarrow || landscapeNarrow) {
+    try {
+      await ScreenOrientation.lockAsync(
+        ScreenOrientation.OrientationLock.PORTRAIT_UP
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
+
+lockOrientation();
 
 const TabScreen = createBottomTabNavigator(
   {
