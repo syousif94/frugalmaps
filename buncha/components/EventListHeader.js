@@ -8,7 +8,7 @@ import moment from "moment";
 import emitter from "tiny-emitter/instance";
 import { PAGE } from "../store/filters";
 import { itemMargin } from "./UpNextItem";
-import { BLUE, RED } from "../utils/Colors";
+import { BLUE } from "../utils/Colors";
 import { Entypo } from "@expo/vector-icons";
 import _ from "lodash";
 import * as Events from "../store/events";
@@ -21,7 +21,7 @@ export default () => {
       <View
         style={{
           marginTop: ANDROID ? 7 : 10,
-          paddingHorizontal: itemMargin
+          paddingHorizontal: itemMargin / 2
         }}
       >
         <ListHeaderFilterButton searchFocused={searchFocused} />
@@ -75,7 +75,7 @@ const TagsList = ({ searchFocused, inputRef }) => {
           top: 0,
           left: 0,
           right: 0,
-          paddingHorizontal: itemMargin - 4
+          paddingHorizontal: itemMargin / 2 - 4
         }}
         onLayout={e => {
           const height = e.nativeEvent.layout.height;

@@ -4,7 +4,7 @@ import Swiper from "react-native-swiper";
 import { BLUE, RED } from "../utils/Colors";
 import { navigate } from ".";
 import { getInset } from "../utils/SafeAreaInsets";
-import { HEIGHT, WIDTH, ANDROID } from "../utils/Constants";
+import { HEIGHT, ANDROID } from "../utils/Constants";
 import { Entypo, FontAwesome, Ionicons } from "@expo/vector-icons";
 import UpNextItem, { itemMargin } from "../components/UpNextItem";
 
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff"
   },
   page: {
-    width: WIDTH,
+    width: "100%",
     overflow: "hidden",
     paddingTop: getInset("top") + HEIGHT * 0.05,
     paddingBottom: getInset("bottom") + HEIGHT * 0.1,

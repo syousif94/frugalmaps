@@ -31,16 +31,30 @@ if (bottomInset === 0) {
   bottomInset -= 10;
 }
 
-const mapViewHeight = WEB ? 0 : HEIGHT * 0.76;
-
-const mapMinHeight = 190;
-
-let initialOffset = mapViewHeight - mapMinHeight;
-
-const contentMinHeight = HEIGHT - initialOffset / 2;
-
 function makeNarrowWebMapOffset(dimensions) {
   return dimensions.height * 0.7;
+}
+
+function getMapViewDimensions(dimensions) {
+  const mapViewHeight = WEB ? 0 : dimensions.height * 0.76;
+
+  const mapMinHeight = 190;
+
+  let initialOffset = mapViewHeight - mapMinHeight;
+
+  const contentMinHeight = dimensions.height - initialOffset / 2;
+
+  if (WEB) {
+    initialOffset =
+      makeNarrowWebMapOffset(dimensions) - dimensions.height * 0.15;
+  }
+
+  return {
+    mapViewHeight,
+    mapMinHeight,
+    initialOffset,
+    contentMinHeight
+  };
 }
 
 export default memo(({ item, id }) => {
@@ -49,10 +63,12 @@ export default memo(({ item, id }) => {
   const [iframeReady, setIframeReady] = useState(false);
   const [dimensions] = useDimensions();
   const prevDimensions = useRef(null);
-  if (WEB) {
-    initialOffset =
-      makeNarrowWebMapOffset(dimensions) - dimensions.height * 0.15;
-  }
+  const {
+    mapViewHeight,
+    mapMinHeight,
+    initialOffset,
+    contentMinHeight
+  } = getMapViewDimensions(dimensions);
   const scrollOffset = useRef(new Animated.Value(initialOffset));
   const scrollRef = useRef(null);
   const scrollToTop = () => {
@@ -177,6 +193,7 @@ export default memo(({ item, id }) => {
             style={[
               styles.content,
               {
+                marginTop: WEB ? null : mapViewHeight,
                 minHeight:
                   WEB && narrow
                     ? dimensions.height * 0.8
@@ -314,7 +331,6 @@ const EventsList = ({ events, id }) => {
 const styles = StyleSheet.create({
   content: {
     paddingBottom: getInset("bottom"),
-    marginTop: WEB ? null : mapViewHeight,
     backgroundColor: "#fff"
   },
   info: {

@@ -7,6 +7,7 @@ import {
   createSwitchNavigator
 } from "react-navigation";
 import { View, StyleSheet } from "react-native";
+import { ScreenOrientation } from "expo";
 
 import TabBar from "../components/TabBar";
 import UpNextScreen from "./UpNextScreen";
@@ -20,6 +21,11 @@ import InterestedModal from "../components/InterestedModal";
 import PlanScreen from "./PlanScreen";
 import Browser from "../components/Browser";
 import User from "../utils/User";
+import { WIDTH } from "../utils/Constants";
+
+if (WIDTH > 500) {
+  ScreenOrientation.unlockAsync();
+}
 
 const TabScreen = createBottomTabNavigator(
   {

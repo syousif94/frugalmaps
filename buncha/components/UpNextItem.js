@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useEffect } from "react";
 import {
   View,
   Text,
@@ -184,8 +184,7 @@ export default memo(
 
 const styles = StyleSheet.create({
   container: {
-    width: itemWidth,
-    marginLeft: itemMargin,
+    width: "100%",
     height: "100%"
   },
   image: {

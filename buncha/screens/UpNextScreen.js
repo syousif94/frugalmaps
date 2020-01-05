@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { refresh } from "../store/events";
 import * as Cities from "../store/cities";
-import UpNextItem, { columns, itemMargin } from "../components/UpNextItem";
+import UpNextItem, { itemMargin, columns } from "../components/UpNextItem";
 import TopBar from "../components/TopBar";
 import { enableLocation } from "../store/permissions";
 import { WEB, IOS, ANDROID } from "../utils/Constants";
@@ -212,8 +212,6 @@ export default ({ intro = false }) => {
                     }}
                     style={{
                       height: "100%",
-                      width: "100%",
-                      marginLeft: 0,
                       paddingVertical: 0
                     }}
                   />
@@ -236,7 +234,17 @@ export default ({ intro = false }) => {
           <FlatList
             ref={listRef}
             renderItem={data => {
-              return <UpNextItem {...data} />;
+              return (
+                <UpNextItem
+                  {...data}
+                  style={{
+                    paddingHorizontal: itemMargin / 2
+                  }}
+                />
+              );
+            }}
+            columnWrapperStyle={{
+              width: width > 500 ? "33.33%" : "50%"
             }}
             contentInset={{
               top: topInset,
@@ -245,7 +253,8 @@ export default ({ intro = false }) => {
               right: 0
             }}
             contentContainerStyle={{
-              paddingBottom: ANDROID ? tabBarHeight : null
+              paddingBottom: ANDROID ? tabBarHeight : null,
+              paddingHorizontal: itemMargin / 2
             }}
             keyboardShouldPersistTaps="handled"
             progressViewOffset={70}
@@ -279,7 +288,7 @@ const ListFooter = () => {
         backgroundColor: "#fff",
         borderTopWidth: 1,
         borderColor: "#f2f2f2",
-        paddingHorizontal: WEB ? 20 : itemMargin,
+        paddingHorizontal: WEB ? 20 : itemMargin / 2,
         paddingTop: 10,
         paddingBottom: 60
       }}

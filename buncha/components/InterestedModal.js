@@ -7,7 +7,8 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  Dimensions
 } from "react-native";
 import { AWSCF, HEIGHT, WEB } from "../utils/Constants";
 import { BLUE } from "../utils/Colors";
@@ -64,7 +65,7 @@ export default () => {
   const pointerEvents = event ? "auto" : "none";
   const onLayout = e => {
     const modalHeight = e.nativeEvent.layout.height;
-    setBottomOffset((HEIGHT - modalHeight) / -2 - 54);
+    setBottomOffset((Dimensions.get("window").height - modalHeight) / -2 - 54);
   };
   return (
     <Animated.View style={containerStyle} pointerEvents={pointerEvents}>
