@@ -4,7 +4,7 @@ import Swiper from "react-native-swiper";
 import { BLUE, RED } from "../utils/Colors";
 import { navigate } from ".";
 import { getInset } from "../utils/SafeAreaInsets";
-import { HEIGHT, ANDROID } from "../utils/Constants";
+import { HEIGHT, ANDROID, NARROW } from "../utils/Constants";
 import { Entypo, FontAwesome, Ionicons } from "@expo/vector-icons";
 import UpNextItem, { itemMargin } from "../components/UpNextItem";
 
@@ -44,19 +44,24 @@ export default () => {
           );
         }}
       >
-        <View style={styles.page}>
-          <View
-            style={{
-              alignItems: "flex-end",
-              paddingBottom: "10%"
-            }}
-          >
-            <Image
-              source={require("../assets/intro.png")}
-              style={{ transform: [{ scale: 0.7 }, { rotate: "6deg" }] }}
-            />
-          </View>
+        <View
+          style={[
+            styles.page,
+            { justifyContent: "center", paddingBottom: "28%" }
+          ]}
+        >
           <View style={styles.body}>
+            <View
+              style={{
+                alignItems: "flex-end",
+                paddingBottom: "3%"
+              }}
+            >
+              <Image
+                source={require("../assets/intro.png")}
+                style={{ transform: [{ scale: 0.7 }, { rotate: "6deg" }] }}
+              />
+            </View>
             <Text style={styles.titleText} allowFontScaling={false}>
               Welcome to Buncha
             </Text>
@@ -66,8 +71,17 @@ export default () => {
             </Text>
           </View>
         </View>
-        <View style={[styles.page, { justifyContent: "flex-end" }]}>
-          <View style={styles.body}>
+        <View
+          style={[
+            styles.page,
+            {
+              justifyContent: NARROW ? "flex-end" : "space-around",
+              alignItems: NARROW ? null : "center",
+              flexDirection: NARROW ? null : "row"
+            }
+          ]}
+        >
+          <View style={{ marginTop: NARROW ? null : -60 }}>
             <Text style={styles.titleText} allowFontScaling={false}>
               Events
             </Text>
@@ -102,14 +116,20 @@ export default () => {
               they don't have Buncha.
             </Text>
           </View>
-          <View style={{ marginTop: 30 }}>
+          <View
+            style={{
+              marginTop: 30
+            }}
+          >
             <View
               pointerEvents="none"
               style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginHorizontal: -30,
-                paddingLeft: 30 - itemMargin,
+                flexDirection: NARROW ? "row" : "column",
+                justifyContent: NARROW ? "flex-start" : "center",
+                alignItems: NARROW ? "center" : "flex-start",
+                marginRight: NARROW ? null : -220,
+                marginHorizontal: NARROW ? -30 : 0,
+                paddingLeft: NARROW ? 30 - itemMargin : 0,
                 overflow: "hidden"
               }}
             >
@@ -121,9 +141,11 @@ export default () => {
                     index={index}
                     demo
                     style={{
-                      width: "60%",
-                      marginHorizontal: 15,
-                      marginVertical: 0
+                      height: NARROW ? "100%" : null,
+                      width: NARROW ? "60%" : 340,
+                      marginHorizontal: NARROW ? 15 : null,
+                      marginVertical: 0,
+                      marginTop: NARROW ? null : 30
                     }}
                   />
                 );
@@ -237,8 +259,8 @@ const styles = StyleSheet.create({
   page: {
     width: "100%",
     overflow: "hidden",
-    paddingTop: getInset("top") + HEIGHT * 0.05,
-    paddingBottom: getInset("bottom") + HEIGHT * 0.1,
+    paddingTop: getInset("top") + 0.05 * HEIGHT,
+    paddingBottom: getInset("bottom") + 0.08 * HEIGHT,
     paddingHorizontal: 30,
     flex: 1
   },

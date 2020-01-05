@@ -10,7 +10,8 @@ import {
   Animated,
   StyleSheet,
   TouchableOpacity,
-  Easing
+  Easing,
+  KeyboardAvoidingView
 } from "react-native";
 import BlurView from "./BlurView";
 import { WEB } from "../utils/Constants";
@@ -18,13 +19,12 @@ import emitter from "tiny-emitter/instance";
 
 import FilterPlaceView from "./FilterPlaceView";
 import FilterTimeView from "./FilterTimeView";
-import { useKeyboardHeight, useDimensions } from "../utils/Hooks";
+import { useDimensions } from "../utils/Hooks";
 import { getInset } from "../utils/SafeAreaInsets";
 
 export default memo(() => {
   const [page, setPage] = useState(null);
   const [panelHeight, setPanelHeight] = useState(0);
-  const [keyboard, setBottomOffset] = useKeyboardHeight();
   const [dimensions] = useDimensions();
   const animation = useRef(new Animated.Value(0));
 
@@ -71,7 +71,7 @@ export default memo(() => {
     }
   }, [panelHeight, page]);
 
-  const panelTranslate = Animated.add(animation.current, keyboard.current);
+  const panelTranslate = animation.current;
 
   const dismissStyle = wideOrWeb
     ? {
@@ -138,27 +138,40 @@ export default memo(() => {
           }}
         />
       </Animated.View>
-      <Animated.View style={panelStyle}>
-        <BlurView>
-          <View
-            style={{
-              paddingTop: 10,
-              paddingBottom: wideOrWeb ? 20 : getInset("bottom") + 10
-            }}
-            onLayout={e => {
-              if (!wideOrWeb) {
-                setPanelHeight(e.nativeEvent.layout.height);
+      <KeyboardAvoidingView
+        behavior="position"
+        style={
+          wideOrWeb
+            ? null
+            : {
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                right: 0
               }
-            }}
-          >
-            <FilterPlaceView />
-            <FilterTimeView
-              setBottomOffset={setBottomOffset}
-              panelHeight={panelHeight}
-            />
-          </View>
-        </BlurView>
-      </Animated.View>
+        }
+        keyboardVerticalOffset={-getInset("bottom")}
+        enabled={!wideOrWeb}
+      >
+        <Animated.View style={panelStyle}>
+          <BlurView>
+            <View
+              style={{
+                paddingTop: 10,
+                paddingBottom: wideOrWeb ? 20 : getInset("bottom") + 10
+              }}
+              onLayout={e => {
+                if (!wideOrWeb) {
+                  setPanelHeight(e.nativeEvent.layout.height);
+                }
+              }}
+            >
+              <FilterPlaceView />
+              <FilterTimeView />
+            </View>
+          </BlurView>
+        </Animated.View>
+      </KeyboardAvoidingView>
     </View>
   );
 });

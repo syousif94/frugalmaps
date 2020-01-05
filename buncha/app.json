@@ -5,12 +5,12 @@
     "privacy": "public",
     "sdkVersion": "36.0.0",
     "platforms": ["ios", "android", "web"],
-    "version": "2.1.3",
+    "version": "2.1.4",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "cover",
+      "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "scheme": "buncha",
@@ -38,7 +38,7 @@
         "backgroundColor": "#FF94CD",
         "foregroundImage": "./assets/foreground.png"
       },
-      "versionCode": 19,
+      "versionCode": 20,
       "permissions": [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
