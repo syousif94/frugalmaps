@@ -21,12 +21,10 @@ import InterestedModal from "../components/InterestedModal";
 import PlanScreen from "./PlanScreen";
 import Browser from "../components/Browser";
 import User from "../utils/User";
-import { WIDTH, HEIGHT } from "../utils/Constants";
+import { NARROW } from "../utils/Constants";
 
 async function lockOrientation() {
-  const portraitNarrow = WIDTH < HEIGHT && WIDTH <= 500;
-  const landscapeNarrow = HEIGHT < WIDTH && HEIGHT <= 500;
-  if (portraitNarrow || landscapeNarrow) {
+  if (NARROW) {
     try {
       await ScreenOrientation.lockAsync(
         ScreenOrientation.OrientationLock.PORTRAIT_UP

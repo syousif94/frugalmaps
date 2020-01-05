@@ -55,6 +55,11 @@ export const IOS_WEB =
     (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1));
 export const MOBILE_WEB = ANDROID_WEB || IOS_WEB;
 
+const portraitNarrow = WIDTH < HEIGHT && WIDTH <= 500;
+const landscapeNarrow = HEIGHT < WIDTH && HEIGHT <= 500;
+
+export const NARROW = portraitNarrow || landscapeNarrow;
+
 export const PLACEMENT_ID = IOS
   ? "1931177036970533_1956753154412921"
   : "1931177036970533_1991298450958391";

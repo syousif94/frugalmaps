@@ -20,7 +20,7 @@ import {
 import ImageGallery from "./ImageGallery";
 import { Entypo, FontAwesome } from "@expo/vector-icons";
 import { useEveryMinute } from "../utils/Hooks";
-import { WEB, ANDROID } from "../utils/Constants";
+import { WEB, ANDROID, NARROW } from "../utils/Constants";
 import PriceText from "./PriceText";
 import DaysText from "./DaysText";
 import MatchableText from "./MatchableText";
@@ -31,7 +31,7 @@ const windowWidth = Dimensions.get("window").width;
 let columns;
 let itemMargin;
 
-if (windowWidth > 600) {
+if (!NARROW) {
   columns = 3;
   itemMargin = 20;
 } else {
