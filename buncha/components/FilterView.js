@@ -14,7 +14,7 @@ import {
   KeyboardAvoidingView
 } from "react-native";
 import BlurView from "./BlurView";
-import { WEB } from "../utils/Constants";
+import { WEB, ANDROID } from "../utils/Constants";
 import emitter from "tiny-emitter/instance";
 
 import FilterPlaceView from "./FilterPlaceView";
@@ -140,6 +140,7 @@ export default memo(() => {
       </Animated.View>
       <KeyboardAvoidingView
         behavior="position"
+        pointerEvents="box-none"
         style={
           wideOrWeb
             ? null
@@ -147,10 +148,12 @@ export default memo(() => {
                 position: "absolute",
                 bottom: 0,
                 left: 0,
-                right: 0
+                right: 0,
+                top: 0,
+                justifyContent: "flex-end"
               }
         }
-        keyboardVerticalOffset={-getInset("bottom")}
+        keyboardVerticalOffset={ANDROID ? 0 : -getInset("bottom")}
         enabled={!wideOrWeb}
       >
         <Animated.View style={panelStyle}>
@@ -158,7 +161,11 @@ export default memo(() => {
             <View
               style={{
                 paddingTop: 10,
-                paddingBottom: wideOrWeb ? 20 : getInset("bottom") + 10
+                paddingBottom: wideOrWeb
+                  ? 20
+                  : ANDROID
+                  ? 40
+                  : getInset("bottom") + 10
               }}
               onLayout={e => {
                 if (!wideOrWeb) {
