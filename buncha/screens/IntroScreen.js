@@ -219,7 +219,7 @@ export default () => {
               </Text>
             </View>
             <Text allowFontScaling={false} style={styles.subText}>
-              Required to send invites and share your interests.
+              Used to send invites and share your interests.
             </Text>
             <View style={styles.subtitle}>
               <Ionicons
@@ -233,7 +233,7 @@ export default () => {
               </Text>
             </View>
             <Text allowFontScaling={false} style={styles.subText}>
-              Required for alerts.
+              Used for alerts and reminders.
             </Text>
           </View>
         </View>

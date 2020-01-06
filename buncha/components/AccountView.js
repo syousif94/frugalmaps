@@ -1,15 +1,21 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 import {
   View,
   StyleSheet,
   TouchableOpacity,
   Text,
   Animated,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  ActivityIndicator,
+  Image
 } from "react-native";
 import Input from "./Input";
 import { BLUE } from "../utils/Colors";
 import emitter from "tiny-emitter/instance";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
+import * as User from "../store/user";
+import store from "../store";
+import * as ImagePicker from "expo-image-picker";
 
 export const FOCUS_ACCOUNT_INPUT = "focus-account-input";
 export const BLUR_ACCOUNT_INPUT = "blur-account-input";
@@ -71,6 +77,18 @@ export default ({
     });
   };
 
+  useEffect(() => {
+    const {
+      user: { number, name, photo, token }
+    } = store.getState();
+
+    if (name.length && photo) {
+      scrollTo({ page: 3, animated: false, focus: false });
+    } else if (token && number) {
+      scrollTo({ page: 2, animated: false, focus: false });
+    }
+  }, []);
+
   return (
     <View
       style={styles.container}
@@ -105,7 +123,7 @@ export default ({
           keyboardBottomOffset={keyboardBottomOffset}
           enableDismiss={enableDismiss}
         />
-        <ProfileView />
+        <ProfileView keyboardBottomOffset={keyboardBottomOffset} />
         <ContactsView />
       </Animated.View>
     </View>
@@ -119,8 +137,11 @@ const NumberView = ({
   keyboardBottomOffset,
   enableDismiss
 }) => {
+  const dispatch = useDispatch();
   const ref = useRef(null);
   useControlInput(0, page, ref);
+  const value = useSelector(state => state.user.number);
+  const disableNext = value.length !== 10;
   return (
     <View style={styles.page}>
       <TouchableOpacity
@@ -131,7 +152,21 @@ const NumberView = ({
         style={{ ...StyleSheet.absoluteFillObject }}
       />
       <View style={styles.pageContent} pointerEvents="box-none">
-        <Input ref={ref} placeholder="Number" keyboardType="numeric" />
+        <Text style={styles.instructText}>Enter your phone number</Text>
+        <Input
+          ref={ref}
+          placeholder="Number"
+          keyboardType="numeric"
+          value={value}
+          onChangeText={text => {
+            dispatch({
+              type: "user/set",
+              payload: {
+                number: text
+              }
+            });
+          }}
+        />
         <KeyboardAvoidingView
           pointerEvents="box-none"
           behavior="position"
@@ -149,7 +184,9 @@ const NumberView = ({
             text="Next"
             onPress={() => {
               scrollTo({ page: 1 });
+              dispatch(User.getLoginCode());
             }}
+            disabled={disableNext}
           />
         </KeyboardAvoidingView>
       </View>
@@ -164,8 +201,11 @@ const CodeView = ({
   keyboardBottomOffset,
   enableDismiss
 }) => {
+  const dispatch = useDispatch();
   const ref = useRef(null);
   useControlInput(1, page, ref);
+  const value = useSelector(state => state.user.loginCode);
+  const disableNext = value.length !== 6;
   return (
     <View style={styles.page}>
       <TouchableOpacity
@@ -176,7 +216,20 @@ const CodeView = ({
         style={{ ...StyleSheet.absoluteFillObject }}
       />
       <View style={styles.pageContent} pointerEvents="box-none">
-        <Input ref={ref} placeholder="Code" keyboardType="numeric" />
+        <Input
+          ref={ref}
+          placeholder="Code"
+          keyboardType="numeric"
+          value={value}
+          onChangeText={text => {
+            dispatch({
+              type: "user/set",
+              payload: {
+                loginCode: text
+              }
+            });
+          }}
+        />
         <KeyboardAvoidingView
           pointerEvents="box-none"
           behavior="position"
@@ -199,7 +252,15 @@ const CodeView = ({
               style={{ flex: 1 }}
             />
             <View style={{ width: 15 }} />
-            <Button text="Next" style={{ flex: 1 }} />
+            <Button
+              text="Next"
+              style={{ flex: 1 }}
+              disabled={disableNext}
+              onPress={() => {
+                scrollTo({ page: 2, focus: false });
+                dispatch(User.login());
+              }}
+            />
           </View>
         </KeyboardAvoidingView>
       </View>
@@ -207,18 +268,131 @@ const CodeView = ({
   );
 };
 
-const ProfileView = () => {
-  return <View style={styles.page} />;
+const ProfileView = ({ keyboardBottomOffset }) => {
+  const dispatch = useDispatch();
+  const loading = useSelector(state => state.user.loading);
+  const photo = useSelector(state => {
+    if (state.user.photo) {
+      return { uri: state.user.photo };
+    } else if (state.user.localPhoto) {
+      return { uri: state.user.localPhoto };
+    }
+    return null;
+  }, shallowEqual);
+  const name = useSelector(state => state.user.name);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#999" />
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.page}>
+      <View style={styles.pageContent}>
+        <TouchableOpacity
+          style={{ alignSelf: "center", marginBottom: 30 }}
+          onPress={async () => {
+            try {
+              const {
+                canceled,
+                uri
+              } = await ImagePicker.launchImageLibraryAsync({
+                allowsEditing: true,
+                aspect: [1, 1],
+                quality: 0.4
+              });
+
+              if (!canceled) {
+                dispatch({
+                  type: "user/set",
+                  payload: {
+                    localPhoto: uri
+                  }
+                });
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          }}
+        >
+          {photo ? (
+            <Image
+              source={photo}
+              style={{
+                height: 250,
+                width: 250,
+                borderRadius: 125,
+                backgroundColor: "#ccc"
+              }}
+            />
+          ) : (
+            <View
+              style={{
+                height: 250,
+                width: 250,
+                borderRadius: 125,
+                backgroundColor: "#ccc"
+              }}
+            />
+          )}
+        </TouchableOpacity>
+        <Text style={styles.instructText}>What do you go by?</Text>
+        <Input
+          autoCapitalize="words"
+          placeholder="Name"
+          value={name}
+          onChangeText={text => {
+            dispatch({
+              type: "user/set",
+              payload: {
+                name: text
+              }
+            });
+          }}
+        />
+        <View
+          style={{
+            position: "absolute",
+            bottom: keyboardBottomOffset,
+            left: 30,
+            right: 30
+          }}
+        >
+          <Text style={styles.instructText}>Last step!</Text>
+          <Button text="Pick Friends" />
+          <TouchableOpacity>
+            <Text>Logout</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
 };
 
 const ContactsView = () => {
-  return <View style={styles.page} />;
+  return (
+    <View style={styles.page}>
+      <View style={styles.pageContent}>
+        <Text>Contacts</Text>
+      </View>
+    </View>
+  );
 };
 
-const Button = ({ text, style, ...props }) => {
+const Button = ({ text, style, disabled, ...props }) => {
   return (
-    <View style={[styles.button, style]}>
+    <View
+      style={[
+        styles.button,
+        style,
+        { backgroundColor: disabled ? "#ccc" : BLUE }
+      ]}
+    >
       <TouchableOpacity
+        disabled={disabled}
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         {...props}
       >
@@ -248,9 +422,13 @@ const styles = StyleSheet.create({
     maxWidth: 500,
     width: "100%"
   },
+  instructText: {
+    fontSize: 14,
+    color: "#555",
+    marginBottom: 8
+  },
   button: {
     height: 50,
-    backgroundColor: BLUE,
     borderRadius: 5
   },
   buttonText: {

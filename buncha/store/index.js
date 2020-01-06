@@ -3,8 +3,9 @@ import { createLogger } from "redux-logger";
 import thunk from "redux-thunk";
 import reducers from "./reducers";
 import { DEV } from "../utils/Constants";
+import { userPersistor } from "../utils/User";
 
-let middleware = [thunk];
+let middleware = [thunk, userPersistor];
 
 if (DEV) {
   middleware = [...middleware, createLogger()];

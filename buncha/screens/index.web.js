@@ -130,7 +130,6 @@ export default () => {
         {intro ? (
           <IntroScreen
             onComplete={() => {
-              localStorage["intro"] = "complete";
               dispatch({
                 type: "user/set",
                 payload: {
