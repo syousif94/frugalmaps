@@ -103,3 +103,59 @@ export function logout() {
     }
   };
 }
+
+export function uploadPhoto(uri) {
+  return async dispatch => {
+    dispatch({
+      type: "user/set",
+      payload: {
+        localPhoto: uri
+      }
+    });
+
+    try {
+      const { key, policy, signature } = await api("user/photo/policy");
+
+      console.log({
+        key,
+        policy,
+        signature
+      });
+
+      const file = {
+        uri,
+        type: "image/jpeg",
+        name: `${key}.jpg`
+      };
+
+      const fd = new FormData();
+      fd.append("key", `profile/${key}.jpg`);
+      fd.append("AWSAccessKeyId", "AKIAIY7YU2RN7KWKOL7Q");
+      fd.append("acl", "private");
+      fd.append("policy", policy);
+      fd.append("signature", signature);
+      fd.append("Content-Type", "image/jpeg");
+      fd.append("file", file);
+
+      const text = await fetch("https://buncha.s3.amazonaws.com", {
+        method: "POST",
+        body: fd
+      }).then(res => res.text());
+
+      if (text.length) {
+        throw new Error("Photo upload failed...");
+      }
+
+      await api("user/photo/update", { key });
+
+      dispatch({
+        type: "user/set",
+        payload: {
+          photo: key
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+}

@@ -16,6 +16,7 @@ import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import * as User from "../store/user";
 import store from "../store";
 import * as ImagePicker from "expo-image-picker";
+import { AWSCF } from "../utils/Constants";
 
 export const FOCUS_ACCOUNT_INPUT = "focus-account-input";
 export const BLUR_ACCOUNT_INPUT = "blur-account-input";
@@ -82,9 +83,12 @@ export default ({
       user: { number, name, photo, token }
     } = store.getState();
 
-    if (name.length && photo) {
+    /** if (name.length && photo) {
       scrollTo({ page: 3, animated: false, focus: false });
-    } else if (token && number) {
+    } else */ if (
+      token &&
+      number
+    ) {
       scrollTo({ page: 2, animated: false, focus: false });
     }
   }, []);
@@ -272,10 +276,12 @@ const ProfileView = ({ keyboardBottomOffset }) => {
   const dispatch = useDispatch();
   const loading = useSelector(state => state.user.loading);
   const photo = useSelector(state => {
-    if (state.user.photo) {
-      return { uri: state.user.photo };
-    } else if (state.user.localPhoto) {
+    if (state.user.localPhoto) {
       return { uri: state.user.localPhoto };
+    }
+    if (state.user.photo) {
+      const uri = `${AWSCF}profile/${state.user.photo}.jpg`;
+      return { uri };
     }
     return null;
   }, shallowEqual);
@@ -293,7 +299,7 @@ const ProfileView = ({ keyboardBottomOffset }) => {
     <View style={styles.page}>
       <View style={styles.pageContent}>
         <TouchableOpacity
-          style={{ alignSelf: "center", marginBottom: 30 }}
+          style={{ alignSelf: "center", marginBottom: 30, marginTop: 10 }}
           onPress={async () => {
             try {
               const {
@@ -306,12 +312,7 @@ const ProfileView = ({ keyboardBottomOffset }) => {
               });
 
               if (!canceled) {
-                dispatch({
-                  type: "user/set",
-                  payload: {
-                    localPhoto: uri
-                  }
-                });
+                dispatch(User.uploadPhoto(uri));
               }
             } catch (error) {
               console.log(error);

@@ -5,7 +5,6 @@ async function updateAccount(req, res) {
   try {
     const {
       name = undefined,
-      photo = undefined,
       pushtoken = undefined,
       coordinates = undefined
     } = req.body;
@@ -16,9 +15,6 @@ async function updateAccount(req, res) {
 
     if (name) {
       doc.name = name;
-    }
-    if (photo) {
-      doc.photo = photo;
     }
     if (pushtoken) {
       doc.pushtoken = pushtoken;

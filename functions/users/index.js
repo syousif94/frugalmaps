@@ -8,6 +8,7 @@ const userSchema = require("../schema/user");
 const { contacts, contact } = require("./contacts");
 const { friends } = require("./friends");
 const { interested, interestedFriends } = require("./interested");
+const { getPolicy, updatePhoto } = require("./uploadPhoto");
 const feed = require("./feed");
 const account = require("./account");
 
@@ -124,6 +125,10 @@ router.post("/interested/:eid", interestedFriends);
 router.post("/feed", feed);
 
 router.post("/account", account);
+
+router.post("/photo/policy", getPolicy);
+
+router.post("/photo/update", updatePhoto);
 
 module.exports = router;
 

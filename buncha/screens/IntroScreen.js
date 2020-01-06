@@ -1,12 +1,5 @@
 import React, { useRef } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-  Image,
-  Keyboard
-} from "react-native";
+import { View, StyleSheet, TouchableOpacity, Text, Image } from "react-native";
 import Swiper from "react-native-swiper";
 import { BLUE, RED } from "../utils/Colors";
 import { navigate } from ".";
