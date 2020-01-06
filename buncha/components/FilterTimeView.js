@@ -7,7 +7,6 @@ import * as Events from "../store/events";
 import { useEveryMinute } from "../utils/Hooks";
 import moment from "moment";
 import TimeInput from "./TimeInput";
-import { getInset } from "../utils/SafeAreaInsets";
 
 export default () => {
   return (

@@ -1,27 +1,53 @@
-import React from "react";
-import { View, StyleSheet, TouchableOpacity, Text, Image } from "react-native";
+import React, { useRef } from "react";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  Image,
+  Keyboard
+} from "react-native";
 import Swiper from "react-native-swiper";
 import { BLUE, RED } from "../utils/Colors";
 import { navigate } from ".";
 import { getInset } from "../utils/SafeAreaInsets";
-import { HEIGHT, ANDROID, NARROW } from "../utils/Constants";
+import { HEIGHT, ANDROID, NARROW, WIDTH } from "../utils/Constants";
 import { Entypo, FontAwesome, Ionicons } from "@expo/vector-icons";
 import UpNextItem, { itemMargin } from "../components/UpNextItem";
+import AccountView, {
+  FOCUS_ACCOUNT_INPUT,
+  BLUR_ACCOUNT_INPUT
+} from "../components/AccountView";
+import emitter from "tiny-emitter/instance";
 
 export default () => {
   const events = JSON.parse(eventsJSON);
+  const swiperRef = useRef(null);
   return (
     <View style={styles.container}>
       <Swiper
+        onIndexChanged={index => {
+          if (index === 3) {
+            emitter.emit(FOCUS_ACCOUNT_INPUT);
+          } else {
+            emitter.emit(BLUR_ACCOUNT_INPUT);
+          }
+        }}
+        ref={swiperRef}
         loop={false}
         bounces
+        automaticallyAdjustContentInsets={false}
+        keyboardShouldPersistTaps="always"
         renderPagination={(index, total) => {
           const dots = Array.apply(null, new Array(total)).map((_, i) => i);
           return (
             <View
               style={{
+                backgroundColor: "#fff",
+                borderRadius: 5,
+                paddingVertical: 2,
                 position: "absolute",
-                bottom: getInset("bottom") + 15,
+                bottom: getInset("bottom") + 13,
                 alignSelf: "center",
                 flexDirection: "row"
               }}
@@ -75,7 +101,11 @@ export default () => {
           style={[
             styles.page,
             {
-              justifyContent: NARROW ? "flex-end" : "space-around",
+              justifyContent: NARROW
+                ? WIDTH <= 320
+                  ? "flex-start"
+                  : "flex-end"
+                : "space-around",
               alignItems: NARROW ? null : "center",
               flexDirection: NARROW ? null : "row"
             }
@@ -207,17 +237,26 @@ export default () => {
             </Text>
           </View>
         </View>
-        <View style={styles.page}>
-          <View style={{ justifyContent: "flex-start" }}>
+        <View style={{ flex: 1, overflow: "hidden" }}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "baseline",
+              paddingLeft: 30,
+              paddingRight: 20,
+              marginTop: getInset("top") + 0.05 * HEIGHT,
+              maxWidth: 500,
+              width: "100%",
+              alignSelf: "center"
+            }}
+          >
             <Text allowFontScaling={false} style={styles.titleText}>
               Account
             </Text>
             <TouchableOpacity
               style={{
-                position: "absolute",
-                top: 0,
-                right: 0,
-                padding: 5
+                padding: 10
               }}
               onPress={() => {
                 navigate("UpNext");
@@ -228,23 +267,10 @@ export default () => {
               </Text>
             </TouchableOpacity>
           </View>
-          <View style={{ flex: 1 }} />
-          <View style={{ backgroundColor: BLUE, borderRadius: 8 }}>
-            <TouchableOpacity
-              style={{
-                height: 50,
-                justifyContent: "center",
-                alignItems: "center"
-              }}
-            >
-              <Text
-                allowFontScaling={false}
-                style={{ fontSize: 18, color: "#fff", fontWeight: "700" }}
-              >
-                Get Started
-              </Text>
-            </TouchableOpacity>
-          </View>
+          <AccountView
+            keyboardVerticalOffset={getInset("bottom") + (ANDROID ? 160 : 120)}
+            keyboardBottomOffset={getInset("bottom") + 80}
+          />
         </View>
       </Swiper>
     </View>
@@ -257,7 +283,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff"
   },
   page: {
-    width: "100%",
     overflow: "hidden",
     paddingTop: getInset("top") + 0.05 * HEIGHT,
     paddingBottom: getInset("bottom") + 0.08 * HEIGHT,
