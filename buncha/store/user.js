@@ -67,13 +67,11 @@ export function login() {
         });
         const res = await api("user/token", { number, code: loginCode });
 
-        console.log({ res });
-
         let photo;
         let name;
         if (res.user) {
-          photo = res.user._source.photo;
-          name = res.user._source.name;
+          photo = res.user._source.photo || null;
+          name = res.user._source.name || "";
         }
 
         dispatch({
@@ -88,6 +86,19 @@ export function login() {
       } catch (error) {
         console.log(error.message);
       }
+    }
+  };
+}
+
+export function saveProfile() {
+  return async (dispatch, getState) => {
+    const {
+      user: { name, number }
+    } = getState();
+    try {
+      await api("user/account", { name, number });
+    } catch (error) {
+      console.log(error);
     }
   };
 }
@@ -109,7 +120,8 @@ export function uploadPhoto(uri) {
     dispatch({
       type: "user/set",
       payload: {
-        localPhoto: uri
+        localPhoto: uri,
+        photo: null
       }
     });
 

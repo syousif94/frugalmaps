@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -7,7 +7,9 @@ import {
   Animated,
   KeyboardAvoidingView,
   ActivityIndicator,
-  Image
+  Image,
+  Dimensions,
+  Alert
 } from "react-native";
 import Input from "./Input";
 import { BLUE } from "../utils/Colors";
@@ -16,7 +18,8 @@ import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import * as User from "../store/user";
 import store from "../store";
 import * as ImagePicker from "expo-image-picker";
-import { AWSCF } from "../utils/Constants";
+import { AWSCF, IOS } from "../utils/Constants";
+import { useKeyboardHeight } from "../utils/Hooks";
 
 export const FOCUS_ACCOUNT_INPUT = "focus-account-input";
 export const BLUR_ACCOUNT_INPUT = "blur-account-input";
@@ -49,14 +52,23 @@ function useControlInput(index, page, inputRef) {
 export default ({
   keyboardVerticalOffset,
   keyboardBottomOffset,
-  enableDismiss
+  enableDismiss,
+  renderHeader
 }) => {
   const width = useRef(0);
   const page = useRef(0);
   const transform = useRef(new Animated.Value(0));
+  const [keyboardTransformEnabled, setKeyboardTransformEnabled] = useState(
+    false
+  );
+  const [keyboard, setBottomOffset] = useKeyboardHeight();
 
   const scrollTo = ({ page: p, animated = true, focus = true }) => {
+    if (p > 1) {
+      emitter.emit(BLUR_ACCOUNT_INPUT);
+    }
     page.current = p;
+    setKeyboardTransformEnabled(p === 2);
     requestAnimationFrame(() => {
       const toValue = Math.min(0, page.current * -width.current);
       if (animated) {
@@ -94,13 +106,21 @@ export default ({
   }, []);
 
   return (
-    <View
-      style={styles.container}
+    <Animated.View
+      style={[
+        styles.container,
+        {
+          transform: [
+            { translateY: keyboardTransformEnabled ? keyboard.current : 0 }
+          ]
+        }
+      ]}
       onLayout={e => {
         width.current = e.nativeEvent.layout.width;
         transform.current.setValue(Math.min(0, -width.current * page.current));
       }}
     >
+      {renderHeader ? renderHeader() : null}
       <Animated.View
         style={{
           flexDirection: "row",
@@ -127,10 +147,14 @@ export default ({
           keyboardBottomOffset={keyboardBottomOffset}
           enableDismiss={enableDismiss}
         />
-        <ProfileView keyboardBottomOffset={keyboardBottomOffset} />
+        <ProfileView
+          scrollTo={scrollTo}
+          keyboardBottomOffset={keyboardBottomOffset}
+          setBottomOffset={setBottomOffset}
+        />
         <ContactsView />
       </Animated.View>
-    </View>
+    </Animated.View>
   );
 };
 
@@ -225,6 +249,7 @@ const CodeView = ({
           placeholder="Code"
           keyboardType="numeric"
           value={value}
+          textContentType={IOS ? "oneTimeCode" : null}
           onChangeText={text => {
             dispatch({
               type: "user/set",
@@ -272,7 +297,45 @@ const CodeView = ({
   );
 };
 
-const ProfileView = ({ keyboardBottomOffset }) => {
+class BottomOffsetCalculator {
+  contentLayout;
+  inputLayout;
+
+  constructor(setBottomOffset) {
+    this.setBottomOffset = setBottomOffset;
+  }
+
+  setContentLayout = layout => {
+    this.contentLayout = layout;
+    this.calculateBottomOffset();
+  };
+
+  setInputLayout = layout => {
+    this.inputLayout = layout;
+    this.calculateBottomOffset();
+  };
+
+  calculateBottomOffset = () => {
+    if (!this.contentLayout || !this.inputLayout || !this.setBottomOffset) {
+      return;
+    }
+
+    const windowHeight = Dimensions.get("window").height;
+
+    const contentOffset =
+      windowHeight -
+      this.contentLayout.height +
+      this.inputLayout.y +
+      this.inputLayout.height;
+
+    this.setBottomOffset(contentOffset - windowHeight + 25);
+  };
+}
+
+const ProfileView = ({ keyboardBottomOffset, setBottomOffset, scrollTo }) => {
+  const bottomOffsetCalculator = useRef(
+    new BottomOffsetCalculator(setBottomOffset)
+  );
   const dispatch = useDispatch();
   const loading = useSelector(state => state.user.loading);
   const photo = useSelector(state => {
@@ -285,11 +348,24 @@ const ProfileView = ({ keyboardBottomOffset }) => {
     }
     return null;
   }, shallowEqual);
+  const uploadingPhoto = useSelector(
+    state => state.user.localPhoto && !state.user.photo
+  );
   const name = useSelector(state => state.user.name);
+  const disableNext = useSelector(
+    state => !state.user.name.length || !state.user.photo
+  );
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          paddingBottom: keyboardBottomOffset
+        }}
+      >
         <ActivityIndicator size="large" color="#999" />
       </View>
     );
@@ -297,9 +373,44 @@ const ProfileView = ({ keyboardBottomOffset }) => {
 
   return (
     <View style={styles.page}>
-      <View style={styles.pageContent}>
+      <View
+        style={styles.pageContent}
+        onLayout={e => {
+          const layout = e.nativeEvent.layout;
+          bottomOffsetCalculator.current.setContentLayout(layout);
+        }}
+      >
         <TouchableOpacity
-          style={{ alignSelf: "center", marginBottom: 30, marginTop: 10 }}
+          style={{ padding: 5, paddingRight: 0, alignSelf: "flex-end" }}
+          onPress={() => {
+            Alert.alert("Logout", "Are you sure?", [
+              {
+                text: "Cancel",
+                style: "cancel"
+              },
+              {
+                text: "OK",
+                onPress: () => {
+                  dispatch(User.logout());
+                  scrollTo({ page: 0 });
+                }
+              }
+            ]);
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 14,
+              color: "#4E08DB",
+              fontWeight: "700"
+            }}
+          >
+            Logout
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          disabled={uploadingPhoto}
+          style={{ alignSelf: "center", marginBottom: 30, marginTop: 20 }}
           onPress={async () => {
             try {
               const {
@@ -339,21 +450,44 @@ const ProfileView = ({ keyboardBottomOffset }) => {
               }}
             />
           )}
+          {uploadingPhoto ? (
+            <View
+              pointerEvents="none"
+              style={{
+                ...StyleSheet.absoluteFillObject,
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: 125,
+                backgroundColor: "rgba(0,0,0,0.5)"
+              }}
+            >
+              <ActivityIndicator size="large" color="#fff" />
+            </View>
+          ) : null}
         </TouchableOpacity>
         <Text style={styles.instructText}>What do you go by?</Text>
-        <Input
-          autoCapitalize="words"
-          placeholder="Name"
-          value={name}
-          onChangeText={text => {
-            dispatch({
-              type: "user/set",
-              payload: {
-                name: text
-              }
-            });
+        <View
+          onLayout={e => {
+            const layout = e.nativeEvent.layout;
+            bottomOffsetCalculator.current.setInputLayout(layout);
           }}
-        />
+        >
+          <Input
+            autoCapitalize="words"
+            placeholder="Name"
+            value={name}
+            textContentType={IOS ? "name" : null}
+            onChangeText={text => {
+              dispatch({
+                type: "user/set",
+                payload: {
+                  name: text
+                }
+              });
+            }}
+          />
+        </View>
+
         <View
           style={{
             position: "absolute",
@@ -363,24 +497,22 @@ const ProfileView = ({ keyboardBottomOffset }) => {
           }}
         >
           <Text style={styles.instructText}>Last step!</Text>
-          <Button text="Pick Friends" />
-          <TouchableOpacity>
-            <Text>Logout</Text>
-          </TouchableOpacity>
+          <Button
+            text="Pick Friends"
+            disabled={disableNext}
+            onPress={() => {
+              dispatch(User.saveProfile());
+              scrollTo({ page: 3 });
+            }}
+          />
         </View>
       </View>
     </View>
   );
 };
 
-const ContactsView = () => {
-  return (
-    <View style={styles.page}>
-      <View style={styles.pageContent}>
-        <Text>Contacts</Text>
-      </View>
-    </View>
-  );
+const ContactsView = ({ scrollTo }) => {
+  return <View style={styles.page}></View>;
 };
 
 const Button = ({ text, style, disabled, ...props }) => {

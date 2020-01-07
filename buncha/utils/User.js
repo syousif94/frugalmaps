@@ -82,27 +82,29 @@ export const userPersistor = store => next => action => {
 
   Object.keys(action.payload).forEach(key => {
     const value = action.payload[key];
+    const noValue =
+      value === null || (typeof value === "string" && !value.length);
     const json = JSON.stringify(value);
     if (WEB) {
       if (User.secureKeys.has(key) || User.persistedKeys.has(key)) {
-        if (value.length) {
-          localStorage[key] = json;
-        } else {
+        if (noValue) {
           delete localStorage[key];
+        } else {
+          localStorage[key] = json;
         }
       }
     } else {
       if (User.secureKeys.has(key)) {
-        if (value.length) {
-          SecureStore.setItemAsync(key, json);
-        } else {
+        if (noValue) {
           SecureStore.deleteItemAsync(key);
+        } else {
+          SecureStore.setItemAsync(key, json);
         }
       } else if (User.persistedKeys.has(key)) {
-        if (value.length) {
-          AsyncStorage.setItem(key, json);
-        } else {
+        if (noValue) {
           AsyncStorage.removeItem(key);
+        } else {
+          AsyncStorage.setItem(key, json);
         }
       }
     }

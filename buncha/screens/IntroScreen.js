@@ -231,38 +231,44 @@ export default () => {
           </View>
         </View>
         <View style={{ flex: 1, overflow: "hidden" }}>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "baseline",
-              paddingLeft: 30,
-              paddingRight: 20,
-              marginTop: getInset("top") + 0.05 * HEIGHT,
-              maxWidth: 500,
-              width: "100%",
-              alignSelf: "center"
-            }}
-          >
-            <Text allowFontScaling={false} style={styles.titleText}>
-              Account
-            </Text>
-            <TouchableOpacity
-              style={{
-                padding: 10
-              }}
-              onPress={() => {
-                navigate("UpNext");
-              }}
-            >
-              <Text style={{ fontSize: 14, color: "#eee", fontWeight: "700" }}>
-                Skip
-              </Text>
-            </TouchableOpacity>
-          </View>
           <AccountView
             keyboardVerticalOffset={getInset("bottom") + (ANDROID ? 160 : 120)}
             keyboardBottomOffset={getInset("bottom") + 80}
+            renderHeader={() => {
+              return (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "baseline",
+                    paddingLeft: 30,
+                    paddingRight: 20,
+                    marginTop: getInset("top") + 0.05 * HEIGHT,
+                    maxWidth: 500,
+                    width: "100%",
+                    alignSelf: "center"
+                  }}
+                >
+                  <Text allowFontScaling={false} style={styles.titleText}>
+                    Account
+                  </Text>
+                  <TouchableOpacity
+                    style={{
+                      padding: 10
+                    }}
+                    onPress={() => {
+                      navigate("UpNext");
+                    }}
+                  >
+                    <Text
+                      style={{ fontSize: 14, color: "#eee", fontWeight: "700" }}
+                    >
+                      Skip
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              );
+            }}
           />
         </View>
       </Swiper>
