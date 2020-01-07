@@ -20,6 +20,8 @@ import store from "../store";
 import * as ImagePicker from "expo-image-picker";
 import { AWSCF, IOS } from "../utils/Constants";
 import { useKeyboardHeight } from "../utils/Hooks";
+import ContactsList from "./ContactsList";
+import { LOAD_CONTACTS } from "../utils/Contacts";
 
 export const FOCUS_ACCOUNT_INPUT = "focus-account-input";
 export const BLUR_ACCOUNT_INPUT = "blur-account-input";
@@ -79,6 +81,9 @@ export default ({
         ).start(() => {
           if (focus) {
             emitter.emit(FOCUS_ACCOUNT_INPUT);
+          }
+          if (p === 3) {
+            emitter.emit(LOAD_CONTACTS);
           }
         });
       } else {
@@ -512,7 +517,11 @@ const ProfileView = ({ keyboardBottomOffset, setBottomOffset, scrollTo }) => {
 };
 
 const ContactsView = ({ scrollTo }) => {
-  return <View style={styles.page}></View>;
+  return (
+    <View style={styles.page}>
+      <ContactsList />
+    </View>
+  );
 };
 
 const Button = ({ text, style, disabled, ...props }) => {

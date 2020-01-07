@@ -11,7 +11,6 @@ const name = makeReducer("name", "");
 const number = makeReducer("number", "");
 const photo = makeReducer("photo", null);
 const localPhoto = makeReducer("localPhoto", null);
-const contacts = makeReducer("contacts", []);
 
 export default combineReducers({
   loading,
@@ -21,7 +20,6 @@ export default combineReducers({
   name,
   number,
   photo,
-  contacts,
   localPhoto
 });
 

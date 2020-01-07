@@ -5,7 +5,7 @@
     "privacy": "public",
     "sdkVersion": "36.0.0",
     "platforms": ["ios", "android", "web"],
-    "version": "2.1.4",
+    "version": "2.1.5",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "splash": {
@@ -24,7 +24,8 @@
       "bundleIdentifier": "me.syousif.LitCal",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Location access is used to sort events and search results by distance and notify you when new events are added nearby",
-        "NSCalendarsUsageDescription": "Allow to view events in your calendar"
+        "NSCalendarsUsageDescription": "Allow to view events in your calendar",
+        "NSContactsUsageDescription": "Contacts access is used to add friends from your contact list"
       }
     },
     "android": {
@@ -38,7 +39,7 @@
         "backgroundColor": "#FF94CD",
         "foregroundImage": "./assets/foreground.png"
       },
-      "versionCode": 20,
+      "versionCode": 21,
       "permissions": [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
@@ -46,7 +47,8 @@
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE",
         "INTERNET",
-        "ACCESS_NOTIFICATION_POLICY"
+        "ACCESS_NOTIFICATION_POLICY",
+        "READ_CONTACTS"
       ]
     },
     "androidStatusBar": {
