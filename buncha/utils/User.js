@@ -73,7 +73,9 @@ class User {
   };
 }
 
-export default new User();
+const user = new User();
+
+export default user;
 
 export const userPersistor = store => next => action => {
   if (!_.startsWith(action.type, "user/")) {
@@ -82,6 +84,9 @@ export const userPersistor = store => next => action => {
 
   Object.keys(action.payload).forEach(key => {
     const value = action.payload[key];
+    if (key.match(/(token|needsIntro)/gi)) {
+      user[key] = value;
+    }
     const noValue =
       value === null || (typeof value === "string" && !value.length);
     const json = JSON.stringify(value);
