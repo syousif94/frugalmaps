@@ -22,6 +22,7 @@ import { AWSCF, IOS } from "../utils/Constants";
 import { useKeyboardHeight } from "../utils/Hooks";
 import ContactsList from "./ContactsList";
 import { LOAD_CONTACTS } from "../utils/Contacts";
+import { getInset } from "../utils/SafeAreaInsets";
 
 export const FOCUS_ACCOUNT_INPUT = "focus-account-input";
 export const BLUR_ACCOUNT_INPUT = "blur-account-input";
@@ -157,7 +158,10 @@ export default ({
           keyboardBottomOffset={keyboardBottomOffset}
           setBottomOffset={setBottomOffset}
         />
-        <ContactsView />
+        <ContactsView
+          scrollTo={scrollTo}
+          keyboardBottomOffset={keyboardBottomOffset}
+        />
       </Animated.View>
     </Animated.View>
   );
@@ -516,10 +520,24 @@ const ProfileView = ({ keyboardBottomOffset, setBottomOffset, scrollTo }) => {
   );
 };
 
-const ContactsView = ({ scrollTo }) => {
+const ContactsView = ({ scrollTo, keyboardBottomOffset }) => {
   return (
     <View style={styles.page}>
       <ContactsList />
+      <View
+        style={[
+          styles.pageContent,
+          {
+            paddingBottom: getInset("bottom") + 33,
+            paddingTop: 12,
+            borderTopWidth: 1,
+            borderColor: "#f4f4f4",
+            flex: null
+          }
+        ]}
+      >
+        <Button text="Get Started" />
+      </View>
     </View>
   );
 };

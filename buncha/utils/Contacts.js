@@ -3,6 +3,7 @@ import * as Contacts from "expo-contacts";
 import * as Permissions from "expo-permissions";
 import Fuse from "fuse.js";
 import emitter from "tiny-emitter/instance";
+import sh from "shorthash";
 
 export async function getContacts() {
   const { status } = await Permissions.askAsync(Permissions.CONTACTS);
@@ -19,13 +20,24 @@ export async function getContacts() {
   }
 
   return data
-    .filter(
-      item =>
+    .reduce((contacts, item) => {
+      const hasUSNumber =
         item.phoneNumbers &&
         item.phoneNumbers.length &&
         item.phoneNumbers[0] &&
-        item.phoneNumbers[0].countryCode === "us"
-    )
+        item.phoneNumbers[0].countryCode === "us";
+
+      if (hasUSNumber) {
+        const number = item.phoneNumbers[0].digits.substr(-10);
+        contacts.push({
+          number,
+          id: sh.unique(number),
+          name: item.name
+        });
+      }
+
+      return contacts;
+    }, [])
     .sort((a, b) => {
       const aSplit = a.name.split(" ");
       const aLast = aSplit[aSplit.length - 1].toLowerCase();

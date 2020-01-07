@@ -8,6 +8,8 @@ import {
 } from "react-native";
 import { useContacts } from "../utils/Contacts";
 import Input from "./Input";
+import { BLUE } from "../utils/Colors";
+import { Entypo } from "@expo/vector-icons";
 
 const SEARCHBAR_HEIGHT = 46 + 16 + 2;
 const ROW_HEIGHT = 50;
@@ -16,6 +18,7 @@ const SEPARATOR_HEIGHT = 1;
 export default ({ renderHeader, containerStyle, headerHeight = 0 }) => {
   const listRef = useRef(null);
   const [contacts, filter, setFilter] = useContacts();
+  const [selected, setSelected] = useState(new Set());
   const data = [
     {
       data: contacts
@@ -53,7 +56,9 @@ export default ({ renderHeader, containerStyle, headerHeight = 0 }) => {
           index
         };
       }}
-      renderItem={data => <ItemView {...data} />}
+      renderItem={data => (
+        <ItemView {...data} selected={selected} setSelected={setSelected} />
+      )}
       renderSectionHeader={({ section }) => (
         <View
           style={{
@@ -79,7 +84,7 @@ export default ({ renderHeader, containerStyle, headerHeight = 0 }) => {
   );
 };
 
-const ItemView = ({ item, index }) => {
+const ItemView = ({ item, index, selected, setSelected }) => {
   let matches;
   if (item.matches) {
     matches = item.matches;
@@ -160,15 +165,34 @@ const ItemView = ({ item, index }) => {
     );
   }
 
+  const isSelected = selected.has(item.id);
+
   return (
     <TouchableOpacity
       style={{
-        paddingHorizontal: 15,
+        paddingLeft: 15,
+        paddingRight: 13,
         height: ROW_HEIGHT,
-        justifyContent: "center"
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between"
+      }}
+      onPress={() => {
+        if (isSelected) {
+          selected.delete(item.id);
+        } else {
+          selected.add(item.id);
+        }
+        setSelected(new Set(selected));
       }}
     >
       <NameText />
+      <Entypo
+        style={{ marginTop: 1 }}
+        name="plus"
+        color={isSelected ? BLUE : "#eee"}
+        size={26}
+      />
     </TouchableOpacity>
   );
 };
