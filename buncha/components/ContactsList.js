@@ -52,6 +52,8 @@ export default () => {
         />
       </View>
       <FlatList
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         data={contacts}
         style={{ flex: 1 }}
         ref={listRef}

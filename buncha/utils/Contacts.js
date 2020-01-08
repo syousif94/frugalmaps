@@ -4,6 +4,7 @@ import * as Permissions from "expo-permissions";
 import Fuse from "fuse.js";
 import emitter from "tiny-emitter/instance";
 import sh from "shorthash";
+import api from "./API";
 
 export async function getContacts() {
   const { status } = await Permissions.askAsync(Permissions.CONTACTS);
@@ -19,7 +20,7 @@ export async function getContacts() {
     return [];
   }
 
-  return data
+  const contacts = data
     .reduce((contacts, item) => {
       const hasUSNumber =
         item.phoneNumbers &&
@@ -51,6 +52,16 @@ export async function getContacts() {
       }
       return 0;
     });
+
+  try {
+    await api("user/contacts", {
+      contacts
+    });
+  } catch (error) {
+    console.log(error.stack);
+  }
+
+  return contacts;
 }
 
 export const LOAD_CONTACTS = "load-contacts";

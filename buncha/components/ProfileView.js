@@ -122,8 +122,6 @@ class BottomOffsetCalculator {
 
     const bottomOffset = contentOffset - windowHeight + 25;
 
-    console.log({ bottomOffset });
-
     this.setBottomOffset(bottomOffset);
   };
 }
