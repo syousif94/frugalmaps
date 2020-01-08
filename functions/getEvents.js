@@ -242,7 +242,10 @@ module.exports = async function getEvents(req, res) {
 
     const markers = makeMarkers(currentTime, markerData);
 
-    const listData = makeListData(calendar, currentTime);
+    const { events: listData, tags: occurringTags } = makeListData(
+      calendar,
+      currentTime
+    );
 
     const list = [
       {
@@ -293,6 +296,7 @@ module.exports = async function getEvents(req, res) {
       list,
       places,
       newest,
+      occurringTags,
       tags: []
     };
 

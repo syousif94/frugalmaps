@@ -113,6 +113,12 @@ export default memo(
             <Text style={styles.countText}>{index + 1}</Text>
           </View>
         </View>
+        <Text
+          allowFontScaling={false}
+          style={{ fontSize: 9, fontWeight: "700", color: "#444" }}
+        >
+          {item._source.tags.join(", ").toUpperCase()}
+        </Text>
         <DaysText days={item._source.days} />
         <Text style={styles.titleText} allowFontScaling={false}>
           {item._source.title}

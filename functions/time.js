@@ -571,7 +571,22 @@ function makeListData(calendar, time) {
 
   const upcomingEvents = allUpcomingEvents[1];
 
-  return _.uniqBy(
+  const tags = [
+    ...yesterdayEvents,
+    ...endingUpcomingEvents,
+    ...upcomingEvents
+  ].reduce((tags, event) => {
+    event._source.tags.forEach(tag => {
+      const tagList = tags[tag];
+      if (!tagList) {
+        tags[tag] = [];
+      }
+      tags[tag].push(event._id);
+    });
+    return tags;
+  }, {});
+
+  const events = _.uniqBy(
     [
       ...yesterdayEvents,
       ...endingUpcomingEvents,
@@ -605,6 +620,11 @@ function makeListData(calendar, time) {
     ],
     "_id"
   );
+
+  return {
+    events,
+    tags
+  };
 }
 
 module.exports = {
