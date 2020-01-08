@@ -4,18 +4,21 @@ import {
   SectionList,
   StyleSheet,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  Dimensions
 } from "react-native";
 import { useContacts } from "../utils/Contacts";
 import Input from "./Input";
 import { BLUE } from "../utils/Colors";
 import { Entypo } from "@expo/vector-icons";
+import ProfileView from "./ProfileView";
 
 const SEARCHBAR_HEIGHT = 46 + 16 + 2;
 const ROW_HEIGHT = 50;
 const SEPARATOR_HEIGHT = 1;
 
-export default ({ renderHeader, containerStyle, headerHeight = 0 }) => {
+export default ({ bottomOffset }) => {
+  const headerHeight = Dimensions.get("window").height * 0.8;
   const listRef = useRef(null);
   const [contacts, filter, setFilter] = useContacts();
   const [selected, setSelected] = useState(new Set());
@@ -25,62 +28,68 @@ export default ({ renderHeader, containerStyle, headerHeight = 0 }) => {
     }
   ];
   return (
-    <SectionList
-      sections={data}
-      style={{ flex: 1 }}
-      ref={listRef}
-      keyExtractor={item => (item.matches ? item.item.id : item.id)}
-      ItemSeparatorComponent={() => (
-        <View
-          style={{
-            height: SEPARATOR_HEIGHT,
-            backgroundColor: "#f4f4f4",
-            marginLeft: 8
-          }}
-        />
-      )}
-      getItemLayout={(data, index) => {
-        if (!index) {
-          return {
-            length: SEARCHBAR_HEIGHT,
-            offset: headerHeight,
-            index
-          };
-        }
-        return {
-          length: ROW_HEIGHT,
-          offset:
-            headerHeight +
-            SEARCHBAR_HEIGHT +
-            (index - 1) * (ROW_HEIGHT + SEPARATOR_HEIGHT),
-          index
-        };
-      }}
-      renderItem={data => (
-        <ItemView {...data} selected={selected} setSelected={setSelected} />
-      )}
-      renderSectionHeader={({ section }) => (
-        <View
-          style={{
-            height: SEARCHBAR_HEIGHT,
-            paddingHorizontal: 8,
-            backgroundColor: "#fff",
-            borderTopWidth: 1,
-            borderBottomWidth: 1,
-            borderColor: "#f4f4f4",
-            justifyContent: "center"
-          }}
-        >
-          <Input
-            placeholder="Search contacts"
-            value={filter}
-            onChangeText={text => {
-              setFilter(text);
+    <View style={{ flex: 1 }}>
+      <SectionList
+        sections={data}
+        style={{ flex: 1 }}
+        ref={listRef}
+        keyExtractor={item => (item.matches ? item.item.id : item.id)}
+        render
+        ItemSeparatorComponent={() => (
+          <View
+            style={{
+              height: SEPARATOR_HEIGHT,
+              backgroundColor: "#f4f4f4",
+              marginLeft: 8
             }}
           />
-        </View>
-      )}
-    />
+        )}
+        getItemLayout={(data, index) => {
+          if (!index) {
+            return {
+              length: SEARCHBAR_HEIGHT,
+              offset: headerHeight,
+              index
+            };
+          }
+          return {
+            length: ROW_HEIGHT,
+            offset:
+              headerHeight +
+              SEARCHBAR_HEIGHT +
+              (index - 1) * (ROW_HEIGHT + SEPARATOR_HEIGHT),
+            index
+          };
+        }}
+        ListHeaderComponent={() => {
+          return <ProfileView />;
+        }}
+        renderItem={data => (
+          <ItemView {...data} selected={selected} setSelected={setSelected} />
+        )}
+        renderSectionHeader={({ section }) => (
+          <View
+            style={{
+              height: SEARCHBAR_HEIGHT,
+              paddingHorizontal: 8,
+              backgroundColor: "#fff",
+              borderTopWidth: 1,
+              borderBottomWidth: 1,
+              borderColor: "#f4f4f4",
+              justifyContent: "center"
+            }}
+          >
+            <Input
+              placeholder="Search contacts"
+              value={filter}
+              onChangeText={text => {
+                setFilter(text);
+              }}
+            />
+          </View>
+        )}
+      />
+    </View>
   );
 };
 
@@ -190,7 +199,7 @@ const ItemView = ({ item, index, selected, setSelected }) => {
       <Entypo
         style={{ marginTop: 1 }}
         name="plus"
-        color={isSelected ? BLUE : "#eee"}
+        color={isSelected ? BLUE : "#ddd"}
         size={26}
       />
     </TouchableOpacity>

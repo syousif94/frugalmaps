@@ -1,28 +1,22 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useContext } from "react";
 import {
   View,
   StyleSheet,
   TouchableOpacity,
   Text,
   Animated,
-  KeyboardAvoidingView,
-  ActivityIndicator,
-  Image,
-  Dimensions,
-  Alert
+  KeyboardAvoidingView
 } from "react-native";
 import Input from "./Input";
 import { BLUE } from "../utils/Colors";
 import emitter from "tiny-emitter/instance";
-import { useSelector, useDispatch, shallowEqual } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import * as User from "../store/user";
 import store from "../store";
-import * as ImagePicker from "expo-image-picker";
-import { AWSCF, IOS } from "../utils/Constants";
-import { useKeyboardHeight } from "../utils/Hooks";
+import { IOS } from "../utils/Constants";
 import ContactsList from "./ContactsList";
 import { LOAD_CONTACTS } from "../utils/Contacts";
-import { getInset } from "../utils/SafeAreaInsets";
+import { KeyboardContext, KeyboardProvider } from "./KeyboardContext";
 
 export const FOCUS_ACCOUNT_INPUT = "focus-account-input";
 export const BLUR_ACCOUNT_INPUT = "blur-account-input";
@@ -52,7 +46,15 @@ function useControlInput(index, page, inputRef) {
   }, [index]);
 }
 
-export default ({
+export default props => {
+  return (
+    <KeyboardProvider>
+      <AccountView {...props} />
+    </KeyboardProvider>
+  );
+};
+
+const AccountView = ({
   keyboardVerticalOffset,
   keyboardBottomOffset,
   enableDismiss,
@@ -64,7 +66,8 @@ export default ({
   const [keyboardTransformEnabled, setKeyboardTransformEnabled] = useState(
     false
   );
-  const [keyboard, setBottomOffset] = useKeyboardHeight();
+
+  const [keyboard] = useContext(KeyboardContext);
 
   const scrollTo = ({ page: p, animated = true, focus = true }) => {
     if (p > 1) {
@@ -131,7 +134,7 @@ export default ({
         style={{
           flexDirection: "row",
           flex: 1,
-          width: "400%",
+          width: "300%",
           transform: [
             {
               translateX: transform.current
@@ -152,11 +155,6 @@ export default ({
           keyboardVerticalOffset={keyboardVerticalOffset}
           keyboardBottomOffset={keyboardBottomOffset}
           enableDismiss={enableDismiss}
-        />
-        <ProfileView
-          scrollTo={scrollTo}
-          keyboardBottomOffset={keyboardBottomOffset}
-          setBottomOffset={setBottomOffset}
         />
         <ContactsView
           scrollTo={scrollTo}
@@ -306,243 +304,15 @@ const CodeView = ({
   );
 };
 
-class BottomOffsetCalculator {
-  contentLayout;
-  inputLayout;
-
-  constructor(setBottomOffset) {
-    this.setBottomOffset = setBottomOffset;
-  }
-
-  setContentLayout = layout => {
-    this.contentLayout = layout;
-    this.calculateBottomOffset();
-  };
-
-  setInputLayout = layout => {
-    this.inputLayout = layout;
-    this.calculateBottomOffset();
-  };
-
-  calculateBottomOffset = () => {
-    if (!this.contentLayout || !this.inputLayout || !this.setBottomOffset) {
-      return;
-    }
-
-    const windowHeight = Dimensions.get("window").height;
-
-    const contentOffset =
-      windowHeight -
-      this.contentLayout.height +
-      this.inputLayout.y +
-      this.inputLayout.height;
-
-    this.setBottomOffset(contentOffset - windowHeight + 25);
-  };
-}
-
-const ProfileView = ({ keyboardBottomOffset, setBottomOffset, scrollTo }) => {
-  const bottomOffsetCalculator = useRef(
-    new BottomOffsetCalculator(setBottomOffset)
-  );
-  const dispatch = useDispatch();
-  const loading = useSelector(state => state.user.loading);
-  const photo = useSelector(state => {
-    if (state.user.localPhoto) {
-      return { uri: state.user.localPhoto };
-    }
-    if (state.user.photo) {
-      const uri = `${AWSCF}profile/${state.user.photo}.jpg`;
-      return { uri };
-    }
-    return null;
-  }, shallowEqual);
-  const uploadingPhoto = useSelector(
-    state => state.user.localPhoto && !state.user.photo
-  );
-  const name = useSelector(state => state.user.name);
-  const disableNext = useSelector(
-    state => !state.user.name.length || !state.user.photo
-  );
-
-  if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          paddingBottom: keyboardBottomOffset
-        }}
-      >
-        <ActivityIndicator size="large" color="#999" />
-      </View>
-    );
-  }
-
+const ContactsView = ({ keyboardBottomOffset }) => {
   return (
     <View style={styles.page}>
-      <View
-        style={styles.pageContent}
-        onLayout={e => {
-          const layout = e.nativeEvent.layout;
-          bottomOffsetCalculator.current.setContentLayout(layout);
-        }}
-      >
-        <TouchableOpacity
-          style={{ padding: 5, paddingRight: 0, alignSelf: "flex-end" }}
-          onPress={() => {
-            Alert.alert("Logout", "Are you sure?", [
-              {
-                text: "Cancel",
-                style: "cancel"
-              },
-              {
-                text: "OK",
-                onPress: () => {
-                  dispatch(User.logout());
-                  scrollTo({ page: 0 });
-                }
-              }
-            ]);
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 14,
-              color: "#4E08DB",
-              fontWeight: "700"
-            }}
-          >
-            Logout
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          disabled={uploadingPhoto}
-          style={{ alignSelf: "center", marginBottom: 30, marginTop: 20 }}
-          onPress={async () => {
-            try {
-              const {
-                canceled,
-                uri
-              } = await ImagePicker.launchImageLibraryAsync({
-                allowsEditing: true,
-                aspect: [1, 1],
-                quality: 0.4
-              });
-
-              if (!canceled) {
-                dispatch(User.uploadPhoto(uri));
-              }
-            } catch (error) {
-              console.log(error);
-            }
-          }}
-        >
-          {photo ? (
-            <Image
-              source={photo}
-              style={{
-                height: 250,
-                width: 250,
-                borderRadius: 125,
-                backgroundColor: "#ccc"
-              }}
-            />
-          ) : (
-            <View
-              style={{
-                height: 250,
-                width: 250,
-                borderRadius: 125,
-                backgroundColor: "#ccc"
-              }}
-            />
-          )}
-          {uploadingPhoto ? (
-            <View
-              pointerEvents="none"
-              style={{
-                ...StyleSheet.absoluteFillObject,
-                justifyContent: "center",
-                alignItems: "center",
-                borderRadius: 125,
-                backgroundColor: "rgba(0,0,0,0.5)"
-              }}
-            >
-              <ActivityIndicator size="large" color="#fff" />
-            </View>
-          ) : null}
-        </TouchableOpacity>
-        <Text style={styles.instructText}>What do you go by?</Text>
-        <View
-          onLayout={e => {
-            const layout = e.nativeEvent.layout;
-            bottomOffsetCalculator.current.setInputLayout(layout);
-          }}
-        >
-          <Input
-            autoCapitalize="words"
-            placeholder="Name"
-            value={name}
-            textContentType={IOS ? "name" : null}
-            onChangeText={text => {
-              dispatch({
-                type: "user/set",
-                payload: {
-                  name: text
-                }
-              });
-            }}
-          />
-        </View>
-
-        <View
-          style={{
-            position: "absolute",
-            bottom: keyboardBottomOffset,
-            left: 30,
-            right: 30
-          }}
-        >
-          <Text style={styles.instructText}>Last step!</Text>
-          <Button
-            text="Pick Friends"
-            disabled={disableNext}
-            onPress={() => {
-              dispatch(User.saveProfile());
-              scrollTo({ page: 3 });
-            }}
-          />
-        </View>
-      </View>
+      <ContactsList bottomOffset={keyboardBottomOffset} />
     </View>
   );
 };
 
-const ContactsView = ({ scrollTo, keyboardBottomOffset }) => {
-  return (
-    <View style={styles.page}>
-      <ContactsList />
-      <View
-        style={[
-          styles.pageContent,
-          {
-            paddingBottom: getInset("bottom") + 33,
-            paddingTop: 12,
-            borderTopWidth: 1,
-            borderColor: "#f4f4f4",
-            flex: null
-          }
-        ]}
-      >
-        <Button text="Get Started" />
-      </View>
-    </View>
-  );
-};
-
-const Button = ({ text, style, disabled, ...props }) => {
+export const Button = ({ text, style, disabled, ...props }) => {
   return (
     <View
       style={[
@@ -571,7 +341,7 @@ const styles = StyleSheet.create({
     overflow: "hidden"
   },
   page: {
-    width: "25%",
+    width: "33.33%",
     overflow: "hidden"
   },
   pageContent: {

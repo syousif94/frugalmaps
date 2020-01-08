@@ -239,7 +239,6 @@ export default () => {
                 <View
                   style={{
                     flexDirection: "row",
-                    justifyContent: "space-between",
                     alignItems: "baseline",
                     paddingLeft: 30,
                     paddingRight: 20,
@@ -254,7 +253,8 @@ export default () => {
                   </Text>
                   <TouchableOpacity
                     style={{
-                      padding: 10
+                      padding: 10,
+                      paddingBottom: 0
                     }}
                     onPress={() => {
                       navigate("UpNext");
