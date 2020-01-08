@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { View, StyleSheet, TouchableOpacity, Text, Image } from "react-native";
 import Swiper from "react-native-swiper";
 import { BLUE, RED } from "../utils/Colors";
@@ -12,10 +12,30 @@ import AccountView, {
   BLUR_ACCOUNT_INPUT
 } from "../components/AccountView";
 import emitter from "tiny-emitter/instance";
+import ContactsList from "../components/ContactsList";
+import { useSelector } from "react-redux";
+import { LOAD_CONTACTS } from "../utils/Contacts";
+import { LogoutButton } from "../components/ProfileView";
 
 export default () => {
+  const showContacts = useSelector(state => state.user.showContacts);
   const events = JSON.parse(eventsJSON);
   const swiperRef = useRef(null);
+  useEffect(() => {
+    const onEvent = () => {
+      requestAnimationFrame(() => {
+        swiperRef.current.scrollTo(4);
+        requestAnimationFrame(() => {
+          emitter.emit(LOAD_CONTACTS);
+        });
+      });
+    };
+    emitter.on("scroll-intro-contacts", onEvent);
+
+    return () => {
+      return emitter.off("scroll-intro-contacts", onEvent);
+    };
+  });
   return (
     <View style={styles.container}>
       <Swiper
@@ -36,7 +56,6 @@ export default () => {
           return (
             <View
               style={{
-                backgroundColor: "#fff",
                 borderRadius: 5,
                 paddingVertical: 2,
                 position: "absolute",
@@ -53,7 +72,7 @@ export default () => {
                       height: 6,
                       width: 6,
                       borderRadius: 3,
-                      backgroundColor: index === i ? "#000" : "#ccc",
+                      backgroundColor: index === i ? "#000" : "rgba(0,0,0,0.2)",
                       marginHorizontal: 2
                     }}
                   />
@@ -234,43 +253,58 @@ export default () => {
           <AccountView
             keyboardVerticalOffset={getInset("bottom") + (ANDROID ? 160 : 120)}
             keyboardBottomOffset={getInset("bottom") + 80}
-            renderHeader={() => {
+            renderHeader={({ scrollTo }) => {
               return (
                 <View
                   style={{
                     flexDirection: "row",
                     alignItems: "baseline",
                     paddingLeft: 30,
-                    paddingRight: 20,
+                    paddingRight: 30,
                     marginTop: getInset("top") + 0.05 * HEIGHT,
                     maxWidth: 500,
                     width: "100%",
-                    alignSelf: "center"
+                    alignSelf: "center",
+                    justifyContent: "space-between"
                   }}
                 >
-                  <Text allowFontScaling={false} style={styles.titleText}>
-                    Account
-                  </Text>
-                  <TouchableOpacity
+                  <View
                     style={{
-                      padding: 10,
-                      paddingBottom: 0
-                    }}
-                    onPress={() => {
-                      navigate("UpNext");
+                      flexDirection: "row",
+                      alignItems: "baseline"
                     }}
                   >
-                    <Text
-                      style={{ fontSize: 14, color: "#eee", fontWeight: "700" }}
-                    >
-                      Skip
+                    <Text allowFontScaling={false} style={styles.titleText}>
+                      Account
                     </Text>
-                  </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{
+                        padding: 10,
+                        paddingBottom: 0
+                      }}
+                      onPress={() => {
+                        navigate("UpNext");
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: "#eee",
+                          fontWeight: "700"
+                        }}
+                      >
+                        Skip
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  <LogoutButton scrollTo={scrollTo} />
                 </View>
               );
             }}
           />
         </View>
+        {showContacts ? <ContactsList /> : null}
       </Swiper>
     </View>
   );

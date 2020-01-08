@@ -11,6 +11,7 @@ const name = makeReducer("name", "");
 const number = makeReducer("number", "");
 const photo = makeReducer("photo", null);
 const localPhoto = makeReducer("localPhoto", null);
+const showContacts = makeReducer("showContacts", false);
 
 export default combineReducers({
   loading,
@@ -20,7 +21,8 @@ export default combineReducers({
   name,
   number,
   photo,
-  localPhoto
+  localPhoto,
+  showContacts
 });
 
 export function getLoginCode() {
@@ -105,6 +107,7 @@ export function logout() {
   return {
     type: "user/set",
     payload: {
+      showContacts: false,
       token: null,
       number: "",
       name: "",

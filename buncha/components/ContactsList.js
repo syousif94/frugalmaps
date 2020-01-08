@@ -1,94 +1,121 @@
 import React, { useRef, useEffect, useState } from "react";
 import {
   View,
-  SectionList,
+  FlatList,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  Dimensions
+  TouchableOpacity
 } from "react-native";
 import { useContacts } from "../utils/Contacts";
 import Input from "./Input";
 import { BLUE } from "../utils/Colors";
-import { Entypo } from "@expo/vector-icons";
-import ProfileView from "./ProfileView";
+import { Entypo, FontAwesome } from "@expo/vector-icons";
+import { getInset } from "../utils/SafeAreaInsets";
+import { HEIGHT } from "../utils/Constants";
 
-const SEARCHBAR_HEIGHT = 46 + 16 + 2;
+const SEARCHBAR_HEIGHT = 46 + 16 + 1;
 const ROW_HEIGHT = 50;
 const SEPARATOR_HEIGHT = 1;
 
-export default ({ bottomOffset }) => {
-  const headerHeight = Dimensions.get("window").height * 0.8;
+export default () => {
   const listRef = useRef(null);
   const [contacts, filter, setFilter] = useContacts();
   const [selected, setSelected] = useState(new Set());
-  const data = [
-    {
-      data: contacts
-    }
-  ];
   return (
     <View style={{ flex: 1 }}>
-      <SectionList
-        sections={data}
+      <View
+        style={{
+          paddingTop: getInset("top") + 15,
+          paddingHorizontal: 30
+        }}
+      >
+        <Text style={{ fontSize: 18, color: "#555" }}>
+          Only contacts you pick can see what you're interested in.
+        </Text>
+      </View>
+      <View
+        style={{
+          height: SEARCHBAR_HEIGHT,
+          marginHorizontal: 20,
+          backgroundColor: "#fff",
+          justifyContent: "center",
+          borderBottomWidth: 1,
+          borderColor: "#f4f4f4"
+        }}
+      >
+        <Input
+          placeholder="Search contacts"
+          value={filter}
+          onChangeText={text => {
+            setFilter(text);
+          }}
+        />
+      </View>
+      <FlatList
+        data={contacts}
         style={{ flex: 1 }}
         ref={listRef}
         keyExtractor={item => (item.matches ? item.item.id : item.id)}
-        render
         ItemSeparatorComponent={() => (
           <View
             style={{
               height: SEPARATOR_HEIGHT,
               backgroundColor: "#f4f4f4",
-              marginLeft: 8
+              marginHorizontal: 30
             }}
           />
         )}
         getItemLayout={(data, index) => {
-          if (!index) {
-            return {
-              length: SEARCHBAR_HEIGHT,
-              offset: headerHeight,
-              index
-            };
-          }
           return {
             length: ROW_HEIGHT,
-            offset:
-              headerHeight +
-              SEARCHBAR_HEIGHT +
-              (index - 1) * (ROW_HEIGHT + SEPARATOR_HEIGHT),
+            offset: index * (ROW_HEIGHT + SEPARATOR_HEIGHT),
             index
           };
-        }}
-        ListHeaderComponent={() => {
-          return <ProfileView />;
         }}
         renderItem={data => (
           <ItemView {...data} selected={selected} setSelected={setSelected} />
         )}
-        renderSectionHeader={({ section }) => (
-          <View
-            style={{
-              height: SEARCHBAR_HEIGHT,
-              paddingHorizontal: 8,
-              backgroundColor: "#fff",
-              borderTopWidth: 1,
-              borderBottomWidth: 1,
-              borderColor: "#f4f4f4",
-              justifyContent: "center"
-            }}
-          >
-            <Input
-              placeholder="Search contacts"
-              value={filter}
-              onChangeText={text => {
-                setFilter(text);
-              }}
-            />
-          </View>
-        )}
       />
+      <SubmitButton />
+    </View>
+  );
+};
+
+const SubmitButton = () => {
+  return (
+    <View
+      style={{
+        height: 60,
+        width: 60,
+        borderRadius: 30,
+        position: "absolute",
+        bottom: getInset("bottom") + 15,
+        right: 20,
+        backgroundColor: "#f4f4f4"
+      }}
+    >
+      <TouchableOpacity
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center"
+        }}
+      >
+        <FontAwesome name="check" color={BLUE} size={26} />
+        <Text
+          allowFontScaling={false}
+          style={{
+            position: "absolute",
+            alignSelf: "center",
+            bottom: -15,
+            fontSize: 9,
+            color: BLUE,
+            fontWeight: "700"
+          }}
+        >
+          Done
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -179,12 +206,11 @@ const ItemView = ({ item, index, selected, setSelected }) => {
   return (
     <TouchableOpacity
       style={{
-        paddingLeft: 15,
-        paddingRight: 13,
+        paddingLeft: 20,
+        paddingRight: 30,
         height: ROW_HEIGHT,
         flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between"
+        alignItems: "center"
       }}
       onPress={() => {
         if (isSelected) {
@@ -195,13 +221,13 @@ const ItemView = ({ item, index, selected, setSelected }) => {
         setSelected(new Set(selected));
       }}
     >
-      <NameText />
       <Entypo
-        style={{ marginTop: 1 }}
+        style={{ marginTop: 1, marginRight: 6 }}
         name="plus"
         color={isSelected ? BLUE : "#ddd"}
         size={26}
       />
+      <NameText />
     </TouchableOpacity>
   );
 };

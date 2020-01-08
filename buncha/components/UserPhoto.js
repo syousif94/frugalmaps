@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import {
   View,
@@ -9,9 +9,11 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { AWSCF } from "../utils/Constants";
+import * as User from "../store/user";
 
 export default () => {
-  const dispatch = useDispatch;
+  const dispatch = useDispatch();
+  const [loadingPhoto, setLoadingPhoto] = useState(false);
   const photo = useSelector(state => {
     if (state.user.localPhoto) {
       return { uri: state.user.localPhoto };
@@ -29,7 +31,21 @@ export default () => {
     <TouchableOpacity
       disabled={uploadingPhoto}
       style={{ alignSelf: "center", marginBottom: 30, marginTop: 20 }}
-      onPress={openPicker.bind(null, dispatch)}
+      onPress={async () => {
+        try {
+          const { canceled, uri } = await ImagePicker.launchImageLibraryAsync({
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.4
+          });
+
+          if (!canceled) {
+            dispatch(User.uploadPhoto(uri));
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }}
     >
       {photo ? (
         <Image
@@ -39,6 +55,12 @@ export default () => {
             width: 250,
             borderRadius: 125,
             backgroundColor: "#ccc"
+          }}
+          onLoadStart={() => {
+            setLoadingPhoto(true);
+          }}
+          onLoadEnd={() => {
+            setLoadingPhoto(false);
           }}
         />
       ) : (
@@ -51,7 +73,7 @@ export default () => {
           }}
         />
       )}
-      {uploadingPhoto ? (
+      {uploadingPhoto || loadingPhoto ? (
         <View
           pointerEvents="none"
           style={{
@@ -59,28 +81,15 @@ export default () => {
             justifyContent: "center",
             alignItems: "center",
             borderRadius: 125,
-            backgroundColor: "rgba(0,0,0,0.5)"
+            backgroundColor: loadingPhoto ? "rgba(0,0,0,0)" : "rgba(0,0,0,0.5)"
           }}
         >
-          <ActivityIndicator size="large" color="#fff" />
+          <ActivityIndicator
+            size="large"
+            color={loadingPhoto ? "#000" : "#fff"}
+          />
         </View>
       ) : null}
     </TouchableOpacity>
   );
 };
-
-async function openPicker(dispatch) {
-  try {
-    const { canceled, uri } = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.4
-    });
-
-    if (!canceled) {
-      dispatch(User.uploadPhoto(uri));
-    }
-  } catch (error) {
-    console.log(error);
-  }
-}

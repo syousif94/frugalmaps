@@ -17,6 +17,7 @@ import { IOS } from "../utils/Constants";
 import ContactsList from "./ContactsList";
 import { LOAD_CONTACTS } from "../utils/Contacts";
 import { KeyboardContext, KeyboardProvider } from "./KeyboardContext";
+import ProfileView from "./ProfileView";
 
 export const FOCUS_ACCOUNT_INPUT = "focus-account-input";
 export const BLUR_ACCOUNT_INPUT = "blur-account-input";
@@ -129,7 +130,7 @@ const AccountView = ({
         transform.current.setValue(Math.min(0, -width.current * page.current));
       }}
     >
-      {renderHeader ? renderHeader() : null}
+      {renderHeader ? renderHeader({ scrollTo }) : null}
       <Animated.View
         style={{
           flexDirection: "row",
@@ -156,10 +157,7 @@ const AccountView = ({
           keyboardBottomOffset={keyboardBottomOffset}
           enableDismiss={enableDismiss}
         />
-        <ContactsView
-          scrollTo={scrollTo}
-          keyboardBottomOffset={keyboardBottomOffset}
-        />
+        <ProfileView />
       </Animated.View>
     </Animated.View>
   );
@@ -304,10 +302,10 @@ const CodeView = ({
   );
 };
 
-const ContactsView = ({ keyboardBottomOffset }) => {
+const ContactsView = () => {
   return (
-    <View style={styles.page}>
-      <ContactsList bottomOffset={keyboardBottomOffset} />
+    <View style={{ flex: 1 }}>
+      <ContactsList />
     </View>
   );
 };

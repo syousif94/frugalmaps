@@ -14,6 +14,7 @@ import { useSelector, useDispatch } from "react-redux";
 import * as User from "../store/user";
 import { IOS } from "../utils/Constants";
 import { KeyboardContext } from "./KeyboardContext";
+import emitter from "tiny-emitter/instance";
 
 export default ({ scrollTo }) => {
   const [_, setBottomOffset] = useContext(KeyboardContext);
@@ -32,7 +33,13 @@ export default ({ scrollTo }) => {
   }
 
   return (
-    <View style={{ height: Dimensions.get("window").height * 0.8 }}>
+    <View
+      style={{ width: "33.33%" }}
+      onLayout={e => {
+        const layout = e.nativeEvent.layout;
+        bottomOffsetCalculator.current.setContentLayout(layout);
+      }}
+    >
       <View
         style={{
           justifyContent: "flex-start",
@@ -43,7 +50,6 @@ export default ({ scrollTo }) => {
           width: "100%"
         }}
       >
-        {/* <LogoutButton scrollTo={scrollTo} /> */}
         <UserPhoto />
         <Text style={{ fontSize: 14, color: "#555", marginBottom: 8 }}>
           What do you go by?
@@ -54,7 +60,14 @@ export default ({ scrollTo }) => {
             bottomOffsetCalculator.current.setInputLayout(layout);
           }}
         />
-        <Text style={{ fontSize: 14, color: "#555", marginBottom: 8 }}>
+        <Text
+          style={{
+            fontSize: 14,
+            color: "#555",
+            marginBottom: 8,
+            marginTop: 25
+          }}
+        >
           Last step!
         </Text>
         <Button
@@ -62,7 +75,13 @@ export default ({ scrollTo }) => {
           disabled={disableNext}
           onPress={() => {
             dispatch(User.saveProfile());
-            scrollTo({ page: 3 });
+            dispatch({
+              type: "user/set",
+              payload: {
+                showContacts: true
+              }
+            });
+            emitter.emit("scroll-intro-contacts");
           }}
         />
       </View>
@@ -132,11 +151,15 @@ const NameInput = ({ onLayout }) => {
   );
 };
 
-const LogoutButton = ({ scrollTo }) => {
+export const LogoutButton = ({ scrollTo }) => {
+  const loggedIn = useSelector(state => state.user.token);
   const dispatch = useDispatch();
+  if (!loggedIn) {
+    return null;
+  }
   return (
     <TouchableOpacity
-      style={{ padding: 5, paddingRight: 0, alignSelf: "flex-end" }}
+      style={{ padding: 5, paddingRight: 0 }}
       onPress={logout.bind(null, { dispatch, scrollTo })}
     >
       <Text
