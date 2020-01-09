@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useContext } from "react";
 import EventSearchInput from "./EventSearchInput";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
@@ -11,38 +11,32 @@ import { itemMargin } from "./UpNextItem";
 import { BLUE } from "../utils/Colors";
 import { Entypo } from "@expo/vector-icons";
 import _ from "lodash";
+import { InputContext } from "./InputContext";
 
 export default () => {
   const inputRef = useRef(null);
-  const [searchFocused, setSearchFocused] = useState(false);
+  const [searchFocused, setSearchFocused] = useContext(InputContext);
   return (
-    <View>
-      <View
-        style={{
-          marginTop: ANDROID ? 7 : 10,
-          paddingHorizontal: itemMargin / 2
+    <View
+      style={{
+        marginTop: ANDROID ? 7 : 10,
+        paddingHorizontal: itemMargin / 2
+      }}
+    >
+      <ListHeaderFilterButton searchFocused={searchFocused} />
+      <EventSearchInput
+        contentContainerStyle={{
+          flexDirection: "row",
+          alignItems: "center"
         }}
-      >
-        <ListHeaderFilterButton searchFocused={searchFocused} />
-        <EventSearchInput
-          contentContainerStyle={{
-            flexDirection: "row",
-            alignItems: "center"
-          }}
-          ref={inputRef}
-          onFocus={() => {
-            requestAnimationFrame(() => {
-              setSearchFocused(true);
-            });
-          }}
-          onBlur={() => {
-            requestAnimationFrame(() => {
-              setSearchFocused(false);
-            });
-          }}
-        />
-      </View>
-      {/* <TagsList searchFocused={searchFocused} inputRef={inputRef} /> */}
+        ref={inputRef}
+        onFocus={() => {
+          setSearchFocused(true);
+        }}
+        onBlur={() => {
+          setSearchFocused(false);
+        }}
+      />
     </View>
   );
 };

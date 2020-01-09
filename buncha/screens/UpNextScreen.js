@@ -25,6 +25,7 @@ import SortBar from "../components/SortBar";
 import { getInset } from "../utils/SafeAreaInsets";
 import EventListHeader from "../components/EventListHeader";
 import TagsList from "../components/TagList";
+import { InputProvider } from "../components/InputContext";
 
 let tabBarHeight;
 
@@ -157,128 +158,132 @@ export default ({ intro = false }) => {
   }, []);
 
   return (
-    <View style={[styles.container, { opacity }]}>
-      {WEB ? (
-        <Helmet>
-          <title>Buncha</title>
-        </Helmet>
-      ) : null}
-      {WEB ? (
-        <React.Fragment>
-          <ScrollView
-            ref={listRef}
-            style={styles.list}
-            contentContainerStyle={[styles.listContent, { paddingTop: 48 }]}
-          >
-            {/* <AppBanner /> */}
-            <SortBar
-              style={{
-                marginTop: 10,
-                marginBottom: 5,
-                marginHorizontal: width < 900 || width > 920 ? null : 8,
-                backgroundColor: width < 900 ? null : "#f0f0f0",
-                borderRadius: width < 900 ? null : 6,
-                borderWidth: width < 900 ? null : 0.5,
-                borderColor: width < 900 ? null : "rgba(0,0,0,0.05)"
-              }}
-              buttonStyle={{
-                paddingVertical: width < 900 ? 4 : 3,
-                paddingRight: width < 900 ? 4 : 3,
-                paddingLeft: width < 900 ? 6 : 5
-              }}
-              contentContainerStyle={{ paddingHorizontal: width < 900 ? 8 : 2 }}
-            />
-            {error ? (
-              <ListError />
-            ) : (
-              <View
+    <InputProvider>
+      <View style={[styles.container, { opacity }]}>
+        {WEB ? (
+          <Helmet>
+            <title>Buncha</title>
+          </Helmet>
+        ) : null}
+        {WEB ? (
+          <React.Fragment>
+            <ScrollView
+              ref={listRef}
+              style={styles.list}
+              contentContainerStyle={[styles.listContent, { paddingTop: 48 }]}
+            >
+              {/* <AppBanner /> */}
+              <SortBar
                 style={{
-                  flexDirection: "row",
-                  flexWrap: "wrap",
-                  width: "100%",
-                  alignItems: "stretch",
-                  paddingHorizontal: width < narrow ? 8 : 10
+                  marginTop: 10,
+                  marginBottom: 5,
+                  marginHorizontal: width < 900 || width > 920 ? null : 8,
+                  backgroundColor: width < 900 ? null : "#f0f0f0",
+                  borderRadius: width < 900 ? null : 6,
+                  borderWidth: width < 900 ? null : 0.5,
+                  borderColor: width < 900 ? null : "rgba(0,0,0,0.05)"
                 }}
-              >
-                {data.map((item, index) => (
+                buttonStyle={{
+                  paddingVertical: width < 900 ? 4 : 3,
+                  paddingRight: width < 900 ? 4 : 3,
+                  paddingLeft: width < 900 ? 6 : 5
+                }}
+                contentContainerStyle={{
+                  paddingHorizontal: width < 900 ? 8 : 2
+                }}
+              />
+              {error ? (
+                <ListError />
+              ) : (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    width: "100%",
+                    alignItems: "stretch",
+                    paddingHorizontal: width < narrow ? 8 : 10
+                  }}
+                >
+                  {data.map((item, index) => (
+                    <UpNextItem
+                      key={item._id}
+                      item={item}
+                      index={index}
+                      containerStyle={{
+                        width: width < narrow ? "50%" : "33.33%",
+                        paddingHorizontal: width < narrow ? 8 : 10,
+                        marginVertical: width < narrow ? 6 : 8,
+                        flexDirection: "column"
+                      }}
+                      style={{
+                        height: "100%",
+                        paddingVertical: 0
+                      }}
+                    />
+                  ))}
+                </View>
+              )}
+
+              {data.length ? <ListFooter /> : null}
+            </ScrollView>
+            <FilterView />
+            <TopBar
+              width={width}
+              contentContainerStyle={{
+                paddingHorizontal: width > narrow ? 16.5 : 4.5
+              }}
+            />
+          </React.Fragment>
+        ) : (
+          <View style={styles.list}>
+            <FlatList
+              ref={listRef}
+              renderItem={data => {
+                return (
                   <UpNextItem
-                    key={item._id}
-                    item={item}
-                    index={index}
-                    containerStyle={{
-                      width: width < narrow ? "50%" : "33.33%",
-                      paddingHorizontal: width < narrow ? 8 : 10,
-                      marginVertical: width < narrow ? 6 : 8,
-                      flexDirection: "column"
-                    }}
+                    {...data}
                     style={{
-                      height: "100%",
-                      paddingVertical: 0
+                      paddingHorizontal: itemMargin / 2
                     }}
                   />
-                ))}
-              </View>
-            )}
-
-            {data.length ? <ListFooter /> : null}
-          </ScrollView>
-          <FilterView />
-          <TopBar
-            width={width}
-            contentContainerStyle={{
-              paddingHorizontal: width > narrow ? 16.5 : 4.5
-            }}
-          />
-        </React.Fragment>
-      ) : (
-        <View style={styles.list}>
-          <FlatList
-            ref={listRef}
-            renderItem={data => {
-              return (
-                <UpNextItem
-                  {...data}
-                  style={{
-                    paddingHorizontal: itemMargin / 2
-                  }}
-                />
-              );
-            }}
-            columnWrapperStyle={{
-              width: width > 500 ? "33.33%" : "50%"
-            }}
-            contentInset={{
-              top: topInset,
-              bottom: tabBarHeight,
-              left: 0,
-              right: 0
-            }}
-            contentContainerStyle={{
-              paddingBottom: ANDROID ? tabBarHeight : null,
-              paddingHorizontal: itemMargin / 2
-            }}
-            keyboardShouldPersistTaps="handled"
-            progressViewOffset={70}
-            numColumns={columns}
-            data={data}
-            style={styles.list}
-            contentInsetAdjustmentBehavior="never"
-            keyExtractor={item => item._id}
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            ListHeaderComponent={EventListHeader}
-            ListFooterComponent={() => (data.length ? <ListFooter /> : null)}
-            ListEmptyComponent={() => (error ? <ListError /> : null)}
-          />
-          <TagsList />
-        </View>
-      )}
-      {WEB && (refreshing || (!data.length && !error && !intro)) ? (
-        <View style={styles.loading}>
-          <ActivityIndicator size="small" color="#000" />
-        </View>
-      ) : null}
-    </View>
+                );
+              }}
+              columnWrapperStyle={{
+                width: width > 500 ? "33.33%" : "50%"
+              }}
+              contentInset={{
+                top: topInset,
+                bottom: tabBarHeight,
+                left: 0,
+                right: 0
+              }}
+              contentContainerStyle={{
+                paddingBottom: ANDROID ? tabBarHeight : null,
+                paddingHorizontal: itemMargin / 2
+              }}
+              keyboardShouldPersistTaps="handled"
+              progressViewOffset={70}
+              numColumns={columns}
+              data={data}
+              style={styles.list}
+              contentInsetAdjustmentBehavior="never"
+              keyExtractor={item => item._id}
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              ListHeaderComponent={EventListHeader}
+              ListFooterComponent={() => (data.length ? <ListFooter /> : null)}
+              ListEmptyComponent={() => (error ? <ListError /> : null)}
+            />
+            <TagsList />
+          </View>
+        )}
+        {WEB && (refreshing || (!data.length && !error && !intro)) ? (
+          <View style={styles.loading}>
+            <ActivityIndicator size="small" color="#000" />
+          </View>
+        ) : null}
+      </View>
+    </InputProvider>
   );
 };
 

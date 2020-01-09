@@ -571,8 +571,11 @@ function makeListData(calendar, time) {
 
   const upcomingEvents = allUpcomingEvents[1];
 
+  const taggedEvents = new Set();
+
   const endingTags = [...yesterdayEvents, ...endingUpcomingEvents].reduce(
     (tags, event) => {
+      taggedEvents.add(event._id);
       event._source.tags.forEach(tag => {
         const tagList = tags[tag];
         if (!tagList) {
@@ -580,12 +583,14 @@ function makeListData(calendar, time) {
         }
         tags[tag].push(event._id);
       });
+
       return tags;
     },
     {}
   );
 
   const upcomingTags = upcomingEvents.reduce((tags, event) => {
+    taggedEvents.add(event._id);
     event._source.tags.forEach(tag => {
       const tagList = tags[tag];
       if (!tagList) {
@@ -626,13 +631,16 @@ function makeListData(calendar, time) {
   ];
 
   const remainingTags = remainingEvents.reduce((tags, event) => {
-    event._source.tags.forEach(tag => {
-      const tagList = tags[tag];
-      if (!tagList) {
-        tags[tag] = [];
-      }
-      tags[tag].push(event._id);
-    });
+    if (!taggedEvents.has(event._id)) {
+      taggedEvents.add(event._id);
+      event._source.tags.forEach(tag => {
+        const tagList = tags[tag];
+        if (!tagList) {
+          tags[tag] = [];
+        }
+        tags[tag].push(event._id);
+      });
+    }
     return tags;
   }, {});
 

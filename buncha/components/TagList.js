@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   ScrollView,
   KeyboardAvoidingView,
-  PixelRatio
+  Animated
 } from "react-native";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { itemMargin } from "./UpNextItem";
@@ -14,8 +14,12 @@ import * as Events from "../store/events";
 import { tabBarHeight } from "./TabBar";
 import BlurView from "./BlurView";
 import { GREEN, UPCOMING } from "../utils/Colors";
+import { InputContext } from "./InputContext";
+import { IOS } from "../utils/Constants";
 
 export default () => {
+  const [focused] = useContext(InputContext);
+  const [animate] = useAnimateOnFocus(focused);
   const occurringTags = useSelector(state => state.events.occurringTags);
   const countedTags = useSelector(state => state.events.tags, shallowEqual);
   const tagsCount = _.keyBy(countedTags, "text");
@@ -39,38 +43,51 @@ export default () => {
     });
   }
 
-  console.log(tags);
-
   return (
     <KeyboardAvoidingView
       behavior="position"
       style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}
-      pointerEvents="box-none"
-      keyboardVerticalOffset={-tabBarHeight}
+      pointerEvents={focused ? "box-none" : "none"}
     >
-      <View style={{ backgroundColor: "rgba(0,0,0,0.05)", height: 1 }} />
-      <BlurView
-        tint="dark"
-        style={{
-          marginBottom: tabBarHeight
-        }}
-      >
-        <ScrollView
-          showsHorizontalScrollIndicator={false}
-          horizontal
-          style={{ height: 50 }}
-          contentContainerStyle={{
-            paddingHorizontal: itemMargin / 2 - 4
-          }}
-        >
-          {tags.map((tag, index) => {
-            return <Button tag={tag} key={`${index}`} />;
-          })}
-        </ScrollView>
-      </BlurView>
+      <Animated.View style={{ opacity: animate.current }}>
+        <View style={{ backgroundColor: "rgba(0,0,0,0.05)", height: 1 }} />
+        <BlurView tint="dark">
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            showsHorizontalScrollIndicator={false}
+            horizontal
+            style={{ height: 50 }}
+            contentContainerStyle={{
+              paddingHorizontal: itemMargin / 2 - 4
+            }}
+          >
+            {tags.map((tag, index) => {
+              return <Button tag={tag} key={`${index}`} />;
+            })}
+          </ScrollView>
+        </BlurView>
+      </Animated.View>
     </KeyboardAvoidingView>
   );
 };
+
+function useAnimateOnFocus(focused) {
+  const animation = useRef(new Animated.Value(0));
+  useEffect(() => {
+    const toValue = focused ? 1 : 0;
+    if (IOS) {
+      Animated.timing(
+        animation.current,
+        { toValue, duration: 250 },
+        { useNativeDriver: true }
+      ).start();
+    } else {
+      animation.current.setValue(toValue);
+    }
+  }, [focused]);
+
+  return [animation];
+}
 
 const Button = ({ tag: { text, count, ending, upcoming } }) => {
   const dispatch = useDispatch();

@@ -121,7 +121,11 @@ export default memo(
         </Text>
         <DaysText days={item._source.days} />
         <Text style={styles.titleText} allowFontScaling={false}>
-          {item._source.title}
+          <MatchableText
+            text={item._source.title}
+            match={searchTerm}
+            style={styles.titleText}
+          />
           <Text style={{ color: time.color, fontWeight: "700" }}>
             {" "}
             {time.text}
@@ -129,7 +133,11 @@ export default memo(
           <Text style={styles.subText}>{time.duration}</Text>
         </Text>
         <Text style={styles.locationText} allowFontScaling={false}>
-          {item._source.location}
+          <MatchableText
+            text={item._source.location}
+            match={searchTerm}
+            style={styles.locationText}
+          />
           <PriceText prefix=" " priceLevel={item._source.priceLevel} />
           <Text style={styles.subText}> {distance}</Text>
           {item._source.neighborhood ? (

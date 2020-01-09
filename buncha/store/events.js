@@ -133,8 +133,32 @@ const debouncedSetEvent = _.debounce((dispatch, args) => {
 export function filter({ tag = null, text = "" }) {
   return (dispatch, getState) => {
     const {
-      events: { bounds, text: prevText, notNow }
+      events: { bounds, text: prevText, notNow, data, occurringTags }
     } = getState();
+
+    if (tag) {
+      const upNext = ["ending", "upcoming", "remaining"]
+        .reduce((ids, key) => {
+          const keyData = occurringTags[key][tag];
+          if (keyData) {
+            return [...ids, ...keyData];
+          }
+
+          return ids;
+        }, [])
+        .map(id => data[id]);
+
+      dispatch({
+        type: "events/set",
+        payload: {
+          tag,
+          text,
+          upNext
+        }
+      });
+
+      return;
+    }
 
     dispatch({
       type: "events/set",
