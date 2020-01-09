@@ -24,6 +24,7 @@ import FilterView from "../components/FilterView";
 import SortBar from "../components/SortBar";
 import { getInset } from "../utils/SafeAreaInsets";
 import EventListHeader from "../components/EventListHeader";
+import TagsList from "../components/TagList";
 
 let tabBarHeight;
 
@@ -269,6 +270,7 @@ export default ({ intro = false }) => {
             ListFooterComponent={() => (data.length ? <ListFooter /> : null)}
             ListEmptyComponent={() => (error ? <ListError /> : null)}
           />
+          <TagsList />
         </View>
       )}
       {WEB && (refreshing || (!data.length && !error && !intro)) ? (

@@ -1,9 +1,9 @@
 import React, { useRef, useState } from "react";
 import EventSearchInput from "./EventSearchInput";
-import { View, Text, TouchableOpacity, Animated } from "react-native";
-import { useSelector, useDispatch, shallowEqual } from "react-redux";
+import { View, Text, TouchableOpacity } from "react-native";
+import { useSelector } from "react-redux";
 import { ANDROID } from "../utils/Constants";
-import { useEveryMinute, useAnimateOn } from "../utils/Hooks";
+import { useEveryMinute } from "../utils/Hooks";
 import moment from "moment";
 import emitter from "tiny-emitter/instance";
 import { PAGE } from "../store/filters";
@@ -11,7 +11,6 @@ import { itemMargin } from "./UpNextItem";
 import { BLUE } from "../utils/Colors";
 import { Entypo } from "@expo/vector-icons";
 import _ from "lodash";
-import * as Events from "../store/events";
 
 export default () => {
   const inputRef = useRef(null);
@@ -43,98 +42,7 @@ export default () => {
           }}
         />
       </View>
-      <TagsList searchFocused={searchFocused} inputRef={inputRef} />
-    </View>
-  );
-};
-
-const TagsList = ({ searchFocused, inputRef }) => {
-  const [height, setHeight] = useState(0);
-  const tags = useSelector(state => state.events.tags, shallowEqual);
-  const query = useSelector(
-    state => state.events.tag || state.events.text,
-    shallowEqual
-  );
-  const visible = !query.length && tags.length && searchFocused;
-  const [, transform] = useAnimateOn(visible);
-
-  const containerStyle = {
-    overflow: "hidden",
-    height: transform.current.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, height]
-    })
-  };
-  return (
-    <Animated.View style={containerStyle}>
-      <View
-        style={{
-          flexDirection: "row",
-          flexWrap: "wrap",
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          paddingHorizontal: itemMargin / 2 - 4
-        }}
-        onLayout={e => {
-          const height = e.nativeEvent.layout.height;
-          requestAnimationFrame(() => {
-            setHeight(height);
-          });
-        }}
-      >
-        {tags.map((tag, index) => {
-          return <Button tag={tag} key={`${index}`} inputRef={inputRef} />;
-        })}
-      </View>
-    </Animated.View>
-  );
-};
-
-const Button = ({ tag: { text, count }, inputRef }) => {
-  const dispatch = useDispatch();
-  const selected = useSelector(state => state.events.tag === text);
-  const onPress = () => {
-    inputRef.current.blur();
-    requestAnimationFrame(() => {
-      dispatch(Events.filter({ tag: selected ? null : text }));
-    });
-  };
-  return (
-    <View
-      style={[
-        {
-          backgroundColor: selected ? "#f4f4f4" : "#fafafa",
-          borderRadius: 8,
-          marginTop: 8,
-          marginHorizontal: 4
-        }
-      ]}
-    >
-      <TouchableOpacity
-        style={[
-          {
-            paddingHorizontal: 6,
-            paddingTop: 5,
-            paddingBottom: 4
-          }
-        ]}
-        onPress={onPress}
-      >
-        <Text style={{ fontSize: 14, color: "#000", fontWeight: "600" }}>
-          {_.startCase(text)}
-        </Text>
-        <Text
-          style={{
-            fontSize: 9,
-            color: BLUE,
-            fontWeight: "600"
-          }}
-        >
-          {count} event{count !== 1 ? "s" : ""}
-        </Text>
-      </TouchableOpacity>
+      {/* <TagsList searchFocused={searchFocused} inputRef={inputRef} /> */}
     </View>
   );
 };

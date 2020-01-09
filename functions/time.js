@@ -571,11 +571,61 @@ function makeListData(calendar, time) {
 
   const upcomingEvents = allUpcomingEvents[1];
 
-  const tags = [
-    ...yesterdayEvents,
-    ...endingUpcomingEvents,
-    ...upcomingEvents
-  ].reduce((tags, event) => {
+  const endingTags = [...yesterdayEvents, ...endingUpcomingEvents].reduce(
+    (tags, event) => {
+      event._source.tags.forEach(tag => {
+        const tagList = tags[tag];
+        if (!tagList) {
+          tags[tag] = [];
+        }
+        tags[tag].push(event._id);
+      });
+      return tags;
+    },
+    {}
+  );
+
+  const upcomingTags = upcomingEvents.reduce((tags, event) => {
+    event._source.tags.forEach(tag => {
+      const tagList = tags[tag];
+      if (!tagList) {
+        tags[tag] = [];
+      }
+      tags[tag].push(event._id);
+    });
+    return tags;
+  }, {});
+
+  const remainingEvents = [
+    ...(calendar.length > 1 ? calendar.slice(1) : calendar).reduce(
+      (events, day) => {
+        let data = day.data;
+        if (calendar.length < 2) {
+          data = data.filter(event => {
+            const hours = event._source.groupedHours.find(group =>
+              group.days.find(groupDay => groupDay.iso === day.iso)
+            );
+            const { ended } = timeRemaining(hours, day.iso, time);
+            return ended;
+          });
+        }
+        return [...events, ...data];
+      },
+      []
+    ),
+    ...(calendar.length > 1 ? calendar[0].data : []).filter(event => {
+      const hours = event._source.groupedHours.find(group =>
+        group.days.find(day => day.iso === calendar[0].iso)
+      );
+      if (hours.days.length === 1) {
+        const { ended } = timeRemaining(hours, calendar[0].iso, time);
+        return ended;
+      }
+      return false;
+    })
+  ];
+
+  const remainingTags = remainingEvents.reduce((tags, event) => {
     event._source.tags.forEach(tag => {
       const tagList = tags[tag];
       if (!tagList) {
@@ -591,39 +641,18 @@ function makeListData(calendar, time) {
       ...yesterdayEvents,
       ...endingUpcomingEvents,
       ...upcomingEvents,
-      ...(calendar.length > 1 ? calendar.slice(1) : calendar).reduce(
-        (events, day) => {
-          let data = day.data;
-          if (calendar.length < 2) {
-            data = data.filter(event => {
-              const hours = event._source.groupedHours.find(group =>
-                group.days.find(groupDay => groupDay.iso === day.iso)
-              );
-              const { ended } = timeRemaining(hours, day.iso, time);
-              return ended;
-            });
-          }
-          return [...events, ...data];
-        },
-        []
-      ),
-      ...(calendar.length > 1 ? calendar[0].data : []).filter(event => {
-        const hours = event._source.groupedHours.find(group =>
-          group.days.find(day => day.iso === calendar[0].iso)
-        );
-        if (hours.days.length === 1) {
-          const { ended } = timeRemaining(hours, calendar[0].iso, time);
-          return ended;
-        }
-        return false;
-      })
+      ...remainingEvents
     ],
     "_id"
   );
 
   return {
     events,
-    tags
+    tags: {
+      ending: endingTags,
+      upcoming: upcomingTags,
+      remaining: remainingTags
+    }
   };
 }
 

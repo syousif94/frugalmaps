@@ -72,7 +72,7 @@ function makeAppContainer() {
       }
     },
     {
-      initialRouteName: User.needsIntro ? "Intro" : "Tabs"
+      initialRouteName: /** User.needsIntro ? "Intro" :*/ "Tabs"
     }
   );
 

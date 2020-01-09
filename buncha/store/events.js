@@ -33,6 +33,7 @@ const selected = makeReducer("selected", null);
 // if day is set, ignore now
 const notNow = makeReducer("notNow", false);
 const day = makeReducer("day", null);
+const occurringTags = makeReducer("occurringTags", null);
 
 const data = makeReducer(
   "data",
@@ -75,7 +76,8 @@ export default combineReducers({
   tags,
   now,
   tag,
-  text
+  text,
+  occurringTags
 });
 
 export function selectEvent(id) {
@@ -331,6 +333,7 @@ function setEvents({ bounds, searching, notNow, searchingTime }) {
           bounds: filtering ? undefined : res.bounds,
           data: res.data,
           tags: filtering ? undefined : res.tags,
+          occurringTags: filtering ? undefined : res.occurringTags,
           notNow,
           day: null
         }
