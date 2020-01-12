@@ -28,6 +28,7 @@ export default memo(
         autoCorrect,
         spellCheck,
         invalid = false,
+        renderRight,
         ...props
       },
       ref
@@ -86,10 +87,9 @@ export default memo(
         });
       };
 
-      const _renderClear = multiline => {
-        if (!props.value || !props.value.length) return null;
+      const _renderRight = () => {
+        const style = [styles.inputRightView];
 
-        const style = [styles.clear];
         if (multiline) {
           style.push({
             height: 40
@@ -101,13 +101,19 @@ export default memo(
         }
 
         return (
-          <TouchableOpacity style={style} onPress={_clear}>
-            <Ionicons
-              name="ios-close-circle"
-              size={18}
-              color="rgba(0,0,0,0.4)"
-            />
-          </TouchableOpacity>
+          <View style={style} pointerEvents="box-none">
+            {!props.value || !props.value.length ? null : (
+              <TouchableOpacity style={styles.clear} onPress={_clear}>
+                <Ionicons
+                  name="ios-close-circle"
+                  size={18}
+                  color="rgba(0,0,0,0.4)"
+                />
+              </TouchableOpacity>
+            )}
+
+            {renderRight ? renderRight() : null}
+          </View>
         );
       };
 
@@ -203,7 +209,7 @@ export default memo(
               />
             )}
 
-            {_renderClear(multiline)}
+            {_renderRight()}
           </View>
         );
       }
@@ -249,7 +255,7 @@ export default memo(
               autoCorrect={autoCorrect}
             />
           </TouchableOpacity>
-          {_renderClear(multiline)}
+          {_renderRight()}
         </View>
       );
     }
@@ -271,15 +277,19 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flexDirection: "row",
-    backgroundColor: "#f4f4f4",
+    backgroundColor: "#fcfcfc",
     borderRadius: 5,
     overflow: "hidden"
   },
-  clear: {
+  inputRightView: {
     position: "absolute",
     top: 0,
     right: 0,
-    paddingHorizontal: 12,
+    flexDirection: "row"
+  },
+  clear: {
+    paddingLeft: 8,
+    paddingRight: 15,
     justifyContent: "center",
     alignItems: "center"
   }

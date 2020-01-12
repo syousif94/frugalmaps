@@ -235,15 +235,13 @@ export function timeRemaining(hours, iso) {
 
     const minutes = Math.ceil(minFloat);
 
-    let value = "";
+    remaining = "";
 
     if (hour) {
-      value += `${hour}h`;
-    } else {
-      value += `${minutes}m`;
+      remaining += `${hour}h `;
     }
 
-    remaining = { value };
+    remaining += `${minutes}m`;
   }
 
   const ended =
@@ -447,7 +445,7 @@ export function itemRemaining(item) {
     if (!away) {
       away = 7;
     }
-    remaining = { value: `${away}d` };
+    remaining = `${away}d`;
   }
 
   const upcoming = !ended && !ending && spanHours.today;
@@ -461,8 +459,6 @@ export function itemRemaining(item) {
       color = UPCOMING;
     }
   }
-
-  const state = ending ? "left" : "";
 
   const day = (tomorrow && tomorrow.text) || spanHours.days[0].text;
 
@@ -478,16 +474,15 @@ export function itemRemaining(item) {
     text = `${start} ${LONG_DAYS[day]}`;
   }
 
-  const duration = ending
-    ? ` ${remaining.value} left`
-    : ` til ${end}`; /**  ` ${spanHours.duration}hr${pluralize(spanHours.duration)}`*/
+  const duration = ending ? ` ${remaining} left` : ` til ${end}`;
 
   return {
     text,
     color,
     span,
     remaining,
-    state,
+    ending,
+    upcoming,
     day,
     start,
     duration,

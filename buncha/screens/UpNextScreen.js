@@ -24,7 +24,7 @@ import FilterView from "../components/FilterView";
 import SortBar from "../components/SortBar";
 import { getInset } from "../utils/SafeAreaInsets";
 import EventListHeader from "../components/EventListHeader";
-import TagsList from "../components/TagList";
+import SearchAccessory from "../components/SearchAccessory";
 import { InputProvider } from "../components/InputContext";
 
 let tabBarHeight;
@@ -35,7 +35,7 @@ if (!WEB) {
 
 const topInset = IOS ? getInset("top") : 0;
 
-const narrow = 600;
+const narrow = 750;
 
 export default ({ intro = false }) => {
   const data = useSelector(state => state.events.upNext, shallowEqual);
@@ -210,7 +210,7 @@ export default ({ intro = false }) => {
                       item={item}
                       index={index}
                       containerStyle={{
-                        width: width < narrow ? "50%" : "33.33%",
+                        width: width < narrow ? "50%" : "25%",
                         paddingHorizontal: width < narrow ? 8 : 10,
                         marginVertical: width < narrow ? 6 : 8,
                         flexDirection: "column"
@@ -249,7 +249,7 @@ export default ({ intro = false }) => {
                 );
               }}
               columnWrapperStyle={{
-                width: width > 500 ? "33.33%" : "50%"
+                width: width > 500 ? "25%" : "50%"
               }}
               contentInset={{
                 top: topInset,
@@ -261,6 +261,7 @@ export default ({ intro = false }) => {
                 paddingBottom: ANDROID ? tabBarHeight : null,
                 paddingHorizontal: itemMargin / 2
               }}
+              keyboardDismissMode="on-drag"
               keyboardShouldPersistTaps="handled"
               progressViewOffset={70}
               numColumns={columns}
@@ -274,7 +275,7 @@ export default ({ intro = false }) => {
               ListFooterComponent={() => (data.length ? <ListFooter /> : null)}
               ListEmptyComponent={() => (error ? <ListError /> : null)}
             />
-            <TagsList />
+            <SearchAccessory />
           </View>
         )}
         {WEB && (refreshing || (!data.length && !error && !intro)) ? (

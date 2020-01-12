@@ -1,47 +1,51 @@
-import React, { useRef, useState, useContext } from "react";
+import React, { useRef, useContext } from "react";
 import EventSearchInput from "./EventSearchInput";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
 import { ANDROID } from "../utils/Constants";
 import { useEveryMinute } from "../utils/Hooks";
 import moment from "moment";
-import emitter from "tiny-emitter/instance";
-import { PAGE } from "../store/filters";
 import { itemMargin } from "./UpNextItem";
-import { BLUE } from "../utils/Colors";
-import { Entypo } from "@expo/vector-icons";
 import _ from "lodash";
 import { InputContext } from "./InputContext";
+import TagList from "./TagList";
 
 export default () => {
   const inputRef = useRef(null);
   const [searchFocused, setSearchFocused] = useContext(InputContext);
   return (
-    <View
-      style={{
-        marginTop: ANDROID ? 7 : 10,
-        paddingHorizontal: itemMargin / 2
-      }}
-    >
-      <ListHeaderFilterButton searchFocused={searchFocused} />
-      <EventSearchInput
-        contentContainerStyle={{
-          flexDirection: "row",
-          alignItems: "center"
+    <View>
+      <View
+        style={{
+          marginTop: ANDROID ? 7 : 10,
+          paddingHorizontal: itemMargin / 2
         }}
-        ref={inputRef}
-        onFocus={() => {
-          setSearchFocused(true);
-        }}
-        onBlur={() => {
-          setSearchFocused(false);
-        }}
-      />
+      >
+        <ListHeaderFilterButton
+          searchFocused={searchFocused}
+          inputRef={inputRef}
+        />
+        <EventSearchInput
+          contentContainerStyle={{
+            flexDirection: "row",
+            alignItems: "center",
+            overflow: "hidden"
+          }}
+          ref={inputRef}
+          onFocus={() => {
+            setSearchFocused(true);
+          }}
+          onBlur={() => {
+            setSearchFocused(false);
+          }}
+        />
+      </View>
+      <TagList style={{ marginHorizontal: itemMargin / -2, marginTop: 10 }} />
     </View>
   );
 };
 
-const ListHeaderFilterButton = ({ searchFocused }) => {
+const ListHeaderFilterButton = ({ searchFocused, inputRef }) => {
   const [currentTime] = useEveryMinute();
   const refreshing = useSelector(state => state.events.refreshing);
   const notNow = useSelector(state => state.events.notNow);
@@ -65,7 +69,7 @@ const ListHeaderFilterButton = ({ searchFocused }) => {
     dayText = day.title;
   } else {
     const today = moment(now);
-    dayText = today.format("dddd h:mma");
+    dayText = today.format("h:mma dddd M/D");
   }
 
   let fromNow = "";
@@ -103,52 +107,24 @@ const ListHeaderFilterButton = ({ searchFocused }) => {
   }
 
   const onPress = () => {
-    requestAnimationFrame(() => {
-      emitter.emit("filters", PAGE.WHEN);
-    });
+    inputRef.current.focus();
+    // requestAnimationFrame(() => {
+    //   emitter.emit("filters", PAGE.WHEN);
+    // });
   };
   return (
     <TouchableOpacity onPress={onPress} disabled={searchFocused}>
-      <View style={{ flexDirection: "row" }}>
-        <View style={{ flex: 1 }}>
-          <Text
-            allowFontScaling={false}
-            style={{
-              fontSize: 30,
-              color: "#000",
-              fontWeight: ANDROID ? "700" : "800"
-            }}
-          >
-            {dayText}
-          </Text>
-          <Text
-            allowFontScaling={false}
-            style={{
-              fontSize: 13,
-              color: "#999",
-              fontWeight: "500",
-              textTransform: "uppercase"
-            }}
-          >
-            {fromNow}
-          </Text>
-        </View>
-        <View
-          style={{
-            alignItems: "center",
-            marginRight: 7,
-            paddingTop: 5
-          }}
-        >
-          <Entypo
-            name="chevron-up"
-            color={BLUE}
-            size={17}
-            style={{ marginBottom: -8 }}
-          />
-          <Entypo name="chevron-down" color={BLUE} size={17} />
-        </View>
-      </View>
+      <Text
+        allowFontScaling={false}
+        style={{
+          fontSize: 13,
+          color: "#999",
+          fontWeight: "500",
+          textTransform: "uppercase"
+        }}
+      >
+        {fromNow}
+      </Text>
       <Text
         allowFontScaling={false}
         style={{
@@ -156,12 +132,22 @@ const ListHeaderFilterButton = ({ searchFocused }) => {
           color: "#777",
           fontWeight: ANDROID ? "700" : "800",
           textTransform: "uppercase",
-          marginTop: 6,
-          paddingBottom: 15
+          marginTop: 6
         }}
       >
         {locationText}
         {countText}
+      </Text>
+      <Text
+        allowFontScaling={false}
+        style={{
+          fontSize: 30,
+          color: "#000",
+          fontWeight: ANDROID ? "700" : "800",
+          marginBottom: 15
+        }}
+      >
+        {dayText}
       </Text>
     </TouchableOpacity>
   );

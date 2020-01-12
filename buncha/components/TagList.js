@@ -1,25 +1,12 @@
-import React, { useContext, useEffect, useRef } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  KeyboardAvoidingView,
-  Animated
-} from "react-native";
+import React from "react";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { itemMargin } from "./UpNextItem";
 import _ from "lodash";
 import * as Events from "../store/events";
-import { tabBarHeight } from "./TabBar";
-import BlurView from "./BlurView";
-import { GREEN, UPCOMING } from "../utils/Colors";
-import { InputContext } from "./InputContext";
-import { IOS } from "../utils/Constants";
+import { GREEN, UPCOMING, NOW, NOT_TODAY } from "../utils/Colors";
 
-export default () => {
-  const [focused] = useContext(InputContext);
-  const [animate] = useAnimateOnFocus(focused);
+export default ({ style }) => {
   const occurringTags = useSelector(state => state.events.occurringTags);
   const countedTags = useSelector(state => state.events.tags, shallowEqual);
   const tagsCount = _.keyBy(countedTags, "text");
@@ -42,52 +29,22 @@ export default () => {
       };
     });
   }
-
   return (
-    <KeyboardAvoidingView
-      behavior="position"
-      style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}
-      pointerEvents={focused ? "box-none" : "none"}
+    <ScrollView
+      keyboardShouldPersistTaps="handled"
+      showsHorizontalScrollIndicator={false}
+      horizontal
+      style={[{ height: 50 }, style]}
+      contentContainerStyle={{
+        paddingHorizontal: itemMargin - 5
+      }}
     >
-      <Animated.View style={{ opacity: animate.current }}>
-        <View style={{ backgroundColor: "rgba(0,0,0,0.05)", height: 1 }} />
-        <BlurView tint="dark">
-          <ScrollView
-            keyboardShouldPersistTaps="handled"
-            showsHorizontalScrollIndicator={false}
-            horizontal
-            style={{ height: 50 }}
-            contentContainerStyle={{
-              paddingHorizontal: itemMargin / 2 - 4
-            }}
-          >
-            {tags.map((tag, index) => {
-              return <Button tag={tag} key={`${index}`} />;
-            })}
-          </ScrollView>
-        </BlurView>
-      </Animated.View>
-    </KeyboardAvoidingView>
+      {tags.map((tag, index) => {
+        return <Button tag={tag} key={`${index}`} />;
+      })}
+    </ScrollView>
   );
 };
-
-function useAnimateOnFocus(focused) {
-  const animation = useRef(new Animated.Value(0));
-  useEffect(() => {
-    const toValue = focused ? 1 : 0;
-    if (IOS) {
-      Animated.timing(
-        animation.current,
-        { toValue, duration: 250 },
-        { useNativeDriver: true }
-      ).start();
-    } else {
-      animation.current.setValue(toValue);
-    }
-  }, [focused]);
-
-  return [animation];
-}
 
 const Button = ({ tag: { text, count, ending, upcoming } }) => {
   const dispatch = useDispatch();
@@ -116,7 +73,13 @@ const Button = ({ tag: { text, count, ending, upcoming } }) => {
         ]}
         onPress={onPress}
       >
-        <Text style={{ fontSize: 15, color: "#fff", fontWeight: "700" }}>
+        <Text
+          style={{
+            fontSize: 15,
+            color: selected ? "#ccc" : "#000",
+            fontWeight: "700"
+          }}
+        >
           {_.lowerCase(text)}{" "}
           <Text
             style={{
@@ -125,16 +88,16 @@ const Button = ({ tag: { text, count, ending, upcoming } }) => {
               fontWeight: "800"
             }}
           >
-            {ending ? <Text style={{ color: GREEN }}>{ending}</Text> : null}
+            {ending ? <Text style={{ color: UPCOMING }}>{ending}</Text> : null}
             {upcoming ? (
-              <Text style={{ color: UPCOMING }}>{upcoming}</Text>
+              <Text style={{ color: NOT_TODAY }}>{upcoming}</Text>
             ) : null}
           </Text>
-          {!ending && !upcoming ? (
+          {count !== ending + upcoming ? (
             <Text
               style={{
                 fontSize: 15,
-                color: "#999",
+                color: "#ccc",
                 fontWeight: "700"
               }}
             >

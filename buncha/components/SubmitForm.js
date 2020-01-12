@@ -147,7 +147,7 @@ export default ({ page, setPage, pages }) => {
 
           {WEB ? <BackButton /> : null}
         </View>
-        <Text style={styles.instructionText}>Title</Text>
+        <Text style={styles.instructionText}>1. Title</Text>
         <ConnectedInput
           field="title"
           placeholder="Happy Hour, Trivia Night, Karaoke, etc."
@@ -155,24 +155,24 @@ export default ({ page, setPage, pages }) => {
           name="location"
         />
         <Text style={[styles.instructionText, { marginBottom: 0 }]}>
-          Location
+          2. Location
         </Text>
         <Text style={styles.subtext}>
           May need to include city or state in search
         </Text>
         <SubmitPlacePicker />
-        <Text style={styles.instructionText}>Days</Text>
+        <Text style={styles.instructionText}>3. Days</Text>
         <SubmitDayPicker />
         <View style={styles.row}>
           <View style={styles.time}>
             <Text style={[styles.instructionText, { marginBottom: 0 }]}>
-              Starts at
+              4. Starts at
             </Text>
           </View>
           <View style={{ width: 10 }} />
           <View style={styles.time}>
             <Text style={[styles.instructionText, { marginBottom: 0 }]}>
-              Ends at
+              5. Ends at
             </Text>
           </View>
         </View>
@@ -198,14 +198,14 @@ export default ({ page, setPage, pages }) => {
         </View>
 
         <Text style={[styles.instructionText, { marginTop: 22 }]}>
-          Description
+          6. Description
         </Text>
         <ConnectedInput
           multiline
           field="description"
           placeholder="Please include any information that can't be found online. Websites and location details are encouraged."
         />
-        <Text style={styles.instructionText}>Tags</Text>
+        <Text style={styles.instructionText}>7. Tags</Text>
         <SubmitTags />
         <Text style={styles.instructionText}>Admin Code</Text>
         <ConnectedInput field="postCode" placeholder="Leave this blank" />

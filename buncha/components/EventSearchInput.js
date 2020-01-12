@@ -30,6 +30,22 @@ function usePlaceholder(tags) {
   return [placeholder];
 }
 
+function Icon({ searching }) {
+  return (
+    <View style={styles.icon} pointerEvents="none">
+      {searching ? (
+        <ActivityIndicator
+          style={{ transform: [{ scale: 0.7 }] }}
+          size="small"
+          color="#ccc"
+        />
+      ) : (
+        <Ionicons name="ios-search" size={WEB ? 18 : 24} color={BLUE} />
+      )}
+    </View>
+  );
+}
+
 export default React.forwardRef(
   ({ contentContainerStyle = {}, ...props }, ref) => {
     const dispatch = useDispatch();
@@ -42,6 +58,10 @@ export default React.forwardRef(
 
     const onChangeText = text => {
       dispatch(Events.filter({ text }));
+    };
+
+    const renderProp = {
+      [WEB ? "render" : "renderRight"]: () => <Icon searching={searching} />
     };
 
     return (
@@ -60,19 +80,7 @@ export default React.forwardRef(
           backgroundColor="rgba(180,180,180,0.1)"
           containerStyle={{ flex: 1, borderRadius: 6 }}
           style={styles.input}
-          render={() => (
-            <View style={styles.icon}>
-              {searching ? (
-                <ActivityIndicator
-                  style={{ transform: [{ scale: 0.7 }] }}
-                  size="small"
-                  color="#ccc"
-                />
-              ) : (
-                <Ionicons name="ios-search" size={18} color={BLUE} />
-              )}
-            </View>
-          )}
+          {...renderProp}
           {...props}
         />
       </View>
@@ -83,12 +91,13 @@ export default React.forwardRef(
 const styles = StyleSheet.create({
   icon: {
     justifyContent: "center",
-    width: 35,
-    paddingLeft: 5,
-    alignItems: "center"
+    alignItems: WEB ? "center" : null,
+    paddingHorizontal: WEB ? 12 : null,
+    width: 37
   },
   input: {
-    paddingLeft: 0,
-    height: WEB ? buttonHeight - 2 : 40
+    paddingLeft: WEB ? 0 : 12,
+    height: WEB ? buttonHeight - 2 : 48,
+    fontSize: WEB ? 14 : 20
   }
 });

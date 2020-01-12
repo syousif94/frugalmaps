@@ -35,6 +35,9 @@ const notNow = makeReducer("notNow", false);
 const day = makeReducer("day", null);
 const occurringTags = makeReducer("occurringTags", null);
 
+let upNextCache = null;
+let markerCache = null;
+
 const data = makeReducer(
   "data",
   {},
@@ -148,12 +151,29 @@ export function filter({ tag = null, text = "" }) {
         }, [])
         .map(id => data[id]);
 
+      const markers = _.uniqBy(upNext, "_source.placeid");
+
       dispatch({
         type: "events/set",
         payload: {
           tag,
           text,
-          upNext
+          upNext,
+          markers
+        }
+      });
+
+      return;
+    }
+
+    if (!tag && (!text || !text.length) && upNextCache) {
+      dispatch({
+        type: "events/set",
+        payload: {
+          tag,
+          text,
+          upNext: upNextCache,
+          markers: markerCache
         }
       });
 
@@ -169,7 +189,7 @@ export function filter({ tag = null, text = "" }) {
       }
     });
 
-    dispatch(get({ bounds, searching: true, notNow: false }));
+    // dispatch(get({ bounds, searching: true, notNow: false }));
   };
 }
 
@@ -341,6 +361,11 @@ function setEvents({ bounds, searching, notNow, searchingTime }) {
       }
 
       const filtering = tag || text.length;
+
+      if (!searching) {
+        upNextCache = res.list[0].data;
+        markerCache = res.markers[0].data;
+      }
 
       dispatch({
         type: "events/set",

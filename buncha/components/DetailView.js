@@ -38,7 +38,7 @@ function makeNarrowWebMapOffset(dimensions) {
 function getMapViewDimensions(dimensions) {
   const mapViewHeight = WEB ? 0 : dimensions.height * 0.76;
 
-  const mapMinHeight = 190;
+  const mapMinHeight = dimensions.height * 0.45;
 
   let initialOffset = mapViewHeight - mapMinHeight;
 

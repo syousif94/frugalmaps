@@ -32,7 +32,7 @@ let columns;
 let itemMargin;
 
 if (!NARROW) {
-  columns = 3;
+  columns = 4;
   itemMargin = 20;
 } else {
   columns = 2;
@@ -113,25 +113,11 @@ export default memo(
             <Text style={styles.countText}>{index + 1}</Text>
           </View>
         </View>
-        <Text
-          allowFontScaling={false}
+        <MatchableText
           style={{ fontSize: 9, fontWeight: "700", color: "#444" }}
-        >
-          {item._source.tags.join(", ").toUpperCase()}
-        </Text>
-        <DaysText days={item._source.days} />
-        <Text style={styles.titleText} allowFontScaling={false}>
-          <MatchableText
-            text={item._source.title}
-            match={searchTerm}
-            style={styles.titleText}
-          />
-          <Text style={{ color: time.color, fontWeight: "700" }}>
-            {" "}
-            {time.text}
-          </Text>
-          <Text style={styles.subText}>{time.duration}</Text>
-        </Text>
+          text={item._source.tags.join(", ").toUpperCase()}
+          match={searchTerm}
+        />
         <Text style={styles.locationText} allowFontScaling={false}>
           <MatchableText
             text={item._source.location}
@@ -146,6 +132,23 @@ export default memo(
               {item._source.neighborhood.split(",")[0]}
             </Text>
           ) : null}
+        </Text>
+        <Text style={styles.distanceText}>
+          <DaysText days={item._source.days} />
+          {time.ending ? " Now" : ` ${time.remaining} away`}
+        </Text>
+
+        <Text style={styles.titleText} allowFontScaling={false}>
+          <MatchableText
+            text={item._source.title}
+            match={searchTerm}
+            style={styles.titleText}
+          />
+          <Text style={{ color: time.color, fontWeight: "700" }}>
+            {" "}
+            {time.text}
+          </Text>
+          <Text style={styles.subText}>{time.duration}</Text>
         </Text>
 
         <MatchableText
@@ -210,9 +213,9 @@ const styles = StyleSheet.create({
     marginBottom: 4
   },
   titleText: {
-    fontSize: WEB ? 16 : 17,
+    fontSize: WEB ? 16 : 18,
     color: "#000",
-    fontWeight: ANDROID ? "700" : "600",
+    fontWeight: "700",
     marginVertical: WEB ? 1 : null
   },
   distanceText: {
@@ -227,17 +230,15 @@ const styles = StyleSheet.create({
   },
   locationText: {
     marginBottom: WEB ? 1 : null,
-    fontSize: WEB ? 14 : 15,
+    fontSize: WEB ? 14 : 18,
     color: "#000",
-    fontWeight: ANDROID ? "700" : "600"
+    fontWeight: "700"
     // textTransform: "uppercase"
   },
   descriptionText: {
     marginVertical: 2,
-    lineHeight: 17,
-    fontSize: 13,
-    color: "#444",
-    fontWeight: "500"
+    fontSize: 15,
+    color: "#000"
   },
   actions: {
     flexDirection: "row"

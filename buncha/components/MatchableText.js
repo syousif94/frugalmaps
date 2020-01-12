@@ -19,7 +19,7 @@ export default ({ match, text, ...props }) => {
               <Text
                 key={key}
                 style={{
-                  backgroundColor: "yellow",
+                  backgroundColor: "#DCF8FF",
                   paddingHorizontal: 1,
                   borderRadius: 2,
                   marginHorizontal: -1
