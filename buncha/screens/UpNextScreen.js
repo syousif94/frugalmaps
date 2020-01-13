@@ -21,11 +21,11 @@ import { Helmet } from "react-helmet";
 import ListError from "../components/ListError";
 import emitter from "tiny-emitter/instance";
 import FilterView from "../components/FilterView";
-import SortBar from "../components/SortBar";
 import { getInset } from "../utils/SafeAreaInsets";
 import EventListHeader from "../components/EventListHeader";
 import SearchAccessory from "../components/SearchAccessory";
 import { InputProvider } from "../components/InputContext";
+import TagList from "../components/TagList";
 
 let tabBarHeight;
 
@@ -35,7 +35,8 @@ if (!WEB) {
 
 const topInset = IOS ? getInset("top") : 0;
 
-const narrow = 750;
+const medium = 780;
+const narrow = 550;
 
 export default ({ intro = false }) => {
   const data = useSelector(state => state.events.upNext, shallowEqual);
@@ -173,25 +174,7 @@ export default ({ intro = false }) => {
               contentContainerStyle={[styles.listContent, { paddingTop: 48 }]}
             >
               {/* <AppBanner /> */}
-              <SortBar
-                style={{
-                  marginTop: 10,
-                  marginBottom: 5,
-                  marginHorizontal: width < 900 || width > 920 ? null : 8,
-                  backgroundColor: width < 900 ? null : "#f0f0f0",
-                  borderRadius: width < 900 ? null : 6,
-                  borderWidth: width < 900 ? null : 0.5,
-                  borderColor: width < 900 ? null : "rgba(0,0,0,0.05)"
-                }}
-                buttonStyle={{
-                  paddingVertical: width < 900 ? 4 : 3,
-                  paddingRight: width < 900 ? 4 : 3,
-                  paddingLeft: width < 900 ? 6 : 5
-                }}
-                contentContainerStyle={{
-                  paddingHorizontal: width < 900 ? 8 : 2
-                }}
-              />
+              <TagList style={{ marginVertical: 10 }} />
               {error ? (
                 <ListError />
               ) : (
@@ -201,7 +184,7 @@ export default ({ intro = false }) => {
                     flexWrap: "wrap",
                     width: "100%",
                     alignItems: "stretch",
-                    paddingHorizontal: width < narrow ? 8 : 10
+                    paddingHorizontal: width < medium ? 8 : 10
                   }}
                 >
                   {data.map((item, index) => (
@@ -210,9 +193,14 @@ export default ({ intro = false }) => {
                       item={item}
                       index={index}
                       containerStyle={{
-                        width: width < narrow ? "50%" : "25%",
-                        paddingHorizontal: width < narrow ? 8 : 10,
-                        marginVertical: width < narrow ? 6 : 8,
+                        width:
+                          width < medium
+                            ? width < narrow
+                              ? "50%"
+                              : "33.33%"
+                            : "25%",
+                        paddingHorizontal: width < medium ? 8 : 10,
+                        marginVertical: width < medium ? 6 : 8,
                         flexDirection: "column"
                       }}
                       style={{
@@ -230,7 +218,7 @@ export default ({ intro = false }) => {
             <TopBar
               width={width}
               contentContainerStyle={{
-                paddingHorizontal: width > narrow ? 16.5 : 4.5
+                paddingHorizontal: width > medium ? 16.5 : 4.5
               }}
             />
           </React.Fragment>

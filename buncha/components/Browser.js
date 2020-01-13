@@ -128,42 +128,34 @@ const BottomBar = ({ navDirections, webViewRef, url }) => {
     case Browser.MODES[0]:
       return (
         <View style={styles.bottomBar}>
-          <TouchableOpacity
-            style={styles.bottombarButton}
-            onPress={() => {
-              webViewRef.current.goBack();
-            }}
-            disabled={!navDirections.pop}
-          >
-            <Feather
-              name="chevron-left"
-              color={navDirections.pop ? BLUE : "#ccc"}
-              size={24}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.bottombarButton}
-            onPress={() => {
-              webViewRef.current.goForward();
-            }}
-            disabled={!navDirections.push}
-          >
-            <Feather
-              name="chevron-right"
-              color={navDirections.push ? BLUE : "#ccc"}
-              size={24}
-            />
-          </TouchableOpacity>
-          <View style={{ flex: 1 }} />
-          <TouchableOpacity
-            style={styles.bottombarButton}
-            onPress={async () => {
-              await Linking.openURL(url);
-            }}
-          >
-            <Feather name="share" color={BLUE} size={20} />
-          </TouchableOpacity>
-          <View style={{ flex: 1 }} />
+          <View style={{ flex: 1, flexDirection: "row" }}>
+            <TouchableOpacity
+              style={styles.bottombarButton}
+              onPress={() => {
+                webViewRef.current.goBack();
+              }}
+              disabled={!navDirections.pop}
+            >
+              <Feather
+                name="chevron-left"
+                color={navDirections.pop ? BLUE : "#ccc"}
+                size={24}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.bottombarButton}
+              onPress={() => {
+                webViewRef.current.goForward();
+              }}
+              disabled={!navDirections.push}
+            >
+              <Feather
+                name="chevron-right"
+                color={navDirections.push ? BLUE : "#ccc"}
+                size={24}
+              />
+            </TouchableOpacity>
+          </View>
           <TouchableOpacity
             style={styles.bottombarButton}
             onPress={() => {
@@ -179,13 +171,28 @@ const BottomBar = ({ navDirections, webViewRef, url }) => {
               style={{
                 color: BLUE,
                 fontSize: 14,
-                fontWeight: "500",
-                marginLeft: 8
+                fontWeight: "500"
               }}
             >
               Done
             </Text>
           </TouchableOpacity>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              justifyContent: "flex-end"
+            }}
+          >
+            <TouchableOpacity
+              style={styles.bottombarButton}
+              onPress={async () => {
+                await Linking.openURL(url);
+              }}
+            >
+              <Feather name="external-link" color={BLUE} size={20} />
+            </TouchableOpacity>
+          </View>
         </View>
       );
     default:
