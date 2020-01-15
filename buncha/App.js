@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { Provider } from "react-redux";
 import { AppLoading } from "expo";
-import { StatusBar, View } from "react-native";
+import { StatusBar } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import store from "./store";
 import cache from "./utils/Cache";
 import Navigator from "./screens";
@@ -10,9 +11,11 @@ import { IOS } from "./utils/Constants";
 console.disableYellowBox = true;
 
 const App = () => (
-  <Provider store={store}>
-    <Navigator />
-  </Provider>
+  <SafeAreaProvider>
+    <Provider store={store}>
+      <Navigator />
+    </Provider>
+  </SafeAreaProvider>
 );
 
 export default class extends Component {

@@ -1,4 +1,4 @@
-import React, { useRef, useContext } from "react";
+import React, { useRef, useContext, memo } from "react";
 import EventSearchInput from "./EventSearchInput";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
@@ -10,21 +10,17 @@ import _ from "lodash";
 import { InputContext } from "./InputContext";
 import TagList from "./TagList";
 
-export default () => {
+export default memo(() => {
   const inputRef = useRef(null);
   const [searchFocused, setSearchFocused] = useContext(InputContext);
   return (
     <View>
       <View
         style={{
-          marginTop: ANDROID ? 7 : 10,
-          paddingHorizontal: itemMargin / 2
+          marginTop: 10,
+          paddingHorizontal: 10
         }}
       >
-        <ListHeaderFilterButton
-          searchFocused={searchFocused}
-          inputRef={inputRef}
-        />
         <EventSearchInput
           contentContainerStyle={{
             flexDirection: "row",
@@ -42,14 +38,12 @@ export default () => {
       </View>
       <TagList
         style={{
-          marginHorizontal: itemMargin / -2,
-          marginTop: 5,
-          marginBottom: 4
+          marginTop: 5
         }}
       />
     </View>
   );
-};
+});
 
 const ListHeaderFilterButton = ({ searchFocused, inputRef }) => {
   const [currentTime] = useEveryMinute();

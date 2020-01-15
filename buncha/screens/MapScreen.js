@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, memo } from "react";
 import { useSelector, shallowEqual } from "react-redux";
 import { StyleSheet, View, ActivityIndicator } from "react-native";
 import MapView from "react-native-maps";
@@ -95,7 +95,7 @@ const IndicatorView = () => {
   );
 };
 
-const MarkerMapView = () => {
+export const MarkerMapView = memo(() => {
   const mapView = useRef(null);
   const bounds = useSelector(state => state.events.bounds, shallowEqual);
   const locationEnabled = useSelector(state => state.permissions.location);
@@ -210,7 +210,7 @@ const MarkerMapView = () => {
       }, [])}
     </MapView>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {

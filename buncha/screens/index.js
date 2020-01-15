@@ -68,7 +68,7 @@ function makeAppContainer() {
         screen: IntroScreen
       },
       Tabs: {
-        screen: TabScreen
+        screen: UpNextScreen
       }
     },
     {

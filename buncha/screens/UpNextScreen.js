@@ -3,7 +3,6 @@ import { shallowEqual, useSelector, useDispatch } from "react-redux";
 import {
   View,
   StyleSheet,
-  FlatList,
   ActivityIndicator,
   ScrollView,
   Text,
@@ -11,7 +10,7 @@ import {
 } from "react-native";
 import { refresh } from "../store/events";
 import * as Cities from "../store/cities";
-import UpNextItem, { itemMargin, columns } from "../components/UpNextItem";
+import UpNextItem, { itemMargin } from "../components/UpNextItem";
 import TopBar from "../components/TopBar";
 import { enableLocation } from "../store/permissions";
 import { WEB, IOS, ANDROID } from "../utils/Constants";
@@ -21,19 +20,10 @@ import { Helmet } from "react-helmet";
 import ListError from "../components/ListError";
 import emitter from "tiny-emitter/instance";
 import FilterView from "../components/FilterView";
-import { getInset } from "../utils/SafeAreaInsets";
-import EventListHeader from "../components/EventListHeader";
 import SearchAccessory from "../components/SearchAccessory";
 import { InputProvider } from "../components/InputContext";
 import TagList from "../components/TagList";
-
-let tabBarHeight;
-
-if (!WEB) {
-  tabBarHeight = require("../components/TabBar").tabBarHeight;
-}
-
-const topInset = IOS ? getInset("top") : 0;
+import EventList from "../components/EventList";
 
 const medium = 780;
 const narrow = 550;
@@ -45,7 +35,6 @@ export default ({ intro = false }) => {
   const locationEnabled = useSelector(state => state.permissions.location);
   const dispatch = useDispatch();
   const onRefresh = useCallback(() => dispatch(refresh()), []);
-  const listRef = useRef(null);
   const [opacity, setOpacity] = useState(
     WEB && location.pathname !== "/" ? 0 : 1
   );
@@ -89,10 +78,6 @@ export default ({ intro = false }) => {
     }
 
     if (!WEB && !data.length && !refreshing && !error) {
-      listRef.current.scrollToOffset({
-        animated: false,
-        offset: topInset
-      });
       onRefresh();
       dispatch(Cities.get());
     } else if (WEB) {
@@ -134,17 +119,7 @@ export default ({ intro = false }) => {
       if (IOS) {
         initialLoadCompleted.current = false;
         requestAnimationFrame(dismissFilters);
-        setTimeout(() => {
-          listRef.current.scrollToOffset({
-            animated: true,
-            offset: -(topInset + 54)
-          });
-        }, 350);
       } else if (ANDROID) {
-        listRef.current.scrollToOffset({
-          animated: false,
-          offset: 0
-        });
         requestAnimationFrame(dismissFilters);
       } else if (WEB) {
         requestAnimationFrame(dismissFilters);
@@ -169,7 +144,6 @@ export default ({ intro = false }) => {
         {WEB ? (
           <React.Fragment>
             <ScrollView
-              ref={listRef}
               style={styles.list}
               contentContainerStyle={[styles.listContent, { paddingTop: 48 }]}
             >
@@ -224,45 +198,12 @@ export default ({ intro = false }) => {
           </React.Fragment>
         ) : (
           <View style={styles.list}>
-            <FlatList
-              ref={listRef}
-              renderItem={data => {
-                return (
-                  <UpNextItem
-                    {...data}
-                    style={{
-                      paddingHorizontal: itemMargin / 2
-                    }}
-                  />
-                );
-              }}
-              columnWrapperStyle={{
-                width: width > 500 ? "25%" : "50%"
-              }}
-              contentInset={{
-                top: topInset,
-                bottom: tabBarHeight,
-                left: 0,
-                right: 0
-              }}
-              contentContainerStyle={{
-                paddingBottom: ANDROID ? tabBarHeight : null,
-                paddingHorizontal: itemMargin / 2
-              }}
-              keyboardDismissMode="on-drag"
-              keyboardShouldPersistTaps="handled"
-              progressViewOffset={70}
-              numColumns={columns}
-              data={data}
-              style={styles.list}
-              contentInsetAdjustmentBehavior="never"
-              keyExtractor={item => item._id}
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              ListHeaderComponent={EventListHeader}
-              ListFooterComponent={() => (data.length ? <ListFooter /> : null)}
-              ListEmptyComponent={() => (error ? <ListError /> : null)}
-            />
+            <EventList />
+            {refreshing ? (
+              <View style={styles.loading}>
+                <ActivityIndicator size="large" color="#000" />
+              </View>
+            ) : null}
             <SearchAccessory />
           </View>
         )}
@@ -304,7 +245,7 @@ const styles = StyleSheet.create({
   loading: {
     position: "absolute",
     top: 140,
-    alignSelf: WEB ? "center" : "stretch"
+    alignSelf: "center"
   },
   list: {
     backgroundColor: "#fff",
