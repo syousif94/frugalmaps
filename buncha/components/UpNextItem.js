@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
   },
   actions: {
     flexDirection: "row",
-    marginTop: 4,
+    marginTop: 6,
     marginBottom: 15,
     marginLeft: -1
   },

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import PickerButton, { buttonHeight } from "./PickerButton";
 import { navigate } from "../screens";
@@ -54,22 +54,31 @@ export default ({ style = {}, contentContainerStyle = {}, width }) => {
 };
 
 const MenuButton = ({ narrow }) => {
+  const clickedRef = useRef(false);
   const [menuVisible, setMenuVisible] = useState(false);
   return (
     <div
       onMouseLeave={() => {
+        if (clickedRef.current) {
+          return;
+        }
         setMenuVisible(false);
       }}
     >
       <div
         onMouseEnter={e => {
+          if (clickedRef.current) {
+            return;
+          }
           setMenuVisible(true);
         }}
       >
         <TouchableOpacity
           style={styles.btn}
           onPress={() => {
-            setMenuVisible(!setMenuVisible);
+            const visible = !clickedRef.current;
+            clickedRef.current = visible;
+            setMenuVisible(visible);
           }}
         >
           <Ionicons
