@@ -108,7 +108,10 @@ const Button = ({ tag: { text, count, ending, upcoming, subtext }, style }) => {
       style={[
         {
           justifyContent: "center",
-          marginRight: 15
+          marginRight: 8,
+          backgroundColor: "rgba(180,180,180,0.1)",
+          paddingHorizontal: 8,
+          borderRadius: 6
         },
         style
       ]}
@@ -117,42 +120,19 @@ const Button = ({ tag: { text, count, ending, upcoming, subtext }, style }) => {
       <Text
         style={{
           fontSize: 14,
-          color: selected ? "#000" : "#777",
-          fontWeight: "700"
+          color: selected ? "#000" : "#666",
+          fontWeight: "500"
         }}
       >
         {_.lowerCase(text)}
-        {count !== ending + upcoming ? (
-          <Text
-            style={{
-              fontSize: 14,
-              color: "#666"
-            }}
-          >
-            {" "}
-            {count > 1 ? count : null}
-          </Text>
-        ) : null}
       </Text>
       <Text
         style={{
-          marginTop: 2,
-          fontSize: 14,
-          color: "#444",
-          fontWeight: "600"
+          fontSize: 12,
+          fontWeight: "600",
+          color: ending ? NOW : upcoming ? UPCOMING : "#999"
         }}
       >
-        {ending ? (
-          <Text style={{ fontSize: 14, fontWeight: "800", color: NOW }}>
-            {ending}
-          </Text>
-        ) : null}
-        {upcoming ? (
-          <Text style={{ color: UPCOMING, fontSize: 14, fontWeight: "800" }}>
-            {upcoming}
-          </Text>
-        ) : null}
-        {upcoming || ending ? " " : ""}
         {subtext}
       </Text>
     </TouchableOpacity>

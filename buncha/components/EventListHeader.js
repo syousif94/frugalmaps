@@ -38,7 +38,7 @@ export default memo(() => {
       </View>
       <TagList
         style={{
-          marginTop: 5
+          marginTop: 8
         }}
       />
     </View>
