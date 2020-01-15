@@ -47,7 +47,7 @@ export default ({ onComplete }) => {
         width: "100%",
         alignSelf: "center",
         paddingHorizontal: 10,
-        paddingTop: 70,
+        paddingTop: "4.5%",
         opacity
       }}
     >
@@ -80,15 +80,20 @@ export default ({ onComplete }) => {
             nights, and more.
           </Text>
 
-          <View style={{ flexDirection: "row", marginTop: 20, marginLeft: -8 }}>
+          <View
+            style={{ flexDirection: "row", marginTop: 20, marginLeft: -8 }}
+            pointerEvents="none"
+          >
             {events.map((item, index) => {
               return (
                 <UpNextItem
+                  demo
                   key={item._id}
                   item={item}
                   index={index}
                   containerStyle={{
-                    width: "60%",
+                    maxWidth: 270,
+                    width: "65%",
                     paddingTop: 10,
                     paddingBottom: 5,
                     paddingHorizontal: 10,

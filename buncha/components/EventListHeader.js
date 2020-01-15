@@ -40,7 +40,13 @@ export default () => {
           }}
         />
       </View>
-      <TagList style={{ marginHorizontal: itemMargin / -2, marginTop: 10 }} />
+      <TagList
+        style={{
+          marginHorizontal: itemMargin / -2,
+          marginTop: 5,
+          marginBottom: 4
+        }}
+      />
     </View>
   );
 };

@@ -200,7 +200,7 @@ export default ({ intro = false }) => {
                               : "33.33%"
                             : "25%",
                         paddingHorizontal: width < medium ? 8 : 10,
-                        marginVertical: width < medium ? 6 : 8,
+                        marginTop: width < medium ? 6 : 8,
                         flexDirection: "column"
                       }}
                       style={{

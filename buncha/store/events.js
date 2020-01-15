@@ -34,6 +34,7 @@ const selected = makeReducer("selected", null);
 const notNow = makeReducer("notNow", false);
 const day = makeReducer("day", null);
 const occurringTags = makeReducer("occurringTags", null);
+const staleMs = makeReducer("staleMs", null);
 
 let upNextCache = null;
 let markerCache = null;
@@ -344,7 +345,8 @@ function setEvents({ bounds, searching, notNow, searchingTime }) {
             error,
             city,
             notNow,
-            day: null
+            day: null,
+            staleMs: null
           }
         });
         return;
@@ -367,6 +369,8 @@ function setEvents({ bounds, searching, notNow, searchingTime }) {
         markerCache = res.markers[0].data;
       }
 
+      console.log(`stale in ${res.staleMs / 1000 / 60} minutes`);
+
       dispatch({
         type: "events/set",
         payload: {
@@ -384,6 +388,7 @@ function setEvents({ bounds, searching, notNow, searchingTime }) {
           tags: filtering ? undefined : res.tags,
           occurringTags: filtering ? undefined : res.occurringTags,
           notNow,
+          staleMs: res.staleMs,
           day: null
         }
       });
@@ -396,6 +401,7 @@ function setEvents({ bounds, searching, notNow, searchingTime }) {
           refreshing: searching ? undefined : false,
           error: error,
           notNow,
+          staleMs: null,
           day: null
         }
       });

@@ -10,7 +10,7 @@ import { navigate } from "../screens";
 import Link from "./Link";
 import { selectPlaceEvents } from "../store/events";
 import { useSelector, shallowEqual, useDispatch } from "react-redux";
-import { RED } from "../utils/Colors";
+import { RED, BLUE } from "../utils/Colors";
 import { roundedDistanceTo } from "../utils/Locate";
 import {
   itemRemaining,
@@ -18,7 +18,7 @@ import {
   itemTimeForDay
 } from "../utils/Time";
 import ImageGallery from "./ImageGallery";
-import { Entypo, FontAwesome } from "@expo/vector-icons";
+import { Entypo, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useEveryMinute } from "../utils/Hooks";
 import { WEB, ANDROID, NARROW } from "../utils/Constants";
 import PriceText from "./PriceText";
@@ -169,28 +169,35 @@ export default memo(
               <FontAwesome
                 allowFontScaling={false}
                 name="star"
-                size={WEB ? 16 : 15}
-                color={"#FFA033"}
+                size={16}
+                color={"rgba(0,0,0,0.4)"}
               />
-              <Text allowFontScaling={false} style={styles.actionText}>
-                Interested
-              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
                 navigate("Plan", { eid: item._id });
               }}
-              style={[styles.actionButton, { marginLeft: 10 }]}
+              style={[styles.actionButton]}
             >
               <Entypo
                 allowFontScaling={false}
                 name="calendar"
-                size={WEB ? 16 : 15}
-                color={RED}
+                size={16}
+                color={"rgba(0,0,0,0.4)"}
               />
-              <Text allowFontScaling={false} style={styles.actionText}>
-                Plan
-              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                navigate("Plan", { eid: item._id });
+              }}
+              style={[styles.actionButton]}
+            >
+              <Ionicons
+                allowFontScaling={false}
+                name="md-heart"
+                size={16}
+                color={"rgba(0,0,0,0.4)"}
+              />
             </TouchableOpacity>
           </View>
         )}
@@ -241,13 +248,21 @@ const styles = StyleSheet.create({
     color: "#000"
   },
   actions: {
-    flexDirection: "row"
+    flexDirection: "row",
+    marginTop: 4,
+    marginBottom: 15,
+    marginLeft: -1
   },
   actionButton: {
+    paddingHorizontal: 10,
+    backgroundColor: "#f7f7f7",
+    marginRight: 8,
+    borderRadius: 3,
     flexDirection: "row",
     alignItems: "center",
-    paddingTop: WEB ? 6 : 4,
-    paddingBottom: WEB ? 5 : 15
+    paddingTop: 6.5,
+    paddingBottom: 6,
+    justifyContent: "center"
   },
   actionText: {
     marginLeft: 5,

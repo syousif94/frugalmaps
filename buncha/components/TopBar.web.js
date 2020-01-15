@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import PickerButton, { buttonHeight } from "./PickerButton";
 import { navigate } from "../screens";
@@ -38,7 +38,6 @@ export default ({ style = {}, contentContainerStyle = {}, width }) => {
   return (
     <div style={containerStyle}>
       <View style={contentStyle}>
-        <PickerButton />
         <EventSearchInput
           contentContainerStyle={{
             flex: 1,
@@ -47,37 +46,90 @@ export default ({ style = {}, contentContainerStyle = {}, width }) => {
             alignItems: "center"
           }}
         />
-        <AddButton narrow={narrow} />
+        <PickerButton />
+        <MenuButton />
       </View>
     </div>
   );
 };
 
-const AddButton = ({ narrow }) => {
-  if (narrow) {
-    return null;
-  }
+const MenuButton = ({ narrow }) => {
+  const [menuVisible, setMenuVisible] = useState(false);
   return (
-    <TouchableOpacity
-      style={styles.roundBtn}
-      onPress={() => {
-        navigate("Add");
+    <div
+      onMouseLeave={() => {
+        setMenuVisible(false);
       }}
     >
-      <Ionicons name="ios-add-circle-outline" size={18} color={BLUE} />
-      <Text allowFontScaling={false} style={styles.buttonText}>
-        Add Fun Stuff
-      </Text>
-    </TouchableOpacity>
+      <div
+        onMouseEnter={e => {
+          setMenuVisible(true);
+        }}
+      >
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => {
+            setMenuVisible(!setMenuVisible);
+          }}
+        >
+          <Ionicons
+            name="md-menu"
+            size={18}
+            color={menuVisible ? "#999" : BLUE}
+          />
+        </TouchableOpacity>
+      </div>
+      <View
+        style={{
+          position: "absolute",
+          top: buttonHeight,
+          right: 0,
+          padding: 10,
+          opacity: menuVisible ? 1 : 0
+        }}
+        pointerEvents={menuVisible ? "auto" : "none"}
+      >
+        <div
+          style={{
+            marginTop: 2.5,
+            marginRight: 10,
+            borderBottomLeftRadius: 5,
+            borderBottomRightRadius: 5,
+            backgroundColor: "rgba(240,240,240,0.9)",
+            WebkitBackdropFilter: "blur(30px)",
+            backdropFilter: "blur(30px)",
+            border: "0.5px solid rgba(0,0,0,0.1)",
+            borderTop: "none",
+            display: "flex"
+          }}
+        >
+          <View style={{ padding: 2.5, width: 230 }}>
+            <TouchableOpacity
+              style={styles.menuButton}
+              onPress={() => {
+                navigate("Add");
+              }}
+            >
+              <Text style={styles.menuButtonText}>Add Stuff</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.menuButton}>
+              <Text style={styles.menuButtonText}>Create Invite</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.menuButton}>
+              <Text style={styles.menuButtonText}>Logout</Text>
+            </TouchableOpacity>
+          </View>
+        </div>
+      </View>
+    </div>
   );
 };
 
 const styles = StyleSheet.create({
-  roundBtn: {
+  btn: {
     height: buttonHeight,
     minWidth: buttonHeight,
-    paddingHorizontal: 10,
-    flexDirection: "row",
+    justifyContent: "center",
     alignItems: "center",
     borderRadius: 6,
     backgroundColor: "rgba(180,180,180,0.1)",
@@ -86,6 +138,22 @@ const styles = StyleSheet.create({
   buttonText: {
     marginLeft: 7,
     fontSize: 12,
+    fontWeight: "500",
+    color: BLUE
+  },
+  menuHeaderText: {
+    fontSize: 14,
+    color: "#000",
+    fontWeight: "700"
+  },
+  menuButton: {
+    padding: 7,
+    backgroundColor: "rgba(0,0,0,0.03)",
+    margin: 2.5,
+    borderRadius: 3
+  },
+  menuButtonText: {
+    fontSize: 14,
     fontWeight: "500",
     color: BLUE
   }

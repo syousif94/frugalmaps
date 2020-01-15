@@ -83,12 +83,13 @@ const PlacesList = () => {
             >
               <TouchableOpacity
                 onPress={onPress}
-                style={{ flexDirection: "row", alignItems: "center" }}
+                style={{ flexDirection: "row" }}
               >
                 <View
                   style={{
                     padding: 7,
                     alignItems: "center",
+                    justifyContent: "center",
                     minWidth: 36,
                     backgroundColor: "rgba(0,0,0,0.05)"
                   }}
@@ -103,17 +104,25 @@ const PlacesList = () => {
                     {city._source.count}
                   </Text>
                 </View>
-                <Text
+                <View
                   style={{
-                    marginLeft: 8,
-                    marginRight: 15,
-                    fontSize: 16,
-                    color: "#000",
-                    fontWeight: "600"
+                    paddingVertical: 7,
+                    justifyContent: "center",
+                    alignItems: "center"
                   }}
                 >
-                  {city._source.name}
-                </Text>
+                  <Text
+                    style={{
+                      marginLeft: 8,
+                      marginRight: 15,
+                      fontSize: 16,
+                      color: "#000",
+                      fontWeight: "600"
+                    }}
+                  >
+                    {city._source.name}
+                  </Text>
+                </View>
               </TouchableOpacity>
             </View>
           );

@@ -4,10 +4,10 @@ import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { itemMargin } from "./UpNextItem";
 import _ from "lodash";
 import * as Events from "../store/events";
-import { UPCOMING, NOW } from "../utils/Colors";
+import { UPCOMING, NOW, RED } from "../utils/Colors";
 import { itemRemaining } from "../utils/Time";
 
-export default ({ style }) => {
+export default ({ style, buttonStyle }) => {
   const occurringTags = useSelector(state => state.events.occurringTags);
   const countedTags = useSelector(state => state.events.tags, shallowEqual);
   const data = useSelector(state => state.events.data, shallowEqual);
@@ -44,12 +44,14 @@ export default ({ style }) => {
           }
         }
       } else if (ending) {
-        const endingKeys = occurringTags.ending[key];
-        const key = endingKeys[endingKeys.length - 1];
-        item = data[key];
-        if (item) {
-          const { text } = itemRemaining(item);
-          subtext = text;
+        const keys = occurringTags.ending[key];
+        if (keys) {
+          const key = keys[keys.length - 1];
+          item = data[key];
+          if (item) {
+            const { text } = itemRemaining(item);
+            subtext = text;
+          }
         }
       } else {
         const keys = occurringTags.remaining[key];
@@ -73,7 +75,7 @@ export default ({ style }) => {
     });
   }
   return (
-    <View style={[{ height: 50 }, style]}>
+    <View style={style}>
       <ScrollView
         keyboardShouldPersistTaps="handled"
         showsHorizontalScrollIndicator={false}
@@ -83,14 +85,14 @@ export default ({ style }) => {
         }}
       >
         {tags.map((tag, index) => {
-          return <Button tag={tag} key={`${index}`} />;
+          return <Button tag={tag} key={`${index}`} style={buttonStyle} />;
         })}
       </ScrollView>
     </View>
   );
 };
 
-const Button = ({ tag: { text, count, ending, upcoming, subtext } }) => {
+const Button = ({ tag: { text, count, ending, upcoming, subtext }, style }) => {
   const dispatch = useDispatch();
   const tag = useSelector(state => state.events.tag);
   const selected = tag === text;
@@ -101,63 +103,58 @@ const Button = ({ tag: { text, count, ending, upcoming, subtext } }) => {
     });
   };
   return (
-    <View
-      style={[
-        {
-          marginVertical: 6,
-          borderRadius: 5
-        }
-      ]}
-    >
+    <View>
       <TouchableOpacity
         style={[
           {
-            flex: 1,
-            paddingHorizontal: 5,
+            paddingVertical: 5,
+            paddingLeft: 7,
+            paddingRight: 15,
             justifyContent: "center"
-          }
+          },
+          style
         ]}
         onPress={onPress}
       >
         <Text
           style={{
-            fontSize: 15,
-            color: selected ? "#000" : tag ? "#777" : "#000",
+            fontSize: 16,
+            color: selected ? "#000" : "#777",
             fontWeight: "700"
           }}
         >
-          {_.lowerCase(text)}{" "}
-          <Text
-            style={{
-              fontSize: 17,
-              color: "#ccc",
-              fontWeight: "800"
-            }}
-          >
-            {ending ? <Text style={{ color: NOW }}>{ending}</Text> : null}
-            {upcoming ? (
-              <Text style={{ color: UPCOMING }}>{upcoming}</Text>
-            ) : null}
-          </Text>
+          {_.lowerCase(text)}
           {count !== ending + upcoming ? (
             <Text
               style={{
-                fontSize: 15,
-                color: "#aaa",
-                fontWeight: "700"
+                fontSize: 14,
+                color: "#666"
               }}
             >
+              {" "}
               {count > 1 ? count : null}
             </Text>
           ) : null}
         </Text>
         <Text
           style={{
-            fontSize: 12,
-            color: "#555",
-            fontWeight: "700"
+            marginTop: 2,
+            fontSize: 14,
+            color: "#444",
+            fontWeight: "600"
           }}
         >
+          {ending ? (
+            <Text style={{ fontSize: 14, fontWeight: "800", color: NOW }}>
+              {ending}
+            </Text>
+          ) : null}
+          {upcoming ? (
+            <Text style={{ color: UPCOMING, fontSize: 12, fontWeight: "800" }}>
+              {upcoming}
+            </Text>
+          ) : null}
+          {upcoming || ending ? " " : ""}
           {subtext}
         </Text>
       </TouchableOpacity>

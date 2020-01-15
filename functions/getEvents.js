@@ -242,7 +242,7 @@ module.exports = async function getEvents(req, res) {
 
     const markers = makeMarkers(currentTime, markerData);
 
-    const { events: listData, tags: occurringTags } = makeListData(
+    const { events: listData, tags: occurringTags, staleMs } = makeListData(
       calendar,
       currentTime
     );
@@ -297,7 +297,8 @@ module.exports = async function getEvents(req, res) {
       places,
       newest,
       occurringTags,
-      tags: []
+      tags: [],
+      staleMs
     };
 
     if (bounds) {
@@ -316,7 +317,7 @@ module.exports = async function getEvents(req, res) {
     res.send(response);
   } catch (error) {
     res.send({
-      error: error.message,
+      error: error.stack,
       city
     });
   }

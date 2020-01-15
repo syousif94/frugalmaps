@@ -102,6 +102,7 @@ export default memo(
 
         return (
           <View style={style} pointerEvents="box-none">
+            {renderRight ? renderRight() : null}
             {!props.value || !props.value.length ? null : (
               <TouchableOpacity style={styles.clear} onPress={_clear}>
                 <Ionicons
@@ -111,8 +112,6 @@ export default memo(
                 />
               </TouchableOpacity>
             )}
-
-            {renderRight ? renderRight() : null}
           </View>
         );
       };
@@ -288,7 +287,7 @@ const styles = StyleSheet.create({
     flexDirection: "row"
   },
   clear: {
-    paddingLeft: 8,
+    paddingLeft: 0,
     paddingRight: 15,
     justifyContent: "center",
     alignItems: "center"

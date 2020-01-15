@@ -224,7 +224,7 @@ function timeRemaining(hours, iso, today) {
     end.isAfter(start, "minute") &&
     start.isAfter(now.endOf("day"), "minute");
 
-  return { remaining, ending, ended };
+  return { remaining, ending, ended, diff };
 }
 
 // day is the non standard day int converted to iso day int
@@ -654,7 +654,56 @@ function makeListData(calendar, time) {
     "_id"
   );
 
+  let firstEndingEvent;
+  let firstEnd;
+  let firstStartingEvent;
+  let firstStart;
+
+  if (endingUpcomingEvents.length) {
+    firstEndingEvent = endingUpcomingEvents[0];
+    const hours = firstEndingEvent._source.groupedHours.find(group =>
+      group.days.find(day => day.iso === calendar[0].iso)
+    );
+    const { diff } = timeRemaining(hours, calendar[0].iso, time);
+    firstEnd = diff;
+  } else if (yesterdayEvents.length) {
+    firstEndingEvent = yesterdayEvents[0];
+    const hours = firstEndingEvent._source.groupedHours.find(group =>
+      group.days.find(day => day.iso === yesterdayISO)
+    );
+    const { diff } = timeRemaining(hours, yesterdayISO, time);
+    firstEnd = diff;
+  }
+
+  if (upcomingEvents.length) {
+    firstStartingEvent = upcomingEvents[0];
+    const hours = firstStartingEvent._source.groupedHours.find(group =>
+      group.days.find(day => day.iso === calendar[0].iso)
+    );
+    const { diff } = timeRemaining(hours, calendar[0].iso, time);
+    firstStart = diff;
+  } else if (remainingEvents.length) {
+    firstStartingEvent = remainingEvents[0];
+    const iso = makeISO(firstStartingEvent._source.days, time);
+    const hours = firstStartingEvent._source.groupedHours.find(group =>
+      group.days.find(day => day.iso === iso)
+    );
+    const { diff } = timeRemaining(hours, iso, time);
+    firstStart = diff;
+  }
+
+  let staleMs;
+
+  if (firstEndingEvent && firstStartingEvent) {
+    staleMs = Math.min(firstStart, firstEnd);
+  } else if (firstEndingEvent) {
+    staleMs = firstEnd;
+  } else if (firstStartingEvent) {
+    staleMs = firstStart;
+  }
+
   return {
+    staleMs,
     events,
     tags: {
       ending: endingTags,
