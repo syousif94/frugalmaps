@@ -18,7 +18,7 @@ export default memo(() => {
       <View
         style={{
           marginTop: 10,
-          paddingHorizontal: 10
+          paddingHorizontal: itemMargin
         }}
       >
         <EventSearchInput

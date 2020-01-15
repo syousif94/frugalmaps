@@ -93,11 +93,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: WEB ? "center" : null,
     paddingHorizontal: WEB ? 12 : null,
-    width: 37
+    width: 34
   },
   input: {
     paddingLeft: WEB ? 0 : 12,
-    height: WEB ? buttonHeight - 2 : 48,
-    fontSize: WEB ? 14 : 20
+    height: WEB ? buttonHeight - 2 : 44,
+    fontSize: WEB ? 14 : 17
   }
 });

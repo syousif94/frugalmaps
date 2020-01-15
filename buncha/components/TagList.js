@@ -81,7 +81,8 @@ export default ({ style, buttonStyle }) => {
         showsHorizontalScrollIndicator={false}
         horizontal
         contentContainerStyle={{
-          paddingHorizontal: itemMargin - 5
+          paddingHorizontal: itemMargin,
+          height: 44
         }}
       >
         {tags.map((tag, index) => {
@@ -103,61 +104,57 @@ const Button = ({ tag: { text, count, ending, upcoming, subtext }, style }) => {
     });
   };
   return (
-    <View>
-      <TouchableOpacity
-        style={[
-          {
-            paddingVertical: 5,
-            paddingLeft: 7,
-            paddingRight: 15,
-            justifyContent: "center"
-          },
-          style
-        ]}
-        onPress={onPress}
+    <TouchableOpacity
+      style={[
+        {
+          justifyContent: "center",
+          marginRight: 15
+        },
+        style
+      ]}
+      onPress={onPress}
+    >
+      <Text
+        style={{
+          fontSize: 14,
+          color: selected ? "#000" : "#777",
+          fontWeight: "700"
+        }}
       >
-        <Text
-          style={{
-            fontSize: 16,
-            color: selected ? "#000" : "#777",
-            fontWeight: "700"
-          }}
-        >
-          {_.lowerCase(text)}
-          {count !== ending + upcoming ? (
-            <Text
-              style={{
-                fontSize: 14,
-                color: "#666"
-              }}
-            >
-              {" "}
-              {count > 1 ? count : null}
-            </Text>
-          ) : null}
-        </Text>
-        <Text
-          style={{
-            marginTop: 2,
-            fontSize: 14,
-            color: "#444",
-            fontWeight: "600"
-          }}
-        >
-          {ending ? (
-            <Text style={{ fontSize: 14, fontWeight: "800", color: NOW }}>
-              {ending}
-            </Text>
-          ) : null}
-          {upcoming ? (
-            <Text style={{ color: UPCOMING, fontSize: 12, fontWeight: "800" }}>
-              {upcoming}
-            </Text>
-          ) : null}
-          {upcoming || ending ? " " : ""}
-          {subtext}
-        </Text>
-      </TouchableOpacity>
-    </View>
+        {_.lowerCase(text)}
+        {count !== ending + upcoming ? (
+          <Text
+            style={{
+              fontSize: 14,
+              color: "#666"
+            }}
+          >
+            {" "}
+            {count > 1 ? count : null}
+          </Text>
+        ) : null}
+      </Text>
+      <Text
+        style={{
+          marginTop: 2,
+          fontSize: 14,
+          color: "#444",
+          fontWeight: "600"
+        }}
+      >
+        {ending ? (
+          <Text style={{ fontSize: 14, fontWeight: "800", color: NOW }}>
+            {ending}
+          </Text>
+        ) : null}
+        {upcoming ? (
+          <Text style={{ color: UPCOMING, fontSize: 14, fontWeight: "800" }}>
+            {upcoming}
+          </Text>
+        ) : null}
+        {upcoming || ending ? " " : ""}
+        {subtext}
+      </Text>
+    </TouchableOpacity>
   );
 };

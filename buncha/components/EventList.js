@@ -33,10 +33,15 @@ export default memo(() => {
           [{ nativeEvent: { contentOffset: { y: scrollOffset.current } } }],
           { useNativeDriver: true }
         )}
+        contentOffset={{
+          x: 0,
+          y: 120 + insets.bottom
+        }}
         ListHeaderComponent={headerRef.current}
         contentContainerStyle={{
           paddingBottom: insets.bottom,
-          paddingHorizontal: itemMargin / 2
+          paddingHorizontal: itemMargin / 2,
+          minHeight: dimensions.height - 40 + 120 + insets.bottom
         }}
         ListHeaderComponentStyle={{ marginHorizontal: itemMargin / -2 }}
         contentInsetAdjustmentBehavior="never"
@@ -63,10 +68,11 @@ export default memo(() => {
 });
 
 const ListHeader = ({ scrollOffset }) => {
+  const height = Dimensions.get("window").height - 40;
   return (
     <View
       style={{
-        height: Dimensions.get("window").height - 40,
+        height,
         overflow: "hidden"
       }}
     >
@@ -76,8 +82,8 @@ const ListHeader = ({ scrollOffset }) => {
           transform: [
             {
               translateY: scrollOffset.current.interpolate({
-                inputRange: [0, Number.MAX_SAFE_INTEGER],
-                outputRange: [0, Number.MAX_SAFE_INTEGER],
+                inputRange: [0, height],
+                outputRange: [0, height / 2],
                 extrapolate: "clamp"
               })
             }
