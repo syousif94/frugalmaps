@@ -7,7 +7,7 @@ import * as Events from "../store/events";
 import { UPCOMING, NOW, RED } from "../utils/Colors";
 import { itemRemaining } from "../utils/Time";
 
-export default ({ style, buttonStyle }) => {
+export default ({ style, buttonStyle, contentContainerStyle }) => {
   const occurringTags = useSelector(state => state.events.occurringTags);
   const countedTags = useSelector(state => state.events.tags, shallowEqual);
   const data = useSelector(state => state.events.data, shallowEqual);
@@ -80,10 +80,13 @@ export default ({ style, buttonStyle }) => {
         keyboardShouldPersistTaps="handled"
         showsHorizontalScrollIndicator={false}
         horizontal
-        contentContainerStyle={{
-          paddingHorizontal: itemMargin,
-          height: 44
-        }}
+        contentContainerStyle={[
+          {
+            paddingHorizontal: itemMargin,
+            height: 44
+          },
+          contentContainerStyle
+        ]}
       >
         {tags.map((tag, index) => {
           return <Button tag={tag} key={`${index}`} style={buttonStyle} />;

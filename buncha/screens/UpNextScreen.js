@@ -148,7 +148,17 @@ export default ({ intro = false }) => {
               contentContainerStyle={[styles.listContent, { paddingTop: 48 }]}
             >
               {/* <AppBanner /> */}
-              <TagList style={{ marginVertical: 10 }} />
+              <TagList
+                contentContainerStyle={{
+                  paddingRight: width < medium ? 16 : 20,
+                  paddingLeft:
+                    Math.max((width - 900) / 2, 0) + (width < medium ? 16 : 20)
+                }}
+                style={{
+                  marginVertical: 10,
+                  width: "100%"
+                }}
+              />
               {error ? (
                 <ListError />
               ) : (
@@ -156,9 +166,11 @@ export default ({ intro = false }) => {
                   style={{
                     flexDirection: "row",
                     flexWrap: "wrap",
-                    width: "100%",
                     alignItems: "stretch",
-                    paddingHorizontal: width < medium ? 8 : 10
+                    paddingHorizontal: width < medium ? 8 : 10,
+                    width: "100%",
+                    maxWidth: 900,
+                    alignSelf: "center"
                   }}
                 >
                   {data.map((item, index) => (
@@ -221,13 +233,15 @@ const ListFooter = () => {
   return (
     <View
       style={{
-        minWidth: "100%",
         backgroundColor: "#fff",
         borderTopWidth: 1,
         borderColor: "#f2f2f2",
         paddingHorizontal: WEB ? 20 : itemMargin / 2,
         paddingTop: 10,
-        paddingBottom: 60
+        paddingBottom: 60,
+        width: "100%",
+        maxWidth: 900,
+        alignSelf: "center"
       }}
     >
       <Text style={{ color: "#ccc", fontSize: 12, fontWeight: "700" }}>
@@ -254,8 +268,6 @@ const styles = StyleSheet.create({
   listContent: {
     backgroundColor: "#fff",
     width: "100%",
-    minHeight: "100%",
-    maxWidth: WEB ? 900 : null,
-    alignSelf: WEB ? "center" : "stretch"
+    minHeight: "100%"
   }
 });
