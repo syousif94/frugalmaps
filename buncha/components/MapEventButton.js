@@ -17,14 +17,14 @@ import DaysText from "./DaysText";
 import { WIDTH } from "../utils/Constants";
 import { tabBarHeight } from "./TabBar";
 import PriceText from "./PriceText";
+import { useSafeArea } from "react-native-safe-area-context";
 
 const height = 165;
 
 const WIDESCREEN = WIDTH > 500;
 
-const translateY = WIDESCREEN ? height : -height;
-
-export default () => {
+export default ({ scrollOffset }) => {
+  const insets = useSafeArea();
   const selectedEvent = useSelector(state => {
     const selected = state.events.selected;
     if (!selected) {
@@ -39,8 +39,25 @@ export default () => {
 
   const eventCount = `${events.length} event${events.length !== 1 ? "s" : ""}`;
 
+  const heightWithInset = WIDESCREEN ? height : height + insets.top;
+  const translateY = WIDESCREEN ? heightWithInset : -heightWithInset;
+
   return (
-    <View style={styles.container} pointerEvents="box-none">
+    <Animated.View
+      style={[
+        styles.container,
+        {
+          height: heightWithInset,
+          paddingTop: insets.top,
+          transform: [
+            {
+              translateY: scrollOffset.current
+            }
+          ]
+        }
+      ]}
+      pointerEvents="box-none"
+    >
       <Animated.View
         style={[
           styles.slider,
@@ -140,18 +157,17 @@ export default () => {
           )}
         </TouchableOpacity>
       </Animated.View>
-    </View>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: WIDESCREEN ? null : topBarHeight,
-    bottom: WIDESCREEN ? tabBarHeight : null,
+    top: WIDESCREEN ? null : 0,
+    bottom: WIDESCREEN ? 0 : null,
     left: 0,
     right: 0,
-    height,
     overflow: "hidden",
     paddingHorizontal: 8
   },

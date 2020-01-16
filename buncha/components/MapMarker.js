@@ -13,7 +13,7 @@ const orangeSelectedPin = require("../assets/pin-upcoming-selected.png");
 
 class MapMarker extends Component {
   static imageHeight = 150;
-  static miniScale = 0.65;
+  static miniScale = 0.68;
   static offset = { x: 0, y: -28 * MapMarker.miniScale };
 
   state = {
@@ -114,10 +114,10 @@ class MapMarker extends Component {
     let pinSource;
     switch (color) {
       case NOW:
-        pinSource = greenSelectedPin;
+        pinSource = orangeSelectedPin;
         break;
       case UPCOMING:
-        pinSource = orangeSelectedPin;
+        pinSource = greenSelectedPin;
         break;
       default:
         pinSource = redSelectedPin;
@@ -156,11 +156,6 @@ class MapMarker extends Component {
             <Text allowFontScaling={false} style={spotTextStyle}>
               {spot}
             </Text>
-            {day ? (
-              <Text allowFontScaling={false} style={styles.indexText}>
-                {day}
-              </Text>
-            ) : null}
           </View>
         </View>
       </MapView.Marker>
@@ -198,17 +193,18 @@ const styles = StyleSheet.create({
   },
   indexText: {
     paddingLeft: 3,
+    marginBottom: 0.5,
     textAlign: "center",
-    fontSize: 9,
-    lineHeight: 9,
+    fontSize: 10,
+    lineHeight: 10,
     fontWeight: "700",
     color: "#fff",
     backgroundColor: "transparent"
   },
   spotText: {
     paddingLeft: 3,
-    lineHeight: 12,
-    fontSize: 12,
+    lineHeight: 13,
+    fontSize: 13,
     textAlign: "center",
     color: "#fff",
     fontWeight: "700",

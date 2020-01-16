@@ -171,39 +171,12 @@ export const MarkerMapView = memo(() => {
           time = itemRemaining(data);
         }
 
-        const texts = time.text.split(" ");
+        const timeText = time.remaining && time.remaining.split(" ")[0];
 
-        let foundIndex;
-
-        const timeText = texts
-          .find((text, index) => {
-            const match = text.match(/(a|p)m/gi);
-            if (match) {
-              foundIndex = index;
-            }
-            return match;
-          })
-          .replace("m", "")
-          .substr(0, 4);
-
-        let day;
-        if (foundIndex < texts.length - 1) {
-          day = texts[texts.length - 1].substr(0, 2);
-          if (day === "to") {
-            day = null;
-          }
-        }
-
-        const key = `${_id}${time.color}`;
+        const key = `${_id}${timeText}`;
 
         markers.push(
-          <Marker
-            color={time.color}
-            data={data}
-            key={key}
-            time={timeText}
-            day={day}
-          />
+          <Marker color={time.color} data={data} key={key} time={timeText} />
         );
 
         return markers;

@@ -1,11 +1,14 @@
-import React, { useRef, memo } from "react";
+import React, { useRef, memo, useEffect } from "react";
 import {
   Text,
   View,
   StyleSheet,
   Animated,
   Dimensions,
-  TouchableOpacity
+  TouchableOpacity,
+  Keyboard,
+  UIManager,
+  TextInput
 } from "react-native";
 import { useSafeArea } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -14,34 +17,42 @@ import UpNextItem, { itemMargin, columns } from "./UpNextItem";
 import { MarkerMapView as MapView } from "../screens/MapScreen";
 import { useDimensions } from "../utils/Hooks";
 import EventListHeader from "./EventListHeader";
+import { ANDROID } from "../utils/Constants";
+import MapEventButton from "./MapEventButton";
+
+const EXPOSED_LIST = 240;
 
 export default memo(() => {
   let initialOffset = 0;
+  const listRef = useRef(null);
   const scrollOffset = useRef(new Animated.Value(initialOffset));
   const headerRef = useRef(<ListHeader scrollOffset={scrollOffset} />);
   const insets = useSafeArea();
   const data = useSelector(state => state.events.upNext, shallowEqual);
   const [dimensions] = useDimensions();
+  const [scrollPosition] = useScrollToSearch(listRef);
   return (
     <View style={styles.container}>
       <Animated.FlatList
+        ref={listRef}
         data={data}
         renderItem={({ item, index }) => {
           return <Text>{item}</Text>;
         }}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollOffset.current } } }],
-          { useNativeDriver: true }
+        onScroll={Animated.forkEvent(
+          Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollOffset.current } } }],
+            { useNativeDriver: true }
+          ),
+          e => {
+            scrollPosition.current = e.nativeEvent.contentOffset.y;
+          }
         )}
-        contentOffset={{
-          x: 0,
-          y: 120 + insets.bottom
-        }}
         ListHeaderComponent={headerRef.current}
         contentContainerStyle={{
           paddingBottom: insets.bottom,
           paddingHorizontal: itemMargin / 2,
-          minHeight: dimensions.height - 40 + 120 + insets.bottom
+          minHeight: dimensions.height * 2 - EXPOSED_LIST
         }}
         ListHeaderComponentStyle={{ marginHorizontal: itemMargin / -2 }}
         contentInsetAdjustmentBehavior="never"
@@ -68,7 +79,7 @@ export default memo(() => {
 });
 
 const ListHeader = ({ scrollOffset }) => {
-  const height = Dimensions.get("window").height - 40;
+  const height = Dimensions.get("window").height - EXPOSED_LIST;
   return (
     <View
       style={{
@@ -92,6 +103,7 @@ const ListHeader = ({ scrollOffset }) => {
       >
         <MapView />
       </Animated.View>
+      <MapEventButton scrollOffset={scrollOffset} />
       <View
         style={{
           backgroundColor: "#fff",
@@ -148,6 +160,45 @@ const MenuButton = () => {
     </View>
   );
 };
+
+const KEYBOARD_EVENTS = ANDROID
+  ? ["keyboardDidShow", "keyboardDidHide"]
+  : ["keyboardWillShow", "keyboardWillHide"];
+
+function useScrollToSearch(listRef) {
+  const scrollPosition = useRef(0);
+
+  useEffect(() => {
+    const onShow = async e => {
+      const keyboardTop = e.endCoordinates.screenY;
+      const currentField = TextInput.State.currentlyFocusedField();
+      const { y, height: inputHeight } = await new Promise(resolve => {
+        UIManager.measureInWindow(currentField, (x, y, width, height) => {
+          resolve({ x, y, width, height });
+        });
+      });
+
+      const inputBottom = y + inputHeight;
+
+      const keyboardWithSpacing = keyboardTop - 220;
+
+      if (inputBottom > keyboardWithSpacing) {
+        listRef.current.getNode().scrollToOffset({
+          offset: scrollPosition.current + inputBottom - keyboardWithSpacing,
+          animated: !ANDROID
+        });
+      }
+    };
+
+    Keyboard.addListener(KEYBOARD_EVENTS[0], onShow);
+
+    return () => {
+      Keyboard.removeListener(KEYBOARD_EVENTS[0], onShow);
+    };
+  }, []);
+
+  return [scrollPosition];
+}
 
 const styles = StyleSheet.create({
   container: {
