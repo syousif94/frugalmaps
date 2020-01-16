@@ -40,7 +40,7 @@ export default ({ scrollOffset }) => {
   const eventCount = `${events.length} event${events.length !== 1 ? "s" : ""}`;
 
   const heightWithInset = WIDESCREEN ? height : height + insets.top;
-  const translateY = WIDESCREEN ? heightWithInset : -heightWithInset;
+  const translateY = WIDESCREEN ? height : -heightWithInset;
 
   return (
     <Animated.View
@@ -48,12 +48,14 @@ export default ({ scrollOffset }) => {
         styles.container,
         {
           height: heightWithInset,
-          paddingTop: insets.top,
-          transform: [
-            {
-              translateY: scrollOffset.current
-            }
-          ]
+          paddingTop: WIDESCREEN ? null : insets.top,
+          transform: WIDESCREEN
+            ? null
+            : [
+                {
+                  translateY: scrollOffset.current
+                }
+              ]
         }
       ]}
       pointerEvents="box-none"
@@ -165,7 +167,7 @@ const styles = StyleSheet.create({
   container: {
     position: "absolute",
     top: WIDESCREEN ? null : 0,
-    bottom: WIDESCREEN ? 0 : null,
+    bottom: WIDESCREEN ? 44 + 44 + 18 : null,
     left: 0,
     right: 0,
     overflow: "hidden",

@@ -81,7 +81,8 @@ export default combineReducers({
   now,
   tag,
   text,
-  occurringTags
+  occurringTags,
+  staleMs
 });
 
 export function selectEvent(id) {

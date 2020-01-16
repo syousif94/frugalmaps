@@ -20,7 +20,7 @@ import EventListHeader from "./EventListHeader";
 import { ANDROID } from "../utils/Constants";
 import MapEventButton from "./MapEventButton";
 
-const EXPOSED_LIST = 240;
+const EXPOSED_LIST = 166;
 
 export default memo(() => {
   let initialOffset = 0;

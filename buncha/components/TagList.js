@@ -60,7 +60,8 @@ export default ({ style, buttonStyle, contentContainerStyle }) => {
           item = data[key];
           if (item) {
             const { remaining } = itemRemaining(item);
-            subtext = remaining.replace("d", " days");
+            const daysAway = parseInt(remaining.replace("d", ""), 10);
+            subtext = `${daysAway} day${daysAway != 1 ? "s" : ""}`;
           }
         }
       }
