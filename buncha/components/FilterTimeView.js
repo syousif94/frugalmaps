@@ -46,10 +46,28 @@ const SearchButton = () => {
 
 const DayPicker = () => {
   const dispatch = useDispatch();
+  const tag = useSelector(state => state.events.tag, shallowEqual);
+  const occurringTags = useSelector(
+    state => state.events.occurringTags,
+    shallowEqual
+  );
   const calendar = useSelector(
     state => state.events.calendar.sort((a, b) => a.iso - b.iso),
     shallowEqual
   );
+
+  let eventSet;
+  if (tag) {
+    const allTags = ["ending", "remaining", "upcoming"].reduce((ids, key) => {
+      if (occurringTags[key] && occurringTags[key][tag]) {
+        return [...ids, ...occurringTags[key][tag]];
+      }
+
+      return ids;
+    }, []);
+    eventSet = new Set(allTags);
+  }
+
   const selectedDay = useSelector(state => state.filters.day);
   return (
     <View style={styles.days}>
@@ -60,7 +78,11 @@ const DayPicker = () => {
             color: BLUE
           });
         }
-        const eventCount = `${day.data.length}`;
+        let data = day.data;
+        if (eventSet) {
+          data = data.filter(event => eventSet.has(event._id));
+        }
+        const eventCount = `${data.length}`;
         return (
           <View style={styles.day} key={day.title}>
             <TouchableOpacity
