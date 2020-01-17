@@ -5,13 +5,11 @@ import {
   StyleSheet,
   Animated,
   Dimensions,
-  TouchableOpacity,
   Keyboard,
   UIManager,
   TextInput
 } from "react-native";
 import { useSafeArea } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
 import { useSelector, shallowEqual } from "react-redux";
 import UpNextItem, { itemMargin, columns } from "./UpNextItem";
 import { MarkerMapView as MapView } from "../screens/MapScreen";
@@ -122,41 +120,6 @@ const ListHeader = ({ scrollOffset }) => {
       >
         <EventListHeader />
       </View>
-    </View>
-  );
-};
-
-const MenuButton = () => {
-  const insets = useSafeArea();
-  return (
-    <View
-      style={{
-        position: "absolute",
-        bottom: insets.bottom > 0 ? insets.bottom : 15,
-        right: 18,
-        height: 58,
-        width: 58,
-        borderRadius: 29,
-        backgroundColor: "#157AFC",
-        shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 1
-        },
-        shadowOpacity: 0.3,
-        shadowRadius: 2
-      }}
-    >
-      <TouchableOpacity
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          paddingTop: 3
-        }}
-      >
-        <Ionicons name="md-menu" size={26} color="#fff" />
-      </TouchableOpacity>
     </View>
   );
 };

@@ -3,13 +3,11 @@ import {
   createAppContainer,
   createStackNavigator,
   NavigationActions,
-  createBottomTabNavigator,
   createSwitchNavigator
 } from "react-navigation";
 import { View, StyleSheet } from "react-native";
 import { ScreenOrientation } from "expo";
 
-import TabBar from "../components/TabBar";
 import UpNextScreen from "./UpNextScreen";
 import DetailScreen from "./DetailScreen";
 import IntroScreen from "./IntroScreen";
@@ -36,30 +34,6 @@ async function lockOrientation() {
 }
 
 lockOrientation();
-
-const TabScreen = createBottomTabNavigator(
-  {
-    UpNext: {
-      screen: UpNextScreen,
-      path: ""
-    },
-    Map: {
-      screen: require("./MapScreen").default,
-      path: "map"
-    },
-    Account: {
-      screen: AccountScreen,
-      path: "account"
-    },
-    Submit: {
-      screen: SubmitScreen,
-      path: "submit"
-    }
-  },
-  {
-    tabBarComponent: props => <TabBar {...props} />
-  }
-);
 
 function makeAppContainer() {
   const MainRouter = createSwitchNavigator(
@@ -93,6 +67,14 @@ function makeAppContainer() {
       Planned: {
         screen: PlanScreen,
         path: "p/:id"
+      },
+      Account: {
+        screen: AccountScreen,
+        path: "account"
+      },
+      Submit: {
+        screen: SubmitScreen,
+        path: "submit"
       }
     },
     {

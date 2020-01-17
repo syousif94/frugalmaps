@@ -24,6 +24,7 @@ import SearchAccessory from "../components/SearchAccessory";
 import { InputProvider } from "../components/InputContext";
 import TagList from "../components/TagList";
 import EventList from "../components/EventList";
+import RefreshButton from "../components/RefreshButton";
 
 const medium = 780;
 const narrow = 550;
@@ -216,6 +217,7 @@ export default ({ intro = false }) => {
                 <ActivityIndicator size="large" color="#000" />
               </View>
             ) : null}
+            <RefreshButton />
             <SearchAccessory />
           </View>
         )}
