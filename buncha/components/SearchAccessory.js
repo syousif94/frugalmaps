@@ -47,25 +47,5 @@ function useAnimateOnFocus(focused) {
 }
 
 const ChangeTimeButton = () => {
-  return (
-    <View
-      style={{ alignItems: "flex-end", paddingBottom: 2, paddingRight: 2 }}
-      pointerEvents="box-none"
-    >
-      <BlurView tint="dark" style={{ borderRadius: 5 }}>
-        <TouchableOpacity
-          style={{
-            alignItems: "flex-end",
-            justifyContent: "center",
-            paddingHorizontal: 8,
-            paddingVertical: 5
-          }}
-        >
-          <Text style={{ color: "#fff", fontWeight: "700", fontSize: 14 }}>
-            When?
-          </Text>
-        </TouchableOpacity>
-      </BlurView>
-    </View>
-  );
+  return <BlurView tint="dark" style={{ height: 40 }} />;
 };

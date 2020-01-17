@@ -33,17 +33,7 @@ export default ({ style, buttonStyle, contentContainerStyle }) => {
 
       let subtext = "";
 
-      if (upcoming) {
-        const upcomingKeys = occurringTags.upcoming[key];
-        if (upcomingKeys) {
-          const key = upcomingKeys[0];
-          item = data[key];
-          if (item) {
-            const { text } = itemRemaining(item);
-            subtext = text.replace(" today", "");
-          }
-        }
-      } else if (ending) {
+      if (ending) {
         const keys = occurringTags.ending[key];
         if (keys) {
           const key = keys[keys.length - 1];
@@ -51,6 +41,16 @@ export default ({ style, buttonStyle, contentContainerStyle }) => {
           if (item) {
             const { text } = itemRemaining(item);
             subtext = text;
+          }
+        }
+      } else if (upcoming) {
+        const upcomingKeys = occurringTags.upcoming[key];
+        if (upcomingKeys) {
+          const key = upcomingKeys[0];
+          item = data[key];
+          if (item) {
+            const { text } = itemRemaining(item);
+            subtext = text.replace(" today", "");
           }
         }
       } else {
@@ -102,7 +102,6 @@ const Button = ({ tag: { text, count, ending, upcoming, subtext }, style }) => {
   const tag = useSelector(state => state.events.tag);
   const selected = tag === text;
   const onPress = () => {
-    // inputRef.current.blur();
     requestAnimationFrame(() => {
       dispatch(Events.filter({ tag: selected ? null : text }));
     });
@@ -129,6 +128,7 @@ const Button = ({ tag: { text, count, ending, upcoming, subtext }, style }) => {
         }}
       >
         {_.lowerCase(text)}
+        <Text style={{ color: "#999" }}> {count}</Text>
       </Text>
       <Text
         style={{
