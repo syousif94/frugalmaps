@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Animated, Easing, Keyboard, Dimensions } from "react-native";
-import { ANDROID } from "./Constants";
+import { ANDROID, WEB } from "./Constants";
 
 export function useDimensions() {
   const [dimensions, setDimensions] = useState(Dimensions.get("window"));
@@ -143,4 +143,42 @@ export function useKeyboardHeight() {
   }, [bottomOffset]);
 
   return [heightRef, setBottomOffset];
+}
+
+export function usePreventBackScroll(scrollRef) {
+  useEffect(() => {
+    if (WEB) {
+      const scrollView = scrollRef.current.getScrollableNode();
+
+      let lastScroll;
+
+      function onWheel(e) {
+        const now = Date.now();
+
+        if (lastScroll && now - lastScroll <= 32) {
+          lastScroll = now;
+          return;
+        }
+
+        lastScroll = now;
+
+        const maxX = this.scrollWidth - this.offsetWidth;
+
+        if (
+          this.scrollLeft + event.deltaX < 0 ||
+          this.scrollLeft + event.deltaX > maxX
+        ) {
+          e.preventDefault();
+        }
+      }
+
+      scrollView.addEventListener("wheel", onWheel);
+      scrollView.addEventListener("touchmove", onWheel);
+
+      return () => {
+        scrollView.removeEventListener("wheel", onWheel);
+        scrollView.removeEventListener("touchmove", onWheel);
+      };
+    }
+  }, []);
 }

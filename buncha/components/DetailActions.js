@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -14,12 +14,16 @@ import { RED, BLUE, NOW, UPCOMING } from "../utils/Colors";
 import { WEB, ANDROID } from "../utils/Constants";
 import { getHistory, pop } from "../screens";
 import * as Browser from "../store/browser";
+import { usePreventBackScroll } from "../utils/Hooks";
 
 export default ({ item }) => {
+  const scrollRef = useRef(null);
+  usePreventBackScroll(scrollRef);
   const dispatch = useDispatch();
   return (
     <View style={styles.container}>
       <ScrollView
+        ref={scrollRef}
         showsHorizontalScrollIndicator={false}
         horizontal
         contentContainerStyle={styles.scrollContent}

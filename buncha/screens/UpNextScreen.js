@@ -138,12 +138,10 @@ export default ({ intro = false }) => {
     <InputProvider>
       <View style={[styles.container, { opacity }]}>
         {WEB ? (
-          <Helmet>
-            <title>Buncha</title>
-          </Helmet>
-        ) : null}
-        {WEB ? (
           <React.Fragment>
+            <Helmet>
+              <title>Buncha</title>
+            </Helmet>
             <ScrollView
               style={styles.list}
               contentContainerStyle={[styles.listContent, { paddingTop: 48 }]}
@@ -151,7 +149,10 @@ export default ({ intro = false }) => {
               {/* <AppBanner /> */}
               <TagList
                 contentContainerStyle={{
-                  paddingRight: width < medium ? 16 : 20,
+                  paddingRight:
+                    Math.max((width - 900) / 2, 0) +
+                    (width < medium ? 16 : 20) -
+                    8,
                   paddingLeft:
                     Math.max((width - 900) / 2, 0) + (width < medium ? 16 : 20)
                 }}

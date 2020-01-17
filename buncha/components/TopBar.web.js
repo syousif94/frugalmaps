@@ -33,8 +33,6 @@ export default ({ style = {}, contentContainerStyle = {}, width }) => {
     ...StyleSheet.flatten(contentContainerStyle)
   };
 
-  const narrow = width < 500;
-
   return (
     <div style={containerStyle}>
       <View style={contentStyle}>
@@ -47,13 +45,13 @@ export default ({ style = {}, contentContainerStyle = {}, width }) => {
           }}
         />
         <PickerButton />
-        <MenuButton />
+        <MenuButton width={width} />
       </View>
     </div>
   );
 };
 
-const MenuButton = ({ narrow }) => {
+const MenuButton = ({ width }) => {
   const clickedRef = useRef(false);
   const [menuVisible, setMenuVisible] = useState(false);
   return (
@@ -92,8 +90,8 @@ const MenuButton = ({ narrow }) => {
         style={{
           position: "absolute",
           top: buttonHeight,
+          paddingTop: 9.5,
           right: 0,
-          padding: 10,
           opacity: menuVisible ? 1 : 0
         }}
         pointerEvents={menuVisible ? "auto" : "none"}
@@ -101,7 +99,7 @@ const MenuButton = ({ narrow }) => {
         <div
           style={{
             marginTop: 2.5,
-            marginRight: 10,
+            marginRight: width > 900 ? 16.5 : 4.5,
             borderBottomLeftRadius: 5,
             borderBottomRightRadius: 5,
             backgroundColor: "rgba(240,240,240,0.9)",

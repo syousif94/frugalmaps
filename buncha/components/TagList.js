@@ -1,13 +1,16 @@
-import React from "react";
+import React, { useRef } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { itemMargin } from "./UpNextItem";
 import _ from "lodash";
 import * as Events from "../store/events";
-import { UPCOMING, NOW, RED } from "../utils/Colors";
+import { UPCOMING, NOW } from "../utils/Colors";
 import { itemRemaining } from "../utils/Time";
+import { usePreventBackScroll } from "../utils/Hooks";
 
 export default ({ style, buttonStyle, contentContainerStyle }) => {
+  const scrollRef = useRef(null);
+  usePreventBackScroll(scrollRef);
   const occurringTags = useSelector(state => state.events.occurringTags);
   const countedTags = useSelector(state => state.events.tags, shallowEqual);
   const data = useSelector(state => state.events.data, shallowEqual);
@@ -78,6 +81,7 @@ export default ({ style, buttonStyle, contentContainerStyle }) => {
   return (
     <View style={style}>
       <ScrollView
+        ref={scrollRef}
         keyboardShouldPersistTaps="handled"
         showsHorizontalScrollIndicator={false}
         horizontal
