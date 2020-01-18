@@ -16,7 +16,7 @@ export default ({ style, buttonStyle, contentContainerStyle }) => {
   const data = useSelector(state => state.events.data, shallowEqual);
   const tagsCount = _.keyBy(countedTags, "text");
   let tags = [];
-  if (occurringTags) {
+  if (occurringTags && countedTags.length) {
     const keys = _.uniq([
       ...Object.keys(occurringTags.ending),
       ...Object.keys(occurringTags.upcoming),
