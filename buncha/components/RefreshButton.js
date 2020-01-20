@@ -44,7 +44,7 @@ export default () => {
       {
         translateY: animation.current.interpolate({
           inputRange: [0, 1],
-          outputRange: [60, 0]
+          outputRange: [30, 0]
         })
       }
     ],
@@ -73,13 +73,12 @@ export default () => {
           }
           setTouchable(false);
           visible.current = false;
+          dispatch(refresh());
           Animated.timing(
             animation.current,
             { toValue: visible.current ? 1 : 0, duration: 250 },
             { useNativeDriver: true }
-          ).start(() => {
-            dispatch(refresh());
-          });
+          ).start();
         }}
       >
         <Text style={{ color: "#fff", fontWeight: "600" }}>Tap to Refresh</Text>
