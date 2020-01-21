@@ -9,7 +9,7 @@ import {
 import _ from "lodash";
 import BlurView from "./BlurView";
 import { InputContext } from "./InputContext";
-import { IOS } from "../utils/Constants";
+import { IOS, ANDROID } from "../utils/Constants";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import * as Filters from "../store/filters";
 import { Entypo } from "@expo/vector-icons";
@@ -23,6 +23,7 @@ export default () => {
       behavior="position"
       style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}
       pointerEvents={focused ? "box-none" : "none"}
+      keyboardVerticalOffset={ANDROID ? 24 : null}
     >
       <Animated.View
         style={{
@@ -300,7 +301,6 @@ function daysAwayText(away) {
 const BarView = () => {
   return (
     <BlurView
-      pointerEvents="none"
       tint="dark"
       style={{
         height: PICKER_BUTTON_HEIGHT + PICKER_BUTTON_MARGIN * 2

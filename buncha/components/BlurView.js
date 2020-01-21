@@ -3,6 +3,15 @@ import { View, StyleSheet } from "react-native";
 import { BlurView } from "expo-blur";
 import { IOS, WEB } from "../utils/Constants";
 
+function makeTint(tint) {
+  switch (tint) {
+    case "dark":
+      return "rgba(0,0,0,0.9)";
+    default:
+      return "rgba(240,240,240,0.9)";
+  }
+}
+
 export default ({ children, style = {}, intensity = 100, tint = "light" }) => {
   if (IOS) {
     return (
@@ -12,7 +21,7 @@ export default ({ children, style = {}, intensity = 100, tint = "light" }) => {
     );
   } else if (WEB) {
     const styles = {
-      backgroundColor: "rgba(240,240,240,0.9)",
+      backgroundColor: makeTint(tint),
       WebkitBackdropFilter: "blur(30px)",
       backdropFilter: "blur(30px)",
       display: "flex",
@@ -21,7 +30,7 @@ export default ({ children, style = {}, intensity = 100, tint = "light" }) => {
     };
     return <div style={styles}>{children}</div>;
   } else {
-    const bgColor = { backgroundColor: "rgba(255,255,255,0.95)" };
+    const bgColor = { backgroundColor: makeTint(tint) };
     const styles = Array.isArray(style)
       ? [...style, bgColor]
       : [style, bgColor];
