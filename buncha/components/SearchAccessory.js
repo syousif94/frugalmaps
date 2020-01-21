@@ -66,7 +66,7 @@ const DayPicker = ({ focused }) => {
   const pickerTransform = useRef(new Animated.Value(0));
   const daysTransform = useRef(new Animated.Value(0));
 
-  const selectedDay = useSelector(state => state.filters.day);
+  const selectedDay = useSelector(state => state.filters.day, shallowEqual);
 
   const dispatch = useDispatch();
   const tag = useSelector(state => state.events.tag, shallowEqual);
@@ -79,59 +79,50 @@ const DayPicker = ({ focused }) => {
     shallowEqual
   );
 
-  useEffect(() => {
+  const closePickerAnimated = selectedDay => {
     const index = calendar.findIndex(day => day.title === selectedDay.title);
     if (index < 0) {
       return;
     }
     const toValue = index * -PICKER_BUTTON_HEIGHT;
+    Animated.parallel([
+      Animated.timing(
+        daysTransform.current,
+        { toValue, duration: 150 },
+        { useNativeDriver: true }
+      ),
+      Animated.timing(
+        pickerTransform.current,
+        {
+          toValue: height.current - PICKER_BUTTON_HEIGHT,
+          duration: 150
+        },
+        { useNativeDriver: true }
+      )
+    ]).start(() => {
+      open.current = false;
+    });
+  };
+
+  useEffect(() => {
     if (open.current) {
-      Animated.parallel([
-        Animated.timing(
-          daysTransform.current,
-          { toValue, duration: 150 },
-          { useNativeDriver: true }
-        ),
-        Animated.timing(
-          pickerTransform.current,
-          {
-            toValue: height.current - PICKER_BUTTON_HEIGHT,
-            duration: 150
-          },
-          { useNativeDriver: true }
-        )
-      ]).start(() => {
-        open.current = false;
-      });
-    } else {
-      daysTransform.current.setValue(toValue);
+      return;
     }
+
+    const index = calendar.findIndex(day => day.title === selectedDay.title);
+
+    if (index < 0) {
+      return;
+    }
+
+    const toValue = index * -PICKER_BUTTON_HEIGHT;
+
+    daysTransform.current.setValue(toValue);
   }, [calendar, selectedDay]);
 
   useEffect(() => {
     if (!focused && open.current) {
-      const index = calendar.findIndex(day => day.title === selectedDay.title);
-      if (index < 0) {
-        return;
-      }
-      const toValue = index * -PICKER_BUTTON_HEIGHT;
-      Animated.parallel([
-        Animated.timing(
-          daysTransform.current,
-          { toValue, duration: 150 },
-          { useNativeDriver: true }
-        ),
-        Animated.timing(
-          pickerTransform.current,
-          {
-            toValue: height.current - PICKER_BUTTON_HEIGHT,
-            duration: 150
-          },
-          { useNativeDriver: true }
-        )
-      ]).start(() => {
-        open.current = false;
-      });
+      closePickerAnimated(selectedDay);
     }
   }, [focused, calendar, selectedDay]);
 
@@ -152,11 +143,10 @@ const DayPicker = ({ focused }) => {
       style={{
         position: "absolute",
         bottom: PICKER_BUTTON_MARGIN,
-        left: PICKER_BUTTON_MARGIN,
+        left: 3,
         borderBottomLeftRadius: 5,
         borderBottomRightRadius: 5,
-        overflow: "hidden",
-        width: "50%"
+        overflow: "hidden"
       }}
       pointerEvents="box-none"
     >
@@ -201,11 +191,13 @@ const DayPicker = ({ focused }) => {
                   style={{
                     height: PICKER_BUTTON_HEIGHT,
                     flexDirection: "row",
-                    alignItems: "center"
+                    alignItems: "center",
+                    width: 150
                   }}
                   onPress={() => {
                     if (open.current) {
                       dispatch(Filters.setDay(day));
+                      closePickerAnimated(day);
                     } else {
                       open.current = true;
                       Animated.parallel([
@@ -233,7 +225,7 @@ const DayPicker = ({ focused }) => {
                     style={{
                       flex: 1,
                       justifyContent: "center",
-                      paddingLeft: 5
+                      paddingLeft: 9
                     }}
                   >
                     <Text
@@ -251,7 +243,7 @@ const DayPicker = ({ focused }) => {
                   </View>
                   <Text
                     allowFontScaling={false}
-                    style={{ color: "#fff", fontSize: 14, marginRight: 25 }}
+                    style={{ color: "#fff", fontSize: 14, marginRight: 20 }}
                   >
                     {eventCount}
                   </Text>
