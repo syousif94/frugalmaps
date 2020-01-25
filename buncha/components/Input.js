@@ -287,6 +287,7 @@ const styles = StyleSheet.create({
     flexDirection: "row"
   },
   clear: {
+    paddingTop: 1,
     paddingLeft: 0,
     paddingRight: 15,
     justifyContent: "center",

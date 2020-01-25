@@ -60,10 +60,6 @@ export default React.forwardRef(
       dispatch(Events.filter({ text }));
     };
 
-    const renderProp = {
-      [WEB ? "render" : "renderRight"]: () => <Icon searching={searching} />
-    };
-
     return (
       <View style={contentContainerStyle} pointerEvents="box-none">
         <Input
@@ -77,10 +73,10 @@ export default React.forwardRef(
           autoCapitalize="none"
           returnKeyType="search"
           blurOnSubmit
+          render={() => <Icon searching={searching} />}
           backgroundColor="rgba(180,180,180,0.1)"
           containerStyle={{ flex: 1, borderRadius: 6 }}
           style={styles.input}
-          {...renderProp}
           {...props}
         />
       </View>
@@ -91,13 +87,12 @@ export default React.forwardRef(
 const styles = StyleSheet.create({
   icon: {
     justifyContent: "center",
-    alignItems: WEB ? "center" : null,
-    paddingHorizontal: WEB ? 12 : null,
-    width: 34
+    alignItems: "center",
+    paddingHorizontal: 12
   },
   input: {
-    paddingLeft: WEB ? 0 : 12,
-    height: WEB ? buttonHeight - 2 : 44,
+    paddingLeft: 0,
+    height: WEB ? buttonHeight - 2 : 40,
     fontSize: WEB ? 14 : 17
   }
 });

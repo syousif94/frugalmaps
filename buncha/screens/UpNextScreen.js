@@ -20,7 +20,6 @@ import { Helmet } from "react-helmet";
 import ListError from "../components/ListError";
 import emitter from "tiny-emitter/instance";
 import FilterView from "../components/FilterView";
-import SearchAccessory from "../components/SearchAccessory";
 import { InputProvider } from "../components/InputContext";
 import TagList from "../components/TagList";
 import EventList from "../components/EventList";
@@ -219,7 +218,6 @@ export default ({ intro = false }) => {
               </View>
             ) : null}
             <RefreshButton />
-            <SearchAccessory />
           </View>
         )}
         {WEB && (refreshing || (!data.length && !error && !intro)) ? (

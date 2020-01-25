@@ -4,5 +4,5 @@ export const GREEN = "#18AB2E";
 
 // export const NOT_TODAY = "#E3210B";
 export const NOT_TODAY = "#DE5576";
-export const UPCOMING = "#18AB2E";
-export const NOW = "#E9730C";
+export const NOW = "#18AB2E";
+export const UPCOMING = "#E9730C";

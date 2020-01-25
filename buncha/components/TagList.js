@@ -82,7 +82,7 @@ export default ({ style, buttonStyle, contentContainerStyle }) => {
     <View style={style}>
       <ScrollView
         ref={scrollRef}
-        keyboardShouldPersistTaps="handled"
+        keyboardShouldPersistTaps="always"
         showsHorizontalScrollIndicator={false}
         horizontal
         contentContainerStyle={[

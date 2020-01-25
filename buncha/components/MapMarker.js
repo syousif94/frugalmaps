@@ -114,10 +114,10 @@ class MapMarker extends Component {
     let pinSource;
     switch (color) {
       case NOW:
-        pinSource = orangeSelectedPin;
+        pinSource = greenSelectedPin;
         break;
       case UPCOMING:
-        pinSource = greenSelectedPin;
+        pinSource = orangeSelectedPin;
         break;
       default:
         pinSource = redSelectedPin;

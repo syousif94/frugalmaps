@@ -39,7 +39,7 @@ export default ({ item }) => {
             style={{ marginTop: 1 }}
             name="phone"
             size={14}
-            color={UPCOMING}
+            color={NOW}
           />
           <Text style={[styles.titleText, { marginLeft: 6 }]}>Call</Text>
         </Link>

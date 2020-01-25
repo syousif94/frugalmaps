@@ -1,24 +1,23 @@
-import React, { useRef, memo, useEffect } from "react";
+import React, { useRef, memo, useEffect, useState } from "react";
 import {
   Text,
   View,
   StyleSheet,
   Animated,
   Dimensions,
-  Keyboard,
-  UIManager,
-  TextInput
+  Keyboard
 } from "react-native";
 import { useSafeArea } from "react-native-safe-area-context";
 import { useSelector, shallowEqual } from "react-redux";
 import UpNextItem, { itemMargin, columns } from "./UpNextItem";
 import { MarkerMapView as MapView } from "../screens/MapScreen";
 import { useDimensions } from "../utils/Hooks";
-import EventListHeader from "./EventListHeader";
 import { ANDROID } from "../utils/Constants";
 import MapEventButton from "./MapEventButton";
+import TagList from "./TagList";
+import EventListHeader from "./EventListHeader";
 
-const EXPOSED_LIST = 166;
+export const EXPOSED_LIST = 200;
 
 export default memo(() => {
   let initialOffset = 0;
@@ -69,7 +68,6 @@ export default memo(() => {
             />
           );
         }}
-        keyboardDismissMode="on-drag"
         keyboardShouldPersistTaps="handled"
       />
     </View>
@@ -101,6 +99,7 @@ const ListHeader = ({ scrollOffset }) => {
       >
         <MapView />
       </Animated.View>
+      <EventListHeader scrollOffset={scrollOffset} />
       <MapEventButton scrollOffset={scrollOffset} />
       <View
         style={{
@@ -118,7 +117,11 @@ const ListHeader = ({ scrollOffset }) => {
           elevation: 6
         }}
       >
-        <EventListHeader />
+        <TagList
+          style={{
+            marginTop: itemMargin
+          }}
+        />
       </View>
     </View>
   );
@@ -132,22 +135,12 @@ function useScrollToSearch(listRef) {
   const scrollPosition = useRef(0);
 
   useEffect(() => {
-    const onShow = async e => {
-      const keyboardTop = e.endCoordinates.screenY;
-      const currentField = TextInput.State.currentlyFocusedField();
-      const { y, height: inputHeight } = await new Promise(resolve => {
-        UIManager.measureInWindow(currentField, (x, y, width, height) => {
-          resolve({ x, y, width, height });
-        });
-      });
+    const onShow = e => {
+      const keyboardHeight = e.endCoordinates.height - EXPOSED_LIST + 11;
 
-      const inputBottom = y + inputHeight;
-
-      const keyboardWithSpacing = keyboardTop - 220;
-
-      if (inputBottom > keyboardWithSpacing) {
+      if (scrollPosition.current < keyboardHeight) {
         listRef.current.getNode().scrollToOffset({
-          offset: scrollPosition.current + inputBottom - keyboardWithSpacing,
+          offset: keyboardHeight,
           animated: !ANDROID
         });
       }
