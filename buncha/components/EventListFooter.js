@@ -19,59 +19,69 @@ export default forwardRef(({ data, layouts, onScroll, scrollOffset }, ref) => {
     <BlurView
       style={{
         position: "absolute",
-        bottom: 0,
+        top: 0,
         right: 0,
         left: 0
       }}
     >
       <View
         style={{
-          paddingBottom: insets.bottom,
-          borderTopWidth: 1,
+          paddingTop: insets.top,
+          borderBottomWidth: 1,
           borderColor: "rgba(0,0,0,0.05)"
         }}
       >
         <ScrollView
           ref={ref}
           horizontal
-          contentContainerStyle={{ paddingTop: 6, paddingHorizontal: 3 }}
           showsHorizontalScrollIndicator={false}
           scrollEventThrottle={16}
           onScroll={e => {
             onScroll(e.nativeEvent.contentOffset.x);
           }}
         >
-          {data.map((item, index) => {
-            if (!index) {
-              return (
-                <FriendsButton
-                  index={index}
-                  layouts={layouts}
-                  key="friends"
-                  scrollOffset={scrollOffset}
-                />
-              );
-            } else if (index > 1) {
-              return (
-                <TagButton
-                  index={index}
-                  layouts={layouts}
-                  key={item.key}
-                  item={item}
-                  scrollOffset={scrollOffset}
-                />
-              );
-            } else {
-              return (
-                <AllButton
-                  index={index}
-                  layouts={layouts}
-                  key="upnext"
-                  scrollOffset={scrollOffset}
-                />
-              );
-            }
-          })}
+          <View
+            style={{
+              flexDirection: "row",
+              paddingBottom: 6,
+              paddingHorizontal: 3
+            }}
+            onLayout={e => {
+              layouts.current["container"] = e.nativeEvent.layout.width;
+            }}
+          >
+            {data.map((item, index) => {
+              if (!index) {
+                return (
+                  <FriendsButton
+                    index={index}
+                    layouts={layouts}
+                    key="friends"
+                    scrollOffset={scrollOffset}
+                  />
+                );
+              } else if (index > 1) {
+                return (
+                  <TagButton
+                    index={index}
+                    layouts={layouts}
+                    key={item.key}
+                    item={item}
+                    scrollOffset={scrollOffset}
+                  />
+                );
+              } else {
+                return (
+                  <AllButton
+                    index={index}
+                    layouts={layouts}
+                    key="upnext"
+                    scrollOffset={scrollOffset}
+                  />
+                );
+              }
+            })}
+          </View>
         </ScrollView>
       </View>
     </BlurView>
@@ -187,7 +197,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 14,
-    fontWeight: "700",
+    fontWeight: "600",
     color: "#777"
   },
   subText: {

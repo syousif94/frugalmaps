@@ -245,6 +245,7 @@ const styles = StyleSheet.create({
   descriptionText: {
     marginVertical: 2,
     fontSize: 15,
+    fontWeight: "500",
     color: "#000"
   },
   actions: {

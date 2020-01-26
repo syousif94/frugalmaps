@@ -30,7 +30,7 @@ export default memo(() => {
     const onPageTo = index => {
       if (listRef.current) {
         listRef.current.getNode().scrollTo({
-          x: index * dimensions.width
+          x: index * Dimensions.get("window").width
         });
       }
     };
@@ -199,7 +199,7 @@ const BaseList = ({ data }) => {
       <FlatList
         data={data}
         contentContainerStyle={{
-          paddingTop: insets.top,
+          paddingTop: insets.top + 40 + 6 + 1,
           paddingBottom: insets.bottom,
           paddingHorizontal: itemMargin / 2
         }}
@@ -255,12 +255,20 @@ function useSynchronizePager(footerRef) {
 
       const layout = layouts.current[endPage];
 
+      if (!layout) {
+        return;
+      }
+
       let midX = layout.x + layout.width / 2;
 
       const halfWidth = width / 2;
 
+      const maxX = layouts.current["container"];
+
       if (midX < halfWidth) {
         midX = 0;
+      } else if (midX > maxX) {
+        midX = maxX;
       }
 
       const distance = midX - halfWidth - footerStartOffset.current;
