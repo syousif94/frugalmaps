@@ -11,6 +11,7 @@ import {
 import BlurView from "./BlurView";
 import { useSafeArea } from "react-native-safe-area-context";
 import emitter from "tiny-emitter/instance";
+import { NOW, UPCOMING } from "../utils/Colors";
 
 export default forwardRef(({ data, layouts, onScroll, scrollOffset }, ref) => {
   const insets = useSafeArea();
@@ -119,17 +120,31 @@ const TagButton = ({ scrollOffset, item, ...props }) => {
   const [color] = useTitleColor(scrollOffset, props.index);
   return (
     <Button {...props}>
-      <Animated.Text
-        style={[
-          styles.titleText,
-          {
-            color: color.current
-          }
-        ]}
+      <View style={{ flexDirection: "row" }}>
+        <Animated.Text
+          style={[
+            styles.titleText,
+            {
+              color: color.current
+            }
+          ]}
+        >
+          {item.key}
+        </Animated.Text>
+        <Text style={[styles.subText, { marginLeft: 5 }]}>
+          {item.ids.length}
+        </Text>
+      </View>
+
+      <Text
+        style={{
+          fontSize: 13,
+          fontWeight: "600",
+          color: item.ending ? NOW : item.upcoming ? UPCOMING : "#777"
+        }}
       >
-        {item.key}
-      </Animated.Text>
-      <Text style={styles.subText}>{item.ids.length}</Text>
+        {item.subtext}
+      </Text>
     </Button>
   );
 };

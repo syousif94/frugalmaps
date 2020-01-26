@@ -8,6 +8,7 @@ import _ from "lodash";
 import EventListFooter from "./EventListFooter";
 import AccountScreen from "../screens/AccountScreen";
 import emitter from "tiny-emitter/instance";
+import { itemRemaining } from "../utils/Time";
 
 export const EXPOSED_LIST = 200;
 
@@ -46,37 +47,12 @@ export default memo(() => {
     shallowEqual
   );
 
+  const events = useSelector(state => state.events.data, shallowEqual);
+
   let data = [];
 
   if (occurringTags) {
-    const keys = _.uniq([
-      ...Object.keys(occurringTags.ending),
-      ...Object.keys(occurringTags.upcoming),
-      ...Object.keys(occurringTags.remaining)
-    ]);
-
-    data = [
-      null,
-      null,
-      ...keys.map(key => {
-        let ids = [];
-
-        if (occurringTags.ending[key]) {
-          ids = [...ids, ...occurringTags.ending[key]];
-        }
-        if (occurringTags.upcoming[key]) {
-          ids = [...ids, ...occurringTags.upcoming[key]];
-        }
-        if (occurringTags.remaining[key]) {
-          ids = [...ids, ...occurringTags.remaining[key]];
-        }
-
-        return {
-          key,
-          ids
-        };
-      })
-    ];
+    data = [null, null, ...makeData(occurringTags, events)];
   } else {
     return null;
   }
@@ -128,6 +104,81 @@ export default memo(() => {
     </View>
   );
 });
+
+function makeData(occurringTags, data) {
+  const keys = _.uniq([
+    ...Object.keys(occurringTags.ending),
+    ...Object.keys(occurringTags.upcoming),
+    ...Object.keys(occurringTags.remaining)
+  ]);
+
+  return keys.map(key => {
+    let ids = [];
+
+    if (occurringTags.ending[key]) {
+      ids = [...ids, ...occurringTags.ending[key]];
+    }
+    if (occurringTags.upcoming[key]) {
+      ids = [...ids, ...occurringTags.upcoming[key]];
+    }
+    if (occurringTags.remaining[key]) {
+      ids = [...ids, ...occurringTags.remaining[key]];
+    }
+
+    const ending = occurringTags.ending[key]
+      ? occurringTags.ending[key].length
+      : 0;
+
+    const upcoming = occurringTags.upcoming[key]
+      ? occurringTags.upcoming[key].length
+      : 0;
+
+    let item;
+
+    let subtext = "";
+
+    if (ending) {
+      const keys = occurringTags.ending[key];
+      if (keys) {
+        const key = keys[keys.length - 1];
+        item = data[key];
+        if (item) {
+          const { text } = itemRemaining(item);
+          subtext = text;
+        }
+      }
+    } else if (upcoming) {
+      const upcomingKeys = occurringTags.upcoming[key];
+      if (upcomingKeys) {
+        const key = upcomingKeys[0];
+        item = data[key];
+        if (item) {
+          const { text } = itemRemaining(item);
+          subtext = text.replace(" today", "");
+        }
+      }
+    } else {
+      const keys = occurringTags.remaining[key];
+      if (keys) {
+        const key = keys[0];
+        item = data[key];
+        if (item) {
+          const { remaining } = itemRemaining(item);
+          const daysAway = parseInt(remaining.replace("d", ""), 10);
+          subtext = `${daysAway} day${daysAway != 1 ? "s" : ""}`;
+        }
+      }
+    }
+
+    return {
+      key,
+      ids,
+      upcoming,
+      ending,
+      subtext
+    };
+  });
+}
 
 const UpcomingList = () => {
   const data = useSelector(state => state.events.upNext, shallowEqual);
