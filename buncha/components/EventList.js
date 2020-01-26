@@ -1,12 +1,5 @@
 import React, { useRef, memo, useEffect, useCallback } from "react";
-import {
-  View,
-  StyleSheet,
-  Animated,
-  FlatList,
-  Dimensions,
-  ScrollView
-} from "react-native";
+import { View, StyleSheet, Animated, FlatList, Dimensions } from "react-native";
 import { useSafeArea } from "react-native-safe-area-context";
 import { useSelector, shallowEqual } from "react-redux";
 import UpNextItem, { itemMargin, columns } from "./UpNextItem";
@@ -22,6 +15,8 @@ export default memo(() => {
   const listRef = useRef(null);
   const footerRef = useRef(null);
   const [dimensions] = useDimensions();
+  const initialOffset = dimensions.width;
+  const scrollOffset = useRef(new Animated.Value(initialOffset));
   const [
     onPagerBeginDrag,
     onPagerScroll,
@@ -33,7 +28,7 @@ export default memo(() => {
   useEffect(() => {
     const onPageTo = index => {
       if (listRef.current) {
-        listRef.current.scrollTo({
+        listRef.current.getNode().scrollTo({
           x: index * dimensions.width
         });
       }
@@ -88,15 +83,20 @@ export default memo(() => {
 
   return (
     <View style={styles.container}>
-      <ScrollView
+      <Animated.ScrollView
         ref={listRef}
         contentOffset={{
-          x: dimensions.width,
+          x: initialOffset,
           y: 0
         }}
-        onScroll={e => {
-          onPagerScroll(e.nativeEvent.contentOffset.x);
-        }}
+        onScroll={Animated.forkEvent(
+          Animated.event([
+            { nativeEvent: { contentOffset: { x: scrollOffset.current } } }
+          ]),
+          e => {
+            onPagerScroll(e.nativeEvent.contentOffset.x);
+          }
+        )}
         scrollEventThrottle={16}
         onScrollBeginDrag={onPagerBeginDrag}
         onMomentumScrollEnd={onPagerScrollEnd}
@@ -117,12 +117,13 @@ export default memo(() => {
               return <TaggedList item={item} key={item.key} />;
           }
         })}
-      </ScrollView>
+      </Animated.ScrollView>
       <EventListFooter
         data={data}
         ref={footerRef}
         onScroll={onFooterScroll}
         layouts={layouts}
+        scrollOffset={scrollOffset}
       />
     </View>
   );

@@ -4,13 +4,15 @@ import {
   StyleSheet,
   Text,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
+  Animated,
+  Dimensions
 } from "react-native";
 import BlurView from "./BlurView";
 import { useSafeArea } from "react-native-safe-area-context";
 import emitter from "tiny-emitter/instance";
 
-export default forwardRef(({ data, layouts, onScroll }, ref) => {
+export default forwardRef(({ data, layouts, onScroll, scrollOffset }, ref) => {
   const insets = useSafeArea();
   return (
     <BlurView
@@ -41,7 +43,12 @@ export default forwardRef(({ data, layouts, onScroll }, ref) => {
           {data.map((item, index) => {
             if (!index) {
               return (
-                <FriendsButton index={index} layouts={layouts} key="friends" />
+                <FriendsButton
+                  index={index}
+                  layouts={layouts}
+                  key="friends"
+                  scrollOffset={scrollOffset}
+                />
               );
             } else if (index > 1) {
               return (
@@ -50,10 +57,18 @@ export default forwardRef(({ data, layouts, onScroll }, ref) => {
                   layouts={layouts}
                   key={item.key}
                   item={item}
+                  scrollOffset={scrollOffset}
                 />
               );
             } else {
-              return <AllButton index={index} layouts={layouts} key="upnext" />;
+              return (
+                <AllButton
+                  index={index}
+                  layouts={layouts}
+                  key="upnext"
+                  scrollOffset={scrollOffset}
+                />
+              );
             }
           })}
         </ScrollView>
@@ -82,30 +97,66 @@ const Button = ({ layouts, index, children }) => {
   );
 };
 
-const FriendsButton = props => {
+const FriendsButton = ({ scrollOffset, ...props }) => {
+  const [color] = useTitleColor(scrollOffset, props.index);
   return (
     <Button {...props}>
-      <Text>Friends</Text>
+      <Animated.Text style={{ color: color.current }}>Friends</Animated.Text>
     </Button>
   );
 };
 
-const AllButton = props => {
+const AllButton = ({ scrollOffset, ...props }) => {
+  const [color] = useTitleColor(scrollOffset, props.index);
   return (
     <Button {...props}>
-      <Text>All</Text>
+      <Animated.Text style={{ color: color.current }}>All</Animated.Text>
     </Button>
   );
 };
 
-const TagButton = ({ item, ...props }) => {
+const TagButton = ({ scrollOffset, item, ...props }) => {
+  const [color] = useTitleColor(scrollOffset, props.index);
   return (
     <Button {...props}>
-      <Text style={styles.titleText}>{item.key}</Text>
+      <Animated.Text
+        style={[
+          styles.titleText,
+          {
+            color: color.current
+          }
+        ]}
+      >
+        {item.key}
+      </Animated.Text>
       <Text style={styles.subText}>{item.ids.length}</Text>
     </Button>
   );
 };
+
+function useTitleColor(scrollOffset, index) {
+  const width = Dimensions.get("window").width;
+
+  const offset = width * index;
+
+  const halfWidth = width * 0.5;
+
+  const start = offset - halfWidth;
+
+  const end = offset + halfWidth;
+
+  const inputRange = [start, offset, end];
+
+  const color = useRef(null);
+
+  color.current = scrollOffset.current.interpolate({
+    inputRange,
+    outputRange: ["#777", "#000", "#777"],
+    extrapolate: "clamp"
+  });
+
+  return [color];
+}
 
 const styles = StyleSheet.create({
   button: {
