@@ -1,5 +1,12 @@
 import React, { useRef, memo, useEffect, useCallback } from "react";
-import { View, StyleSheet, Animated, FlatList, Dimensions } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Animated,
+  FlatList,
+  Dimensions,
+  ScrollView
+} from "react-native";
 import { useSafeArea } from "react-native-safe-area-context";
 import { useSelector, shallowEqual } from "react-redux";
 import UpNextItem, { itemMargin, columns } from "./UpNextItem";
@@ -12,7 +19,6 @@ import emitter from "tiny-emitter/instance";
 export const EXPOSED_LIST = 200;
 
 export default memo(() => {
-  let initialOffset = 0;
   const listRef = useRef(null);
   const footerRef = useRef(null);
   const [dimensions] = useDimensions();
@@ -27,8 +33,8 @@ export default memo(() => {
   useEffect(() => {
     const onPageTo = index => {
       if (listRef.current) {
-        listRef.current.scrollToOffset({
-          offset: index * dimensions.width
+        listRef.current.scrollTo({
+          x: index * dimensions.width
         });
       }
     };
@@ -82,9 +88,8 @@ export default memo(() => {
 
   return (
     <View style={styles.container}>
-      <FlatList
+      <ScrollView
         ref={listRef}
-        data={data}
         contentOffset={{
           x: dimensions.width,
           y: 0
@@ -93,45 +98,26 @@ export default memo(() => {
           onPagerScroll(e.nativeEvent.contentOffset.x);
         }}
         scrollEventThrottle={16}
-        getItemLayout={(data, index) => {
-          return {
-            index,
-            length: dimensions.width,
-            offset: index * dimensions.width
-          };
-        }}
         onScrollBeginDrag={onPagerBeginDrag}
         onMomentumScrollEnd={onPagerScrollEnd}
         pagingEnabled
         horizontal
-        windowSize={3}
-        initialNumToRender={1}
         showsHorizontalScrollIndicator={false}
         removeClippedSubviews
-        maxToRenderPerBatch={1}
-        keyExtractor={(item, index) => {
-          switch (index) {
-            case 0:
-              return "account";
-            case 1:
-              return "upnext";
-            default:
-              return item.key;
-          }
-        }}
-        renderItem={data => {
-          switch (data.index) {
-            case 0:
-              return <AccountScreen />;
-            case 1:
-              return <UpcomingList />;
-            default:
-              return <TaggedList {...data} />;
-          }
-        }}
         contentInsetAdjustmentBehavior="never"
         keyboardShouldPersistTaps="handled"
-      />
+      >
+        {data.map((item, index) => {
+          switch (index) {
+            case 0:
+              return <AccountScreen key="account" />;
+            case 1:
+              return <UpcomingList key="upnext" />;
+            default:
+              return <TaggedList item={item} key={item.key} />;
+          }
+        })}
+      </ScrollView>
       <EventListFooter
         data={data}
         ref={footerRef}
