@@ -99,7 +99,7 @@ export const MarkerMapView = memo(() => {
   const mapView = useRef(null);
   const bounds = useSelector(state => state.events.bounds, shallowEqual);
   const locationEnabled = useSelector(state => state.permissions.location);
-  const markers = useSelector(state => state.events.markers, shallowEqual);
+  const allMarkers = useSelector(state => state.events.markers, shallowEqual);
   const day = useSelector(state => state.events.day);
   const notNow = useSelector(state => state.events.notNow);
   const now = useSelector(state => state.events.now);
@@ -123,7 +123,7 @@ export const MarkerMapView = memo(() => {
       mapView.current.fitToCoordinates(coords, {
         animated: false,
         edgePadding: {
-          top: 100,
+          top: 0,
           left: 20,
           right: 20,
           bottom: 0
@@ -152,7 +152,7 @@ export const MarkerMapView = memo(() => {
       showsUserLocation={locationEnabled}
       {...androidMapProps}
     >
-      {markers.reduce((markers, data) => {
+      {allMarkers.reduce((markers, data) => {
         const { _id } = data;
 
         let time;
@@ -173,10 +173,18 @@ export const MarkerMapView = memo(() => {
 
         const timeText = time.remaining && time.remaining.split(" ")[0];
 
-        const key = `${_id}${timeText}`;
+        const zIndex = allMarkers.length - markers.length;
+
+        const key = `${_id}${timeText}${zIndex}`;
 
         markers.push(
-          <Marker color={time.color} data={data} key={key} time={timeText} />
+          <Marker
+            color={time.color}
+            data={data}
+            key={key}
+            time={timeText}
+            zIndex={zIndex}
+          />
         );
 
         return markers;

@@ -135,6 +135,24 @@ const debouncedSetEvent = _.debounce((dispatch, args) => {
   dispatch(setEvents(args));
 }, 150);
 
+export function filterMarkers(events) {
+  if (events) {
+    return {
+      type: "events/set",
+      payload: {
+        markers: _.uniqBy(events, "_source.placeid")
+      }
+    };
+  } else {
+    return {
+      type: "events/set",
+      payload: {
+        markers: markerCache
+      }
+    };
+  }
+}
+
 export function filter({ tag = null, text = "" }) {
   return (dispatch, getState) => {
     const {

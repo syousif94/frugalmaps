@@ -1,22 +1,25 @@
-import React, { useRef, memo, useEffect, useCallback } from "react";
+import React, { useRef, memo, useEffect, useCallback, useContext } from "react";
 import { View, StyleSheet, Animated, FlatList, Dimensions } from "react-native";
 import { useSafeArea } from "react-native-safe-area-context";
-import { useSelector, shallowEqual } from "react-redux";
+import { useSelector, shallowEqual, useDispatch } from "react-redux";
 import UpNextItem, { itemMargin, columns } from "./UpNextItem";
 import { useDimensions } from "../utils/Hooks";
 import _ from "lodash";
-import EventListFooter from "./EventListFooter";
+import EventListBar from "./EventListBar";
 import AccountScreen from "../screens/AccountScreen";
 import emitter from "tiny-emitter/instance";
 import { itemRemaining } from "../utils/Time";
+import SearchList from "./SearchList";
+import * as Events from "../store/events";
+import { EventListContext, EventListProvider } from "./EventListContext";
 
 export const EXPOSED_LIST = 200;
 
-export default memo(() => {
+const EventList = memo(() => {
   const listRef = useRef(null);
   const footerRef = useRef(null);
   const [dimensions] = useDimensions();
-  const initialOffset = dimensions.width;
+  const initialOffset = dimensions.width * 2;
   const scrollOffset = useRef(new Animated.Value(initialOffset));
   const [
     onPagerBeginDrag,
@@ -52,7 +55,7 @@ export default memo(() => {
   let data = [];
 
   if (occurringTags) {
-    data = [null, null, ...makeData(occurringTags, events)];
+    data = [null, null, null, ...makeData(occurringTags, events)];
   } else {
     return null;
   }
@@ -88,13 +91,15 @@ export default memo(() => {
             case 0:
               return <AccountScreen key="account" />;
             case 1:
+              return <SearchList key="search" />;
+            case 2:
               return <UpcomingList key="upnext" />;
             default:
-              return <TaggedList item={item} key={item.key} />;
+              return <TaggedList item={item} key={item.key} index={index} />;
           }
         })}
       </Animated.ScrollView>
-      <EventListFooter
+      <EventListBar
         data={data}
         ref={footerRef}
         onScroll={onFooterScroll}
@@ -104,6 +109,12 @@ export default memo(() => {
     </View>
   );
 });
+
+export default () => (
+  <EventListProvider>
+    <EventList />
+  </EventListProvider>
+);
 
 function makeData(occurringTags, data) {
   const keys = _.uniq([
@@ -182,40 +193,65 @@ function makeData(occurringTags, data) {
 
 const UpcomingList = () => {
   const data = useSelector(state => state.events.upNext, shallowEqual);
-  return <BaseList data={data} />;
+  return <BaseList data={data} index={0} />;
 };
 
-const TaggedList = ({ item }) => {
+const TaggedList = ({ item, index }) => {
   const events = useSelector(state => state.events.data, shallowEqual);
   const data = item.ids.map(id => events[id]);
-  return <BaseList data={data} />;
+  return <BaseList data={data} index={index} />;
 };
 
-const BaseList = ({ data }) => {
+const viewabilityConfig = {
+  minimumViewTime: 500,
+  itemVisiblePercentThreshold: 85
+};
+
+const BaseList = ({ data, index }) => {
+  const dispatch = useDispatch();
+  const [, setTopItem] = useContext(EventListContext);
   const insets = useSafeArea();
   const [dimensions] = useDimensions();
+  useEffect(() => {
+    const setMarkers = i => {
+      if (index === i) {
+        dispatch(Events.filterMarkers(data));
+      }
+    };
+
+    emitter.on("set-markers", setMarkers);
+
+    return () => {
+      emitter.off("set-markers", setMarkers);
+    };
+  }, [data, index]);
   return (
     <View style={{ width: dimensions.width }}>
       <FlatList
         data={data}
         contentContainerStyle={{
-          paddingTop: insets.top + 40 + 6 + 1,
+          paddingTop: 40 + 12 + 2,
           paddingBottom: insets.bottom,
           paddingHorizontal: itemMargin / 2
         }}
         removeClippedSubviews
         contentInsetAdjustmentBehavior="never"
         keyExtractor={item => item._id}
-        numColumns={columns}
-        columnWrapperStyle={{
-          width: dimensions.width > 500 ? "25%" : "50%"
+        onViewableItemsChanged={({ viewableItems, changed }) => {
+          const firstItem = viewableItems[0];
+          if (firstItem) {
+            setTopItem(index, firstItem.item._source.placeid);
+          }
         }}
+        viewabilityConfig={viewabilityConfig}
         renderItem={data => {
           return (
             <UpNextItem
               {...data}
               style={{
-                paddingHorizontal: itemMargin / 2
+                paddingHorizontal: itemMargin / 2,
+                width: "100%",
+                height: null
               }}
             />
           );
@@ -226,6 +262,7 @@ const BaseList = ({ data }) => {
 };
 
 function useSynchronizePager(footerRef) {
+  const [setPage] = useContext(EventListContext);
   const layouts = useRef({});
   const scrollOffset = useRef(Dimensions.get("window").width);
   const footerOffset = useRef(0);
@@ -287,6 +324,13 @@ function useSynchronizePager(footerRef) {
   const onPagerScrollEnd = useCallback(() => {
     scrollStartOffset.current = null;
     footerStartOffset.current = null;
+
+    let index = Math.round(
+      scrollOffset.current / Dimensions.get("window").width
+    );
+    index = index < 3 ? 0 : index;
+    emitter.emit("set-markers", index);
+    setPage(index);
   }, []);
 
   return [
@@ -300,6 +344,6 @@ function useSynchronizePager(footerRef) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1.6
   }
 });

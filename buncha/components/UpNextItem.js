@@ -100,7 +100,7 @@ export default memo(
       >
         <View style={styles.image}>
           <ImageGallery
-            photos={item._source.photos.slice(0, 4)}
+            photos={item._source.photos}
             height={imageHeight}
             scrollEnabled={false}
           />

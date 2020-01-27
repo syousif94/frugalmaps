@@ -85,7 +85,7 @@ class MapMarker extends Component {
       data: { _source: item },
       color,
       time,
-      day
+      zIndex
     } = this.props;
 
     const coordinate = {
@@ -106,7 +106,7 @@ class MapMarker extends Component {
       spot = `${text.substr(0, 2)}\n${text.substr(2, 4)}`;
     }
 
-    const markerStyle = [styles.marker];
+    const markerStyle = [styles.marker, { zIndex }];
     const imageStyle = [styles.image];
     const spotStyle = [styles.spot];
     const spotTextStyle = [styles.spotText];
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     transform: [{ scale: MapMarker.miniScale }]
   },
   selectedMarker: {
-    zIndex: 2,
+    zIndex: 999,
     transform: [{ scale: 1 }]
   },
   image: {

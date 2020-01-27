@@ -37,7 +37,7 @@ export default () => {
 
   const containerStyle = {
     position: "absolute",
-    top: insets.top + 10,
+    top: insets.top + 50,
     alignSelf: "center",
     opacity: animation.current,
     transform: [

@@ -9,12 +9,11 @@ import {
   Dimensions
 } from "react-native";
 import BlurView from "./BlurView";
-import { useSafeArea } from "react-native-safe-area-context";
 import emitter from "tiny-emitter/instance";
-import { NOW, UPCOMING } from "../utils/Colors";
+import { NOW, UPCOMING, BLUE } from "../utils/Colors";
+import { Ionicons } from "@expo/vector-icons";
 
 export default forwardRef(({ data, layouts, onScroll, scrollOffset }, ref) => {
-  const insets = useSafeArea();
   return (
     <BlurView
       style={{
@@ -26,7 +25,7 @@ export default forwardRef(({ data, layouts, onScroll, scrollOffset }, ref) => {
     >
       <View
         style={{
-          paddingTop: insets.top,
+          borderTopWidth: 1,
           borderBottomWidth: 1,
           borderColor: "rgba(0,0,0,0.05)"
         }}
@@ -43,7 +42,7 @@ export default forwardRef(({ data, layouts, onScroll, scrollOffset }, ref) => {
           <View
             style={{
               flexDirection: "row",
-              paddingBottom: 6,
+              paddingVertical: 6,
               paddingHorizontal: 3
             }}
             onLayout={e => {
@@ -51,34 +50,44 @@ export default forwardRef(({ data, layouts, onScroll, scrollOffset }, ref) => {
             }}
           >
             {data.map((item, index) => {
-              if (!index) {
-                return (
-                  <FriendsButton
-                    index={index}
-                    layouts={layouts}
-                    key="friends"
-                    scrollOffset={scrollOffset}
-                  />
-                );
-              } else if (index > 1) {
-                return (
-                  <TagButton
-                    index={index}
-                    layouts={layouts}
-                    key={item.key}
-                    item={item}
-                    scrollOffset={scrollOffset}
-                  />
-                );
-              } else {
-                return (
-                  <AllButton
-                    index={index}
-                    layouts={layouts}
-                    key="upnext"
-                    scrollOffset={scrollOffset}
-                  />
-                );
+              switch (index) {
+                case 0:
+                  return (
+                    <FriendsButton
+                      index={index}
+                      layouts={layouts}
+                      key="friends"
+                      scrollOffset={scrollOffset}
+                    />
+                  );
+                case 1:
+                  return (
+                    <SearchButton
+                      index={index}
+                      layouts={layouts}
+                      key="search"
+                      scrollOffset={scrollOffset}
+                    />
+                  );
+                case 2:
+                  return (
+                    <AllButton
+                      index={index}
+                      layouts={layouts}
+                      key="upnext"
+                      scrollOffset={scrollOffset}
+                    />
+                  );
+                default:
+                  return (
+                    <TagButton
+                      index={index}
+                      layouts={layouts}
+                      key={item.key}
+                      item={item}
+                      scrollOffset={scrollOffset}
+                    />
+                  );
               }
             })}
           </View>
@@ -117,6 +126,24 @@ const FriendsButton = ({ scrollOffset, ...props }) => {
   );
 };
 
+const AnimatedIcon = Animated.createAnimatedComponent(Ionicons);
+
+const SearchButton = ({ scrollOffset, ...props }) => {
+  const [color] = useTitleColor(scrollOffset, props.index, BLUE);
+  return (
+    <Button {...props}>
+      <AnimatedIcon
+        name="ios-search"
+        style={{
+          paddingHorizontal: 6,
+          color: color.current
+        }}
+        size={22}
+      />
+    </Button>
+  );
+};
+
 const AllButton = ({ scrollOffset, ...props }) => {
   const [color] = useTitleColor(scrollOffset, props.index);
   return (
@@ -148,8 +175,8 @@ const TagButton = ({ scrollOffset, item, ...props }) => {
 
       <Text
         style={{
-          fontSize: 13,
-          fontWeight: "600",
+          fontSize: 10,
+          fontWeight: "700",
           color: item.ending ? NOW : item.upcoming ? UPCOMING : "#777"
         }}
       >
@@ -159,7 +186,7 @@ const TagButton = ({ scrollOffset, item, ...props }) => {
   );
 };
 
-function useTitleColor(scrollOffset, index) {
+function useTitleColor(scrollOffset, index, highlightColor, dimColor) {
   const width = Dimensions.get("window").width;
 
   const offset = width * index;
@@ -174,9 +201,13 @@ function useTitleColor(scrollOffset, index) {
 
   const color = useRef(null);
 
+  const dimmed = dimColor || "#777";
+
+  const highlight = highlightColor || "#000";
+
   color.current = scrollOffset.current.interpolate({
     inputRange,
-    outputRange: ["#777", "#000", "#777"],
+    outputRange: [dimmed, highlight, dimmed],
     extrapolate: "clamp"
   });
 
@@ -196,12 +227,13 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   titleText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "600",
     color: "#777"
   },
   subText: {
-    fontSize: 13,
+    fontSize: 12,
+    fontWeight: "700",
     color: "#777"
   }
 });
