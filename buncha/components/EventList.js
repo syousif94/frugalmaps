@@ -12,8 +12,14 @@ import { itemRemaining } from "../utils/Time";
 import SearchList from "./SearchList";
 import * as Events from "../store/events";
 import { EventListContext, EventListProvider } from "./EventListContext";
+import { BLUE, RED } from "../utils/Colors";
 
 export const EXPOSED_LIST = 200;
+
+const viewabilityConfig = {
+  minimumViewTime: 500,
+  viewAreaCoveragePercentThreshold: 22
+};
 
 const EventList = memo(() => {
   const listRef = useRef(null);
@@ -60,6 +66,8 @@ const EventList = memo(() => {
     return null;
   }
 
+  const topPercent = `${viewabilityConfig.viewAreaCoveragePercentThreshold}%`;
+
   return (
     <View style={styles.container}>
       <Animated.ScrollView
@@ -99,6 +107,30 @@ const EventList = memo(() => {
           }
         })}
       </Animated.ScrollView>
+      <View
+        style={{
+          position: "absolute",
+          top: topPercent,
+          height: 8,
+          width: 8,
+          left: -4,
+          borderRadius: 1,
+          backgroundColor: "#ccc",
+          transform: [{ rotate: "45deg" }]
+        }}
+      />
+      <View
+        style={{
+          position: "absolute",
+          top: topPercent,
+          height: 8,
+          width: 8,
+          right: -4,
+          borderRadius: 1,
+          backgroundColor: "#ccc",
+          transform: [{ rotate: "45deg" }]
+        }}
+      />
       <EventListBar
         data={data}
         ref={footerRef}
@@ -202,16 +234,17 @@ const TaggedList = ({ item, index }) => {
   return <BaseList data={data} index={index} />;
 };
 
-const viewabilityConfig = {
-  minimumViewTime: 500,
-  itemVisiblePercentThreshold: 85
-};
-
 const BaseList = ({ data, index }) => {
   const dispatch = useDispatch();
   const [, setTopItem] = useContext(EventListContext);
   const insets = useSafeArea();
   const [dimensions] = useDimensions();
+  const onViewableItemsChanged = useCallback(({ viewableItems, changed }) => {
+    const firstItem = viewableItems[0];
+    if (firstItem) {
+      setTopItem(index, firstItem.item);
+    }
+  }, []);
   useEffect(() => {
     const setMarkers = i => {
       if (index === i) {
@@ -230,19 +263,14 @@ const BaseList = ({ data, index }) => {
       <FlatList
         data={data}
         contentContainerStyle={{
-          paddingTop: 40 + 12 + 2,
+          paddingTop: 40 + 12 + 2 + 10,
           paddingBottom: insets.bottom,
           paddingHorizontal: itemMargin / 2
         }}
         removeClippedSubviews
         contentInsetAdjustmentBehavior="never"
-        keyExtractor={item => item._id}
-        onViewableItemsChanged={({ viewableItems, changed }) => {
-          const firstItem = viewableItems[0];
-          if (firstItem) {
-            setTopItem(index, firstItem.item._source.placeid);
-          }
-        }}
+        keyExtractor={(item, index) => `${item._id}${index}`}
+        onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
         renderItem={data => {
           return (
@@ -344,6 +372,6 @@ function useSynchronizePager(footerRef) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1.6
+    flex: 1.9
   }
 });

@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from "react";
+import React, { memo, useContext } from "react";
 import {
   View,
   Text,
@@ -10,7 +10,6 @@ import { navigate } from "../screens";
 import Link from "./Link";
 import { selectPlaceEvents } from "../store/events";
 import { useSelector, shallowEqual, useDispatch } from "react-redux";
-import { RED, BLUE } from "../utils/Colors";
 import { roundedDistanceTo } from "../utils/Locate";
 import {
   itemRemaining,
@@ -91,11 +90,7 @@ export default memo(
       <Link
         to={`e/${item._id}`}
         containerStyle={containerStyle}
-        style={[
-          styles.container,
-          { paddingTop: !WEB && index < columns ? itemMargin - 3 : null },
-          style
-        ]}
+        style={[styles.container, style]}
         onPress={onPress}
       >
         <View style={styles.image}>
@@ -158,6 +153,7 @@ export default memo(
           match={searchTerm}
           style={styles.descriptionText}
         />
+
         {demo ? null : (
           <View style={styles.actions}>
             <TouchableOpacity
@@ -244,7 +240,7 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     marginVertical: 2,
-    fontSize: 15,
+    fontSize: 18,
     fontWeight: "500",
     color: "#000"
   },

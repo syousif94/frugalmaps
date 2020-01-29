@@ -17,6 +17,8 @@ import MapMarkerList from "../components/MapMarkerList";
 import { itemMargin } from "../components/UpNextItem";
 import SortBar from "../components/SortBar";
 import { tabBarHeight } from "../components/TabBar";
+import { useSafeArea } from "react-native-safe-area-context";
+import locate, { distanceTo } from "../utils/Locate";
 
 export default () => {
   return (
@@ -96,6 +98,7 @@ const IndicatorView = () => {
 };
 
 export const MarkerMapView = memo(() => {
+  const insets = useSafeArea();
   const mapView = useRef(null);
   const bounds = useSelector(state => state.events.bounds, shallowEqual);
   const locationEnabled = useSelector(state => state.permissions.location);
@@ -123,7 +126,7 @@ export const MarkerMapView = memo(() => {
       mapView.current.fitToCoordinates(coords, {
         animated: false,
         edgePadding: {
-          top: 0,
+          top: insets.top - 10,
           left: 20,
           right: 20,
           bottom: 0
@@ -131,6 +134,51 @@ export const MarkerMapView = memo(() => {
       });
     });
   }, [bounds]);
+
+  useEffect(() => {
+    const fitMarker = async item => {
+      let coords;
+
+      if (locationEnabled && distanceTo(item) < 50) {
+        const coordinate = {
+          latitude: item._source.coordinates[1],
+          longitude: item._source.coordinates[0]
+        };
+        const { coords: userLocation } = await locate();
+        coords = [coordinate, userLocation];
+      } else {
+        const bounds = item._source.viewport;
+        coords = [
+          {
+            latitude: bounds.northeast.lat,
+            longitude: bounds.northeast.lng
+          },
+          {
+            latitude: bounds.southwest.lat,
+            longitude: bounds.southwest.lng
+          }
+        ];
+      }
+
+      requestAnimationFrame(() => {
+        mapView.current.fitToCoordinates(coords, {
+          animated: false,
+          edgePadding: {
+            top: insets.top,
+            left: 20,
+            right: 20,
+            bottom: 10
+          }
+        });
+      });
+    };
+
+    emitter.on("fit-marker", fitMarker);
+
+    return () => {
+      emitter.off("fit-marker", fitMarker);
+    };
+  }, [locationEnabled]);
 
   const [time] = useEveryMinute();
   const androidMapProps = ANDROID
