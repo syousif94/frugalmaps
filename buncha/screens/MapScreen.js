@@ -164,7 +164,7 @@ export const MarkerMapView = memo(() => {
         mapView.current.fitToCoordinates(coords, {
           animated: false,
           edgePadding: {
-            top: insets.top,
+            top: insets.top - 10,
             left: 20,
             right: 20,
             bottom: 10

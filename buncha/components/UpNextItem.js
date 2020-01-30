@@ -45,7 +45,7 @@ export { columns, itemMargin, itemWidth };
 const imageHeight = 80;
 
 export default memo(
-  ({ item, index, style = {}, containerStyle = {}, demo }) => {
+  ({ item, index, style = {}, containerStyle = {}, demo, listTitle }) => {
     const dispatch = useDispatch();
     const day = useSelector(state => state.events.day);
     const notNow = useSelector(state => state.events.notNow);
@@ -55,14 +55,14 @@ export default memo(
       navigate("Detail", { id: item._id });
     };
     const placeEvents = useSelector(selectPlaceEvents(item), shallowEqual);
-    const searchTerm = useSelector(state =>
+    const searchTerm = listTitle; /** useSelector(state =>
       state.events.text.length
         ? state.events.text
             .split(" ")
             .map(text => text.trim())
             .filter(text => text.length)
         : state.events.tag
-    );
+    ); */
 
     const hasMoreEvents = placeEvents.length > 1;
 
@@ -241,7 +241,6 @@ const styles = StyleSheet.create({
   descriptionText: {
     marginVertical: 2,
     fontSize: 18,
-    fontWeight: "500",
     color: "#000"
   },
   actions: {

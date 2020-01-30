@@ -24,7 +24,6 @@ import { InputProvider } from "../components/InputContext";
 import TagList from "../components/TagList";
 import EventList from "../components/EventList";
 import RefreshButton from "../components/RefreshButton";
-import { MarkerMapView } from "./MapScreen";
 
 const medium = 780;
 const narrow = 550;
@@ -212,7 +211,6 @@ export default ({ intro = false }) => {
           </React.Fragment>
         ) : (
           <View style={styles.list}>
-            <MarkerMapView />
             <EventList />
             {refreshing ? (
               <View style={styles.loading}>

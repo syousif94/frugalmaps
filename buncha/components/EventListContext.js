@@ -1,64 +1,30 @@
 import React, { useRef, useCallback } from "react";
+import { Dimensions } from "react-native";
 import emitter from "tiny-emitter/instance";
 
 export const EventListContext = React.createContext(null);
 
 export function EventListProvider({ children }) {
+  const verticalOffset = useRef(0);
+  const scrollEnabled = useRef(false);
   const page = useRef(0);
-  const topItems = useRef({});
-  // const itemHeights = useRef({});
-  // const [snapOffsets, setSnapOffsets] = useState({});
 
   const setPage = useCallback(index => {
     page.current = index;
-    const item = topItems.current[index];
-
-    if (item) {
-      requestAnimationFrame(() => {
-        emitter.emit("select-marker", item._source.placeid);
-        emitter.emit("fit-marker", item);
-      });
-    }
   }, []);
 
-  const setTopItem = useCallback((index, item) => {
-    topItems.current[index] = item;
-
-    if (index === page.current) {
-      emitter.emit("select-marker", item._source.placeid);
-      emitter.emit("fit-marker", item);
+  const setVerticalOffset = useCallback(offset => {
+    verticalOffset.current = offset;
+    const topOffset = Math.floor(Dimensions.get("window").height * 0.6);
+    const enabled = Math.ceil(verticalOffset.current) >= topOffset;
+    if (enabled !== scrollEnabled.current) {
+      emitter.emit("scroll-enabled", enabled);
+      scrollEnabled.current = enabled;
     }
   }, []);
-
-  // const buildItemLayouts = useCallback(
-  //   (index, itemIndex, height) => {
-  //     const heights = itemHeights.current[index] || [];
-  //     heights[itemIndex] = height;
-  //     itemHeights.current[index] = heights;
-  //     if (heights.includes(undefined)) {
-  //       return;
-  //     }
-
-  //     const offsets = heights.reduce(
-  //       (offsets, height, index) => {
-  //         offsets.push(height + offsets[index]);
-  //         return offsets;
-  //       },
-  //       [0]
-  //     );
-
-  //     const nextSnapOffsets = {
-  //       ...snapOffsets,
-  //       [index]: offsets
-  //     };
-
-  //     setSnapOffsets(nextSnapOffsets);
-  //   },
-  //   [snapOffsets]
-  // );
 
   return (
-    <EventListContext.Provider value={[setPage, setTopItem]}>
+    <EventListContext.Provider value={[setPage, setVerticalOffset]}>
       {children}
     </EventListContext.Provider>
   );

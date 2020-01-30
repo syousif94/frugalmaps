@@ -1,8 +1,15 @@
 import React, { useRef, memo, useEffect, useCallback, useContext } from "react";
-import { View, StyleSheet, Animated, FlatList, Dimensions } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Animated,
+  FlatList,
+  Dimensions,
+  ScrollView
+} from "react-native";
 import { useSafeArea } from "react-native-safe-area-context";
 import { useSelector, shallowEqual, useDispatch } from "react-redux";
-import UpNextItem, { itemMargin, columns } from "./UpNextItem";
+import UpNextItem, { itemMargin } from "./UpNextItem";
 import { useDimensions } from "../utils/Hooks";
 import _ from "lodash";
 import EventListBar from "./EventListBar";
@@ -12,14 +19,9 @@ import { itemRemaining } from "../utils/Time";
 import SearchList from "./SearchList";
 import * as Events from "../store/events";
 import { EventListContext, EventListProvider } from "./EventListContext";
-import { BLUE, RED } from "../utils/Colors";
+import { MarkerMapView } from "../screens/MapScreen";
 
 export const EXPOSED_LIST = 200;
-
-const viewabilityConfig = {
-  minimumViewTime: 500,
-  viewAreaCoveragePercentThreshold: 22
-};
 
 const EventList = memo(() => {
   const listRef = useRef(null);
@@ -34,6 +36,8 @@ const EventList = memo(() => {
     onPagerScrollEnd,
     layouts
   ] = useSynchronizePager(footerRef);
+
+  const [, setVerticalOffset] = useContext(EventListContext);
 
   useEffect(() => {
     const onPageTo = index => {
@@ -66,78 +70,77 @@ const EventList = memo(() => {
     return null;
   }
 
-  const topPercent = `${viewabilityConfig.viewAreaCoveragePercentThreshold}%`;
-
   return (
     <View style={styles.container}>
-      <Animated.ScrollView
-        ref={listRef}
-        contentOffset={{
-          x: initialOffset,
-          y: 0
-        }}
-        onScroll={Animated.forkEvent(
-          Animated.event([
-            { nativeEvent: { contentOffset: { x: scrollOffset.current } } }
-          ]),
-          e => {
-            onPagerScroll(e.nativeEvent.contentOffset.x);
-          }
-        )}
-        scrollEventThrottle={16}
-        onScrollBeginDrag={onPagerBeginDrag}
-        onMomentumScrollEnd={onPagerScrollEnd}
-        pagingEnabled
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        removeClippedSubviews
+      <ScrollView
         contentInsetAdjustmentBehavior="never"
-        keyboardShouldPersistTaps="handled"
+        pagingEnabled
+        showsVerticalScrollIndicator={false}
+        scrollEventThrottle={1}
+        onScroll={e => {
+          setVerticalOffset(e.nativeEvent.contentOffset.y);
+        }}
       >
-        {data.map((item, index) => {
-          switch (index) {
-            case 0:
-              return <AccountScreen key="account" />;
-            case 1:
-              return <SearchList key="search" />;
-            case 2:
-              return <UpcomingList key="upnext" />;
-            default:
-              return <TaggedList item={item} key={item.key} index={index} />;
-          }
-        })}
-      </Animated.ScrollView>
-      <View
-        style={{
-          position: "absolute",
-          top: topPercent,
-          height: 8,
-          width: 8,
-          left: -4,
-          borderRadius: 1,
-          backgroundColor: "#ccc",
-          transform: [{ rotate: "45deg" }]
-        }}
-      />
-      <View
-        style={{
-          position: "absolute",
-          top: topPercent,
-          height: 8,
-          width: 8,
-          right: -4,
-          borderRadius: 1,
-          backgroundColor: "#ccc",
-          transform: [{ rotate: "45deg" }]
-        }}
-      />
-      <EventListBar
-        data={data}
-        ref={footerRef}
-        onScroll={onFooterScroll}
-        layouts={layouts}
-        scrollOffset={scrollOffset}
-      />
+        <View
+          style={{
+            height: dimensions.height * 0.7
+          }}
+        >
+          <MarkerMapView />
+        </View>
+        <View
+          style={{
+            height: dimensions.height * 0.9
+          }}
+        >
+          <Animated.ScrollView
+            ref={listRef}
+            contentOffset={{
+              x: initialOffset,
+              y: 0
+            }}
+            onScroll={Animated.forkEvent(
+              Animated.event([
+                { nativeEvent: { contentOffset: { x: scrollOffset.current } } }
+              ]),
+              e => {
+                onPagerScroll(e.nativeEvent.contentOffset.x);
+              }
+            )}
+            scrollEventThrottle={16}
+            onScrollBeginDrag={onPagerBeginDrag}
+            onMomentumScrollEnd={onPagerScrollEnd}
+            pagingEnabled
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            removeClippedSubviews
+            contentInsetAdjustmentBehavior="never"
+            keyboardShouldPersistTaps="handled"
+          >
+            {data.map((item, index) => {
+              switch (index) {
+                case 0:
+                  return <AccountScreen key="account" />;
+                case 1:
+                  return <SearchList key="search" />;
+                case 2:
+                  return <UpcomingList key="upnext" />;
+                default:
+                  return (
+                    <TaggedList item={item} key={item.key} index={index} />
+                  );
+              }
+            })}
+          </Animated.ScrollView>
+          <EventListBar
+            data={data}
+            ref={footerRef}
+            onScroll={onFooterScroll}
+            layouts={layouts}
+            scrollOffset={scrollOffset}
+          />
+        </View>
+      </ScrollView>
     </View>
   );
 });
@@ -231,20 +234,14 @@ const UpcomingList = () => {
 const TaggedList = ({ item, index }) => {
   const events = useSelector(state => state.events.data, shallowEqual);
   const data = item.ids.map(id => events[id]);
-  return <BaseList data={data} index={index} />;
+  return <BaseList data={data} index={index} title={item.key} />;
 };
 
-const BaseList = ({ data, index }) => {
+const BaseList = ({ data, index, title }) => {
+  const listRef = useRef(null);
   const dispatch = useDispatch();
-  const [, setTopItem] = useContext(EventListContext);
   const insets = useSafeArea();
   const [dimensions] = useDimensions();
-  const onViewableItemsChanged = useCallback(({ viewableItems, changed }) => {
-    const firstItem = viewableItems[0];
-    if (firstItem) {
-      setTopItem(index, firstItem.item);
-    }
-  }, []);
   useEffect(() => {
     const setMarkers = i => {
       if (index === i) {
@@ -258,9 +255,23 @@ const BaseList = ({ data, index }) => {
       emitter.off("set-markers", setMarkers);
     };
   }, [data, index]);
+
+  useEffect(() => {
+    const onScrollEnabled = scrollEnabled => {
+      listRef.current.setNativeProps({ scrollEnabled });
+    };
+
+    emitter.on("scroll-enabled", onScrollEnabled);
+
+    return () => {
+      emitter.off("scroll-enabled", onScrollEnabled);
+    };
+  }, []);
   return (
     <View style={{ width: dimensions.width }}>
       <FlatList
+        ref={listRef}
+        scrollEnabled={false}
         data={data}
         contentContainerStyle={{
           paddingTop: 40 + 12 + 2 + 10,
@@ -270,8 +281,6 @@ const BaseList = ({ data, index }) => {
         removeClippedSubviews
         contentInsetAdjustmentBehavior="never"
         keyExtractor={(item, index) => `${item._id}${index}`}
-        onViewableItemsChanged={onViewableItemsChanged}
-        viewabilityConfig={viewabilityConfig}
         renderItem={data => {
           return (
             <UpNextItem
@@ -281,6 +290,7 @@ const BaseList = ({ data, index }) => {
                 width: "100%",
                 height: null
               }}
+              listTitle={title}
             />
           );
         }}
@@ -372,6 +382,6 @@ function useSynchronizePager(footerRef) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1.9
+    flex: 1
   }
 });
