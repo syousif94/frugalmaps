@@ -7,11 +7,12 @@ import {
   TouchableOpacity
 } from "react-native";
 import { useDimensions } from "../utils/Hooks";
-import { useSelector, shallowEqual } from "react-redux";
+import { useSelector, shallowEqual, useDispatch } from "react-redux";
 import Fuse from "fuse.js";
 import emitter from "tiny-emitter/instance";
 import { useSafeArea } from "react-native-safe-area-context";
 import { itemMargin } from "./UpNextItem";
+import * as Events from "../store/events";
 
 export default () => {
   const listRef = useRef(null);
@@ -54,43 +55,82 @@ export default () => {
             }}
           />
         )}
-        renderItem={data => {
-          return (
-            <TouchableOpacity
-              style={{
-                paddingHorizontal: itemMargin,
-                flexDirection: "row",
-                alignItems: "baseline",
-                paddingVertical: 10
-              }}
-            >
-              <Text
-                allowFontScaling={false}
-                style={{
-                  fontSize: 16,
-                  fontWeight: "600"
-                }}
-              >
-                {data.item.text}
-              </Text>
-              <Text
-                allowFontScaling={false}
-                style={{
-                  marginLeft: 6,
-                  fontSize: 16,
-                  fontWeight: "600",
-                  color: "#777"
-                }}
-              >
-                {data.item.type}
-              </Text>
-            </TouchableOpacity>
-          );
-        }}
+        renderItem={data => <SearchItem {...data} />}
       />
     </View>
   );
 };
+
+const SearchItem = ({ item, index }) => {
+  const dispatch = useDispatch();
+  return (
+    <TouchableOpacity
+      style={{
+        paddingHorizontal: itemMargin,
+        flexDirection: "row",
+        alignItems: "baseline",
+        paddingVertical: 10
+      }}
+      onPress={() => {
+        switch (item.type) {
+          case "city":
+            dispatch(Events.getCity(item.city));
+            emitter.emit("toggle-panel", false);
+          // emitter.emit("page-lists", 3);
+          case "tag":
+            emitter.emit("page-lists", item.text);
+          default:
+            break;
+        }
+      }}
+    >
+      <Text
+        allowFontScaling={false}
+        style={{
+          fontSize: 16,
+          fontWeight: "600"
+        }}
+      >
+        {item.text}
+      </Text>
+      <Text
+        allowFontScaling={false}
+        style={{
+          marginLeft: 6,
+          fontSize: 16,
+          fontWeight: "600",
+          color: "#777"
+        }}
+      >
+        {item.type}
+      </Text>
+      <View style={{ flex: 1 }} />
+      <Text
+        allowFontScaling={false}
+        style={{
+          fontSize: 16,
+          fontWeight: "600",
+          color: "#777"
+        }}
+      >
+        {getTagCount(item)}
+      </Text>
+    </TouchableOpacity>
+  );
+};
+
+function getTagCount(tag) {
+  switch (tag.type) {
+    case "city":
+      return tag.city._source.count;
+    case "tag":
+      return tag.tag.count;
+    case "place":
+      return tag.events.length;
+    default:
+      return null;
+  }
+}
 
 function useSearch() {
   const [filter, setFilter] = useState("");

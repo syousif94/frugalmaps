@@ -24,6 +24,7 @@ import { MarkerMapView } from "../screens/MapScreen";
 export const EXPOSED_LIST = 200;
 
 const EventList = memo(() => {
+  const panelRef = useRef(null);
   const listRef = useRef(null);
   const footerRef = useRef(null);
   const [dimensions] = useDimensions();
@@ -39,22 +40,6 @@ const EventList = memo(() => {
 
   const [, setVerticalOffset] = useContext(EventListContext);
 
-  useEffect(() => {
-    const onPageTo = index => {
-      if (listRef.current) {
-        listRef.current.getNode().scrollTo({
-          x: index * Dimensions.get("window").width
-        });
-      }
-    };
-
-    emitter.on("page-lists", onPageTo);
-
-    return () => {
-      emitter.off("page-lists", onPageTo);
-    };
-  }, []);
-
   const occurringTags = useSelector(
     state => state.events.occurringTags,
     shallowEqual
@@ -63,6 +48,64 @@ const EventList = memo(() => {
   const events = useSelector(state => state.events.data, shallowEqual);
 
   let data = [];
+
+  useEffect(() => {
+    const onPageTo = key => {
+      if (!listRef.current) {
+        return;
+      }
+
+      let index;
+
+      if (typeof key === "string") {
+        if (!data.length) {
+          return;
+        }
+
+        index = data.findIndex(item => {
+          if (item === null) {
+            return false;
+          }
+
+          return key === item.key;
+        });
+
+        if (index < 0) {
+          return;
+        }
+
+        onPagerBeginDrag();
+      } else {
+        index = key;
+      }
+
+      listRef.current.getNode().scrollTo({
+        x: index * Dimensions.get("window").width
+      });
+    };
+
+    emitter.on("page-lists", onPageTo);
+
+    const onTogglePanel = visible => {
+      if (!panelRef.current) {
+        return;
+      }
+      if (visible) {
+        panelRef.current.scrollToEnd();
+      } else {
+        panelRef.current.scrollTo({
+          y: 0
+        });
+      }
+    };
+
+    emitter.on("toggle-panel", onTogglePanel);
+
+    return () => {
+      emitter.off("page-lists", onPageTo);
+      emitter.off("toggle-panel", onTogglePanel);
+    };
+  }, []);
 
   if (occurringTags) {
     data = [null, null, null, ...makeData(occurringTags, events)];
@@ -73,6 +116,7 @@ const EventList = memo(() => {
   return (
     <View style={styles.container}>
       <ScrollView
+        ref={panelRef}
         contentInsetAdjustmentBehavior="never"
         pagingEnabled
         showsVerticalScrollIndicator={false}
