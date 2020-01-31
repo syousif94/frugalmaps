@@ -1,11 +1,167 @@
-import React from "react";
-import { View, StyleSheet, Text } from "react-native";
+import React, { useEffect, useState, useRef } from "react";
+import {
+  View,
+  StyleSheet,
+  Text,
+  FlatList,
+  TouchableOpacity
+} from "react-native";
 import { useDimensions } from "../utils/Hooks";
+import { useSelector, shallowEqual } from "react-redux";
+import Fuse from "fuse.js";
+import emitter from "tiny-emitter/instance";
+import { useSafeArea } from "react-native-safe-area-context";
+import { itemMargin } from "./UpNextItem";
 
 export default () => {
+  const listRef = useRef(null);
   const [dimensions] = useDimensions();
-  return <View style={[styles.container, { width: dimensions.width }]} />;
+  const [filter, setFilter, data] = useSearch();
+  const insets = useSafeArea();
+
+  useEffect(() => {
+    const onScrollEnabled = scrollEnabled => {
+      listRef.current.setNativeProps({ scrollEnabled });
+    };
+
+    emitter.on("scroll-enabled", onScrollEnabled);
+
+    return () => {
+      emitter.off("scroll-enabled", onScrollEnabled);
+    };
+  }, []);
+  return (
+    <View style={[styles.container, { width: dimensions.width }]}>
+      <FlatList
+        ref={listRef}
+        nestedScrollEnabled
+        scrollEnabled={false}
+        contentContainerStyle={{
+          paddingTop: 40 + 12 + 2 + 10,
+          paddingBottom: insets.bottom
+        }}
+        removeClippedSubviews
+        contentInsetAdjustmentBehavior="never"
+        style={{ flex: 1 }}
+        data={data}
+        keyExtractor={item => `${item.type}${item.text}`}
+        ItemSeparatorComponent={() => (
+          <View
+            style={{
+              height: 1,
+              marginLeft: itemMargin,
+              backgroundColor: "#f4f4f4"
+            }}
+          />
+        )}
+        renderItem={data => {
+          return (
+            <TouchableOpacity
+              style={{
+                paddingHorizontal: itemMargin,
+                flexDirection: "row",
+                alignItems: "baseline",
+                paddingVertical: 10
+              }}
+            >
+              <Text
+                allowFontScaling={false}
+                style={{
+                  fontSize: 16,
+                  fontWeight: "600"
+                }}
+              >
+                {data.item.text}
+              </Text>
+              <Text
+                allowFontScaling={false}
+                style={{
+                  marginLeft: 6,
+                  fontSize: 16,
+                  fontWeight: "600",
+                  color: "#777"
+                }}
+              >
+                {data.item.type}
+              </Text>
+            </TouchableOpacity>
+          );
+        }}
+      />
+    </View>
+  );
 };
+
+function useSearch() {
+  const [filter, setFilter] = useState("");
+  const items = useRef([]);
+  const fuseRef = useRef(null);
+  const [list, setList] = useState([]);
+
+  const tags = useSelector(state => state.events.tags, shallowEqual);
+  const cities = useSelector(state => state.cities.closest, shallowEqual);
+  const places = useSelector(state => state.events.places, shallowEqual);
+  const data = useSelector(state => state.events.data, shallowEqual);
+
+  useEffect(() => {
+    items.current = [
+      ...tags.map(tag => {
+        return {
+          type: "tag",
+          text: tag.text,
+          tag
+        };
+      }),
+      ...cities.map(city => {
+        return {
+          type: "city",
+          text: city._source.name,
+          city
+        };
+      }),
+      ...Object.values(places).map(keys => {
+        const events = keys.map(key => data[key]);
+        return {
+          type: "place",
+          text: events[0]._source.location,
+          events
+        };
+      })
+    ].sort((a, b) => {
+      const aText = a.text.toLowerCase();
+      const bText = b.text.toLowerCase();
+      if (aText < bText) {
+        return -1;
+      }
+      if (aText > bText) {
+        return 1;
+      }
+      return 0;
+    });
+
+    setList(items.current);
+
+    fuseRef.current = new Fuse(items.current, {
+      caseSensitive: false,
+      shouldSort: true,
+      findAllMatches: false,
+      includeMatches: true,
+      threshold: 0.3,
+      distance: 20,
+      keys: ["text"]
+    });
+  }, [tags, cities, places, data]);
+
+  useEffect(() => {
+    if (!filter || !filter.length) {
+      setList(items.current);
+    } else if (fuseRef.current) {
+      setList(fuseRef.current.search(filter));
+    }
+  }, [filter]);
+
+  return [filter, setFilter, list];
+}
 
 const styles = StyleSheet.create({
   container: {

@@ -116,6 +116,7 @@ const EventList = memo(() => {
             removeClippedSubviews
             contentInsetAdjustmentBehavior="never"
             keyboardShouldPersistTaps="handled"
+            nestedScrollEnabled
           >
             {data.map((item, index) => {
               switch (index) {
@@ -271,6 +272,7 @@ const BaseList = ({ data, index, title }) => {
     <View style={{ width: dimensions.width }}>
       <FlatList
         ref={listRef}
+        nestedScrollEnabled
         scrollEnabled={false}
         data={data}
         contentContainerStyle={{
