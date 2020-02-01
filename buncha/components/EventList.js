@@ -50,6 +50,27 @@ const EventList = memo(() => {
   let data = [];
 
   useEffect(() => {
+    const onTogglePanel = visible => {
+      if (!panelRef.current) {
+        return;
+      }
+      if (visible) {
+        panelRef.current.scrollToEnd();
+      } else {
+        panelRef.current.scrollTo({
+          y: 0
+        });
+      }
+    };
+
+    emitter.on("toggle-panel", onTogglePanel);
+
+    return () => {
+      emitter.off("toggle-panel", onTogglePanel);
+    };
+  }, []);
+
+  useEffect(() => {
     const onPageTo = key => {
       if (!listRef.current) {
         return;
@@ -86,26 +107,10 @@ const EventList = memo(() => {
 
     emitter.on("page-lists", onPageTo);
 
-    const onTogglePanel = visible => {
-      if (!panelRef.current) {
-        return;
-      }
-      if (visible) {
-        panelRef.current.scrollToEnd();
-      } else {
-        panelRef.current.scrollTo({
-          y: 0
-        });
-      }
-    };
-
-    emitter.on("toggle-panel", onTogglePanel);
-
     return () => {
       emitter.off("page-lists", onPageTo);
-      emitter.off("toggle-panel", onTogglePanel);
     };
-  }, []);
+  }, [data]);
 
   if (occurringTags) {
     data = [null, null, null, ...makeData(occurringTags, events)];
@@ -312,6 +317,16 @@ const BaseList = ({ data, index, title }) => {
       emitter.off("scroll-enabled", onScrollEnabled);
     };
   }, []);
+
+  const widescreen = dimensions.width > 500;
+  const wideProps = widescreen
+    ? {
+        numColumns: 3,
+        columnWrapperStyle: {
+          width: "33.33%"
+        }
+      }
+    : {};
   return (
     <View style={{ width: dimensions.width }}>
       <FlatList
@@ -320,13 +335,14 @@ const BaseList = ({ data, index, title }) => {
         scrollEnabled={false}
         data={data}
         contentContainerStyle={{
-          paddingTop: 40 + 12 + 2 + 10,
+          paddingTop: 40 + 12 + 2 + (widescreen ? itemMargin : 10),
           paddingBottom: insets.bottom,
           paddingHorizontal: itemMargin / 2
         }}
         removeClippedSubviews
         contentInsetAdjustmentBehavior="never"
         keyExtractor={(item, index) => `${item._id}${index}`}
+        {...wideProps}
         renderItem={data => {
           return (
             <UpNextItem
