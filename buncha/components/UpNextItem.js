@@ -45,7 +45,15 @@ export { columns, itemMargin, itemWidth };
 const imageHeight = 80;
 
 export default memo(
-  ({ item, index, style = {}, containerStyle = {}, demo, listTitle }) => {
+  ({
+    item,
+    index,
+    style = {},
+    containerStyle = {},
+    demo,
+    listTitle,
+    width
+  }) => {
     const dispatch = useDispatch();
     const day = useSelector(state => state.events.day);
     const notNow = useSelector(state => state.events.notNow);
@@ -98,6 +106,7 @@ export default memo(
             photos={item._source.photos}
             height={imageHeight}
             scrollEnabled={false}
+            width={width}
           />
           {placeText && (
             <View style={styles.count}>

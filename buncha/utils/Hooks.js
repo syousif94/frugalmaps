@@ -41,15 +41,28 @@ function repeatEvery(func, interval) {
   };
 }
 
+const minuteSet = new Set();
+
+repeatEvery(() => {
+  const now = Date.now();
+  minuteSet.forEach(cb => {
+    cb(now);
+  });
+}, 60 * 1000);
+
 export function useEveryMinute() {
-  const [state, setState] = useState(Date.now());
+  const [state, setState] = useState();
 
   useEffect(() => {
-    const cancel = repeatEvery(() => {
-      setState(Date.now());
-    }, 60 * 1000);
+    const onMinute = date => {
+      setState(date);
+    };
 
-    return () => cancel();
+    minuteSet.add(onMinute);
+
+    return () => {
+      minuteSet.delete(onMinute);
+    };
   }, []);
 
   return [state];

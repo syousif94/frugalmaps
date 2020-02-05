@@ -130,8 +130,7 @@ class MapMarker extends Component {
 
     const androidProps = ANDROID
       ? {
-          onPress: this._onSelect,
-          tracksViewChanges: true
+          onPress: this._onSelect
         }
       : {};
 

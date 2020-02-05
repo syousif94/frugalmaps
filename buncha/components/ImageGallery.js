@@ -26,27 +26,23 @@ const ImageItem = ({ item, height, width }) => {
   );
 };
 
-const ImageGallery = ({ photos, height = 170 }) => {
-  const [width, setWidth] = useState(null);
-
+const ImageGallery = ({ photos, height = 170, width }) => {
   const images = [];
 
-  if (width !== null) {
-    let i = 0;
-    let totalWidth = 0;
+  let i = 0;
+  let totalWidth = 0;
 
-    while (i < photos.length && totalWidth < width) {
-      const photo = photos[i];
-      const imageWidth = (height / photo.thumb.height) * photo.thumb.width;
-      images.push(
-        <React.Fragment key={`${i}`}>
-          {i ? <View style={styles.divider} /> : null}
-          <ImageItem item={photo} height={height} width={imageWidth} />
-        </React.Fragment>
-      );
-      i += 1;
-      totalWidth += imageWidth + 2;
-    }
+  while (i < photos.length && totalWidth < width) {
+    const photo = photos[i];
+    const imageWidth = (height / photo.thumb.height) * photo.thumb.width;
+    images.push(
+      <React.Fragment key={`${i}`}>
+        {i ? <View style={styles.divider} /> : null}
+        <ImageItem item={photo} height={height} width={imageWidth} />
+      </React.Fragment>
+    );
+    i += 1;
+    totalWidth += imageWidth + 2;
   }
 
   return (
@@ -56,9 +52,6 @@ const ImageGallery = ({ photos, height = 170 }) => {
         width: "100%",
         flexDirection: "row",
         overflow: "hidden"
-      }}
-      onLayout={e => {
-        setWidth(e.nativeEvent.layout.width);
       }}
     >
       {images}

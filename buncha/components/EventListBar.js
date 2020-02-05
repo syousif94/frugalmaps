@@ -11,7 +11,8 @@ import {
 import BlurView from "./BlurView";
 import emitter from "tiny-emitter/instance";
 import { NOW, UPCOMING, BLUE } from "../utils/Colors";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, EvilIcons, Feather } from "@expo/vector-icons";
+import { ANDROID } from "../utils/Constants";
 
 export default forwardRef(({ data, layouts, onScroll, scrollOffset }, ref) => {
   return (
@@ -117,22 +118,31 @@ const Button = ({ layouts, index, children }) => {
   );
 };
 
+const AnimatedFeather = Animated.createAnimatedComponent(Feather);
+
 const FriendsButton = ({ scrollOffset, ...props }) => {
-  const [color] = useTitleColor(scrollOffset, props.index);
+  const [color] = useTitleColor(scrollOffset, props.index, BLUE);
   return (
     <Button {...props}>
-      <Animated.Text style={{ color: color.current }}>Friends</Animated.Text>
+      <AnimatedFeather
+        name="activity"
+        style={{
+          paddingHorizontal: 4,
+          color: color.current
+        }}
+        size={18}
+      />
     </Button>
   );
 };
 
-const AnimatedIcon = Animated.createAnimatedComponent(Ionicons);
+const AnimatedIonicons = Animated.createAnimatedComponent(Ionicons);
 
 const SearchButton = ({ scrollOffset, ...props }) => {
   const [color] = useTitleColor(scrollOffset, props.index, BLUE);
   return (
     <Button {...props}>
-      <AnimatedIcon
+      <AnimatedIonicons
         name="ios-search"
         style={{
           paddingHorizontal: 6,
@@ -144,11 +154,20 @@ const SearchButton = ({ scrollOffset, ...props }) => {
   );
 };
 
+const AnimatedEvilIcons = Animated.createAnimatedComponent(EvilIcons);
+
 const AllButton = ({ scrollOffset, ...props }) => {
-  const [color] = useTitleColor(scrollOffset, props.index);
+  const [color] = useTitleColor(scrollOffset, props.index, BLUE);
   return (
     <Button {...props}>
-      <Animated.Text style={{ color: color.current }}>All</Animated.Text>
+      <AnimatedEvilIcons
+        name="calendar"
+        style={{
+          marginTop: 3.5,
+          color: color.current
+        }}
+        size={28}
+      />
     </Button>
   );
 };
@@ -201,7 +220,7 @@ function useTitleColor(scrollOffset, index, highlightColor, dimColor) {
 
   const color = useRef(null);
 
-  const dimmed = dimColor || "#777";
+  const dimmed = dimColor || "#888";
 
   const highlight = highlightColor || "#000";
 
@@ -228,12 +247,12 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: ANDROID ? "700" : "600",
     color: "#777"
   },
   subText: {
     fontSize: 12,
-    fontWeight: "700",
-    color: "#777"
+    fontWeight: ANDROID ? "700" : "600",
+    color: "#888"
   }
 });

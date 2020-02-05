@@ -9,6 +9,7 @@
     "postinstall": "rm -rf ./node_modules/expo/node_modules/expo-font/"
   },
   "dependencies": {
+    "@react-native-community/viewpager": "2.0.2",
     "clipboard-copy": "^3.0.0",
     "expo": "~36.0.0",
     "expo-asset": "~8.0.0",

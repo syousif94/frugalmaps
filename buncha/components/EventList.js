@@ -20,6 +20,8 @@ import SearchList from "./SearchList";
 import * as Events from "../store/events";
 import { EventListContext, EventListProvider } from "./EventListContext";
 import { MarkerMapView } from "../screens/MapScreen";
+import ViewPager from "@react-native-community/viewpager";
+import { ANDROID, IOS } from "../utils/Constants";
 
 export const EXPOSED_LIST = 200;
 
@@ -100,9 +102,13 @@ const EventList = memo(() => {
         index = key;
       }
 
-      listRef.current.getNode().scrollTo({
-        x: index * Dimensions.get("window").width
-      });
+      if (ANDROID) {
+        listRef.current.setPage(index);
+      } else {
+        listRef.current.getNode().scrollTo({
+          x: index * Dimensions.get("window").width
+        });
+      }
     };
 
     emitter.on("page-lists", onPageTo);
@@ -142,30 +148,13 @@ const EventList = memo(() => {
             height: dimensions.height * 0.9
           }}
         >
-          <Animated.ScrollView
+          <PagerView
             ref={listRef}
-            contentOffset={{
-              x: initialOffset,
-              y: 0
-            }}
-            onScroll={Animated.forkEvent(
-              Animated.event([
-                { nativeEvent: { contentOffset: { x: scrollOffset.current } } }
-              ]),
-              e => {
-                onPagerScroll(e.nativeEvent.contentOffset.x);
-              }
-            )}
-            scrollEventThrottle={16}
-            onScrollBeginDrag={onPagerBeginDrag}
-            onMomentumScrollEnd={onPagerScrollEnd}
-            pagingEnabled
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            removeClippedSubviews
-            contentInsetAdjustmentBehavior="never"
-            keyboardShouldPersistTaps="handled"
-            nestedScrollEnabled
+            scrollOffset={scrollOffset}
+            onPagerBeginDrag={onPagerBeginDrag}
+            onPagerScroll={onPagerScroll}
+            onPagerScrollEnd={onPagerScrollEnd}
+            initialOffset={initialOffset}
           >
             {data.map((item, index) => {
               switch (index) {
@@ -181,7 +170,7 @@ const EventList = memo(() => {
                   );
               }
             })}
-          </Animated.ScrollView>
+          </PagerView>
           <EventListBar
             data={data}
             ref={footerRef}
@@ -276,6 +265,75 @@ function makeData(occurringTags, data) {
   });
 }
 
+const PagerView = React.forwardRef(
+  (
+    {
+      onPagerScroll,
+      onPagerBeginDrag,
+      onPagerScrollEnd,
+      scrollOffset,
+      children,
+      initialOffset
+    },
+    ref
+  ) => {
+    if (ANDROID) {
+      return (
+        <ViewPager
+          ref={ref}
+          style={{ flex: 1 }}
+          initialPage={2}
+          onPageScroll={({ nativeEvent: { position, offset } }) => {
+            const x = (position + offset) * Dimensions.get("window").width;
+            onPagerScroll(x);
+            scrollOffset.current.setValue(x);
+          }}
+          onPageScrollStateChanged={({
+            nativeEvent: { pageScrollState: state }
+          }) => {
+            if (state === "dragging") {
+              onPagerBeginDrag();
+            } else if (state === "idle") {
+              onPagerScrollEnd();
+            }
+          }}
+        >
+          {children}
+        </ViewPager>
+      );
+    }
+    return (
+      <Animated.ScrollView
+        ref={ref}
+        contentOffset={{
+          x: initialOffset,
+          y: 0
+        }}
+        onScroll={Animated.forkEvent(
+          Animated.event([
+            { nativeEvent: { contentOffset: { x: scrollOffset.current } } }
+          ]),
+          e => {
+            onPagerScroll(e.nativeEvent.contentOffset.x);
+          }
+        )}
+        scrollEventThrottle={16}
+        onScrollBeginDrag={onPagerBeginDrag}
+        onMomentumScrollEnd={onPagerScrollEnd}
+        pagingEnabled
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        removeClippedSubviews
+        contentInsetAdjustmentBehavior="never"
+        keyboardShouldPersistTaps="handled"
+        nestedScrollEnabled
+      >
+        {children}
+      </Animated.ScrollView>
+    );
+  }
+);
+
 const UpcomingList = () => {
   const data = useSelector(state => state.events.upNext, shallowEqual);
   return <BaseList data={data} index={0} />;
@@ -286,6 +344,8 @@ const TaggedList = ({ item, index }) => {
   const data = item.ids.map(id => events[id]);
   return <BaseList data={data} index={index} title={item.key} />;
 };
+
+const LIST_BAR_HEIGHT = 40 + 12 + 2;
 
 const BaseList = ({ data, index, title }) => {
   const listRef = useRef(null);
@@ -327,6 +387,13 @@ const BaseList = ({ data, index, title }) => {
         }
       }
     : {};
+
+  const itemWidth = widescreen
+    ? (dimensions.width - itemMargin) * 33.33 - itemMargin
+    : dimensions.width - itemMargin * 2;
+
+  let paddingTop = (widescreen ? itemMargin : 10) + LIST_BAR_HEIGHT;
+
   return (
     <View style={{ width: dimensions.width }}>
       <FlatList
@@ -335,7 +402,7 @@ const BaseList = ({ data, index, title }) => {
         scrollEnabled={false}
         data={data}
         contentContainerStyle={{
-          paddingTop: 40 + 12 + 2 + (widescreen ? itemMargin : 10),
+          paddingTop,
           paddingBottom: insets.bottom,
           paddingHorizontal: itemMargin / 2
         }}
@@ -353,6 +420,7 @@ const BaseList = ({ data, index, title }) => {
                 height: null
               }}
               listTitle={title}
+              width={itemWidth}
             />
           );
         }}
