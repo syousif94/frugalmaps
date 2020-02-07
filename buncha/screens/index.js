@@ -3,7 +3,8 @@ import {
   createAppContainer,
   createStackNavigator,
   NavigationActions,
-  createSwitchNavigator
+  createSwitchNavigator,
+  createBottomTabNavigator
 } from "react-navigation";
 import { View, StyleSheet } from "react-native";
 import { ScreenOrientation } from "expo";
@@ -18,8 +19,10 @@ import FilterView from "../components/FilterView";
 import InterestedModal from "../components/InterestedModal";
 import PlanScreen from "./PlanScreen";
 import Browser from "../components/Browser";
+import TabBar from "../components/TabBar";
 import User from "../utils/User";
-import { NARROW } from "../utils/Constants";
+import { NARROW, ANDROID } from "../utils/Constants";
+import EventList from "../components/EventList";
 
 async function lockOrientation() {
   if (NARROW) {
@@ -36,38 +39,76 @@ async function lockOrientation() {
 lockOrientation();
 
 function makeAppContainer() {
+  let Tabs;
+
+  if (ANDROID) {
+    const TabScreen = createBottomTabNavigator(
+      {
+        UpNext: {
+          screen: UpNextScreen,
+          path: ""
+        },
+        List: {
+          screen: EventList,
+          path: "list"
+        },
+        Account: {
+          screen: AccountScreen,
+          path: "account"
+        },
+        Submit: {
+          screen: SubmitScreen,
+          path: "submit"
+        }
+      },
+      {
+        tabBarComponent: props => <TabBar {...props} />
+      }
+    );
+
+    Tabs = {
+      screen: TabScreen
+    };
+  } else {
+    Tabs = {
+      screen: UpNextScreen
+    };
+  }
+
   const MainRouter = createSwitchNavigator(
     {
       Intro: {
         screen: IntroScreen
       },
-      Tabs: {
-        screen: UpNextScreen
-      }
+      Tabs
     },
     {
       initialRouteName: /** User.needsIntro ? "Intro" :*/ "Tabs"
     }
   );
 
-  const RootScreen = createStackNavigator(
-    {
-      Main: {
-        screen: MainRouter,
-        path: ""
-      },
-      Detail: {
-        screen: DetailScreen,
-        path: "e/:id"
-      },
-      Plan: {
-        screen: PlanScreen,
-        path: "plan/:eid"
-      },
-      Planned: {
-        screen: PlanScreen,
-        path: "p/:id"
-      },
+  let stackConfig = {
+    Main: {
+      screen: MainRouter,
+      path: ""
+    },
+    Detail: {
+      screen: DetailScreen,
+      path: "e/:id"
+    },
+    Plan: {
+      screen: PlanScreen,
+      path: "plan/:eid"
+    },
+    Planned: {
+      screen: PlanScreen,
+      path: "p/:id"
+    }
+  };
+
+  if (!ANDROID) {
+    stackConfig = {
+      ...stackConfig,
       Account: {
         screen: AccountScreen,
         path: "account"
@@ -76,11 +117,12 @@ function makeAppContainer() {
         screen: SubmitScreen,
         path: "submit"
       }
-    },
-    {
-      headerMode: "none"
-    }
-  );
+    };
+  }
+
+  const RootScreen = createStackNavigator(stackConfig, {
+    headerMode: "none"
+  });
 
   return createAppContainer(RootScreen);
 }

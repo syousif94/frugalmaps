@@ -1,27 +1,20 @@
 import React from "react";
-import { Text, StyleSheet, View, Dimensions } from "react-native";
-import { getInset } from "../utils/SafeAreaInsets";
-import { IOS } from "../utils/Constants";
+import { Text, StyleSheet, View } from "react-native";
 import { navigate } from "../screens";
 import { BLUE, RED } from "../utils/Colors";
 import { FontAwesome, EvilIcons, Feather } from "@expo/vector-icons";
 import BlurView from "./BlurView";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { buttonHeight } from "./PickerButton";
-import * as Filters from "../store/filters";
+import { ANDROID } from "../utils/Constants";
+import TagList from "./TagList";
 
-let bottomInset = IOS ? getInset("bottom") : 0;
-
-if (bottomInset === 0) {
-  bottomInset = 5;
-} else if (bottomInset > 25) {
-  bottomInset -= 10;
-}
-
+const bottomInset = 5;
 const topPadding = 5;
 const topBorderWidth = 1;
+const buttonHeight = 44;
 
-const tabBarHeight = bottomInset + buttonHeight + topPadding + topBorderWidth;
+const tabBarHeight =
+  topPadding + buttonHeight * 2 + topPadding + topBorderWidth + bottomInset;
 
 export { tabBarHeight };
 
@@ -34,51 +27,59 @@ export default ({ navigation }) => {
 
   const iC = iconColor(routeKey);
 
-  const enableSort = !!routeKey.match(/(upnext|map)/gi);
-
   return (
     <BlurView style={styles.container}>
       <View style={styles.content}>
-        <View style={{ flex: 1 }}>
+        <TagList
+          contentContainerStyle={{ paddingHorizontal: 2.5 }}
+          buttonStyle={{ marginRight: null, marginHorizontal: 2.5 }}
+        />
+        <View style={styles.navButtons}>
+          <View style={{ flex: 1 }}>
+            <TouchableOpacity
+              style={{
+                marginHorizontal: 2.5,
+                height: buttonHeight,
+                borderRadius: 6,
+                backgroundColor: "rgba(180,180,180,0.1)"
+              }}
+              onPress={() => {}}
+            />
+          </View>
+
           <TouchableOpacity
-            style={[
-              styles.roundBtn,
-              {
-                marginLeft: 2.5,
-                borderTopLeftRadius: 6,
-                borderBottomLeftRadius: 6
-              }
-            ]}
+            style={styles.roundBtn}
             onPress={() => {
               navigate("UpNext");
             }}
           >
-            <EvilIcons name="calendar" size={28} color={iC("UpNext")} />
+            <FontAwesome name="map-o" size={16} color={iC("UpNext")} />
             <Text
               allowFontScaling={false}
-              style={[styles.buttonText, { marginTop: -3 }]}
-            >
-              List
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View style={{ flex: 1 }}>
-          <TouchableOpacity
-            style={styles.roundBtn}
-            onPress={() => {
-              navigate("Map");
-            }}
-          >
-            <FontAwesome name="map-o" size={16} color={iC("Map")} />
-            <Text
-              allowFontScaling={false}
-              style={[styles.buttonText, { marginTop: 3 }]}
+              style={[styles.buttonText, { marginTop: 2, color: iC("UpNext") }]}
             >
               Map
             </Text>
           </TouchableOpacity>
-        </View>
-        <View style={{ flex: 1 }}>
+
+          <TouchableOpacity
+            style={styles.roundBtn}
+            onPress={() => {
+              navigate("List");
+            }}
+          >
+            <EvilIcons name="calendar" size={28} color={iC("List")} />
+            <Text
+              allowFontScaling={false}
+              style={[
+                styles.buttonText,
+                { marginTop: -1.5, color: iC("List") }
+              ]}
+            >
+              List
+            </Text>
+          </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.roundBtn}
             onPress={() => {
@@ -95,7 +96,10 @@ export default ({ navigation }) => {
               <Feather name="activity" size={18} color={iC("Account")} />
               <Text
                 allowFontScaling={false}
-                style={[styles.buttonText, { marginTop: 3 }]}
+                style={[
+                  styles.buttonText,
+                  { marginTop: 1, color: iC("Account") }
+                ]}
               >
                 Feed
               </Text>
@@ -104,19 +108,15 @@ export default ({ navigation }) => {
               </View>
             </View>
           </TouchableOpacity>
-        </View>
-        <View style={{ flex: 1 }}>
+
           <TouchableOpacity
-            style={[styles.roundBtn]}
+            style={styles.roundBtn}
             onPress={() => {
               navigate("Submit");
             }}
           >
             <Feather name="plus" size={20} color={iC("Submit")} />
-            <Text
-              allowFontScaling={false}
-              style={[styles.buttonText, { marginTop: 2 }]}
-            >
+            <Text allowFontScaling={false} style={[styles.buttonText]}>
               Add
             </Text>
           </TouchableOpacity>
@@ -137,26 +137,33 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     right: 0,
-    left: 0
+    left: 0,
+    height: tabBarHeight
   },
   content: {
+    flex: 1,
+    paddingTop: topPadding,
+    borderTopWidth: topBorderWidth,
+    borderColor: "rgba(0,0,0,0.05)"
+  },
+  navButtons: {
+    paddingTop: topPadding,
     maxWidth: 500,
     alignSelf: "center",
-    borderTopWidth: topBorderWidth,
-    borderColor: "rgba(0,0,0,0.05)",
-    flexDirection: "row",
-    width: "100%",
-    paddingTop: topPadding,
     paddingHorizontal: 2.5,
-    paddingBottom: bottomInset
+    paddingBottom: bottomInset,
+    flexDirection: "row",
+    width: "100%"
   },
   roundBtn: {
     height: buttonHeight,
+    width: buttonHeight,
     alignItems: "center",
     justifyContent: "flex-end",
-    paddingBottom: 5
-    // backgroundColor: "rgba(180,180,180,0.1)",
-    // marginHorizontal: 0.5
+    paddingBottom: 3.5,
+    backgroundColor: "rgba(180,180,180,0.1)",
+    marginHorizontal: 2.5,
+    borderRadius: 6
   },
   selected: {
     color: BLUE
@@ -168,18 +175,19 @@ const styles = StyleSheet.create({
   },
   badge: {
     position: "absolute",
-    top: 1,
+    top: 4,
     right: -7,
     borderRadius: 5,
     height: 10,
-    paddingHorizontal: 2,
+    paddingLeft: 2,
+    paddingRight: 2.5,
     justifyContent: "center",
     backgroundColor: RED
   },
   badgeText: {
-    marginTop: 0.5,
+    marginTop: ANDROID ? null : 0.5,
     fontSize: 6,
-    fontWeight: "900",
+    fontWeight: ANDROID ? "700" : "900",
     color: "#fff",
     backgroundColor: "transparent"
   }

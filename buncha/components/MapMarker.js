@@ -17,7 +17,8 @@ class MapMarker extends Component {
   static offset = { x: 0, y: -28 * MapMarker.miniScale };
 
   state = {
-    selected: false
+    selected: false,
+    tracksViewChanges: true
   };
 
   componentDidMount() {
@@ -31,6 +32,7 @@ class MapMarker extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     return (
+      this.state.tracksViewChanges !== nextState.tracksViewChanges ||
       this.state.selected !== nextState.selected ||
       nextProps.data._id !== this.props.data._id ||
       nextProps.color !== this.props.color
@@ -61,7 +63,8 @@ class MapMarker extends Component {
       emitter.on("deselect-marker", this._onDeselect);
     }
     this.setState({
-      selected: true
+      selected: true,
+      tracksViewChanges: true
     });
     this.props.selectEvent(this.props.data._id);
   };
@@ -69,7 +72,8 @@ class MapMarker extends Component {
   _onDeselect = () => {
     this.props.deselectEvent(this.props.data._id);
     this.setState({
-      selected: false
+      selected: false,
+      tracksViewChanges: false
     });
     if (ANDROID) {
       emitter.off("deselect-marker", this._onDeselect);
@@ -78,6 +82,16 @@ class MapMarker extends Component {
 
   _setRef = ref => {
     this._marker = ref;
+  };
+
+  _stopTracking = () => {
+    if (ANDROID) {
+      setTimeout(() => {
+        this.setState({
+          tracksViewChanges: false
+        });
+      }, 150);
+    }
   };
 
   render() {
@@ -130,7 +144,8 @@ class MapMarker extends Component {
 
     const androidProps = ANDROID
       ? {
-          onPress: this._onSelect
+          onPress: this._onSelect,
+          tracksViewChanges: this.state.tracksViewChanges
         }
       : {};
 
@@ -141,11 +156,14 @@ class MapMarker extends Component {
         ref={this._setRef}
         onSelect={this._onSelect}
         onDeselect={this._onDeselect}
-        identifier={item.placeid}
         {...androidProps}
       >
         <View style={markerStyle}>
-          <Image source={pinSource} style={imageStyle} />
+          <Image
+            source={pinSource}
+            style={imageStyle}
+            onLoad={this._stopTracking}
+          />
           <View style={spotStyle}>
             {time ? (
               <Text allowFontScaling={false} style={styles.indexText}>

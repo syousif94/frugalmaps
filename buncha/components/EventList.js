@@ -392,7 +392,7 @@ const BaseList = ({ data, index, title }) => {
     ? (dimensions.width - itemMargin) * 33.33 - itemMargin
     : dimensions.width - itemMargin * 2;
 
-  let paddingTop = (widescreen ? itemMargin : 10) + LIST_BAR_HEIGHT;
+  const paddingTop = (widescreen ? itemMargin : 10) + LIST_BAR_HEIGHT;
 
   return (
     <View style={{ width: dimensions.width }}>

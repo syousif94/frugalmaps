@@ -8,8 +8,20 @@ export default function locate() {
       maximumAge: 15 * 60 * 1000
     });
   } else {
-    return Location.getLastKnownPositionAsync();
+    return getLocation();
   }
+}
+
+async function getLocation() {
+  try {
+    const location = await Location.getLastKnownPositionAsync();
+    return location;
+  } catch (error) {}
+  const location = await Location.getCurrentPositionAsync({
+    enableHighAccuracy: false,
+    maximumAge: 15 * 60 * 1000
+  });
+  return location;
 }
 
 export function distanceTo(item) {

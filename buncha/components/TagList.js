@@ -7,6 +7,7 @@ import * as Events from "../store/events";
 import { UPCOMING, NOW } from "../utils/Colors";
 import { itemRemaining } from "../utils/Time";
 import { usePreventBackScroll } from "../utils/Hooks";
+import { ANDROID } from "../utils/Constants";
 
 export default ({ style, buttonStyle, contentContainerStyle }) => {
   const scrollRef = useRef(null);
@@ -94,14 +95,25 @@ export default ({ style, buttonStyle, contentContainerStyle }) => {
         ]}
       >
         {tags.map((tag, index) => {
-          return <Button tag={tag} key={`${index}`} style={buttonStyle} />;
+          return (
+            <Button
+              index={index}
+              tag={tag}
+              key={`${index}`}
+              style={buttonStyle}
+            />
+          );
         })}
       </ScrollView>
     </View>
   );
 };
 
-const Button = ({ tag: { text, count, ending, upcoming, subtext }, style }) => {
+const Button = ({
+  tag: { text, count, ending, upcoming, subtext },
+  style,
+  index
+}) => {
   const dispatch = useDispatch();
   const tag = useSelector(state => state.events.tag);
   const selected = tag === text;
@@ -125,19 +137,21 @@ const Button = ({ tag: { text, count, ending, upcoming, subtext }, style }) => {
       onPress={onPress}
     >
       <Text
+        allowFontScaling={false}
         style={{
           fontSize: 14,
           color: selected ? "#000" : "#666",
-          fontWeight: "500"
+          fontWeight: ANDROID ? "700" : "500"
         }}
       >
-        {_.lowerCase(text)}
+        {index + 1}. {_.lowerCase(text)}
         <Text style={{ color: "#999" }}> {count}</Text>
       </Text>
       <Text
+        allowFontScaling={false}
         style={{
           fontSize: 12,
-          fontWeight: "600",
+          fontWeight: ANDROID ? "700" : "600",
           color: ending ? NOW : upcoming ? UPCOMING : "#999"
         }}
       >

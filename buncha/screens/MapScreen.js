@@ -1,8 +1,6 @@
-import React, { useRef, useEffect, useState, memo } from "react";
+import React, { useRef, useEffect, memo } from "react";
 import { useSelector, shallowEqual } from "react-redux";
-import { StyleSheet, View, ActivityIndicator } from "react-native";
 import MapView from "react-native-maps";
-import TopBar, { topBarHeight } from "../components/TopBar";
 import Marker from "../components/MapMarker";
 import {
   itemTimeForDay,
@@ -13,89 +11,9 @@ import { useEveryMinute } from "../utils/Hooks";
 import MapEventButton from "../components/MapEventButton";
 import { ANDROID } from "../utils/Constants";
 import emitter from "tiny-emitter/instance";
-import MapMarkerList from "../components/MapMarkerList";
-import { itemMargin } from "../components/UpNextItem";
-import SortBar from "../components/SortBar";
 import { tabBarHeight } from "../components/TabBar";
 import { useSafeArea } from "react-native-safe-area-context";
 import locate, { distanceTo } from "../utils/Locate";
-
-export default () => {
-  return (
-    <View style={styles.container}>
-      <View style={styles.container}>
-        <View style={styles.container}>
-          <MarkerMapView />
-          {/* <MapListsView /> */}
-          <MapEventButton />
-          <IndicatorView />
-        </View>
-        <TopBar
-          style={{ paddingHorizontal: itemMargin }}
-          containerStyle={{
-            position: "absolute",
-            top: 0,
-            left: 0
-          }}
-        />
-      </View>
-    </View>
-  );
-};
-
-const MapListsView = () => {
-  const [sortHeight, setSortHeight] = useState(0);
-  return (
-    <View
-      style={{
-        position: "absolute",
-        left: 0,
-        right: 0,
-        bottom: tabBarHeight
-      }}
-    >
-      <MapMarkerList offset={sortHeight} />
-      <SortBar
-        onLayout={e => {
-          const { height } = e.nativeEvent.layout;
-          setSortHeight(height);
-        }}
-        style={{
-          backgroundColor: null
-        }}
-        contentContainerStyle={{
-          paddingTop: 0,
-          paddingBottom: 8
-        }}
-        buttonStyle={{
-          paddingVertical: 3,
-          paddingRight: 3,
-          paddingLeft: 4,
-          shadowColor: "#000",
-          shadowOffset: {
-            width: 0,
-            height: 1
-          },
-          shadowOpacity: 0.22,
-          shadowRadius: 2.22,
-          elevation: 3
-        }}
-      />
-    </View>
-  );
-};
-
-const IndicatorView = () => {
-  const refreshing = useSelector(state => state.events.refreshing);
-  if (!refreshing) {
-    return null;
-  }
-  return (
-    <View style={styles.loading} pointerEvents="none">
-      <ActivityIndicator size="large" color="#000" />
-    </View>
-  );
-};
 
 export const MarkerMapView = memo(() => {
   const insets = useSafeArea();
@@ -223,7 +141,7 @@ export const MarkerMapView = memo(() => {
 
         const zIndex = allMarkers.length - markers.length;
 
-        const key = `${_id}${timeText}${zIndex}`;
+        const key = `${_id}${timeText}`;
 
         markers.push(
           <Marker
@@ -239,17 +157,4 @@ export const MarkerMapView = memo(() => {
       }, [])}
     </MapView>
   );
-});
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    overflow: "hidden"
-  },
-  loading: {
-    position: "absolute",
-    top: topBarHeight + 55,
-    alignSelf: "center"
-  }
 });
