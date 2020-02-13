@@ -21,8 +21,7 @@ import PlanScreen from "./PlanScreen";
 import Browser from "../components/Browser";
 import TabBar from "../components/TabBar";
 import User from "../utils/User";
-import { NARROW, ANDROID } from "../utils/Constants";
-import EventList from "../components/EventList";
+import { NARROW } from "../utils/Constants";
 
 async function lockOrientation() {
   if (NARROW) {
@@ -39,48 +38,34 @@ async function lockOrientation() {
 lockOrientation();
 
 function makeAppContainer() {
-  let Tabs;
-
-  if (ANDROID) {
-    const TabScreen = createBottomTabNavigator(
-      {
-        UpNext: {
-          screen: UpNextScreen,
-          path: ""
-        },
-        List: {
-          screen: EventList,
-          path: "list"
-        },
-        Account: {
-          screen: AccountScreen,
-          path: "account"
-        },
-        Submit: {
-          screen: SubmitScreen,
-          path: "submit"
-        }
+  const TabScreen = createBottomTabNavigator(
+    {
+      UpNext: {
+        screen: UpNextScreen,
+        path: ""
       },
-      {
-        tabBarComponent: props => <TabBar {...props} />
+      Account: {
+        screen: AccountScreen,
+        path: "account"
+      },
+      Submit: {
+        screen: SubmitScreen,
+        path: "submit"
       }
-    );
-
-    Tabs = {
-      screen: TabScreen
-    };
-  } else {
-    Tabs = {
-      screen: UpNextScreen
-    };
-  }
+    },
+    {
+      tabBarComponent: props => <TabBar {...props} />
+    }
+  );
 
   const MainRouter = createSwitchNavigator(
     {
       Intro: {
         screen: IntroScreen
       },
-      Tabs
+      Tabs: {
+        screen: TabScreen
+      }
     },
     {
       initialRouteName: /** User.needsIntro ? "Intro" :*/ "Tabs"
@@ -105,20 +90,6 @@ function makeAppContainer() {
       path: "p/:id"
     }
   };
-
-  if (!ANDROID) {
-    stackConfig = {
-      ...stackConfig,
-      Account: {
-        screen: AccountScreen,
-        path: "account"
-      },
-      Submit: {
-        screen: SubmitScreen,
-        path: "submit"
-      }
-    };
-  }
 
   const RootScreen = createStackNavigator(stackConfig, {
     headerMode: "none"

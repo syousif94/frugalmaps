@@ -22,9 +22,9 @@ import emitter from "tiny-emitter/instance";
 import FilterView from "../components/FilterView";
 import { InputProvider } from "../components/InputContext";
 import TagList from "../components/TagList";
-import EventList from "../components/EventList";
 import RefreshButton from "../components/RefreshButton";
-import { MarkerMapView } from "./MapScreen";
+import MapView from "../components/MapView";
+import EventList from "../components/EventList";
 
 const medium = 780;
 const narrow = 550;
@@ -212,7 +212,8 @@ export default ({ intro = false }) => {
           </React.Fragment>
         ) : (
           <View style={styles.list}>
-            {ANDROID ? <MarkerMapView /> : <EventList />}
+            <MapView />
+            <EventList />
             {refreshing ? (
               <View style={styles.loading}>
                 <ActivityIndicator size="large" color="#000" />

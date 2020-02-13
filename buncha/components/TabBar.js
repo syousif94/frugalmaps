@@ -6,15 +6,19 @@ import { FontAwesome, EvilIcons, Feather } from "@expo/vector-icons";
 import BlurView from "./BlurView";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { ANDROID } from "../utils/Constants";
-import TagList from "./TagList";
+import TagList, { TAG_LIST_HEIGHT } from "./TagList";
+import { getInset } from "../utils/SafeAreaInsets";
 
-const bottomInset = 5;
+let bottomInset = getInset("bottom");
+if (bottomInset < 20) {
+  bottomInset += 5;
+}
 const topPadding = 5;
 const topBorderWidth = 1;
 const buttonHeight = 44;
 
 const tabBarHeight =
-  topPadding + buttonHeight * 2 + topPadding + topBorderWidth + bottomInset;
+  buttonHeight + TAG_LIST_HEIGHT + topBorderWidth + bottomInset;
 
 export { tabBarHeight };
 
@@ -30,10 +34,7 @@ export default ({ navigation }) => {
   return (
     <BlurView style={styles.container}>
       <View style={styles.content}>
-        <TagList
-          contentContainerStyle={{ paddingHorizontal: 2.5 }}
-          buttonStyle={{ marginRight: null, marginHorizontal: 2.5 }}
-        />
+        <TagList contentContainerStyle={{ padding: 2.5 }} />
         <View style={styles.navButtons}>
           <View style={{ flex: 1 }}>
             <TouchableOpacity
@@ -59,24 +60,6 @@ export default ({ navigation }) => {
               style={[styles.buttonText, { marginTop: 2, color: iC("UpNext") }]}
             >
               Map
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.roundBtn}
-            onPress={() => {
-              navigate("List");
-            }}
-          >
-            <EvilIcons name="calendar" size={28} color={iC("List")} />
-            <Text
-              allowFontScaling={false}
-              style={[
-                styles.buttonText,
-                { marginTop: -1.5, color: iC("List") }
-              ]}
-            >
-              List
             </Text>
           </TouchableOpacity>
 
@@ -142,12 +125,10 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingTop: topPadding,
     borderTopWidth: topBorderWidth,
     borderColor: "rgba(0,0,0,0.05)"
   },
   navButtons: {
-    paddingTop: topPadding,
     maxWidth: 500,
     alignSelf: "center",
     paddingHorizontal: 2.5,

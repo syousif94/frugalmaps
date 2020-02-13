@@ -238,10 +238,12 @@ export function timeRemaining(hours, iso) {
     remaining = "";
 
     if (hour) {
-      remaining += `${hour}h `;
+      remaining += `${hour}h`;
     }
 
-    remaining += `${minutes}m`;
+    if ((!hour || ending) && minutes) {
+      remaining += `${hour ? " " : ""}${minutes}m`;
+    }
   }
 
   const ended =
@@ -474,7 +476,7 @@ export function itemRemaining(item) {
     text = `${start} ${LONG_DAYS[day]}`;
   }
 
-  const duration = ending ? ` ${remaining} left` : ` til ${end}`;
+  const duration = ending ? `${remaining} left` : `${remaining} away`;
 
   return {
     text,

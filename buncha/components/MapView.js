@@ -15,7 +15,7 @@ import { tabBarHeight } from "../components/TabBar";
 import { useSafeArea } from "react-native-safe-area-context";
 import locate, { distanceTo } from "../utils/Locate";
 
-export const MarkerMapView = memo(() => {
+export default memo(() => {
   const insets = useSafeArea();
   const mapView = useRef(null);
   const bounds = useSelector(state => state.events.bounds, shallowEqual);
@@ -44,10 +44,10 @@ export const MarkerMapView = memo(() => {
       mapView.current.fitToCoordinates(coords, {
         animated: false,
         edgePadding: {
-          top: insets.top - 10,
+          top: ANDROID ? -50 : insets.top - 10,
           left: 20,
           right: 20,
-          bottom: 0
+          bottom: tabBarHeight + (ANDROID ? 260 : 100)
         }
       });
     });
@@ -82,10 +82,10 @@ export const MarkerMapView = memo(() => {
         mapView.current.fitToCoordinates(coords, {
           animated: false,
           edgePadding: {
-            top: insets.top - 10,
+            top: ANDROID ? -50 : insets.top - 10,
             left: 20,
             right: 20,
-            bottom: 10
+            bottom: tabBarHeight + (ANDROID ? 260 : 100)
           }
         });
       });
