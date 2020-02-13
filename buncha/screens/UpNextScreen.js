@@ -212,7 +212,7 @@ export default ({ intro = false }) => {
           </React.Fragment>
         ) : (
           <View style={styles.list}>
-            <MapView />
+            {/* <MapView /> */}
             <EventList />
             {refreshing ? (
               <View style={styles.loading}>

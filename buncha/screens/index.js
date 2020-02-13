@@ -38,33 +38,13 @@ async function lockOrientation() {
 lockOrientation();
 
 function makeAppContainer() {
-  const TabScreen = createBottomTabNavigator(
-    {
-      UpNext: {
-        screen: UpNextScreen,
-        path: ""
-      },
-      Account: {
-        screen: AccountScreen,
-        path: "account"
-      },
-      Submit: {
-        screen: SubmitScreen,
-        path: "submit"
-      }
-    },
-    {
-      tabBarComponent: props => <TabBar {...props} />
-    }
-  );
-
   const MainRouter = createSwitchNavigator(
     {
       Intro: {
         screen: IntroScreen
       },
       Tabs: {
-        screen: TabScreen
+        screen: UpNextScreen
       }
     },
     {
@@ -88,6 +68,14 @@ function makeAppContainer() {
     Planned: {
       screen: PlanScreen,
       path: "p/:id"
+    },
+    Account: {
+      screen: AccountScreen,
+      path: "account"
+    },
+    Submit: {
+      screen: SubmitScreen,
+      path: "submit"
     }
   };
 

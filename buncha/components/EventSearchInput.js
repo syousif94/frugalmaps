@@ -40,7 +40,12 @@ function Icon({ searching }) {
           color="#ccc"
         />
       ) : (
-        <Ionicons name="ios-search" size={WEB ? 18 : 24} color={BLUE} />
+        <Ionicons
+          name="ios-search"
+          size={WEB ? 18 : 20}
+          color={BLUE}
+          style={{ marginTop: 1 }}
+        />
       )}
     </View>
   );
@@ -75,7 +80,7 @@ export default React.forwardRef(
           blurOnSubmit
           render={() => <Icon searching={searching} />}
           backgroundColor="rgba(180,180,180,0.1)"
-          containerStyle={{ flex: 1, borderRadius: 6 }}
+          containerStyle={{ flex: 1, borderRadius: 3 }}
           style={styles.input}
           {...props}
         />
@@ -88,11 +93,11 @@ const styles = StyleSheet.create({
   icon: {
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 12
+    paddingHorizontal: 10
   },
   input: {
     paddingLeft: 0,
-    height: WEB ? buttonHeight - 2 : 40,
-    fontSize: WEB ? 14 : 17
+    height: WEB ? buttonHeight - 2 : 34,
+    fontSize: WEB ? 14 : 15
   }
 });

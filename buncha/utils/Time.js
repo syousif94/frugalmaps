@@ -418,7 +418,7 @@ export function itemRemaining(item) {
     group.days.find(day => day.iso === iso)
   );
 
-  const { remaining: r, ending: e, ended: ed, tomorrow } = timeRemaining(
+  let { remaining: r, ending: e, ended: ed, tomorrow } = timeRemaining(
     spanHours,
     iso
   );
@@ -442,15 +442,22 @@ export function itemRemaining(item) {
     }
   }
 
-  if (!ending && (!spanHours.today || tomorrow || ended)) {
-    let away = tomorrow ? tomorrow.daysAway : spanHours.days[0].daysAway;
+  tomorrow = tomorrow || spanHours.days[0].daysAway === 1;
+
+  if (tomorrow) {
+    tomorrow = parseInt(remaining.replace("h", ""), 10) < 24;
+  }
+
+  if (!ending && !tomorrow && (!spanHours.today || ended)) {
+    let away = spanHours.days[0].daysAway;
     if (!away) {
       away = 7;
     }
     remaining = `${away}d`;
   }
 
-  const upcoming = !ended && !ending && spanHours.today;
+  const upcoming =
+    (!ended && !ending && spanHours.today) || (tomorrow && !ending);
 
   let color = NOT_TODAY;
 
@@ -488,6 +495,7 @@ export function itemRemaining(item) {
     day,
     start,
     duration,
+    tomorrow,
     end
   };
 }

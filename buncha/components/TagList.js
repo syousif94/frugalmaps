@@ -9,9 +9,9 @@ import { itemRemaining } from "../utils/Time";
 import { usePreventBackScroll } from "../utils/Hooks";
 import { ANDROID } from "../utils/Constants";
 
-export const TAG_LIST_HEIGHT = 88;
+export const TAG_LIST_HEIGHT = 116;
 
-export default ({ style, buttonStyle, contentContainerStyle }) => {
+export default ({ style, buttonStyle }) => {
   const scrollRef = useRef(null);
   usePreventBackScroll(scrollRef);
   const occurringTags = useSelector(state => state.events.occurringTags);
@@ -27,11 +27,12 @@ export default ({ style, buttonStyle, contentContainerStyle }) => {
         horizontal
         contentContainerStyle={[
           {
-            height: TAG_LIST_HEIGHT
+            height: TAG_LIST_HEIGHT,
+            padding: 1
           }
         ]}
       >
-        <View style={contentContainerStyle}>
+        <View>
           {makeTags(
             occurringTags,
             countedTags,
@@ -47,7 +48,7 @@ export default ({ style, buttonStyle, contentContainerStyle }) => {
   );
 };
 
-const ROWS = 2;
+const ROWS = 3;
 
 function makeTags(occurringTags, countedTags, data, tagsCount, buttonStyle) {
   if (occurringTags && countedTags.length) {
@@ -64,7 +65,7 @@ function makeTags(occurringTags, countedTags, data, tagsCount, buttonStyle) {
         ? occurringTags.ending[key].length
         : 0;
 
-      const upcoming = occurringTags.upcoming[key]
+      let upcoming = occurringTags.upcoming[key]
         ? occurringTags.upcoming[key].length
         : 0;
 
@@ -78,8 +79,8 @@ function makeTags(occurringTags, countedTags, data, tagsCount, buttonStyle) {
           const key = keys[keys.length - 1];
           item = data[key];
           if (item) {
-            const { text } = itemRemaining(item);
-            subtext = text;
+            const { duration } = itemRemaining(item);
+            subtext = duration;
           }
         }
       } else if (upcoming) {
@@ -98,9 +99,14 @@ function makeTags(occurringTags, countedTags, data, tagsCount, buttonStyle) {
           const key = keys[0];
           item = data[key];
           if (item) {
-            const { remaining } = itemRemaining(item);
-            const daysAway = parseInt(remaining.replace("d", ""), 10);
-            subtext = `${daysAway} day${daysAway != 1 ? "s" : ""}`;
+            const { remaining, upcoming: u, start } = itemRemaining(item);
+            upcoming = u;
+            if (upcoming) {
+              subtext = start;
+            } else {
+              const away = parseInt(remaining.replace("d", ""), 10);
+              subtext = `${away} day${away != 1 ? "s" : ""}`;
+            }
           }
         }
       }
@@ -138,8 +144,8 @@ const Button = ({ tag: { text, count, ending, upcoming, subtext }, style }) => {
             ? "rgba(40,40,40,0.1)"
             : "rgba(180,180,180,0.1)",
           paddingHorizontal: 6,
-          borderRadius: 6,
-          margin: 2.5
+          borderRadius: 1,
+          margin: 1
         },
         style
       ]}
@@ -148,20 +154,21 @@ const Button = ({ tag: { text, count, ending, upcoming, subtext }, style }) => {
       <Text
         allowFontScaling={false}
         style={{
-          fontSize: 14,
-          color: "#666",
+          fontSize: 13,
+          color: "#333",
           fontWeight: ANDROID ? "700" : "600"
         }}
       >
         {_.lowerCase(text)}
-        <Text style={{ color: "#999" }}> {count}</Text>
+        <Text style={{ color: "#777" }}> {count}</Text>
       </Text>
       <Text
         allowFontScaling={false}
         style={{
-          fontSize: 12,
+          marginTop: ANDROID ? -1.5 : null,
+          fontSize: 11,
           fontWeight: ANDROID ? "700" : "600",
-          color: ending ? NOW : upcoming ? UPCOMING : "#999"
+          color: ending ? NOW : upcoming ? UPCOMING : "#777"
         }}
       >
         {subtext}

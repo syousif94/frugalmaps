@@ -14,6 +14,8 @@ import emitter from "tiny-emitter/instance";
 import { tabBarHeight } from "../components/TabBar";
 import { useSafeArea } from "react-native-safe-area-context";
 import locate, { distanceTo } from "../utils/Locate";
+import { Dimensions } from "react-native";
+import { TAG_LIST_HEIGHT } from "./TagList";
 
 export default memo(() => {
   const insets = useSafeArea();
@@ -47,7 +49,7 @@ export default memo(() => {
           top: ANDROID ? -50 : insets.top - 10,
           left: 20,
           right: 20,
-          bottom: tabBarHeight + (ANDROID ? 260 : 100)
+          bottom: TAG_LIST_HEIGHT
         }
       });
     });
@@ -85,7 +87,7 @@ export default memo(() => {
             top: ANDROID ? -50 : insets.top - 10,
             left: 20,
             right: 20,
-            bottom: tabBarHeight + (ANDROID ? 260 : 100)
+            bottom: TAG_LIST_HEIGHT
           }
         });
       });
