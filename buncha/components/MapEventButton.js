@@ -10,21 +10,18 @@ import {
 import { navigate } from "../screens";
 import { selectPlaceEvents } from "../store/events";
 import { itemRemaining } from "../utils/Time";
-import { useAnimateOn } from "../utils/Hooks";
-import { topBarHeight } from "./TopBar";
+import { useAnimateOn, useDimensions } from "../utils/Hooks";
 import ImageGallery from "./ImageGallery";
 import DaysText from "./DaysText";
-import { WIDTH } from "../utils/Constants";
-import { tabBarHeight } from "./TabBar";
 import PriceText from "./PriceText";
+import { TAG_LIST_HEIGHT } from "./TagList";
 import { useSafeArea } from "react-native-safe-area-context";
 
-const height = 165;
-
-const WIDESCREEN = WIDTH > 500;
-
-export default ({ scrollOffset }) => {
+export default () => {
+  const [dimensions] = useDimensions();
   const insets = useSafeArea();
+  const height = TAG_LIST_HEIGHT + insets.bottom + 7 + 34 + 6 + 8;
+
   const selectedEvent = useSelector(state => {
     const selected = state.events.selected;
     if (!selected) {
@@ -39,23 +36,12 @@ export default ({ scrollOffset }) => {
 
   const eventCount = `${events.length} event${events.length !== 1 ? "s" : ""}`;
 
-  const heightWithInset = WIDESCREEN ? height : height + insets.top;
-  const translateY = WIDESCREEN ? height : -heightWithInset;
-
   return (
-    <Animated.View
+    <View
       style={[
         styles.container,
         {
-          height: heightWithInset,
-          paddingTop: WIDESCREEN ? null : insets.top,
-          transform: WIDESCREEN
-            ? null
-            : [
-                {
-                  translateY: scrollOffset.current
-                }
-              ]
+          height
         }
       ]}
       pointerEvents="box-none"
@@ -69,7 +55,7 @@ export default ({ scrollOffset }) => {
               {
                 translateY: transform.current.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [translateY, 0]
+                  outputRange: [height, 0]
                 })
               }
             ]
@@ -88,8 +74,9 @@ export default ({ scrollOffset }) => {
           {!event ? null : (
             <View style={{ flex: 1 }}>
               <ImageGallery
-                photos={event._source.photos.slice(0, 7)}
-                height={60}
+                photos={event._source.photos}
+                height={90}
+                width={dimensions.width}
               />
               <View
                 style={{ flex: 1, paddingVertical: 5, paddingHorizontal: 10 }}
@@ -119,7 +106,7 @@ export default ({ scrollOffset }) => {
                   const time = itemRemaining(e);
                   let nameText = e._source.title;
                   return (
-                    <View style={{ marginTop: 3 }} key={`${index}`}>
+                    <View style={{ marginTop: 6 }} key={`${index}`}>
                       <Text
                         style={{
                           fontSize: 16,
@@ -132,12 +119,12 @@ export default ({ scrollOffset }) => {
                         {nameText}
                         <Text style={{ color: time.color, fontWeight: "700" }}>
                           {" "}
-                          {time.text}
+                          {time.text}{" "}
                           <Text style={{ fontSize: 11, color: "#888" }}>
                             {time.duration}{" "}
                           </Text>
                         </Text>
-                        <DaysText days={event._source.days} />
+                        <DaysText days={e._source.days} />
                       </Text>
                       <Text
                         style={{
@@ -149,7 +136,7 @@ export default ({ scrollOffset }) => {
                         numberOfLines={1}
                         allowFontScaling={false}
                       >
-                        {event._source.description}
+                        {e._source.description}
                       </Text>
                     </View>
                   );
@@ -159,29 +146,23 @@ export default ({ scrollOffset }) => {
           )}
         </TouchableOpacity>
       </Animated.View>
-    </Animated.View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: WIDESCREEN ? null : 0,
-    bottom: WIDESCREEN ? 44 + 44 + 18 : null,
+    bottom: 0,
     left: 0,
     right: 0,
-    overflow: "hidden",
-    paddingHorizontal: 8
+    overflow: "hidden"
   },
   slider: {
-    alignSelf: "center",
-    width: "100%",
-    maxWidth: 420,
     flex: 1,
-    marginTop: 4,
-    marginBottom: 8,
     backgroundColor: "#fff",
-    borderRadius: 8,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
     backgroundColor: "#fff",
     shadowColor: "#000",
     shadowOffset: {
@@ -194,7 +175,8 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
-    borderRadius: 8,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
     overflow: "hidden"
   },
   row: {

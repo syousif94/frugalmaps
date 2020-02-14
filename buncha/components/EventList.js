@@ -8,6 +8,7 @@ import BlurView from "./BlurView";
 import TagList, { TAG_LIST_HEIGHT } from "./TagList";
 import { useSafeArea } from "react-native-safe-area-context";
 import EventSearchInput from "./EventSearchInput";
+import MapEventButton from "./MapEventButton";
 
 export default () => {
   const headerView = useRef(<HeaderView />);
@@ -42,6 +43,7 @@ export default () => {
           );
         }}
       />
+      <MapEventButton />
     </View>
   );
 };
@@ -53,7 +55,7 @@ const HeaderView = () => {
     <Animated.View
       style={{
         marginHorizontal: -7,
-        height: dimensions.height - 103,
+        height: dimensions.height - insets.bottom,
         paddingBottom: 7
       }}
     >
