@@ -5,12 +5,13 @@ import { navigate } from "../screens";
 import ImageGallery from "./ImageGallery";
 import { useEveryMinute } from "../utils/Hooks";
 import DaysText from "./DaysText";
-import { ANDROID } from "../utils/Constants";
 import {
   itemRemaining,
   itemRemainingAtTime,
   itemTimeForDay
 } from "../utils/Time";
+import MatchableText from "./MatchableText";
+import { roundedDistanceTo } from "../utils/Locate";
 
 export default ({ item, index, width }) => {
   const dispatch = useDispatch();
@@ -18,9 +19,19 @@ export default ({ item, index, width }) => {
   const notNow = useSelector(state => state.events.notNow);
   const now = useSelector(state => state.events.now);
   const [currentTime] = useEveryMinute();
+  const searchTerm = useSelector(state =>
+    state.events.text.length
+      ? state.events.text
+          .split(" ")
+          .map(text => text.trim())
+          .filter(text => text.length)
+      : state.events.tag
+  );
   const onPress = () => {
     navigate("Detail", { id: item._id });
   };
+
+  const distance = roundedDistanceTo(item);
 
   let time;
 
@@ -109,18 +120,28 @@ export default ({ item, index, width }) => {
           {item._source.title}
         </Text>
         <Text
+          style={{
+            fontSize: 8,
+            fontWeight: "600",
+            color: "#666",
+            marginTop: 1
+          }}
+        >
+          <DaysText days={item._source.days} />
+          {distance ? ` · ${distance}` : null}
+        </Text>
+        <MatchableText
           allowFontScaling={false}
           numberOfLines={6}
           style={{
-            marginVertical: 1.5,
+            marginTop: 1.5,
             fontSize: 13,
             fontWeight: "500",
             color: "#777"
           }}
-        >
-          {item._source.description}
-        </Text>
-        <DaysText days={item._source.days} />
+          text={item._source.description}
+          match={searchTerm}
+        />
       </TouchableOpacity>
     </View>
   );

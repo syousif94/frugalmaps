@@ -22,6 +22,7 @@ export default ({ style, buttonStyle }) => {
     <View style={style}>
       <ScrollView
         ref={scrollRef}
+        keyboardDismissMode="none"
         keyboardShouldPersistTaps="always"
         showsHorizontalScrollIndicator={false}
         horizontal

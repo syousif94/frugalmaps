@@ -24,6 +24,8 @@ export default () => {
       <Animated.FlatList
         ref={listRef}
         numColumns={3}
+        keyboardDismissMode="none"
+        keyboardShouldPersistTaps="always"
         ListHeaderComponent={headerView.current}
         contentContainerStyle={{
           paddingHorizontal: 7,
@@ -75,6 +77,7 @@ const HeaderView = () => {
             <EventSearchInput
               contentContainerStyle={{ marginTop: 2, marginHorizontal: 2 }}
             />
+
             <TagList />
           </View>
         </BlurView>
