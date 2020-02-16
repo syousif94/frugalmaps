@@ -43,7 +43,9 @@ export default ({ intro = false }) => {
 
       const unlisten = history.listen(location => {
         const home = location.pathname === "/";
-        setOpacity(home ? 1 : 0);
+        if (home) {
+          setOpacity(1);
+        }
         if (home && !data.length && !refreshing && !error) {
           if (locationEnabled === null && !intro) {
             dispatch(enableLocation());
@@ -82,20 +84,6 @@ export default ({ intro = false }) => {
   }, [locationEnabled, data, refreshing, error]);
 
   const initialLoadCompleted = useRef(false);
-
-  const [width, setWidth] = useState(Dimensions.get("window").width);
-
-  useEffect(() => {
-    const onChange = ({ window }) => {
-      setWidth(window.width);
-    };
-
-    Dimensions.addEventListener("change", onChange);
-
-    return () => {
-      Dimensions.removeEventListener("change", onChange);
-    };
-  }, []);
 
   useEffect(() => {
     const dismissFilters = () => {

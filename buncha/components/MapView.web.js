@@ -8,37 +8,11 @@ import {
   itemRemainingAtTime,
   itemRemaining
 } from "../utils/Time";
-import { TAG_LIST_HEIGHT } from "./TagList";
-
-const PADDINGS = [
-  [0, 0, 0, 0],
-  [0, 0, TAG_LIST_HEIGHT + 150, 0]
-];
 
 export default ({}) => {
   const mapRef = useRef(null);
 
   const [map] = useMap(mapRef);
-
-  const [dimensions] = useDimensions();
-  const lastDimensions = useRef(null);
-
-  useLayoutEffect(() => {
-    if (!map) {
-      return;
-    }
-
-    if (!lastDimensions.current) {
-      const padding = dimensions.width > 850 ? PADDINGS[0] : PADDINGS[1];
-      map.padding = new mapkit.Padding(padding);
-    } else if (dimensions.width > 850 && lastDimensions.width <= 850) {
-      map.padding = new mapkit.Padding(PADDINGS[0]);
-    } else if (dimensions.width <= 850 && lastDimensions.width > 850) {
-      map.padding = new mapkit.Padding(PADDINGS[1]);
-    }
-
-    lastDimensions.current = dimensions;
-  }, [dimensions, map]);
 
   const [time] = useEveryMinute();
   const bounds = useSelector(state => state.events.bounds, shallowEqual);

@@ -13,6 +13,7 @@ import {
 import MatchableText from "./MatchableText";
 import { roundedDistanceTo } from "../utils/Locate";
 import { ANDROID } from "../utils/Constants";
+import Link from "./Link";
 
 export default ({ item, index, width }) => {
   const dispatch = useDispatch();
@@ -46,110 +47,101 @@ export default ({ item, index, width }) => {
     time = itemRemaining(item);
   }
   return (
-    <View
+    <Link
       style={{
         width,
-        backgroundColor: "#fff"
+        backgroundColor: "#fff",
+        padding: 7
       }}
+      to={`e/${item._id}`}
+      onPress={onPress}
     >
-      <TouchableOpacity
-        style={{
-          flex: 1,
-          padding: 7
-        }}
-        onPress={onPress}
-      >
-        <View style={{ height: 54, borderRadius: 2, overflow: "hidden" }}>
-          <ImageGallery
-            photos={item._source.photos}
-            height={54}
-            width={width}
-          />
-          <View
-            style={{
-              position: "absolute",
-              bottom: 2,
-              right: 2,
-              backgroundColor: "rgba(0,0,0,0.5)",
-              borderRadius: 2,
-              paddingHorizontal: 2
-            }}
-          >
-            <Text style={{ color: "#fff", fontSize: 10, fontWeight: "700" }}>
-              {index + 1}
-            </Text>
-          </View>
-        </View>
-        <Text
-          numberOfLines={1}
-          lineBreakMode="clip"
-          allowFontScaling={false}
+      <View style={{ height: 54, borderRadius: 2, overflow: "hidden" }}>
+        <ImageGallery photos={item._source.photos} height={54} width={width} />
+        <View
           style={{
-            color: time.color,
-            marginTop: 2,
-            fontWeight: "700",
-            fontSize: 13
+            position: "absolute",
+            bottom: 2,
+            right: 2,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            borderRadius: 2,
+            paddingHorizontal: 2
           }}
         >
-          {time.duration}
-          <Text
-            style={{
-              fontSize: 9,
-              fontWeight: ANDROID ? "700" : "600",
-              color: "#888"
-            }}
-          >
-            {" "}
-            {time.ending ? time.end : time.start}
-            {time.upcoming || time.ending ? null : ` ${time.day}`}
+          <Text style={{ color: "#fff", fontSize: 10, fontWeight: "700" }}>
+            {index + 1}
           </Text>
-        </Text>
-        <Text
-          numberOfLines={1}
-          allowFontScaling={false}
-          style={{
-            fontSize: 12,
-            fontWeight: "700",
-            color: "#000"
-          }}
-        >
-          {item._source.location}
-        </Text>
-        <Text
-          numberOfLines={1}
-          allowFontScaling={false}
-          style={{
-            fontSize: 12,
-            fontWeight: "700",
-            color: "#555"
-          }}
-        >
-          {item._source.title}
-        </Text>
+        </View>
+      </View>
+      <Text
+        numberOfLines={1}
+        lineBreakMode="clip"
+        allowFontScaling={false}
+        style={{
+          color: time.color,
+          marginTop: 2,
+          fontWeight: "700",
+          fontSize: 13
+        }}
+      >
+        {time.duration}
         <Text
           style={{
-            fontSize: 8,
-            fontWeight: "600",
-            color: "#666",
-            marginTop: 1
+            fontSize: 9,
+            fontWeight: ANDROID ? "700" : "600",
+            color: "#888"
           }}
         >
-          <DaysText days={item._source.days} />
-          {distance ? ` · ${distance}` : null}
+          {" "}
+          {time.ending ? time.end : time.start}
+          {time.upcoming || time.ending ? null : ` ${time.day}`}
         </Text>
-        <MatchableText
-          allowFontScaling={false}
-          numberOfLines={6}
-          style={{
-            marginTop: 1.5,
-            fontSize: 13,
-            fontWeight: "500",
-            color: "#777"
-          }}
-          text={item._source.description}
-          match={searchTerm}
-        />
-      </TouchableOpacity>
-    </View>
+      </Text>
+      <Text
+        numberOfLines={1}
+        allowFontScaling={false}
+        style={{
+          fontSize: 12,
+          fontWeight: "700",
+          color: "#000"
+        }}
+      >
+        {item._source.location}
+      </Text>
+      <Text
+        numberOfLines={1}
+        allowFontScaling={false}
+        style={{
+          fontSize: 12,
+          fontWeight: "700",
+          color: "#555"
+        }}
+      >
+        {item._source.title}
+      </Text>
+      <Text
+        style={{
+          fontSize: 8,
+          fontWeight: "600",
+          color: "#666",
+          marginTop: 1
+        }}
+      >
+        <DaysText days={item._source.days} />
+        {distance ? ` · ${distance}` : null}
+      </Text>
+      <MatchableText
+        allowFontScaling={false}
+        numberOfLines={6}
+        style={{
+          marginTop: 1.5,
+          fontSize: 13,
+          fontWeight: "500",
+          color: "#777"
+        }}
+        text={item._source.description}
+        match={searchTerm}
+      />
+    </Link>
   );
 };
