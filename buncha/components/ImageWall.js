@@ -39,8 +39,7 @@ const SpacerView = () => {
           top: 0,
           left: 0,
           right: 0,
-          bottom: 2,
-          backgroundColor: "#f2f2f2"
+          bottom: 2
         }}
       />
     </View>

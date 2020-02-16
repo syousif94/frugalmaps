@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, Text, View } from "react-native";
+import { TouchableOpacity, Text, View, Dimensions } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { navigate } from "../screens";
 import ImageGallery from "./ImageGallery";
@@ -12,8 +12,9 @@ import {
 } from "../utils/Time";
 import MatchableText from "./MatchableText";
 import { roundedDistanceTo } from "../utils/Locate";
-import { ANDROID } from "../utils/Constants";
+import { ANDROID, WEB } from "../utils/Constants";
 import Link from "./Link";
+import emitter from "tiny-emitter/instance";
 
 export default ({ item, index, width }) => {
   const dispatch = useDispatch();
@@ -31,6 +32,9 @@ export default ({ item, index, width }) => {
   );
   const onPress = () => {
     navigate("Detail", { id: item._id });
+    if (WEB && Dimensions.get("window").width > 850) {
+      emitter.emit("select-marker", item);
+    }
   };
 
   const distance = roundedDistanceTo(item);

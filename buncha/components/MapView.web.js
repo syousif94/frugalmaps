@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useLayoutEffect } from "react";
-import { View } from "react-native";
+import { View, Dimensions } from "react-native";
 import { useMap } from "../utils/MapKit";
 import { useSelector, shallowEqual } from "react-redux";
 import { useEveryMinute, useDimensions } from "../utils/Hooks";
@@ -8,6 +8,10 @@ import {
   itemRemainingAtTime,
   itemRemaining
 } from "../utils/Time";
+import emitter from "tiny-emitter/instance";
+import { navigate } from "../screens";
+import _ from "lodash";
+import store from "../store";
 
 export default ({}) => {
   const mapRef = useRef(null);
@@ -59,6 +63,51 @@ function useMarkers(map, allMarkers, day, notNow, now, currentTime) {
       return;
     }
 
+    const selectMarker = item => {
+      const annotation = annotationMap.current.get(item._source.placeid);
+
+      if (!annotation || annotation.selected) {
+        return;
+      }
+
+      annotation.selected = true;
+    };
+
+    const deselectMarker = e => {
+      setTimeout(() => {
+        if (Dimensions.get("window").width > 850) {
+          if (_.startsWith(location.pathname, "/e/")) {
+            const id = location.pathname.replace("/e/", "");
+            const placeid = store.getState().events.data[id]._source.placeid;
+            const annotation = annotationMap.current.get(placeid);
+
+            if (!annotation || annotation.selected) {
+              return;
+            }
+
+            annotation.selected = true;
+          } else {
+            map.selectedAnnotation = null;
+          }
+        }
+      }, 32);
+    };
+
+    emitter.on("select-marker", selectMarker);
+
+    window.addEventListener("popstate", deselectMarker);
+
+    return () => {
+      emitter.off("select-marker", selectMarker);
+      window.removeEventListener("popstate", deselectMarker);
+    };
+  }, [map]);
+
+  useEffect(() => {
+    if (!map) {
+      return;
+    }
+
     const newAnnotations = allMarkers.reduce((markers, data) => {
       const { _id } = data;
 
@@ -81,7 +130,7 @@ function useMarkers(map, allMarkers, day, notNow, now, currentTime) {
       const timeText = time.remaining && time.remaining.split(" ")[0];
 
       markers.set(
-        _id,
+        data._source.placeid,
         makeAnnotation({
           marker: data,
           color: time.color,
@@ -183,6 +232,17 @@ function onAnnotationSelected(e) {
   const el = annotation.element;
   el.style.transform = "scale(1)";
   annotation.anchorOffset = new window.DOMPoint(15, 36);
+
+  const data = annotation.data;
+  const path = window.location.pathname;
+  const { width } = Dimensions.get("window");
+
+  if (width > 850) {
+    const paths = data.marker.events.map(e => `/e/${e._id}`);
+    if (!paths.includes(path)) {
+      navigate("Detail", { id: data.marker.events[0]._id });
+    }
+  }
 }
 
 function onAnnotationDeselected(e) {
@@ -190,6 +250,21 @@ function onAnnotationDeselected(e) {
   const el = annotation.element;
   el.style.transform = "scale(0.5)";
   annotation.anchorOffset = new window.DOMPoint(15, 18);
+
+  const path = window.location.pathname;
+  const { width } = Dimensions.get("window");
+
+  setTimeout(() => {
+    const selectedAnnotation = annotation.map.selectedAnnotation;
+
+    if (selectedAnnotation) {
+      return;
+    }
+
+    if (width > 850 && path !== "/") {
+      navigate("UpNext");
+    }
+  }, 32);
 }
 
 function addAnnotations(map, annotationMap) {

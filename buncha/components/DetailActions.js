@@ -10,7 +10,7 @@ import {
 import Link from "./Link";
 import { useDispatch } from "react-redux";
 import { FontAwesome, Entypo, Ionicons } from "@expo/vector-icons";
-import { RED, BLUE, NOW, UPCOMING } from "../utils/Colors";
+import { RED, BLUE, NOW } from "../utils/Colors";
 import { WEB, ANDROID } from "../utils/Constants";
 import { getHistory, pop } from "../screens";
 import * as Browser from "../store/browser";
