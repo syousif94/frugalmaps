@@ -1,17 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { shallowEqual, useSelector, useDispatch } from "react-redux";
-import {
-  View,
-  StyleSheet,
-  ActivityIndicator,
-  ScrollView,
-  Text,
-  Dimensions
-} from "react-native";
+import { View, StyleSheet, ActivityIndicator, Dimensions } from "react-native";
 import { refresh } from "../store/events";
 import * as Cities from "../store/cities";
-import UpNextItem, { itemMargin } from "../components/UpNextItem";
-import TopBar from "../components/TopBar";
 import { enableLocation } from "../store/permissions";
 import { WEB, IOS, ANDROID } from "../utils/Constants";
 import { getHistory } from ".";
@@ -19,15 +10,9 @@ import { Helmet } from "react-helmet";
 // import AppBanner from "../components/AppBanner";
 import ListError from "../components/ListError";
 import emitter from "tiny-emitter/instance";
-import FilterView from "../components/FilterView";
 import { InputProvider } from "../components/InputContext";
-import TagList from "../components/TagList";
 import RefreshButton from "../components/RefreshButton";
-import MapView from "../components/MapView";
 import EventList from "../components/EventList";
-
-const medium = 780;
-const narrow = 550;
 
 export default ({ intro = false }) => {
   const data = useSelector(state => state.events.upNext, shallowEqual);
@@ -142,77 +127,11 @@ export default ({ intro = false }) => {
             <Helmet>
               <title>Buncha</title>
             </Helmet>
-            <ScrollView
-              style={styles.list}
-              contentContainerStyle={[styles.listContent, { paddingTop: 48 }]}
-            >
-              {/* <AppBanner /> */}
-              <TagList
-                contentContainerStyle={{
-                  paddingRight:
-                    Math.max((width - 900) / 2, 0) +
-                    (width < medium ? 16 : 20) -
-                    8,
-                  paddingLeft:
-                    Math.max((width - 900) / 2, 0) + (width < medium ? 16 : 20)
-                }}
-                style={{
-                  marginVertical: 10,
-                  width: "100%"
-                }}
-              />
-              {error ? (
-                <ListError />
-              ) : (
-                <View
-                  style={{
-                    flexDirection: "row",
-                    flexWrap: "wrap",
-                    alignItems: "stretch",
-                    paddingHorizontal: width < medium ? 8 : 10,
-                    width: "100%",
-                    maxWidth: 900,
-                    alignSelf: "center"
-                  }}
-                >
-                  {data.map((item, index) => (
-                    <UpNextItem
-                      key={item._id}
-                      item={item}
-                      index={index}
-                      containerStyle={{
-                        width:
-                          width < medium
-                            ? width < narrow
-                              ? "50%"
-                              : "33.33%"
-                            : "25%",
-                        paddingHorizontal: width < medium ? 8 : 10,
-                        marginTop: width < medium ? 6 : 8,
-                        flexDirection: "column"
-                      }}
-                      style={{
-                        height: "100%",
-                        paddingVertical: 0
-                      }}
-                    />
-                  ))}
-                </View>
-              )}
-
-              {data.length ? <ListFooter /> : null}
-            </ScrollView>
-            <FilterView />
-            <TopBar
-              width={width}
-              contentContainerStyle={{
-                paddingHorizontal: width > medium ? 16.5 : 4.5
-              }}
-            />
+            <EventList />
+            <RefreshButton />
           </React.Fragment>
         ) : (
           <View style={styles.list}>
-            {/* <MapView /> */}
             <EventList />
             {refreshing ? (
               <View style={styles.loading}>
@@ -229,28 +148,6 @@ export default ({ intro = false }) => {
         ) : null}
       </View>
     </InputProvider>
-  );
-};
-
-const ListFooter = () => {
-  return (
-    <View
-      style={{
-        backgroundColor: "#fff",
-        borderTopWidth: 1,
-        borderColor: "#f2f2f2",
-        paddingHorizontal: WEB ? 20 : itemMargin / 2,
-        paddingTop: 10,
-        paddingBottom: 60,
-        width: "100%",
-        maxWidth: 900,
-        alignSelf: "center"
-      }}
-    >
-      <Text style={{ color: "#ccc", fontSize: 12, fontWeight: "700" }}>
-        The end
-      </Text>
-    </View>
   );
 };
 

@@ -12,6 +12,7 @@ import {
 } from "../utils/Time";
 import MatchableText from "./MatchableText";
 import { roundedDistanceTo } from "../utils/Locate";
+import { ANDROID } from "../utils/Constants";
 
 export default ({ item, index, width }) => {
   const dispatch = useDispatch();
@@ -85,13 +86,19 @@ export default ({ item, index, width }) => {
           allowFontScaling={false}
           style={{
             color: time.color,
-            marginTop: 1.5,
+            marginTop: 2,
             fontWeight: "700",
-            fontSize: 14
+            fontSize: 13
           }}
         >
           {time.duration}
-          <Text style={{ fontSize: 8, fontWeight: "700", color: "#666" }}>
+          <Text
+            style={{
+              fontSize: 9,
+              fontWeight: ANDROID ? "700" : "600",
+              color: "#888"
+            }}
+          >
             {" "}
             {time.ending ? time.end : time.start}
             {time.upcoming || time.ending ? null : ` ${time.day}`}

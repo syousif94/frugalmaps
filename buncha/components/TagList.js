@@ -40,8 +40,15 @@ export default ({ style, buttonStyle }) => {
             data,
             tagsCount,
             buttonStyle
-          ).map(row => {
-            return <View style={{ flexDirection: "row", flex: 1 }}>{row}</View>;
+          ).map((row, index) => {
+            return (
+              <View
+                style={{ flexDirection: "row", flex: 1 }}
+                key={`${index}row`}
+              >
+                {row}
+              </View>
+            );
           })}
         </View>
       </ScrollView>

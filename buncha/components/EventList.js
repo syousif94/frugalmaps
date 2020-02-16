@@ -1,11 +1,11 @@
 import React, { useRef } from "react";
-import { View, Animated } from "react-native";
+import { View, Animated, Text } from "react-native";
 import { useSelector, shallowEqual } from "react-redux";
 import { useDimensions } from "../utils/Hooks";
 import EventListItem from "./EventListItem";
 import MapView from "./MapView";
 import BlurView from "./BlurView";
-import TagList, { TAG_LIST_HEIGHT } from "./TagList";
+import TagList from "./TagList";
 import { useSafeArea } from "react-native-safe-area-context";
 import EventSearchInput from "./EventSearchInput";
 import MapEventButton from "./MapEventButton";
@@ -42,6 +42,26 @@ export default () => {
             <EventListItem {...data} width={(dimensions.width - 14) / 3} />
           );
         }}
+        ListFooterComponent={() => {
+          if (!data.length) {
+            return null;
+          }
+          return (
+            <View
+              style={{
+                borderTopWidth: 1,
+                borderColor: "#f4f4f4",
+                padding: 7,
+                marginTop: 7,
+                height: 120
+              }}
+            >
+              <Text style={{ color: "#ccc", fontSize: 12, fontWeight: "600" }}>
+                The End
+              </Text>
+            </View>
+          );
+        }}
       />
       <MapEventButton />
     </View>
@@ -50,12 +70,11 @@ export default () => {
 
 const HeaderView = () => {
   const [dimensions] = useDimensions();
-  const insets = useSafeArea();
   return (
     <Animated.View
       style={{
         marginHorizontal: -7,
-        height: dimensions.height - insets.bottom,
+        height: dimensions.height - 44,
         paddingBottom: 7
       }}
     >

@@ -15,12 +15,11 @@ import ImageGallery from "./ImageGallery";
 import DaysText from "./DaysText";
 import PriceText from "./PriceText";
 import { TAG_LIST_HEIGHT } from "./TagList";
-import { useSafeArea } from "react-native-safe-area-context";
+import { ANDROID } from "../utils/Constants";
 
 export default () => {
   const [dimensions] = useDimensions();
-  const insets = useSafeArea();
-  const height = TAG_LIST_HEIGHT + insets.bottom + 7 + 34 + 6 + 8;
+  const height = TAG_LIST_HEIGHT + (ANDROID ? 76 : 99);
 
   const selectedEvent = useSelector(state => {
     const selected = state.events.selected;
