@@ -427,6 +427,9 @@ export function itemRemaining(item) {
   ending = e;
   ended = ed;
 
+  let away;
+  let day;
+
   if (yesterdayIso !== undefined && !ending && !tomorrow) {
     const hours = item._source.groupedHours.find(group =>
       group.days.find(day => day.iso === yesterdayIso)
@@ -440,6 +443,23 @@ export function itemRemaining(item) {
         ending = e;
       }
     }
+  } else if (ed && item._source.days.length > 1) {
+    const nextDay = item._source.groupedHours
+      .reduce((allDays, hours) => {
+        return [...allDays, ...hours.days.map(day => ({ ...day, hours }))];
+      }, [])
+      .sort((a, b) => {
+        return a.daysAway - b.daysAway;
+      })
+      .find(day => day.daysAway);
+
+    if (nextDay.daysAway !== 1) {
+      spanHours = nextDay.hours;
+      day = nextDay.text;
+      away = nextDay.daysAway;
+      remaining = `${away}d`;
+      tomorrow = away === 1;
+    }
   }
 
   tomorrow = tomorrow || spanHours.days[0].daysAway === 1;
@@ -448,28 +468,27 @@ export function itemRemaining(item) {
     tomorrow = parseInt(remaining.replace("h", ""), 10) < 24;
   }
 
-  if (!ending && !tomorrow && (!spanHours.today || ended)) {
-    let away = spanHours.days[0].daysAway;
+  if (!away && !ending && !tomorrow && (!spanHours.today || ended)) {
+    away = spanHours.days[0].daysAway;
     if (!away) {
       away = 7;
     }
     remaining = `${away}d`;
   }
 
-  const upcoming =
-    (!ended && !ending && spanHours.today) || (tomorrow && !ending);
+  const upcoming = (!ed && !ending && spanHours.today) || (tomorrow && !ending);
 
   let color = NOT_TODAY;
 
   if (ending) {
     color = NOW;
-  } else {
-    if (upcoming) {
-      color = UPCOMING;
-    }
+  } else if (upcoming) {
+    color = UPCOMING;
   }
 
-  const day = (tomorrow && tomorrow.text) || spanHours.days[0].text;
+  if (!day) {
+    day = (tomorrow && tomorrow.text) || spanHours.days[0].text;
+  }
 
   const { span, start, end } = itemTime(day, spanHours, ending, upcoming);
 

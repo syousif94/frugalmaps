@@ -1,70 +1,75 @@
 import React, { memo } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { itemRemaining } from "../utils/Time";
-import { RED } from "../utils/Colors";
-import { Entypo, FontAwesome, Feather } from "@expo/vector-icons";
-import EventFriends from "./EventFriends";
-import share from "../utils/Share";
-import { useEveryMinute, useDimensions } from "../utils/Hooks";
-import { navigate } from "../screens";
-import DaysText from "./DaysText";
-import { useDispatch } from "react-redux";
-import * as Interested from "../store/interested";
+import { useEveryMinute } from "../utils/Hooks";
+import { useDispatch, useSelector } from "react-redux";
 import { ANDROID } from "../utils/Constants";
+import MatchableText from "./MatchableText";
 
-export default memo(({ item, index = 0, style }) => {
+export default memo(({ item }) => {
   const dispatch = useDispatch();
   const [currentTime] = useEveryMinute();
-  const [dimensions] = useDimensions();
 
   const time = itemRemaining(item);
 
+  const searchTerm = useSelector(state =>
+    state.events.text.length
+      ? state.events.text
+          .split(" ")
+          .map(text => text.trim())
+          .filter(text => text.length)
+      : state.events.tag
+  );
+
   return (
-    <View style={[{ overflow: "hidden" }, style]}>
-      <DaysText days={item._source.days} />
-
-      <Text style={[styles.titleText, { marginTop: 4 }]}>
-        {item._source.title}{" "}
-        <Text style={{ color: time.color, fontWeight: "700" }}>
-          {time.text}
-        </Text>
-        <Text style={styles.subText}> {time.duration}</Text>
-      </Text>
-
+    <View style={{ margin: 7 }}>
       <Text
-        style={[
-          styles.descriptionText,
-          { maxWidth: dimensions.width < 800 ? "90%" : 280 }
-        ]}
-      >
-        {item._source.description}
-      </Text>
-
-      <View
+        numberOfLines={1}
+        lineBreakMode="clip"
+        allowFontScaling={false}
         style={{
-          flexDirection: "row",
-          alignItems: "center"
+          color: time.color,
+          marginTop: 2,
+          fontWeight: "700",
+          fontSize: 15
         }}
       >
-        <TouchableOpacity
-          onPress={() => {
-            dispatch(Interested.show({ event: item }));
+        {time.duration}
+        <Text
+          style={{
+            fontSize: 13,
+            fontWeight: ANDROID ? "700" : "600",
+            color: "#888"
           }}
-          style={styles.actionButton}
         >
-          <FontAwesome name="star" size={16} color={"#FFA033"} />
-          <Text style={styles.actionText}>Interested</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            navigate("Plan", { eid: item._id });
-          }}
-          style={[styles.actionButton]}
-        >
-          <Entypo name="calendar" size={16} color={RED} />
-          <Text style={styles.actionText}>Plan</Text>
-        </TouchableOpacity>
-      </View>
+          {" "}
+          {time.ending ? time.end : time.start}
+          {time.upcoming || time.ending ? null : ` ${time.day}`}
+        </Text>
+      </Text>
+      <Text
+        allowFontScaling={false}
+        style={{
+          fontSize: 15,
+          fontWeight: "700",
+          color: "#000"
+        }}
+      >
+        {item._source.title}
+      </Text>
+      <MatchableText
+        allowFontScaling={false}
+        style={{
+          marginTop: 6,
+          fontSize: 15,
+          color: "#444",
+          fontWeight: "500",
+          maxWidth: 270,
+          lineHeight: 22
+        }}
+        text={item._source.description}
+        match={searchTerm}
+      />
     </View>
   );
 });

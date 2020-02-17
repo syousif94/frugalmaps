@@ -1,13 +1,15 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { View, StyleSheet, Text, Animated, ScrollView } from "react-native";
-import { getEvent } from "../store/events";
+import { View, Text, Animated, StyleSheet, ScrollView } from "react-native";
+import { getEvent, selectPlaceEvents } from "../store/events";
 import { Helmet } from "react-helmet";
 import { useDimensions } from "../utils/Hooks";
-import { useMap } from "../utils/MapKit";
+import DetailMapView from "../components/DetailMapView";
 import DetailActions from "../components/DetailActions";
 import PriceText from "../components/PriceText";
 import ImageWall from "../components/ImageWall";
+import { FontAwesome } from "@expo/vector-icons";
+import EventView from "../components/EventView";
 
 export default ({ navigation }) => {
   const id = navigation.getParam("id", null);
@@ -41,17 +43,19 @@ export default ({ navigation }) => {
 const DetailView = ({ preloaded, item }) => {
   const [dimensions] = useDimensions();
 
+  const events = useSelector(selectPlaceEvents(item, true));
+
   if (dimensions.width > 850) {
     return (
       <View style={{ flex: 1, flexDirection: "row" }} pointerEvents="box-none">
         {preloaded ? (
           <View style={{ flex: 1 }} pointerEvents="none" />
         ) : (
-          <DetailMapView item={item} />
+          <DetailMapView events={events} />
         )}
         <View style={{ width: 400, backgroundColor: "#fff" }}>
           <ScrollView>
-            <DetailSidebar item={item} />
+            <DetailSidebar events={events} />
           </ScrollView>
         </View>
       </View>
@@ -69,7 +73,7 @@ const DetailView = ({ preloaded, item }) => {
           backgroundColor: "#fff"
         }}
       >
-        <DetailSidebar item={item} />
+        <DetailSidebar events={events} />
       </View>
       <Animated.View
         style={{
@@ -80,67 +84,54 @@ const DetailView = ({ preloaded, item }) => {
           right: 0
         }}
       >
-        <DetailMapView item={item} />
+        <DetailMapView events={events} />
       </Animated.View>
     </Animated.ScrollView>
   );
 };
 
-const DetailMapView = ({ item }) => {
-  const mapRef = useRef(null);
+const DetailSidebar = ({ events }) => {
+  const item = events[0];
 
-  const [map] = useMap(mapRef);
-
-  useEffect(() => {
-    if (!map) {
-      return;
-    }
-
-    const bounds = item._source.viewport;
-
-    const region = new mapkit.BoundingRegion(
-      bounds.northeast.lat,
-      bounds.northeast.lng,
-      bounds.southwest.lat,
-      bounds.southwest.lng
-    ).toCoordinateRegion();
-
-    requestAnimationFrame(() => {
-      map.region = region;
-    });
-  }, [map]);
-
-  return (
-    <View style={{ flex: 1 }}>
-      <div style={{ flex: 1 }} ref={mapRef} />
-    </View>
-  );
-};
-
-const DetailSidebar = ({ item }) => {
   return (
     <View>
       <DetailActions item={item} />
-      <View style={{ alignSelf: "center", maxWidth: 500, width: "100%" }}>
-        <View style={{ paddingHorizontal: 14 }}>
-          <Text style={{ fontSize: 20, color: "#000", fontWeight: "700" }}>
-            {item._source.location}
-            <PriceText
-              priceLevel={item._source.priceLevel}
-              prefix=" "
-              style={{
-                fontSize: 16,
-                fontWeight: "700"
-              }}
-            />
+      <View style={[styles.sidebarContent, { paddingHorizontal: 14 }]}>
+        <Text style={{ fontSize: 20, color: "#000", fontWeight: "700" }}>
+          {item._source.location}
+          <PriceText
+            priceLevel={item._source.priceLevel}
+            prefix=" "
+            style={{
+              fontSize: 17,
+              fontWeight: "700"
+            }}
+          />
+          <Text style={{ fontSize: 17, fontWeight: "700", marginLeft: 5 }}>
+            <FontAwesome name="star" size={17} color="#FFA033" />
+            <Text style={{ marginLeft: 4 }}>{item._source.rating}</Text>
           </Text>
-          <Text style={{ fontSize: 15, color: "#555", marginTop: 3 }}>
-            {item._source.address}
-          </Text>
-        </View>
-        <View style={{ marginHorizontal: 2 }}>
-          <ImageWall photos={item._source.photos} />
-        </View>
+        </Text>
+        <Text
+          style={{
+            fontSize: 14,
+            color: "#555",
+            marginTop: 3,
+            fontWeight: "500"
+          }}
+        >
+          {item._source.address}
+        </Text>
+      </View>
+
+      <View style={[styles.sidebarContent, { padding: 7 }]}>
+        {events.map((item, index) => {
+          return <EventView item={item} index={index} />;
+        })}
+      </View>
+
+      <View style={[styles.sidebarContent, { paddingHorizontal: 2 }]}>
+        <ImageWall photos={item._source.photos} />
       </View>
     </View>
   );
@@ -158,5 +149,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     zIndex: 10
+  },
+  sidebarContent: {
+    alignSelf: "center",
+    maxWidth: 500,
+    width: "100%"
   }
 });
