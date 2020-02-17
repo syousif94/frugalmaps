@@ -1,6 +1,6 @@
 import React from "react";
-import { TouchableOpacity, Text, View, Dimensions } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { Text, View, Dimensions } from "react-native";
+import { useSelector } from "react-redux";
 import { navigate } from "../screens";
 import ImageGallery from "./ImageGallery";
 import { useEveryMinute } from "../utils/Hooks";
@@ -17,7 +17,6 @@ import Link from "./Link";
 import emitter from "tiny-emitter/instance";
 
 export default ({ item, index, width }) => {
-  const dispatch = useDispatch();
   const day = useSelector(state => state.events.day);
   const notNow = useSelector(state => state.events.notNow);
   const now = useSelector(state => state.events.now);
@@ -106,7 +105,7 @@ export default ({ item, index, width }) => {
         allowFontScaling={false}
         style={{
           fontSize: 12,
-          fontWeight: "700",
+          fontWeight: "600",
           color: "#000"
         }}
       >
@@ -116,9 +115,10 @@ export default ({ item, index, width }) => {
         numberOfLines={1}
         allowFontScaling={false}
         style={{
-          fontSize: 12,
-          fontWeight: "700",
-          color: "#555"
+          marginTop: -1,
+          fontSize: 14,
+          fontWeight: "600",
+          color: "#000"
         }}
       >
         {item._source.title}
