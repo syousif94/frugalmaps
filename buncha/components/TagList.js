@@ -1,7 +1,6 @@
 import React, { useRef } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
-import { itemMargin } from "./UpNextItem";
 import _ from "lodash";
 import * as Events from "../store/events";
 import { UPCOMING, NOW } from "../utils/Colors";
@@ -163,7 +162,7 @@ const Button = ({ tag: { text, count, ending, upcoming, subtext }, style }) => {
         allowFontScaling={false}
         style={{
           fontSize: 13,
-          color: "#333",
+          color: "#555",
           fontWeight: ANDROID ? "700" : "600"
         }}
       >

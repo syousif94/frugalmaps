@@ -11,24 +11,24 @@ import _ from "lodash";
 
 const searchText = "Search";
 
-function usePlaceholder(tags) {
-  const [placeholder, setPlaceholder] = useState(searchText);
+// function usePlaceholder(tags) {
+//   const [placeholder, setPlaceholder] = useState(searchText);
 
-  useEffect(() => {
-    if (!tags.length) {
-      return setPlaceholder(searchText);
-    }
+//   useEffect(() => {
+//     if (!tags.length) {
+//       return setPlaceholder(searchText);
+//     }
 
-    const text = _.shuffle(tags)
-      .slice(0, 3)
-      .map(tag => tag.text)
-      .join(", ");
+//     const text = _.shuffle(tags)
+//       .slice(0, 3)
+//       .map(tag => tag.text)
+//       .join(", ");
 
-    setPlaceholder(`Try ${text}`);
-  }, [tags]);
+//     setPlaceholder(`Try ${text}`);
+//   }, [tags]);
 
-  return [placeholder];
-}
+//   return [placeholder];
+// }
 
 function Icon({ searching }) {
   return (
@@ -56,7 +56,7 @@ export default React.forwardRef(
     const dispatch = useDispatch();
     const query = useSelector(state => state.events.tag || state.events.text);
     const tags = useSelector(state => state.events.tags, shallowEqual);
-    const [placeholder] = usePlaceholder(tags);
+    // const [placeholder] = usePlaceholder(tags);
     const searching = useSelector(
       state => state.events.searching && !state.events.refreshing
     );
@@ -71,7 +71,7 @@ export default React.forwardRef(
           ref={ref}
           value={query}
           onChangeText={onChangeText}
-          placeholder={placeholder}
+          placeholder="Search"
           autoCorrect={false}
           autoCompleteType="off"
           spellCheck={false}
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   },
   input: {
     paddingLeft: 0,
-    height: WEB ? buttonHeight - 2 : 34,
+    height: buttonHeight - 2,
     fontSize: WEB ? 14 : 15
   }
 });

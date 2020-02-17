@@ -495,11 +495,15 @@ export function getTime() {
 
 export const searchTimeSelector = state => {
   const day = state.events.day;
+  const now = state.events.now;
+  const notNow = state.events.notNow;
+
   if (day) {
     return day.title;
+  } else if (!notNow) {
+    return "now";
   }
 
-  const now = state.events.now;
   const time = moment(now);
   const value = time.format("ddd h:mma");
 

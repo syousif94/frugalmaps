@@ -3,8 +3,7 @@ import {
   createAppContainer,
   createStackNavigator,
   NavigationActions,
-  createSwitchNavigator,
-  createBottomTabNavigator
+  createSwitchNavigator
 } from "react-navigation";
 import { View, StyleSheet } from "react-native";
 import { ScreenOrientation } from "expo";
@@ -19,7 +18,6 @@ import FilterView from "../components/FilterView";
 import InterestedModal from "../components/InterestedModal";
 import PlanScreen from "./PlanScreen";
 import Browser from "../components/Browser";
-import TabBar from "../components/TabBar";
 import User from "../utils/User";
 import { NARROW } from "../utils/Constants";
 

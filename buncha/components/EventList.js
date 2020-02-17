@@ -9,6 +9,8 @@ import TagList from "./TagList";
 import { useSafeArea } from "react-native-safe-area-context";
 import EventSearchInput from "./EventSearchInput";
 import MapEventButton from "./MapEventButton";
+import PickerButton from "./PickerButton";
+import MenuButton from "./MenuButton";
 
 export default () => {
   const headerView = useRef(<HeaderView />);
@@ -95,10 +97,17 @@ const HeaderView = () => {
               borderBottomWidth: 1
             }}
           >
-            <EventSearchInput
-              contentContainerStyle={{ marginTop: 2, marginHorizontal: 2 }}
-            />
-
+            <View
+              style={{
+                marginTop: 2,
+                marginHorizontal: 2,
+                flexDirection: "row"
+              }}
+            >
+              <EventSearchInput contentContainerStyle={{ flex: 1 }} />
+              <PickerButton />
+              <MenuButton />
+            </View>
             <TagList />
           </View>
         </BlurView>
