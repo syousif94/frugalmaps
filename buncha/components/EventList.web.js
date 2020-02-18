@@ -9,6 +9,7 @@ import EventSearchInput from "./EventSearchInput";
 import TagList from "./TagList";
 import PickerButton from "./PickerButton";
 import MenuButton from "./MenuButton";
+import { SearchProvider } from "../utils/Search";
 
 export default () => {
   const [dimensions] = useDimensions();
@@ -95,30 +96,32 @@ export const HeaderView = () => {
           right: 0
         };
   return (
-    <View style={[style, , { zIndex: 999 }]}>
-      <BlurView>
-        <View
-          style={{
-            borderColor: "rgba(0,0,0,0.05)",
-            borderTopWidth: 1,
-            borderBottomWidth: 1
-          }}
-        >
+    <SearchProvider>
+      <View style={[style, , { zIndex: 999 }]}>
+        <BlurView>
           <View
             style={{
-              flexDirection: "row",
-              marginTop: 2,
-              marginLeft: 2,
-              zIndex: 999
+              borderColor: "rgba(0,0,0,0.05)",
+              borderTopWidth: 1,
+              borderBottomWidth: 1
             }}
           >
-            <EventSearchInput contentContainerStyle={{ flex: 1 }} />
-            <PickerButton />
-            <MenuButton />
+            <View
+              style={{
+                flexDirection: "row",
+                marginTop: 2,
+                marginLeft: 2,
+                zIndex: 999
+              }}
+            >
+              <EventSearchInput contentContainerStyle={{ flex: 1 }} />
+              <PickerButton />
+              <MenuButton />
+            </View>
+            <TagList />
           </View>
-          <TagList />
-        </View>
-      </BlurView>
-    </View>
+        </BlurView>
+      </View>
+    </SearchProvider>
   );
 };

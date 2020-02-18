@@ -1,34 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector, shallowEqual } from "react-redux";
+import React, { useContext } from "react";
+import { useSelector } from "react-redux";
 import Input from "./Input";
 import { StyleSheet, View, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { WEB } from "../utils/Constants";
 import { buttonHeight } from "./PickerButton";
 import { BLUE } from "../utils/Colors";
-import * as Events from "../store/events";
 import _ from "lodash";
-
-const searchText = "Search";
-
-// function usePlaceholder(tags) {
-//   const [placeholder, setPlaceholder] = useState(searchText);
-
-//   useEffect(() => {
-//     if (!tags.length) {
-//       return setPlaceholder(searchText);
-//     }
-
-//     const text = _.shuffle(tags)
-//       .slice(0, 3)
-//       .map(tag => tag.text)
-//       .join(", ");
-
-//     setPlaceholder(`Try ${text}`);
-//   }, [tags]);
-
-//   return [placeholder];
-// }
+import { SearchContext } from "../utils/Search";
 
 function Icon({ searching }) {
   return (
@@ -53,23 +32,21 @@ function Icon({ searching }) {
 
 export default React.forwardRef(
   ({ contentContainerStyle = {}, ...props }, ref) => {
-    const dispatch = useDispatch();
-    const query = useSelector(state => state.events.tag || state.events.text);
-    const tags = useSelector(state => state.events.tags, shallowEqual);
-    // const [placeholder] = usePlaceholder(tags);
+    const [filter, setFilter] = useContext(SearchContext);
+
     const searching = useSelector(
       state => state.events.searching && !state.events.refreshing
     );
 
     const onChangeText = text => {
-      dispatch(Events.filter({ text }));
+      setFilter(text);
     };
 
     return (
       <View style={contentContainerStyle} pointerEvents="box-none">
         <Input
           ref={ref}
-          value={query}
+          value={filter}
           onChangeText={onChangeText}
           placeholder="Search"
           autoCorrect={false}

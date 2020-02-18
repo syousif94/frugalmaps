@@ -11,6 +11,7 @@ import EventSearchInput from "./EventSearchInput";
 import MapEventButton from "./MapEventButton";
 import PickerButton from "./PickerButton";
 import MenuButton from "./MenuButton";
+import { SearchProvider } from "../utils/Search";
 
 export default () => {
   const headerView = useRef(<HeaderView />);
@@ -73,45 +74,47 @@ export default () => {
 const HeaderView = () => {
   const [dimensions] = useDimensions();
   return (
-    <Animated.View
-      style={{
-        marginHorizontal: -7,
-        height: dimensions.height - 44,
-        paddingBottom: 7
-      }}
-    >
-      <MapView />
-      <View
+    <SearchProvider>
+      <Animated.View
         style={{
-          position: "absolute",
-          bottom: 7,
-          left: 0,
-          right: 0
+          marginHorizontal: -7,
+          height: dimensions.height - 44,
+          paddingBottom: 7
         }}
       >
-        <BlurView>
-          <View
-            style={{
-              borderColor: "rgba(0,0,0,0.05)",
-              borderTopWidth: 1,
-              borderBottomWidth: 1
-            }}
-          >
+        <MapView />
+        <View
+          style={{
+            position: "absolute",
+            bottom: 7,
+            left: 0,
+            right: 0
+          }}
+        >
+          <BlurView>
             <View
               style={{
-                marginTop: 2,
-                marginHorizontal: 2,
-                flexDirection: "row"
+                borderColor: "rgba(0,0,0,0.05)",
+                borderTopWidth: 1,
+                borderBottomWidth: 1
               }}
             >
-              <EventSearchInput contentContainerStyle={{ flex: 1 }} />
-              <PickerButton />
-              <MenuButton />
+              <View
+                style={{
+                  marginTop: 2,
+                  marginHorizontal: 2,
+                  flexDirection: "row"
+                }}
+              >
+                <EventSearchInput contentContainerStyle={{ flex: 1 }} />
+                <PickerButton />
+                <MenuButton />
+              </View>
+              <TagList />
             </View>
-            <TagList />
-          </View>
-        </BlurView>
-      </View>
-    </Animated.View>
+          </BlurView>
+        </View>
+      </Animated.View>
+    </SearchProvider>
   );
 };
