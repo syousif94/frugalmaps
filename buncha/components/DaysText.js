@@ -54,9 +54,9 @@ export default ({ days }) => {
   return (
     <Text
       style={{
-        fontSize: 8,
+        fontSize: 11,
         fontWeight: "600",
-        color: "#666"
+        color: "#555"
       }}
       allowFontScaling={false}
     >

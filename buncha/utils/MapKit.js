@@ -48,7 +48,6 @@ export function useMap(mapRef) {
       const mapkit = await getMapKit();
 
       const map = new mapkit.Map(mapRef.current, {
-        showsUserLocation: true,
         showsZoomControl: false,
         showsMapTypeControl: false
       });

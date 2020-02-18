@@ -19,6 +19,16 @@ export default () => {
   const [dimensions] = useDimensions();
   const insets = useSafeArea();
   const data = useSelector(state => state.events.upNext, shallowEqual);
+
+  let numColumns = 3;
+  if (dimensions.width > 850) {
+    numColumns = 6;
+  } else if (dimensions.width > 550) {
+    numColumns = 5;
+  }
+
+  const itemWidth = (dimensions.width - 12) / numColumns;
+
   return (
     <View
       style={{
@@ -26,13 +36,14 @@ export default () => {
       }}
     >
       <Animated.FlatList
+        key={`${numColumns}`}
         ref={listRef}
-        numColumns={3}
+        numColumns={numColumns}
         keyboardDismissMode="none"
         keyboardShouldPersistTaps="always"
         ListHeaderComponent={headerView.current}
         contentContainerStyle={{
-          paddingHorizontal: 7,
+          paddingHorizontal: 6,
           paddingBottom: insets.bottom
         }}
         data={data}
@@ -41,9 +52,7 @@ export default () => {
         contentInsetAdjustmentBehavior="never"
         keyExtractor={(item, index) => `${item._id}${index}`}
         renderItem={data => {
-          return (
-            <EventListItem {...data} width={(dimensions.width - 14) / 3} />
-          );
+          return <EventListItem {...data} width={itemWidth} />;
         }}
         ListFooterComponent={() => {
           if (!data.length) {
@@ -54,8 +63,8 @@ export default () => {
               style={{
                 borderTopWidth: 1,
                 borderColor: "#f4f4f4",
-                padding: 7,
-                marginTop: 7,
+                padding: 6,
+                marginTop: 6,
                 height: 120
               }}
             >
@@ -77,16 +86,16 @@ const HeaderView = () => {
     <SearchProvider>
       <Animated.View
         style={{
-          marginHorizontal: -7,
+          marginHorizontal: -6,
           height: dimensions.height - 44,
-          paddingBottom: 7
+          paddingBottom: 6
         }}
       >
         <MapView />
         <View
           style={{
             position: "absolute",
-            bottom: 7,
+            bottom: 6,
             left: 0,
             right: 0
           }}

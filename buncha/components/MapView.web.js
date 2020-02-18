@@ -19,6 +19,7 @@ export default ({}) => {
   const [map] = useMap(mapRef);
 
   const [time] = useEveryMinute();
+  const locationEnabled = useSelector(state => state.permissions.location);
   const bounds = useSelector(state => state.events.bounds, shallowEqual);
   const allMarkers = useSelector(state => state.events.markers, shallowEqual);
   const day = useSelector(state => state.events.day);
@@ -41,6 +42,12 @@ export default ({}) => {
       map.region = region;
     });
   }, [bounds, map]);
+
+  useEffect(() => {
+    if (map && locationEnabled) {
+      map.showsUserLocation = true;
+    }
+  }, [map, locationEnabled]);
 
   useMarkers(map, allMarkers, day, notNow, now, time);
 

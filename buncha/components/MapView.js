@@ -8,13 +8,10 @@ import {
   itemRemaining
 } from "../utils/Time";
 import { useEveryMinute } from "../utils/Hooks";
-import MapEventButton from "../components/MapEventButton";
 import { ANDROID } from "../utils/Constants";
 import emitter from "tiny-emitter/instance";
-import { tabBarHeight } from "../components/TabBar";
 import { useSafeArea } from "react-native-safe-area-context";
 import locate, { distanceTo } from "../utils/Locate";
-import { Dimensions } from "react-native";
 import { TAG_LIST_HEIGHT } from "./TagList";
 
 export default memo(() => {

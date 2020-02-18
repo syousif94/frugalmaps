@@ -54,7 +54,7 @@ export default ({ item, index, width }) => {
       style={{
         width,
         backgroundColor: "#fff",
-        padding: 7
+        padding: 6
       }}
       to={`e/${item._id}`}
       onPress={onPress}
@@ -90,9 +90,9 @@ export default ({ item, index, width }) => {
         {time.duration}
         <Text
           style={{
-            fontSize: 9,
+            fontSize: 11,
             fontWeight: ANDROID ? "700" : "600",
-            color: "#888"
+            color: "#555"
           }}
         >
           {" "}
@@ -104,18 +104,31 @@ export default ({ item, index, width }) => {
         numberOfLines={1}
         allowFontScaling={false}
         style={{
-          fontSize: 12,
+          fontSize: 13,
           fontWeight: "600",
           color: "#000"
         }}
       >
         {item._source.location}
       </Text>
+      {item._source.neighborhood ? (
+        <Text
+          numberOfLines={1}
+          allowFontScaling={false}
+          style={{
+            fontSize: 11,
+            fontWeight: "600",
+            color: "#555"
+          }}
+        >
+          {item._source.neighborhood.split(",")[0]}
+        </Text>
+      ) : null}
+
       <Text
         numberOfLines={1}
         allowFontScaling={false}
         style={{
-          marginTop: -1,
           fontSize: 14,
           fontWeight: "600",
           color: "#000"
@@ -125,11 +138,11 @@ export default ({ item, index, width }) => {
       </Text>
       <Text
         style={{
-          fontSize: 8,
+          fontSize: 11,
           fontWeight: "600",
-          color: "#666",
-          marginTop: 1
+          color: "#555"
         }}
+        allowFontScaling={false}
       >
         <DaysText days={item._source.days} />
         {distance ? ` · ${distance}` : null}
@@ -140,8 +153,7 @@ export default ({ item, index, width }) => {
         style={{
           marginTop: 1.5,
           fontSize: 13,
-          fontWeight: "500",
-          color: "#777"
+          color: "#000"
         }}
         text={item._source.description}
         match={searchTerm}
