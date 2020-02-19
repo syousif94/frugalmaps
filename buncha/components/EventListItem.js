@@ -108,7 +108,8 @@ export default ({ item, index, width }) => {
         allowFontScaling={false}
         style={{
           fontSize: 13,
-          fontWeight: "600",
+          marginTop: ANDROID ? -1 : null,
+          fontWeight: ANDROID ? "700" : "600",
           color: "#000"
         }}
       >
@@ -120,7 +121,8 @@ export default ({ item, index, width }) => {
           allowFontScaling={false}
           style={{
             fontSize: 11,
-            fontWeight: "600",
+            marginTop: ANDROID ? -0.5 : null,
+            fontWeight: ANDROID ? "700" : "600",
             color: "#555"
           }}
         >
@@ -133,8 +135,9 @@ export default ({ item, index, width }) => {
         allowFontScaling={false}
         style={{
           fontSize: 14,
-          fontWeight: "600",
-          color: "#000"
+          fontWeight: ANDROID ? "700" : "600",
+          color: "#000",
+          marginTop: ANDROID ? -1 : null
         }}
       >
         {item._source.title}
@@ -142,7 +145,7 @@ export default ({ item, index, width }) => {
       <Text
         style={{
           fontSize: 11,
-          fontWeight: "600",
+          fontWeight: ANDROID ? "700" : "600",
           color: "#555"
         }}
         allowFontScaling={false}
@@ -154,7 +157,7 @@ export default ({ item, index, width }) => {
         allowFontScaling={false}
         numberOfLines={6}
         style={{
-          marginTop: 1.5,
+          marginTop: ANDROID ? null : 1.5,
           fontSize: 13,
           color: "#000"
         }}
@@ -164,7 +167,7 @@ export default ({ item, index, width }) => {
       <Text
         style={{
           fontSize: 11,
-          fontWeight: "600",
+          fontWeight: ANDROID ? "700" : "600",
           color: "#999"
         }}
         allowFontScaling={false}

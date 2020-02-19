@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { PAGE, resetTime } from "../store/filters";
 import { BLUE } from "../utils/Colors";
-import { WEB } from "../utils/Constants";
+import { WEB, ANDROID } from "../utils/Constants";
 import _ from "lodash";
 import emitter from "tiny-emitter/instance";
 import { Entypo } from "@expo/vector-icons";
@@ -89,13 +89,13 @@ const styles = StyleSheet.create({
   },
   pickerTitleText: {
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: ANDROID ? "700" : "600",
     color: "#777"
   },
   pickerValueText: {
-    marginTop: -1,
+    marginTop: ANDROID ? -3 : -1,
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: ANDROID ? "700" : "600",
     color: "#555"
   }
 });

@@ -1,5 +1,5 @@
-import React, { useRef } from "react";
-import { View, Animated, Text } from "react-native";
+import React, { useRef, useCallback, useEffect } from "react";
+import { View, FlatList, Text, Keyboard } from "react-native";
 import { useSelector, shallowEqual } from "react-redux";
 import { useDimensions } from "../utils/Hooks";
 import EventListItem, { PADDING } from "./EventListItem";
@@ -12,6 +12,7 @@ import MapEventButton from "./MapEventButton";
 import PickerButton from "./PickerButton";
 import MenuButton from "./MenuButton";
 import { SearchProvider } from "../utils/Search";
+import { ANDROID } from "../utils/Constants";
 
 export default () => {
   const headerView = useRef(<HeaderView />);
@@ -19,6 +20,7 @@ export default () => {
   const [dimensions] = useDimensions();
   const insets = useSafeArea();
   const data = useSelector(state => state.events.upNext, shallowEqual);
+  const [setScrollOffset] = useScrollAboveKeyboard(listRef);
 
   let numColumns = 3;
   if (dimensions.width > 850) {
@@ -35,7 +37,11 @@ export default () => {
         flex: 1
       }}
     >
-      <Animated.FlatList
+      <FlatList
+        scrollEventThrottle={16}
+        onScroll={e => {
+          setScrollOffset(e.nativeEvent.contentOffset.y);
+        }}
         key={`${numColumns}`}
         ref={listRef}
         numColumns={numColumns}
@@ -80,11 +86,43 @@ export default () => {
   );
 };
 
+const KEYBOARD_EVENTS = ANDROID
+  ? ["keyboardDidShow", "keyboardDidHide"]
+  : ["keyboardWillShow", "keyboardWillHide"];
+
+const OFFSET = ANDROID ? 24 : 50;
+
+function useScrollAboveKeyboard(listRef) {
+  const scrollOffset = useRef(0);
+
+  const setScrollOffset = useCallback(offset => {
+    scrollOffset.current = offset;
+  });
+
+  useEffect(() => {
+    const onShow = e => {
+      if (scrollOffset.current < e.endCoordinates.height - OFFSET) {
+        listRef.current.scrollToOffset({
+          offset: e.endCoordinates.height - OFFSET
+        });
+      }
+    };
+
+    Keyboard.addListener(KEYBOARD_EVENTS[0], onShow);
+
+    return () => {
+      Keyboard.removeListener(KEYBOARD_EVENTS[0], onShow);
+    };
+  }, []);
+
+  return [setScrollOffset];
+}
+
 const HeaderView = () => {
   const [dimensions] = useDimensions();
   return (
     <SearchProvider>
-      <Animated.View
+      <View
         style={{
           marginHorizontal: -PADDING,
           height: dimensions.height - 44,
@@ -123,7 +161,7 @@ const HeaderView = () => {
             </View>
           </BlurView>
         </View>
-      </Animated.View>
+      </View>
     </SearchProvider>
   );
 };

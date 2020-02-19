@@ -1,6 +1,6 @@
 import React from "react";
 import { Text } from "react-native";
-import { ABBREVIATED_DAYS } from "../utils/Constants";
+import { ABBREVIATED_DAYS, ANDROID } from "../utils/Constants";
 
 function consecutizeDays(days) {
   const consecutive = [[days[0]]];
@@ -55,7 +55,7 @@ export default ({ days }) => {
     <Text
       style={{
         fontSize: 11,
-        fontWeight: "600",
+        fontWeight: ANDROID ? "700" : "600",
         color: "#555"
       }}
       allowFontScaling={false}
