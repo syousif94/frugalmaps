@@ -51,7 +51,7 @@ const DetailView = ({ preloaded, item }) => {
         {preloaded ? (
           <View style={{ flex: 1 }} pointerEvents="none" />
         ) : (
-          <DetailMapView events={events} />
+          <DetailMapView events={events} preloaded={preloaded} />
         )}
         <View style={{ width: 400, backgroundColor: "#fff" }}>
           <ScrollView>
@@ -84,7 +84,7 @@ const DetailView = ({ preloaded, item }) => {
           right: 0
         }}
       >
-        <DetailMapView events={events} />
+        <DetailMapView events={events} preloaded={preloaded} />
       </Animated.View>
     </Animated.ScrollView>
   );
@@ -126,7 +126,7 @@ const DetailSidebar = ({ events }) => {
 
       <View style={[styles.sidebarContent, { padding: 7 }]}>
         {events.map((item, index) => {
-          return <EventView item={item} index={index} />;
+          return <EventView item={item} index={index} key={`${index}`} />;
         })}
       </View>
 

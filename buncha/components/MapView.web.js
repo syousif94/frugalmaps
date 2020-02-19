@@ -1,8 +1,8 @@
-import React, { useRef, useEffect, useLayoutEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import { View, Dimensions } from "react-native";
 import { useMap } from "../utils/MapKit";
 import { useSelector, shallowEqual } from "react-redux";
-import { useEveryMinute, useDimensions } from "../utils/Hooks";
+import { useEveryMinute } from "../utils/Hooks";
 import {
   itemTimeForDay,
   itemRemainingAtTime,
@@ -116,8 +116,6 @@ function useMarkers(map, allMarkers, day, notNow, now, currentTime) {
     }
 
     const newAnnotations = allMarkers.reduce((markers, data) => {
-      const { _id } = data;
-
       let time;
 
       if (notNow) {

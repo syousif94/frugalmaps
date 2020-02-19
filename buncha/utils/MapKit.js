@@ -56,9 +56,17 @@ export function useMap(mapRef) {
       map._allowWheelToZoom = true;
 
       setMap(map);
+
+      return map;
     };
 
-    getMap();
+    const mapPromise = getMap();
+
+    return () => {
+      mapPromise.then(map => {
+        map.destroy();
+      });
+    };
   }, [mapRef]);
 
   return [map];

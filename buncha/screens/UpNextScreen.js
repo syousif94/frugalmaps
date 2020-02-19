@@ -8,7 +8,6 @@ import { WEB, IOS, ANDROID } from "../utils/Constants";
 import { getHistory } from ".";
 import { Helmet } from "react-helmet";
 // import AppBanner from "../components/AppBanner";
-import ListError from "../components/ListError";
 import emitter from "tiny-emitter/instance";
 import { InputProvider } from "../components/InputContext";
 import RefreshButton from "../components/RefreshButton";
