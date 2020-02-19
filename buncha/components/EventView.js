@@ -2,12 +2,12 @@ import React, { memo } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { itemRemaining } from "../utils/Time";
 import { useEveryMinute } from "../utils/Hooks";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { ANDROID } from "../utils/Constants";
 import MatchableText from "./MatchableText";
+import EventActions from "./EventActions";
 
 export default memo(({ item }) => {
-  const dispatch = useDispatch();
   const [currentTime] = useEveryMinute();
 
   const time = itemRemaining(item);
@@ -70,6 +70,7 @@ export default memo(({ item }) => {
         text={item._source.description}
         match={searchTerm}
       />
+      <EventActions item={item} />
     </View>
   );
 });

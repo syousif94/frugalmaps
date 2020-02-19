@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Input from "./Input";
 import { StyleSheet, View, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -8,6 +8,7 @@ import { buttonHeight } from "./PickerButton";
 import { BLUE } from "../utils/Colors";
 import _ from "lodash";
 import { SearchContext } from "../utils/Search";
+import * as Events from "../store/events";
 
 function Icon({ searching }) {
   return (
@@ -32,7 +33,13 @@ function Icon({ searching }) {
 
 export default React.forwardRef(
   ({ contentContainerStyle = {}, ...props }, ref) => {
+    const dispatch = useDispatch();
+
     const [filter, setFilter] = useContext(SearchContext);
+
+    const tag = useSelector(state => state.events.tag);
+
+    const value = tag && tag.length ? tag : filter;
 
     const searching = useSelector(
       state => state.events.searching && !state.events.refreshing
@@ -40,13 +47,14 @@ export default React.forwardRef(
 
     const onChangeText = text => {
       setFilter(text);
+      dispatch(Events.filter({ tag: null }));
     };
 
     return (
       <View style={contentContainerStyle} pointerEvents="box-none">
         <Input
           ref={ref}
-          value={filter}
+          value={value}
           onChangeText={onChangeText}
           placeholder="Search"
           autoCorrect={false}

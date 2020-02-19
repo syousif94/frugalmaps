@@ -14,6 +14,10 @@ const locationIssueRegex = new RegExp(
 export default () => {
   const error = useSelector(state => state.events.error);
 
+  if (!error) {
+    return null;
+  }
+
   const isLocationIssue = error.match(locationIssueRegex);
 
   return (

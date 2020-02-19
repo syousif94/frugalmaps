@@ -15,6 +15,9 @@ import { roundedDistanceTo } from "../utils/Locate";
 import { ANDROID, WEB } from "../utils/Constants";
 import Link from "./Link";
 import emitter from "tiny-emitter/instance";
+import EventActions from "./EventActions";
+
+export const PADDING = 6;
 
 export default ({ item, index, width }) => {
   const day = useSelector(state => state.events.day);
@@ -54,7 +57,7 @@ export default ({ item, index, width }) => {
       style={{
         width,
         backgroundColor: "#fff",
-        padding: 6
+        padding: PADDING
       }}
       to={`e/${item._id}`}
       onPress={onPress}
@@ -158,6 +161,17 @@ export default ({ item, index, width }) => {
         text={item._source.description}
         match={searchTerm}
       />
+      <Text
+        style={{
+          fontSize: 11,
+          fontWeight: "600",
+          color: "#999"
+        }}
+        allowFontScaling={false}
+      >
+        {item._source.tags.join(", ")}
+      </Text>
+      <EventActions item={item} />
     </Link>
   );
 };

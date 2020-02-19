@@ -1,20 +1,18 @@
 import React, { useRef, useContext } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
-import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import _ from "lodash";
-import * as Events from "../store/events";
-import { UPCOMING, NOW } from "../utils/Colors";
-import { itemRemaining } from "../utils/Time";
-import { usePreventBackScroll } from "../utils/Hooks";
+import { usePreventBackScroll, useEveryMinute } from "../utils/Hooks";
 import { ANDROID } from "../utils/Constants";
 import { SearchContext, getItemCount, getItemText } from "../utils/Search";
+import { useDispatch } from "react-redux";
+import * as Events from "../store/events";
 
 export const TAG_LIST_HEIGHT = 116;
 
 export default ({ style, buttonStyle }) => {
   const scrollRef = useRef(null);
   usePreventBackScroll(scrollRef);
-  const [, , list] = useContext(SearchContext);
+  const [, setFilter, list] = useContext(SearchContext);
   return (
     <View style={style}>
       <ScrollView
@@ -31,7 +29,7 @@ export default ({ style, buttonStyle }) => {
         ]}
       >
         <View>
-          {makeItems(list, buttonStyle).map((row, index) => {
+          {makeItems(list, buttonStyle, setFilter).map((row, index) => {
             return (
               <View style={{ flexDirection: "row", flex: 1 }} key={`${index}`}>
                 {row}
@@ -46,19 +44,26 @@ export default ({ style, buttonStyle }) => {
 
 const ROWS = 3;
 
-function makeItems(list, buttonStyle) {
+function makeItems(list, buttonStyle, setFilter) {
   const rows = Array.from({ length: ROWS }, () => []);
 
   return list.reduce((rows, item, index) => {
     const rowIndex = index % ROWS;
     rows[rowIndex].push(
-      <Button item={item} key={`${index}`} style={buttonStyle} />
+      <Button
+        item={item}
+        key={`${index}`}
+        style={buttonStyle}
+        setFilter={setFilter}
+      />
     );
     return rows;
   }, rows);
 }
 
-const Button = ({ item: i, style }) => {
+const Button = ({ item: i, style, setFilter }) => {
+  const dispatch = useDispatch();
+
   let item;
   let matches;
   if (i.matches) {
@@ -70,7 +75,6 @@ const Button = ({ item: i, style }) => {
 
   const text = item.type === "tag" ? _.lowerCase(item.text) : item.text;
   const count = getItemCount(item);
-  const subtext = getItemText(item);
   return (
     <TouchableOpacity
       style={[
@@ -83,6 +87,16 @@ const Button = ({ item: i, style }) => {
         },
         style
       ]}
+      onPress={() => {
+        switch (item.type) {
+          case "tag":
+            dispatch(Events.filter({ tag: item.text }));
+            setFilter("");
+            break;
+          default:
+            return;
+        }
+      }}
     >
       <Text
         allowFontScaling={false}
@@ -95,17 +109,30 @@ const Button = ({ item: i, style }) => {
         {text}
         <Text style={{ color: "#777" }}> {count}</Text>
       </Text>
-      <Text
-        allowFontScaling={false}
-        style={{
-          marginTop: ANDROID ? -1.5 : null,
-          fontSize: 11,
-          fontWeight: ANDROID ? "700" : "600",
-          color: "#777"
-        }}
-      >
-        {subtext}
-      </Text>
+      <SubText item={item} />
     </TouchableOpacity>
   );
+};
+
+const SubText = ({ item }) => {
+  const [currentTime] = useEveryMinute();
+  const info = getItemText(item);
+  switch (item.type) {
+    case "tag":
+      return (
+        <Text
+          allowFontScaling={false}
+          style={{
+            marginTop: ANDROID ? -1.5 : null,
+            fontSize: 11,
+            fontWeight: ANDROID ? "700" : "600",
+            color: info.color
+          }}
+        >
+          {info.text}
+        </Text>
+      );
+    default:
+      return null;
+  }
 };

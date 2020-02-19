@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { View, Animated, Text } from "react-native";
 import { useSelector, shallowEqual } from "react-redux";
 import { useDimensions } from "../utils/Hooks";
-import EventListItem from "./EventListItem";
+import EventListItem, { PADDING } from "./EventListItem";
 import MapView from "./MapView";
 import BlurView from "./BlurView";
 import TagList from "./TagList";
@@ -43,7 +43,7 @@ export default () => {
         keyboardShouldPersistTaps="always"
         ListHeaderComponent={headerView.current}
         contentContainerStyle={{
-          paddingHorizontal: 6,
+          paddingHorizontal: PADDING,
           paddingBottom: insets.bottom
         }}
         data={data}
@@ -63,8 +63,8 @@ export default () => {
               style={{
                 borderTopWidth: 1,
                 borderColor: "#f4f4f4",
-                padding: 6,
-                marginTop: 6,
+                padding: PADDING,
+                marginTop: PADDING,
                 height: 120
               }}
             >
@@ -86,16 +86,16 @@ const HeaderView = () => {
     <SearchProvider>
       <Animated.View
         style={{
-          marginHorizontal: -6,
+          marginHorizontal: -PADDING,
           height: dimensions.height - 44,
-          paddingBottom: 6
+          paddingBottom: PADDING
         }}
       >
         <MapView />
         <View
           style={{
             position: "absolute",
-            bottom: 6,
+            bottom: PADDING,
             left: 0,
             right: 0
           }}

@@ -229,11 +229,16 @@ export function timeRemaining(hours, iso) {
 
     // hourFloat = hourFloat - days * 24;
 
-    const hour = Math.floor(hourFloat);
+    let hour = Math.floor(hourFloat);
 
     const minFloat = (hourFloat - hour) * 60;
 
-    const minutes = Math.ceil(minFloat);
+    let minutes = Math.ceil(minFloat);
+
+    if (minutes === 60) {
+      hour += 1;
+      minutes = 0;
+    }
 
     remaining = "";
 

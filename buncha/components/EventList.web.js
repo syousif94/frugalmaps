@@ -3,13 +3,14 @@ import { View, ScrollView } from "react-native";
 import { useDimensions } from "../utils/Hooks";
 import MapView from "./MapView";
 import { useSelector, shallowEqual } from "react-redux";
-import EventListItem from "./EventListItem";
+import EventListItem, { PADDING } from "./EventListItem";
 import BlurView from "./BlurView";
 import EventSearchInput from "./EventSearchInput";
 import TagList from "./TagList";
 import PickerButton from "./PickerButton";
 import MenuButton from "./MenuButton";
 import { SearchProvider } from "../utils/Search";
+import ListError from "./ListError";
 
 export default () => {
   const [dimensions] = useDimensions();
@@ -27,11 +28,12 @@ export default () => {
         <View style={{ width: 400 }}>
           <ScrollView>
             {Header.current}
+            <ListError />
             <View
               style={{
                 flexDirection: "row",
                 flexWrap: "wrap",
-                padding: 7
+                padding: PADDING
               }}
             >
               {data.map((item, index) => {
@@ -61,11 +63,12 @@ export default () => {
           {Map.current}
           {Header.current}
         </View>
+        <ListError />
         <View
           style={{
             flexDirection: "row",
             flexWrap: "wrap",
-            padding: 7
+            padding: PADDING
           }}
         >
           {data.map((item, index) => {

@@ -269,39 +269,40 @@ export function get({
 
 function setEvents({ bounds, searching, notNow, searchingTime }) {
   return async (dispatch, getState) => {
-    const {
-      permissions: { location: locationEnabled },
-      events: { now, tag, text }
-    } = getState();
-
-    const time = moment(now);
-    const body = {
-      now,
-      utc: time.utcOffset(),
-      tags: tag ? [tag] : [],
-      text
-    };
-
-    if (locationEnabled) {
+    try {
       const {
-        coords: { latitude, longitude }
-      } = await locate();
+        permissions: { location: locationEnabled },
+        events: { now, tag, text }
+      } = getState();
 
-      body.lat = latitude;
-      body.lng = longitude;
-    }
+      const time = moment(now);
+      const body = {
+        now,
+        utc: time.utcOffset(),
+        tags: tag ? [tag] : [],
+        text
+      };
 
-    if (bounds || refresh) {
-      if (!searching) {
-        emitter.emit("refresh");
+      if (locationEnabled) {
+        const {
+          coords: { latitude, longitude }
+        } = await locate();
+
+        body.lat = latitude;
+        body.lng = longitude;
       }
 
-      body.bounds = bounds;
-    }
-    if (DEV) {
-      console.log({ body });
-    }
-    try {
+      if (bounds || refresh) {
+        if (!searching) {
+          emitter.emit("refresh");
+        }
+
+        body.bounds = bounds;
+      }
+      if (DEV) {
+        console.log({ body });
+      }
+
       const res = await api("events", body);
 
       if (DEV) {
