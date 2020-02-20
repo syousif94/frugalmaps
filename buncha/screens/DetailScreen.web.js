@@ -53,7 +53,14 @@ const DetailView = ({ preloaded, item }) => {
         ) : (
           <DetailMapView events={events} preloaded={preloaded} />
         )}
-        <View style={{ width: 400, backgroundColor: "#fff" }}>
+        <View
+          style={{
+            width: 401,
+            backgroundColor: "#fff",
+            borderLeftWidth: 1,
+            borderColor: "#e0e0e0"
+          }}
+        >
           <ScrollView>
             <DetailSidebar events={events} />
           </ScrollView>

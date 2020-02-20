@@ -7,7 +7,7 @@ import { SearchContext, getItemCount, getItemText } from "../utils/Search";
 import { useDispatch } from "react-redux";
 import * as Events from "../store/events";
 
-export const TAG_LIST_HEIGHT = 116;
+export const TAG_LIST_HEIGHT = 88;
 
 export default ({ style, buttonStyle }) => {
   const scrollRef = useRef(null);
@@ -42,7 +42,7 @@ export default ({ style, buttonStyle }) => {
   );
 };
 
-const ROWS = 3;
+const ROWS = 2;
 
 function makeItems(list, buttonStyle, setFilter) {
   const rows = Array.from({ length: ROWS }, () => []);
@@ -101,9 +101,9 @@ const Button = ({ item: i, style, setFilter }) => {
       <Text
         allowFontScaling={false}
         style={{
-          fontSize: 13,
+          fontSize: 15,
           color: "#555",
-          fontWeight: ANDROID ? "700" : "600"
+          fontWeight: "700"
         }}
       >
         {text}
@@ -124,8 +124,8 @@ const SubText = ({ item }) => {
           allowFontScaling={false}
           style={{
             marginTop: ANDROID ? -1.5 : null,
-            fontSize: 11,
-            fontWeight: ANDROID ? "700" : "600",
+            fontSize: 12,
+            fontWeight: "700",
             color: info.color
           }}
         >

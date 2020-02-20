@@ -1,11 +1,11 @@
 import React from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
-import { Ionicons, FontAwesome } from "@expo/vector-icons";
+import { Ionicons, FontAwesome, Entypo } from "@expo/vector-icons";
 import { RED } from "../utils/Colors";
 import * as Interested from "../store/interested";
 import { useDispatch } from "react-redux";
 
-export default ({ item }) => {
+export default ({ item, web }) => {
   return (
     <View
       style={{

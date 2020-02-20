@@ -1,10 +1,9 @@
 import React from "react";
 import { Text, View, Dimensions } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { navigate } from "../screens";
 import ImageGallery from "./ImageGallery";
 import { useEveryMinute } from "../utils/Hooks";
-import DaysText from "./DaysText";
 import {
   itemRemaining,
   itemRemainingAtTime,
@@ -16,10 +15,14 @@ import { ANDROID, WEB } from "../utils/Constants";
 import Link from "./Link";
 import emitter from "tiny-emitter/instance";
 import EventActions from "./EventActions";
+import PriceText from "./PriceText";
+import { BLUE } from "../utils/Colors";
+import * as Browser from "../store/browser";
 
-export const PADDING = 6;
+export const PADDING = WEB ? 6 : 8;
 
 export default ({ item, index, width }) => {
+  const dispatch = useDispatch();
   const day = useSelector(state => state.events.day);
   const notNow = useSelector(state => state.events.notNow);
   const now = useSelector(state => state.events.now);
@@ -62,39 +65,43 @@ export default ({ item, index, width }) => {
       to={`e/${item._id}`}
       onPress={onPress}
     >
-      <View style={{ height: 54, borderRadius: 2, overflow: "hidden" }}>
-        <ImageGallery photos={item._source.photos} height={54} width={width} />
+      <View
+        style={{ height: WEB ? 54 : 110, borderRadius: 5, overflow: "hidden" }}
+      >
+        <ImageGallery
+          photos={item._source.photos}
+          height={WEB ? 54 : 110}
+          width={width}
+        />
         <View
           style={{
             position: "absolute",
-            bottom: 2,
-            right: 2,
+            bottom: 3,
+            left: 3,
             backgroundColor: "rgba(0,0,0,0.5)",
-            borderRadius: 2,
-            paddingHorizontal: 2
+            borderRadius: 3,
+            paddingHorizontal: 3
           }}
         >
-          <Text style={{ color: "#fff", fontSize: 10, fontWeight: "700" }}>
+          <Text style={{ color: "#fff", fontSize: 13, fontWeight: "700" }}>
             {index + 1}
           </Text>
         </View>
       </View>
       <Text
-        numberOfLines={1}
-        lineBreakMode="clip"
         allowFontScaling={false}
         style={{
           color: time.color,
-          marginTop: 2,
+          marginTop: 5,
           fontWeight: "700",
-          fontSize: 13
+          fontSize: WEB ? 11 : 16
         }}
       >
-        {time.duration}
+        {time.status}
         <Text
           style={{
-            fontSize: 11,
-            fontWeight: ANDROID ? "700" : "600",
+            fontSize: WEB ? 10 : 15,
+            fontWeight: "700",
             color: "#555"
           }}
         >
@@ -102,68 +109,111 @@ export default ({ item, index, width }) => {
           {time.ending ? time.end : time.start}
           {time.upcoming || time.ending ? null : ` ${time.day}`}
         </Text>
+        <Text
+          style={{
+            fontSize: WEB ? 8 : 12,
+            fontWeight: "700",
+            color: "#999"
+          }}
+        >
+          {" "}
+          {time.ending ? time.start : time.end}
+        </Text>
       </Text>
       <Text
-        numberOfLines={1}
+        numberOfLines={WEB ? 1 : null}
         allowFontScaling={false}
         style={{
-          fontSize: 13,
-          marginTop: ANDROID ? -1 : null,
-          fontWeight: ANDROID ? "700" : "600",
+          fontSize: WEB ? 13 : 17,
+          fontWeight: "700",
           color: "#000"
         }}
       >
         {item._source.location}
+        {distance ? (
+          <Text
+            style={{
+              fontSize: WEB ? 11 : 15,
+              fontWeight: "700",
+              color: "#999"
+            }}
+            allowFontScaling={false}
+          >
+            {" "}
+            {distance}
+          </Text>
+        ) : null}
+        <PriceText
+          priceLevel={item._source.priceLevel}
+          prefix=" "
+          style={{
+            fontSize: WEB ? 11 : 15,
+            fontWeight: "700"
+          }}
+        />
       </Text>
       {item._source.neighborhood ? (
         <Text
-          numberOfLines={1}
-          allowFontScaling={false}
+          numberOfLines={WEB ? 1 : null}
           style={{
-            fontSize: 11,
-            marginTop: ANDROID ? -0.5 : null,
-            fontWeight: ANDROID ? "700" : "600",
+            fontSize: WEB ? 10 : 11,
+            fontWeight: "700",
             color: "#555"
           }}
         >
-          {item._source.neighborhood.split(",")[0]}
+          {item._source.neighborhood}
         </Text>
       ) : null}
-
       <Text
-        numberOfLines={1}
         allowFontScaling={false}
+        numberOfLines={6}
         style={{
-          fontSize: 14,
-          fontWeight: ANDROID ? "700" : "600",
+          fontSize: WEB ? 13 : 20,
+          fontWeight: "700",
           color: "#000",
           marginTop: ANDROID ? -1 : null
         }}
       >
-        {item._source.title}
+        {item._source.title}{" "}
+        <MatchableText
+          allowFontScaling={false}
+          style={{
+            fontSize: WEB ? 13 : 20,
+            color: "#000",
+            fontWeight: "400"
+          }}
+          text={item._source.description}
+          match={searchTerm}
+        />
+        {WEB || !item._source.website ? null : (
+          <React.Fragment>
+            {" "}
+            <Text
+              onPress={() => {
+                dispatch({
+                  type: "browser/set",
+                  payload: {
+                    url: item._source.website,
+                    mode: Browser.MODES[0]
+                  }
+                });
+              }}
+              style={{
+                fontSize: 16,
+                color: BLUE,
+                fontWeight: "400"
+              }}
+            >
+              {
+                item._source.website
+                  .replace(/((http|https):\/\/|www.)/gi, "")
+                  .split("/")[0]
+              }
+            </Text>
+          </React.Fragment>
+        )}
       </Text>
-      <Text
-        style={{
-          fontSize: 11,
-          fontWeight: ANDROID ? "700" : "600",
-          color: "#555"
-        }}
-        allowFontScaling={false}
-      >
-        <DaysText days={item._source.days} />
-        {distance ? ` · ${distance}` : null}
-      </Text>
-      <MatchableText
-        allowFontScaling={false}
-        numberOfLines={6}
-        style={{
-          marginTop: ANDROID ? null : 1.5,
-          fontSize: 13,
-          color: "#000"
-        }}
-        text={item._source.description}
-        match={searchTerm}
-      />
+
       <Text
         style={{
           fontSize: 11,

@@ -13,7 +13,10 @@ export default ({ priceLevel, style = {}, prefix = "", suffix = "" }) => {
   }
   signs += suffix;
   return (
-    <Text style={[{ color: PRICE_COLORS[priceLevel - 1] }, style]}>
+    <Text
+      style={[{ color: PRICE_COLORS[priceLevel - 1] }, style]}
+      allowFontScaling={false}
+    >
       {signs}
     </Text>
   );

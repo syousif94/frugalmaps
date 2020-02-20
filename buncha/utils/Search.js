@@ -205,17 +205,17 @@ function getTagTime({ item, upcoming, ending }) {
   }
 
   if (ending) {
-    const { duration } = itemRemaining(item);
-    return { text: duration, color: NOW };
+    const { status } = itemRemaining(item);
+    return { text: status, color: NOW };
   } else if (upcoming) {
     const { text } = itemRemaining(item);
     return { text: text.replace(" today", ""), color: UPCOMING };
   } else {
-    const { remaining, upcoming: u, start } = itemRemaining(item);
+    const { status, upcoming: u, start } = itemRemaining(item);
     if (u) {
       return { text: start, color: UPCOMING };
     } else {
-      const away = parseInt(remaining.replace("d", ""), 10);
+      const away = parseInt(status.replace("d", ""), 10);
       return { text: `${away} day${away != 1 ? "s" : ""}`, color: "#777" };
     }
   }

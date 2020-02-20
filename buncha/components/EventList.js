@@ -22,14 +22,12 @@ export default () => {
   const data = useSelector(state => state.events.upNext, shallowEqual);
   const [setScrollOffset] = useScrollAboveKeyboard(listRef);
 
-  let numColumns = 3;
-  if (dimensions.width > 850) {
-    numColumns = 6;
-  } else if (dimensions.width > 550) {
-    numColumns = 5;
+  let numColumns = 1;
+  if (dimensions.width > 550) {
+    numColumns = 3;
   }
 
-  const itemWidth = (dimensions.width - 12) / numColumns;
+  const itemWidth = (dimensions.width - PADDING * 2) / numColumns;
 
   return (
     <View

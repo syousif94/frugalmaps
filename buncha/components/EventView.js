@@ -34,7 +34,7 @@ export default memo(({ item }) => {
           fontSize: 15
         }}
       >
-        {time.duration}
+        {time.status}
         <Text
           style={{
             fontSize: 13,

@@ -25,15 +25,17 @@ export default () => {
     return (
       <View style={{ flex: 1, flexDirection: "row" }}>
         {Map.current}
-        <View style={{ width: 400 }}>
+        <View
+          style={{ width: 401, borderLeftWidth: 1, borderColor: "#e0e0e0" }}
+        >
           <ScrollView>
             {Header.current}
             <ListError />
             <View
               style={{
+                padding: PADDING,
                 flexDirection: "row",
-                flexWrap: "wrap",
-                padding: PADDING
+                flexWrap: "wrap"
               }}
             >
               {data.map((item, index) => {
@@ -53,7 +55,7 @@ export default () => {
     );
   }
 
-  const perRow = dimensions.width < 550 ? 3 : 4;
+  const perRow = dimensions.width < 650 ? 3 : 4;
   const itemWidth = (dimensions.width - 14) / perRow;
 
   return (

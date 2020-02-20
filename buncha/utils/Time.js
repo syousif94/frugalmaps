@@ -495,7 +495,7 @@ export function itemRemaining(item) {
     day = (tomorrow && tomorrow.text) || spanHours.days[0].text;
   }
 
-  const { span, start, end } = itemTime(day, spanHours, ending, upcoming);
+  const { start, end } = itemTime(day, spanHours, ending, upcoming);
 
   let text;
 
@@ -507,18 +507,18 @@ export function itemRemaining(item) {
     text = `${start} ${LONG_DAYS[day]}`;
   }
 
-  const duration = ending ? `${remaining} left` : `${remaining} away`;
+  const status = ending ? `${remaining} left` : `${remaining} away`;
 
   return {
     text,
     color,
-    span,
     remaining,
     ending,
     upcoming,
     day,
     start,
-    duration,
+    duration: spanHours.duration,
+    status,
     tomorrow,
     end
   };
@@ -668,12 +668,5 @@ export function truncatedHours(groupedHours) {
 export function itemTime(day, groupedHours, ending, upcoming) {
   const [start, end] = truncatedHours(groupedHours);
 
-  let span;
-  if (ending || upcoming) {
-    span = `Today ${start} to ${end}`;
-  } else {
-    span = `${day} ${start} to ${end}`;
-  }
-
-  return { span, start, end };
+  return { start, end };
 }
