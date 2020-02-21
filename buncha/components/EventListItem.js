@@ -1,5 +1,11 @@
-import React from "react";
-import { Text, View, Dimensions } from "react-native";
+import React, { useRef } from "react";
+import {
+  Text,
+  View,
+  Dimensions,
+  TouchableWithoutFeedback,
+  Animated
+} from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { navigate } from "../screens";
 import ImageGallery from "./ImageGallery";
@@ -11,7 +17,7 @@ import {
 } from "../utils/Time";
 import MatchableText from "./MatchableText";
 import { roundedDistanceTo } from "../utils/Locate";
-import { ANDROID, WEB } from "../utils/Constants";
+import { ANDROID, WEB, IOS } from "../utils/Constants";
 import Link from "./Link";
 import emitter from "tiny-emitter/instance";
 import EventActions from "./EventActions";
@@ -21,8 +27,20 @@ import * as Browser from "../store/browser";
 
 export const PADDING = WEB ? 6 : 8;
 
+const TIME_STYLES = [
+  {
+    fontSize: WEB ? 10 : 16,
+    fontWeight: "700",
+    color: "#555"
+  },
+  {
+    fontSize: WEB ? 9 : 14,
+    fontWeight: "700",
+    color: "#aaa"
+  }
+];
+
 export default ({ item, index, width }) => {
-  const dispatch = useDispatch();
   const day = useSelector(state => state.events.day);
   const notNow = useSelector(state => state.events.notNow);
   const now = useSelector(state => state.events.now);
@@ -66,11 +84,11 @@ export default ({ item, index, width }) => {
       onPress={onPress}
     >
       <View
-        style={{ height: WEB ? 54 : 110, borderRadius: 5, overflow: "hidden" }}
+        style={{ height: WEB ? 54 : 100, borderRadius: 5, overflow: "hidden" }}
       >
         <ImageGallery
           photos={item._source.photos}
-          height={WEB ? 54 : 110}
+          height={WEB ? 54 : 100}
           width={width}
         />
         <View
@@ -98,32 +116,21 @@ export default ({ item, index, width }) => {
         }}
       >
         {time.status}
-        <Text
-          style={{
-            fontSize: WEB ? 10 : 15,
-            fontWeight: "700",
-            color: "#555"
-          }}
-        >
+        <Text style={time.ending ? TIME_STYLES[1] : TIME_STYLES[0]}>
           {" "}
-          {time.ending ? time.end : time.start}
+          {time.start}
           {time.upcoming || time.ending ? null : ` ${time.day}`}
         </Text>
-        <Text
-          style={{
-            fontSize: WEB ? 8 : 12,
-            fontWeight: "700",
-            color: "#999"
-          }}
-        >
+        <Text style={time.ending ? TIME_STYLES[0] : TIME_STYLES[1]}>
           {" "}
-          {time.ending ? time.start : time.end}
+          {time.end}
         </Text>
       </Text>
       <Text
         numberOfLines={WEB ? 1 : null}
         allowFontScaling={false}
         style={{
+          marginTop: 1,
           fontSize: WEB ? 13 : 17,
           fontWeight: "700",
           color: "#000"
@@ -133,9 +140,9 @@ export default ({ item, index, width }) => {
         {distance ? (
           <Text
             style={{
-              fontSize: WEB ? 11 : 15,
+              fontSize: WEB ? 13 : 14,
               fontWeight: "700",
-              color: "#999"
+              color: "#aaa"
             }}
             allowFontScaling={false}
           >
@@ -147,7 +154,7 @@ export default ({ item, index, width }) => {
           priceLevel={item._source.priceLevel}
           prefix=" "
           style={{
-            fontSize: WEB ? 11 : 15,
+            fontSize: WEB ? 13 : 14,
             fontWeight: "700"
           }}
         />
@@ -156,9 +163,10 @@ export default ({ item, index, width }) => {
         <Text
           numberOfLines={WEB ? 1 : null}
           style={{
-            fontSize: WEB ? 10 : 11,
-            fontWeight: "700",
-            color: "#555"
+            fontSize: 10,
+            fontWeight: "400",
+            color: "#666",
+            marginBottom: IOS ? 2 : null
           }}
         >
           {item._source.neighborhood}
@@ -168,48 +176,27 @@ export default ({ item, index, width }) => {
         allowFontScaling={false}
         numberOfLines={6}
         style={{
-          fontSize: WEB ? 13 : 20,
+          fontSize: WEB ? 14 : 20,
           fontWeight: "700",
           color: "#000",
-          marginTop: ANDROID ? -1 : null
+          marginBottom: WEB || IOS ? 2 : null
         }}
       >
         {item._source.title}{" "}
         <MatchableText
           allowFontScaling={false}
           style={{
-            fontSize: WEB ? 13 : 20,
-            color: "#000",
-            fontWeight: "400"
+            fontSize: WEB ? 13 : 17,
+            color: "#666",
+            fontWeight: "500"
           }}
           text={item._source.description}
           match={searchTerm}
         />
-        {WEB || !item._source.website ? null : (
+        {!WEB || !item._source.website ? null : (
           <React.Fragment>
             {" "}
-            <Text
-              onPress={() => {
-                dispatch({
-                  type: "browser/set",
-                  payload: {
-                    url: item._source.website,
-                    mode: Browser.MODES[0]
-                  }
-                });
-              }}
-              style={{
-                fontSize: 16,
-                color: BLUE,
-                fontWeight: "400"
-              }}
-            >
-              {
-                item._source.website
-                  .replace(/((http|https):\/\/|www.)/gi, "")
-                  .split("/")[0]
-              }
-            </Text>
+            <WebsiteText item={item} />
           </React.Fragment>
         )}
       </Text>
@@ -224,7 +211,64 @@ export default ({ item, index, width }) => {
       >
         {item._source.tags.join(", ")}
       </Text>
-      <EventActions item={item} />
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "baseline",
+          paddingRight: 5
+        }}
+      >
+        <EventActions item={item} />
+        {WEB || !item._source.website ? null : <WebsiteText item={item} />}
+      </View>
     </Link>
+  );
+};
+
+const WebsiteText = ({ item }) => {
+  const dispatch = useDispatch();
+  const opacity = useRef(new Animated.Value(1));
+
+  const webtext = item._source.website
+    .replace(/((http|https):\/\/|www.)/gi, "")
+    .split("/")[0];
+
+  return (
+    <TouchableWithoutFeedback
+      onPressIn={() => {
+        opacity.current.setValue(0.3);
+      }}
+      onPressOut={() => {
+        opacity.current.setValue(1);
+      }}
+      onPress={() => {
+        if (WEB) {
+          window.open(item._source.website, "_blank");
+        } else {
+          dispatch({
+            type: "browser/set",
+            payload: {
+              url: item._source.website,
+              mode: Browser.MODES[0]
+            }
+          });
+        }
+      }}
+    >
+      <Animated.Text
+        allowFontScaling={false}
+        style={{
+          opacity: opacity.current,
+          textDecoration: "underline",
+          textDecorationLine: "underline",
+          fontSize: WEB ? 11 : 16,
+          fontWeight: "400",
+          color: "#8DA9C1"
+        }}
+      >
+        {webtext}
+      </Animated.Text>
+    </TouchableWithoutFeedback>
   );
 };

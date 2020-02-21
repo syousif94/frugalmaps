@@ -103,7 +103,7 @@ const Button = ({ item: i, style, setFilter }) => {
         style={{
           fontSize: 15,
           color: "#555",
-          fontWeight: "700"
+          fontWeight: "600"
         }}
       >
         {text}
@@ -125,7 +125,7 @@ const SubText = ({ item }) => {
           style={{
             marginTop: ANDROID ? -1.5 : null,
             fontSize: 12,
-            fontWeight: "700",
+            fontWeight: "600",
             color: info.color
           }}
         >
