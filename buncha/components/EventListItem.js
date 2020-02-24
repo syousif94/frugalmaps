@@ -25,16 +25,16 @@ import PriceText from "./PriceText";
 import { BLUE } from "../utils/Colors";
 import * as Browser from "../store/browser";
 
-export const PADDING = WEB ? 6 : 8;
+export const PADDING = 5;
 
 const TIME_STYLES = [
   {
-    fontSize: WEB ? 10 : 16,
+    fontSize: 10,
     fontWeight: "700",
     color: "#555"
   },
   {
-    fontSize: WEB ? 9 : 14,
+    fontSize: 9,
     fontWeight: "700",
     color: "#aaa"
   }
@@ -83,14 +83,8 @@ export default ({ item, index, width }) => {
       to={`e/${item._id}`}
       onPress={onPress}
     >
-      <View
-        style={{ height: WEB ? 54 : 100, borderRadius: 5, overflow: "hidden" }}
-      >
-        <ImageGallery
-          photos={item._source.photos}
-          height={WEB ? 54 : 100}
-          width={width}
-        />
+      <View style={{ height: 54, borderRadius: 3, overflow: "hidden" }}>
+        <ImageGallery photos={item._source.photos} height={54} width={width} />
         <View
           style={{
             position: "absolute",
@@ -107,101 +101,72 @@ export default ({ item, index, width }) => {
         </View>
       </View>
       <Text
+        numberOfLines={1}
         allowFontScaling={false}
         style={{
-          color: time.color,
-          marginTop: 5,
+          fontSize: 15,
           fontWeight: "700",
-          fontSize: WEB ? 11 : 16
+          color: "#000",
+          marginTop: 2,
+          marginBottom: -1
         }}
       >
-        {time.status}
-        <Text style={time.ending ? TIME_STYLES[1] : TIME_STYLES[0]}>
-          {" "}
-          {time.start}
-          {time.upcoming || time.ending ? null : ` ${time.day}`}
-        </Text>
-        <Text style={time.ending ? TIME_STYLES[0] : TIME_STYLES[1]}>
-          {" "}
-          {time.end}
-        </Text>
+        {item._source.location}
       </Text>
       <Text
-        numberOfLines={WEB ? 1 : null}
+        numberOfLines={1}
         allowFontScaling={false}
         style={{
-          marginTop: 1,
-          fontSize: WEB ? 13 : 17,
+          fontSize: 10,
+          fontWeight: "600",
+          color: "#555"
+        }}
+      >
+        {item._source.neighborhood || item._source.address}
+      </Text>
+      <Text
+        allowFontScaling={false}
+        style={{
+          fontSize: 13,
           fontWeight: "700",
           color: "#000"
         }}
       >
-        {item._source.location}
-        {distance ? (
-          <Text
-            style={{
-              fontSize: WEB ? 13 : 14,
-              fontWeight: "700",
-              color: "#aaa"
-            }}
-            allowFontScaling={false}
-          >
-            {" "}
-            {distance}
-          </Text>
-        ) : null}
-        <PriceText
-          priceLevel={item._source.priceLevel}
-          prefix=" "
-          style={{
-            fontSize: WEB ? 13 : 14,
-            fontWeight: "700"
-          }}
-        />
-      </Text>
-      {item._source.neighborhood ? (
-        <Text
-          numberOfLines={WEB ? 1 : null}
-          style={{
-            fontSize: 10,
-            fontWeight: "400",
-            color: "#666",
-            marginBottom: IOS ? 2 : null
-          }}
-        >
-          {item._source.neighborhood}
-        </Text>
-      ) : null}
-      <Text
-        allowFontScaling={false}
-        numberOfLines={6}
-        style={{
-          fontSize: WEB ? 14 : 20,
-          fontWeight: "700",
-          color: "#000",
-          marginBottom: WEB || IOS ? 2 : null
-        }}
-      >
         {item._source.title}{" "}
-        <MatchableText
+        <Text
           allowFontScaling={false}
           style={{
-            fontSize: WEB ? 13 : 17,
-            color: "#666",
-            fontWeight: "500"
+            color: time.color,
+            fontWeight: "700",
+            fontSize: 11
           }}
-          text={item._source.description}
-          match={searchTerm}
-        />
-        {!WEB || !item._source.website ? null : (
-          <React.Fragment>
+        >
+          {time.status}
+          <Text style={time.ending ? TIME_STYLES[1] : TIME_STYLES[0]}>
             {" "}
-            <WebsiteText item={item} />
-          </React.Fragment>
-        )}
+            {time.start}
+            {time.upcoming || time.ending ? null : ` ${time.day}`}
+          </Text>
+          <Text style={time.ending ? TIME_STYLES[0] : TIME_STYLES[1]}>
+            {" "}
+            til {time.end}
+          </Text>
+        </Text>
       </Text>
+      <MatchableText
+        allowFontScaling={false}
+        style={{
+          fontSize: 14,
+          color: "#000",
+          fontWeight: "400"
+        }}
+        numberOfLines={4}
+        text={item._source.description}
+        match={searchTerm}
+      />
+      {!item._source.website ? null : <WebsiteText item={item} />}
 
-      <Text
+      {/* <Text
         style={{
           fontSize: 11,
           fontWeight: ANDROID ? "700" : "600",
@@ -210,18 +175,8 @@ export default ({ item, index, width }) => {
         allowFontScaling={false}
       >
         {item._source.tags.join(", ")}
-      </Text>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "baseline",
-          paddingRight: 5
-        }}
-      >
-        <EventActions item={item} />
-        {WEB || !item._source.website ? null : <WebsiteText item={item} />}
-      </View>
+      </Text> */}
+      <EventActions item={item} />
     </Link>
   );
 };
@@ -262,7 +217,7 @@ const WebsiteText = ({ item }) => {
           opacity: opacity.current,
           textDecoration: "underline",
           textDecorationLine: "underline",
-          fontSize: WEB ? 11 : 16,
+          fontSize: 13,
           fontWeight: "400",
           color: "#8DA9C1"
         }}

@@ -42,7 +42,7 @@ const ImageGallery = ({ photos, height = 170, width }) => {
       </React.Fragment>
     );
     i += 1;
-    totalWidth += imageWidth + 2;
+    totalWidth += imageWidth + 1;
   }
 
   return (
@@ -63,6 +63,6 @@ export default memo(ImageGallery);
 
 const styles = StyleSheet.create({
   divider: {
-    width: 2
+    width: 1
   }
 });

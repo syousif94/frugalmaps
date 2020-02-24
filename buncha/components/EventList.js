@@ -22,9 +22,9 @@ export default () => {
   const data = useSelector(state => state.events.upNext, shallowEqual);
   const [setScrollOffset] = useScrollAboveKeyboard(listRef);
 
-  let numColumns = 1;
+  let numColumns = 3;
   if (dimensions.width > 550) {
-    numColumns = 3;
+    numColumns = 5;
   }
 
   const itemWidth = (dimensions.width - PADDING * 2) / numColumns;
