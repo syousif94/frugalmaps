@@ -81,13 +81,15 @@ const Item = ({ item, index, width }) => {
       style={{
         width,
         backgroundColor: "#fff",
-        padding: PADDING * 2,
+        paddingBottom: PADDING * 2,
+        paddingHorizontal: PADDING * 2,
+        paddingTop: index ? PADDING * 2 : 0,
         flexDirection: "row"
       }}
       to={`e/${item._id}`}
       onPress={onPress}
     >
-      <View style={{ flex: 1, paddingTop: 2 }}>
+      <View style={{ flex: 1, paddingBottom: 2 }}>
         <Text
           allowFontScaling={false}
           style={{
@@ -96,6 +98,7 @@ const Item = ({ item, index, width }) => {
             fontSize: 17
           }}
         >
+          {time.status}{" "}
           <Text style={time.ending ? TIME_STYLES[1] : TIME_STYLES[0]}>
             {time.start}
             {time.upcoming || time.ending ? null : ` ${time.day}`}
@@ -103,14 +106,13 @@ const Item = ({ item, index, width }) => {
           <Text style={time.ending ? TIME_STYLES[0] : TIME_STYLES[1]}>
             {" "}
             til {time.end}
-          </Text>{" "}
-          {time.status}
+          </Text>
         </Text>
         <Text
           numberOfLines={1}
           allowFontScaling={false}
           style={{
-            fontSize: 20,
+            fontSize: 18,
             fontWeight: "700",
             color: "#000"
           }}
@@ -134,7 +136,7 @@ const Item = ({ item, index, width }) => {
         <Text
           allowFontScaling={false}
           style={{
-            fontSize: 16,
+            fontSize: 20,
             fontWeight: "700",
             color: "#000",
             marginTop: 0.5
@@ -160,15 +162,36 @@ const Item = ({ item, index, width }) => {
       </View>
       <View
         style={{
-          marginTop: 4,
-          height: 100,
-          width: 90,
-          marginLeft: 10,
-          borderRadius: 3,
-          overflow: "hidden"
+          marginTop: index ? 4 : 2,
+          marginLeft: 10
         }}
       >
-        <PhotoView photos={item._source.photos} key={item._id} />
+        <View
+          style={{
+            height: 100,
+            width: 90,
+
+            borderRadius: 3,
+            overflow: "hidden"
+          }}
+        >
+          <PhotoView photos={item._source.photos} key={item._id} />
+          <View
+            style={{
+              position: "absolute",
+              top: 3,
+              right: 3,
+              borderRadius: 3,
+              backgroundColor: "rgba(0,0,0,0.5)",
+              paddingHorizontal: 4
+            }}
+          >
+            <Text style={{ fontSize: 12, color: "#fff", fontWeight: "700" }}>
+              {index + 1}
+            </Text>
+          </View>
+        </View>
+        <EventActions item={item} />
       </View>
     </Link>
   );
