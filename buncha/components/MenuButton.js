@@ -11,7 +11,7 @@ export default () => {
         name="md-menu"
         size={18}
         color={BLUE}
-        style={{ marginTop: 1.5, marginLeft: 2.5 }}
+        style={{ marginTop: 0.5, marginLeft: 1.5 }}
       />
     </TouchableOpacity>
   );
@@ -19,10 +19,10 @@ export default () => {
 
 const styles = StyleSheet.create({
   btn: {
-    marginHorizontal: 2,
+    marginLeft: 5,
     width: 50,
     height: buttonHeight,
-    borderRadius: 3,
+    borderRadius: 5,
     backgroundColor: "rgba(180,180,180,0.1)",
     justifyContent: "center",
     alignItems: "center"

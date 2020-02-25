@@ -65,7 +65,7 @@ export default React.forwardRef(
           blurOnSubmit
           render={() => <Icon searching={searching} />}
           backgroundColor="rgba(180,180,180,0.1)"
-          containerStyle={{ flex: 1, borderRadius: 3 }}
+          containerStyle={{ flex: 1, borderRadius: 5 }}
           style={styles.input}
           {...props}
         />

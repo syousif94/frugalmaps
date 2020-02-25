@@ -13,7 +13,7 @@ const TouchableOpacity = WEB
   ? require("react-native").TouchableOpacity
   : require("react-native-gesture-handler/touchables/TouchableOpacity").default;
 
-export const buttonHeight = 36;
+export const buttonHeight = WEB ? 36 : 42;
 
 export default () => {
   const dispatch = useDispatch();
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   pickerBtn: {
     flexDirection: "row",
     overflow: "hidden",
-    marginLeft: 2
+    marginLeft: 5
   },
   pickerInfo: {
     backgroundColor: "rgba(180,180,180,0.1)",
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 6,
-    borderRadius: 3
+    borderRadius: 5
   },
   pickerTitleText: {
     fontSize: 12,

@@ -14,12 +14,11 @@ import { useAnimateOn, useDimensions } from "../utils/Hooks";
 import ImageGallery from "./ImageGallery";
 import DaysText from "./DaysText";
 import PriceText from "./PriceText";
-import { TAG_LIST_HEIGHT } from "./TagList";
 import { ANDROID } from "../utils/Constants";
 
 export default () => {
   const [dimensions] = useDimensions();
-  const height = TAG_LIST_HEIGHT + (ANDROID ? 76 : 99);
+  const height = 190;
 
   const selectedEvent = useSelector(state => {
     const selected = state.events.selected;

@@ -1,5 +1,11 @@
 import React, { useRef, useContext } from "react";
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Keyboard
+} from "react-native";
 import _ from "lodash";
 import { usePreventBackScroll, useEveryMinute } from "../utils/Hooks";
 import { ANDROID } from "../utils/Constants";
@@ -7,36 +13,37 @@ import { SearchContext, getItemCount, getItemText } from "../utils/Search";
 import { useDispatch } from "react-redux";
 import * as Events from "../store/events";
 
-export const TAG_LIST_HEIGHT = 88;
-
 export default ({ style, buttonStyle }) => {
   const scrollRef = useRef(null);
   usePreventBackScroll(scrollRef);
   const [, setFilter, list] = useContext(SearchContext);
   return (
-    <View style={style}>
+    <View style={{ flex: 1 }}>
       <ScrollView
         ref={scrollRef}
+        showsVerticalScrollIndicator={false}
+        contentInsetAdjustmentBehavior="never"
         keyboardDismissMode="none"
         keyboardShouldPersistTaps="always"
         showsHorizontalScrollIndicator={false}
-        horizontal
         contentContainerStyle={[
           {
-            height: TAG_LIST_HEIGHT,
-            padding: 1
+            padding: 2.5,
+            flexDirection: "row",
+            flexWrap: "wrap"
           }
         ]}
       >
-        <View>
-          {makeItems(list, buttonStyle, setFilter).map((row, index) => {
-            return (
-              <View style={{ flexDirection: "row", flex: 1 }} key={`${index}`}>
-                {row}
-              </View>
-            );
-          })}
-        </View>
+        {list.map((item, index) => {
+          return (
+            <Button
+              item={item}
+              key={`${index}`}
+              style={buttonStyle}
+              setFilter={setFilter}
+            />
+          );
+        })}
       </ScrollView>
     </View>
   );
@@ -81,27 +88,28 @@ const Button = ({ item: i, style, setFilter }) => {
         {
           justifyContent: "center",
           backgroundColor: "rgba(180,180,180,0.1)",
-          paddingHorizontal: 6,
-          borderRadius: 1,
-          margin: 1
+          padding: 6,
+          borderRadius: 5,
+          margin: 2.5
         },
         style
       ]}
       onPress={() => {
+        Keyboard.dismiss();
         switch (item.type) {
           case "tag":
             dispatch(Events.filter({ tag: item.text }));
             setFilter("");
             break;
           default:
-            return;
+            break;
         }
       }}
     >
       <Text
         allowFontScaling={false}
         style={{
-          fontSize: 15,
+          fontSize: 19,
           color: "#555",
           fontWeight: "600"
         }}
@@ -124,7 +132,7 @@ const SubText = ({ item }) => {
           allowFontScaling={false}
           style={{
             marginTop: ANDROID ? -1.5 : null,
-            fontSize: 12,
+            fontSize: 15,
             fontWeight: "600",
             color: info.color
           }}

@@ -1,18 +1,12 @@
-import React, { useRef, useCallback, useEffect } from "react";
-import { View, FlatList, Text, Keyboard } from "react-native";
+import React, { useRef } from "react";
+import { View, FlatList, Text } from "react-native";
 import { useSelector, shallowEqual } from "react-redux";
 import { useDimensions } from "../utils/Hooks";
 import EventListItem, { PADDING } from "./EventListItem";
 import MapView from "./MapView";
-import BlurView from "./BlurView";
-import TagList from "./TagList";
 import { useSafeArea } from "react-native-safe-area-context";
-import EventSearchInput from "./EventSearchInput";
 import MapEventButton from "./MapEventButton";
-import PickerButton from "./PickerButton";
-import MenuButton from "./MenuButton";
 import { SearchProvider } from "../utils/Search";
-import { ANDROID } from "../utils/Constants";
 import BottomPanel from "./BottomPanel";
 
 export default () => {
@@ -21,7 +15,6 @@ export default () => {
   const [dimensions] = useDimensions();
   const insets = useSafeArea();
   const data = useSelector(state => state.events.upNext, shallowEqual);
-  const [setScrollOffset] = useScrollAboveKeyboard(listRef);
 
   let numColumns = 1;
   if (dimensions.width > 550) {
@@ -37,10 +30,6 @@ export default () => {
       }}
     >
       <FlatList
-        scrollEventThrottle={16}
-        onScroll={e => {
-          setScrollOffset(e.nativeEvent.contentOffset.y);
-        }}
         key={`${numColumns}`}
         ref={listRef}
         numColumns={numColumns}
@@ -95,38 +84,6 @@ export default () => {
     </View>
   );
 };
-
-const KEYBOARD_EVENTS = ANDROID
-  ? ["keyboardDidShow", "keyboardDidHide"]
-  : ["keyboardWillShow", "keyboardWillHide"];
-
-const OFFSET = ANDROID ? 24 : 50;
-
-function useScrollAboveKeyboard(listRef) {
-  const scrollOffset = useRef(0);
-
-  const setScrollOffset = useCallback(offset => {
-    scrollOffset.current = offset;
-  });
-
-  useEffect(() => {
-    const onShow = e => {
-      if (scrollOffset.current < e.endCoordinates.height - OFFSET) {
-        listRef.current.scrollToOffset({
-          offset: e.endCoordinates.height - OFFSET
-        });
-      }
-    };
-
-    Keyboard.addListener(KEYBOARD_EVENTS[0], onShow);
-
-    return () => {
-      Keyboard.removeListener(KEYBOARD_EVENTS[0], onShow);
-    };
-  }, []);
-
-  return [setScrollOffset];
-}
 
 const HeaderView = () => {
   const [dimensions] = useDimensions();

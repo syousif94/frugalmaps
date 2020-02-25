@@ -32,12 +32,12 @@ export const PADDING = 4;
 
 const TIME_STYLES = [
   {
-    fontSize: 15,
+    fontSize: 17,
     fontWeight: "700",
     color: "#444"
   },
   {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "700",
     color: "#777"
   }
@@ -81,19 +81,19 @@ const Item = ({ item, index, width }) => {
       style={{
         width,
         backgroundColor: "#fff",
-        padding: PADDING,
+        padding: PADDING * 2,
         flexDirection: "row"
       }}
       to={`e/${item._id}`}
       onPress={onPress}
     >
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, paddingTop: 2 }}>
         <Text
           allowFontScaling={false}
           style={{
             color: time.color,
             fontWeight: "700",
-            fontSize: 15
+            fontSize: 17
           }}
         >
           <Text style={time.ending ? TIME_STYLES[1] : TIME_STYLES[0]}>
@@ -117,12 +117,27 @@ const Item = ({ item, index, width }) => {
         >
           {item._source.location}
         </Text>
+        {item._source.neighborhood ? (
+          <Text
+            numberOfLines={1}
+            allowFontScaling={false}
+            style={{
+              fontSize: 13,
+              fontWeight: "500",
+              color: "#555",
+              marginTop: -0.5
+            }}
+          >
+            {item._source.neighborhood}
+          </Text>
+        ) : null}
         <Text
           allowFontScaling={false}
           style={{
             fontSize: 16,
             fontWeight: "700",
-            color: "#000"
+            color: "#000",
+            marginTop: 0.5
           }}
           numberOfLines={1}
         >
@@ -132,20 +147,23 @@ const Item = ({ item, index, width }) => {
         <Text
           allowFontScaling={false}
           style={{
+            marginTop: 1,
             color: "#555",
-            fontSize: 15,
+            fontSize: 18,
             fontWeight: "500"
           }}
-          numberOfLines={2}
+          numberOfLines={3}
         >
           {item._source.description}
         </Text>
+        {item._source.website ? <WebsiteText item={item} /> : null}
       </View>
       <View
         style={{
+          marginTop: 4,
           height: 100,
           width: 90,
-          marginLeft: PADDING * 2,
+          marginLeft: 10,
           borderRadius: 3,
           overflow: "hidden"
         }}
