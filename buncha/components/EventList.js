@@ -13,6 +13,7 @@ import PickerButton from "./PickerButton";
 import MenuButton from "./MenuButton";
 import { SearchProvider } from "../utils/Search";
 import { ANDROID } from "../utils/Constants";
+import BottomPanel from "./BottomPanel";
 
 export default () => {
   const headerView = useRef(<HeaderView />);
@@ -22,7 +23,7 @@ export default () => {
   const data = useSelector(state => state.events.upNext, shallowEqual);
   const [setScrollOffset] = useScrollAboveKeyboard(listRef);
 
-  let numColumns = 3;
+  let numColumns = 1;
   if (dimensions.width > 550) {
     numColumns = 5;
   }
@@ -58,6 +59,16 @@ export default () => {
         renderItem={data => {
           return <EventListItem {...data} width={itemWidth} />;
         }}
+        ItemSeparatorComponent={() => (
+          <View
+            style={{
+              height: 1,
+              backgroundColor: "#f4f4f4",
+              marginLeft: PADDING,
+              marginRight: -PADDING
+            }}
+          />
+        )}
         ListFooterComponent={() => {
           if (!data.length) {
             return null;
@@ -79,6 +90,7 @@ export default () => {
           );
         }}
       />
+      <BottomPanel />
       <MapEventButton />
     </View>
   );
@@ -123,42 +135,30 @@ const HeaderView = () => {
       <View
         style={{
           marginHorizontal: -PADDING,
-          height: dimensions.height - 44,
-          paddingBottom: PADDING
+          height: dimensions.height - 170,
+          overflow: "hidden"
         }}
       >
         <MapView />
         <View
           style={{
             position: "absolute",
-            bottom: PADDING,
+            bottom: 0,
             left: 0,
-            right: 0
+            right: 0,
+            height: 12,
+            borderTopLeftRadius: 8,
+            borderTopRightRadius: 8,
+            backgroundColor: "#fff",
+            shadowOffset: {
+              width: 0,
+              height: 3
+            },
+            shadowOpacity: 0.29,
+            shadowRadius: 4.65,
+            elevation: 7
           }}
-        >
-          <BlurView>
-            <View
-              style={{
-                borderColor: "rgba(0,0,0,0.05)",
-                borderTopWidth: 1,
-                borderBottomWidth: 1
-              }}
-            >
-              <View
-                style={{
-                  marginTop: 2,
-                  marginHorizontal: 2,
-                  flexDirection: "row"
-                }}
-              >
-                <EventSearchInput contentContainerStyle={{ flex: 1 }} />
-                <PickerButton />
-                <MenuButton />
-              </View>
-              <TagList />
-            </View>
-          </BlurView>
-        </View>
+        />
       </View>
     </SearchProvider>
   );

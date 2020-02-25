@@ -7,7 +7,7 @@ const ImageItem = ({ item, height, width }) => {
     return null;
   }
 
-  let uri = `${AWSCF}${item.thumb.key}`;
+  const uri = `${AWSCF}${item.thumb.key}`;
 
   const source = {
     uri

@@ -1,10 +1,12 @@
-import React, { useRef } from "react";
+import React, { useRef, memo } from "react";
 import {
   Text,
   View,
   Dimensions,
   TouchableWithoutFeedback,
-  Animated
+  Animated,
+  StyleSheet,
+  Image
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { navigate } from "../screens";
@@ -24,23 +26,24 @@ import EventActions from "./EventActions";
 import PriceText from "./PriceText";
 import { BLUE } from "../utils/Colors";
 import * as Browser from "../store/browser";
+import { AWSCF } from "../utils/Constants";
 
-export const PADDING = 5;
+export const PADDING = 4;
 
 const TIME_STYLES = [
   {
-    fontSize: 10,
+    fontSize: 15,
     fontWeight: "700",
-    color: "#555"
+    color: "#444"
   },
   {
-    fontSize: 9,
+    fontSize: 13,
     fontWeight: "700",
-    color: "#aaa"
+    color: "#777"
   }
 ];
 
-export default ({ item, index, width }) => {
+const Item = ({ item, index, width }) => {
   const day = useSelector(state => state.events.day);
   const notNow = useSelector(state => state.events.notNow);
   const now = useSelector(state => state.events.now);
@@ -78,108 +81,94 @@ export default ({ item, index, width }) => {
       style={{
         width,
         backgroundColor: "#fff",
-        padding: PADDING
+        padding: PADDING,
+        flexDirection: "row"
       }}
       to={`e/${item._id}`}
       onPress={onPress}
     >
-      <View style={{ height: 54, borderRadius: 3, overflow: "hidden" }}>
-        <ImageGallery photos={item._source.photos} height={54} width={width} />
-        <View
-          style={{
-            position: "absolute",
-            bottom: 3,
-            left: 3,
-            backgroundColor: "rgba(0,0,0,0.5)",
-            borderRadius: 3,
-            paddingHorizontal: 3
-          }}
-        >
-          <Text style={{ color: "#fff", fontSize: 13, fontWeight: "700" }}>
-            {index + 1}
-          </Text>
-        </View>
-      </View>
-      <Text
-        numberOfLines={1}
-        allowFontScaling={false}
-        style={{
-          fontSize: 15,
-          fontWeight: "700",
-          color: "#000",
-          marginTop: 2,
-          marginBottom: -1
-        }}
-      >
-        {item._source.location}
-      </Text>
-      <Text
-        numberOfLines={1}
-        allowFontScaling={false}
-        style={{
-          fontSize: 10,
-          fontWeight: "600",
-          color: "#555"
-        }}
-      >
-        {item._source.neighborhood || item._source.address}
-      </Text>
-      <Text
-        allowFontScaling={false}
-        style={{
-          fontSize: 13,
-          fontWeight: "700",
-          color: "#000"
-        }}
-      >
-        {item._source.title}{" "}
+      <View style={{ flex: 1 }}>
         <Text
           allowFontScaling={false}
           style={{
             color: time.color,
             fontWeight: "700",
-            fontSize: 11
+            fontSize: 15
           }}
         >
-          {time.status}
           <Text style={time.ending ? TIME_STYLES[1] : TIME_STYLES[0]}>
-            {" "}
             {time.start}
             {time.upcoming || time.ending ? null : ` ${time.day}`}
           </Text>
           <Text style={time.ending ? TIME_STYLES[0] : TIME_STYLES[1]}>
             {" "}
             til {time.end}
-          </Text>
+          </Text>{" "}
+          {time.status}
         </Text>
-      </Text>
-      <MatchableText
-        allowFontScaling={false}
-        style={{
-          fontSize: 14,
-          color: "#000",
-          fontWeight: "400"
-        }}
-        numberOfLines={4}
-        text={item._source.description}
-        match={searchTerm}
-      />
-      {!item._source.website ? null : <WebsiteText item={item} />}
+        <Text
+          numberOfLines={1}
+          allowFontScaling={false}
+          style={{
+            fontSize: 20,
+            fontWeight: "700",
+            color: "#000"
+          }}
+        >
+          {item._source.location}
+        </Text>
+        <Text
+          allowFontScaling={false}
+          style={{
+            fontSize: 16,
+            fontWeight: "700",
+            color: "#000"
+          }}
+          numberOfLines={1}
+        >
+          {item._source.title}
+        </Text>
 
-      {/* <Text
+        <Text
+          allowFontScaling={false}
+          style={{
+            color: "#555",
+            fontSize: 15,
+            fontWeight: "500"
+          }}
+          numberOfLines={2}
+        >
+          {item._source.description}
+        </Text>
+      </View>
+      <View
         style={{
-          fontSize: 11,
-          fontWeight: ANDROID ? "700" : "600",
-          color: "#999"
+          height: 100,
+          width: 90,
+          marginLeft: PADDING * 2,
+          borderRadius: 3,
+          overflow: "hidden"
         }}
-        allowFontScaling={false}
       >
-        {item._source.tags.join(", ")}
-      </Text> */}
-      <EventActions item={item} />
+        <PhotoView photos={item._source.photos} key={item._id} />
+      </View>
     </Link>
   );
 };
+
+export default Item;
+
+const PhotoView = memo(({ photos }) => {
+  const index = Math.floor(Math.random() * (photos.length - 1));
+  const item = photos[index];
+  const uri = `${AWSCF}${item.thumb.key}`;
+
+  const source = {
+    uri
+  };
+
+  return <Image source={source} style={{ flex: 1 }} resizeMode="cover" />;
+});
 
 const WebsiteText = ({ item }) => {
   const dispatch = useDispatch();
