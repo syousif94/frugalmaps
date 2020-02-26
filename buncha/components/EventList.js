@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { View, FlatList, Text } from "react-native";
+import { View, FlatList, Text, Animated } from "react-native";
 import { useSelector, shallowEqual } from "react-redux";
 import { useDimensions } from "../utils/Hooks";
 import EventListItem, { PADDING } from "./EventListItem";
@@ -10,7 +10,9 @@ import { SearchProvider } from "../utils/Search";
 import BottomPanel from "./BottomPanel";
 
 export default () => {
-  const headerView = useRef(<HeaderView />);
+  const animatedScrollOffset = useRef(new Animated.Value(0));
+
+  const headerView = useRef(<HeaderView scrollOffset={animatedScrollOffset} />);
   const listRef = useRef(null);
   const [dimensions] = useDimensions();
   const insets = useSafeArea();
@@ -29,7 +31,17 @@ export default () => {
         flex: 1
       }}
     >
-      <FlatList
+      <Animated.FlatList
+        onScroll={Animated.event([
+          {
+            nativeEvent: {
+              contentOffset: {
+                y: animatedScrollOffset.current
+              }
+            }
+          }
+        ])}
+        scrollEventThrottle={1}
         key={`${numColumns}`}
         ref={listRef}
         numColumns={numColumns}
@@ -85,38 +97,71 @@ export default () => {
   );
 };
 
-const HeaderView = () => {
+const HeaderView = ({ scrollOffset }) => {
   const [dimensions] = useDimensions();
+  const mapHeight = dimensions.height - 170;
   return (
     <SearchProvider>
       <View
         style={{
           marginHorizontal: -PADDING,
-          height: dimensions.height - 170,
+          height: mapHeight,
           overflow: "hidden"
         }}
       >
-        <MapView />
-        <View
+        <Animated.View
           style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: 12,
-            borderTopLeftRadius: 8,
-            borderTopRightRadius: 8,
-            backgroundColor: "#fff",
-            shadowOffset: {
-              width: 0,
-              height: 3
-            },
-            shadowOpacity: 0.29,
-            shadowRadius: 4.65,
-            elevation: 7
+            flex: 1,
+            transform: [
+              {
+                translateY: scrollOffset.current.interpolate({
+                  inputRange: [0, dimensions.height],
+                  outputRange: [0, dimensions.height],
+                  extrapolate: "clamp"
+                })
+              }
+            ]
           }}
-        />
+        >
+          <MapView />
+        </Animated.View>
+        <HeaderContextView />
       </View>
     </SearchProvider>
+  );
+};
+
+const HeaderContextView = () => {
+  return (
+    <View
+      style={{
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: 30,
+        borderTopLeftRadius: 8,
+        borderTopRightRadius: 8,
+        backgroundColor: "#fff",
+        shadowOffset: {
+          width: 0,
+          height: 3
+        },
+        shadowOpacity: 0.29,
+        shadowRadius: 4.65,
+        elevation: 7,
+        paddingHorizontal: 10,
+        flexDirection: "row",
+        alignItems: "center",
+        paddingTop: 2
+      }}
+    >
+      <Text
+        allowFontScaling={false}
+        style={{ fontSize: 14, color: "#777", fontWeight: "600" }}
+      >
+        All Events
+      </Text>
+    </View>
   );
 };

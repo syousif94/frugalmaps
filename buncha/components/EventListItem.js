@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { navigate } from "../screens";
-import ImageGallery from "./ImageGallery";
 import { useEveryMinute } from "../utils/Hooks";
 import {
   itemRemaining,
@@ -19,12 +18,10 @@ import {
 } from "../utils/Time";
 import MatchableText from "./MatchableText";
 import { roundedDistanceTo } from "../utils/Locate";
-import { ANDROID, WEB, IOS } from "../utils/Constants";
+import { WEB } from "../utils/Constants";
 import Link from "./Link";
 import emitter from "tiny-emitter/instance";
 import EventActions from "./EventActions";
-import PriceText from "./PriceText";
-import { BLUE } from "../utils/Colors";
 import * as Browser from "../store/browser";
 import { AWSCF } from "../utils/Constants";
 
@@ -130,6 +127,7 @@ const Item = ({ item, index, width }) => {
               marginTop: -0.5
             }}
           >
+            {distance ? `${distance} · ` : null}
             {item._source.neighborhood}
           </Text>
         ) : null}
