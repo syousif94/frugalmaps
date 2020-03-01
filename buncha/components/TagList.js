@@ -13,26 +13,34 @@ import { SearchContext, getItemCount, getItemText } from "../utils/Search";
 import { useDispatch } from "react-redux";
 import * as Events from "../store/events";
 
-export default ({ style, buttonStyle }) => {
+export default ({ horizontal = false }) => {
   const scrollRef = useRef(null);
   usePreventBackScroll(scrollRef);
   const [, setFilter, list] = useContext(SearchContext);
+  const contentContainerStyle = {
+    padding: 2.5
+  };
+  if (!horizontal) {
+    contentContainerStyle.flexDirection = "row";
+    contentContainerStyle.flexWrap = "wrap";
+  }
+  const buttonStyle = horizontal
+    ? null
+    : {
+        paddingVertical: 5
+      };
   return (
     <View style={{ flex: 1 }}>
       <ScrollView
+        horizontal={horizontal}
         ref={scrollRef}
         showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
         contentInsetAdjustmentBehavior="never"
         keyboardDismissMode="none"
         keyboardShouldPersistTaps="always"
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={[
-          {
-            padding: 2.5,
-            flexDirection: "row",
-            flexWrap: "wrap"
-          }
-        ]}
+        contentContainerStyle={contentContainerStyle}
       >
         {list.map((item, index) => {
           return (
@@ -88,8 +96,9 @@ const Button = ({ item: i, style, setFilter }) => {
         {
           justifyContent: "center",
           backgroundColor: "rgba(180,180,180,0.1)",
-          padding: 6,
-          borderRadius: 5,
+          paddingHorizontal: 7,
+          justifyContent: "center",
+          borderRadius: 4,
           margin: 2.5
         },
         style
@@ -109,15 +118,24 @@ const Button = ({ item: i, style, setFilter }) => {
       <Text
         allowFontScaling={false}
         style={{
-          fontSize: 19,
+          fontSize: 15,
           color: "#555",
           fontWeight: "600"
         }}
       >
         {text}
-        <Text style={{ color: "#777" }}> {count}</Text>
+        <SubText item={item} />
       </Text>
-      <SubText item={item} />
+      <Text
+        style={{
+          color: "#777",
+          marginTop: ANDROID ? -1.5 : -1,
+          fontSize: 12,
+          fontWeight: "600"
+        }}
+      >
+        {count} event{count !== 1 ? "s" : ""}
+      </Text>
     </TouchableOpacity>
   );
 };
@@ -129,14 +147,11 @@ const SubText = ({ item }) => {
     case "tag":
       return (
         <Text
-          allowFontScaling={false}
           style={{
-            marginTop: ANDROID ? -1.5 : null,
-            fontSize: 15,
-            fontWeight: "600",
             color: info.color
           }}
         >
+          {" "}
           {info.text}
         </Text>
       );

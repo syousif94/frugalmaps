@@ -8,6 +8,7 @@ import { useSafeArea } from "react-native-safe-area-context";
 import MapEventButton from "./MapEventButton";
 import { SearchProvider } from "../utils/Search";
 import BottomPanel from "./BottomPanel";
+import TagList from "./TagList";
 
 export default () => {
   const animatedScrollOffset = useRef(new Animated.Value(0));
@@ -18,7 +19,7 @@ export default () => {
   const insets = useSafeArea();
   const data = useSelector(state => state.events.upNext, shallowEqual);
 
-  let numColumns = 1;
+  let numColumns = 3;
   if (dimensions.width > 550) {
     numColumns = 5;
   }
@@ -26,74 +27,69 @@ export default () => {
   const itemWidth = (dimensions.width - PADDING * 2) / numColumns;
 
   return (
-    <View
-      style={{
-        flex: 1
-      }}
-    >
-      <Animated.FlatList
-        onScroll={Animated.event([
-          {
-            nativeEvent: {
-              contentOffset: {
-                y: animatedScrollOffset.current
+    <SearchProvider>
+      <View
+        style={{
+          flex: 1
+        }}
+      >
+        <Animated.FlatList
+          onScroll={Animated.event(
+            [
+              {
+                nativeEvent: {
+                  contentOffset: { y: animatedScrollOffset.current }
+                }
               }
+            ],
+            { useNativeDriver: true }
+          )}
+          scrollEventThrottle={1}
+          key={`${numColumns}`}
+          ref={listRef}
+          numColumns={numColumns}
+          keyboardDismissMode="none"
+          keyboardShouldPersistTaps="always"
+          ListHeaderComponent={headerView.current}
+          contentContainerStyle={{
+            paddingHorizontal: PADDING,
+            paddingBottom: insets.bottom
+          }}
+          data={data}
+          showsHorizontalScrollIndicator={false}
+          removeClippedSubviews
+          contentInsetAdjustmentBehavior="never"
+          keyExtractor={(item, index) => `${item._id}${index}`}
+          renderItem={data => {
+            return <EventListItem {...data} width={itemWidth} />;
+          }}
+          ListFooterComponent={() => {
+            if (!data.length) {
+              return null;
             }
-          }
-        ])}
-        scrollEventThrottle={1}
-        key={`${numColumns}`}
-        ref={listRef}
-        numColumns={numColumns}
-        keyboardDismissMode="none"
-        keyboardShouldPersistTaps="always"
-        ListHeaderComponent={headerView.current}
-        contentContainerStyle={{
-          paddingHorizontal: PADDING,
-          paddingBottom: insets.bottom
-        }}
-        data={data}
-        showsHorizontalScrollIndicator={false}
-        removeClippedSubviews
-        contentInsetAdjustmentBehavior="never"
-        keyExtractor={(item, index) => `${item._id}${index}`}
-        renderItem={data => {
-          return <EventListItem {...data} width={itemWidth} />;
-        }}
-        ItemSeparatorComponent={() => (
-          <View
-            style={{
-              height: 1,
-              backgroundColor: "#f4f4f4",
-              marginLeft: PADDING,
-              marginRight: -PADDING
-            }}
-          />
-        )}
-        ListFooterComponent={() => {
-          if (!data.length) {
-            return null;
-          }
-          return (
-            <View
-              style={{
-                borderTopWidth: 1,
-                borderColor: "#f4f4f4",
-                padding: PADDING,
-                marginTop: PADDING,
-                height: 120
-              }}
-            >
-              <Text style={{ color: "#ccc", fontSize: 12, fontWeight: "600" }}>
-                The End
-              </Text>
-            </View>
-          );
-        }}
-      />
-      <BottomPanel />
-      <MapEventButton />
-    </View>
+            return (
+              <View
+                style={{
+                  borderTopWidth: 1,
+                  borderColor: "#f4f4f4",
+                  padding: PADDING,
+                  marginTop: PADDING,
+                  height: 120
+                }}
+              >
+                <Text
+                  style={{ color: "#ccc", fontSize: 12, fontWeight: "600" }}
+                >
+                  The End
+                </Text>
+              </View>
+            );
+          }}
+        />
+        <BottomPanel />
+        <MapEventButton />
+      </View>
+    </SearchProvider>
   );
 };
 
@@ -101,33 +97,31 @@ const HeaderView = ({ scrollOffset }) => {
   const [dimensions] = useDimensions();
   const mapHeight = dimensions.height - 170;
   return (
-    <SearchProvider>
-      <View
+    <View
+      style={{
+        marginHorizontal: -PADDING,
+        height: mapHeight,
+        overflow: "hidden"
+      }}
+    >
+      <Animated.View
         style={{
-          marginHorizontal: -PADDING,
-          height: mapHeight,
-          overflow: "hidden"
+          flex: 1,
+          transform: [
+            {
+              translateY: scrollOffset.current.interpolate({
+                inputRange: [0, dimensions.height],
+                outputRange: [0, dimensions.height],
+                extrapolateRight: "clamp"
+              })
+            }
+          ]
         }}
       >
-        <Animated.View
-          style={{
-            flex: 1,
-            transform: [
-              {
-                translateY: scrollOffset.current.interpolate({
-                  inputRange: [0, dimensions.height],
-                  outputRange: [0, dimensions.height],
-                  extrapolate: "clamp"
-                })
-              }
-            ]
-          }}
-        >
-          <MapView />
-        </Animated.View>
-        <HeaderContextView />
-      </View>
-    </SearchProvider>
+        <MapView />
+      </Animated.View>
+      <HeaderContextView />
+    </View>
   );
 };
 
@@ -139,7 +133,7 @@ const HeaderContextView = () => {
         bottom: 0,
         left: 0,
         right: 0,
-        height: 30,
+        height: 50,
         borderTopLeftRadius: 8,
         borderTopRightRadius: 8,
         backgroundColor: "#fff",
@@ -149,19 +143,10 @@ const HeaderContextView = () => {
         },
         shadowOpacity: 0.29,
         shadowRadius: 4.65,
-        elevation: 7,
-        paddingHorizontal: 10,
-        flexDirection: "row",
-        alignItems: "center",
-        paddingTop: 2
+        elevation: 7
       }}
     >
-      <Text
-        allowFontScaling={false}
-        style={{ fontSize: 14, color: "#777", fontWeight: "600" }}
-      >
-        All Events
-      </Text>
+      <TagList horizontal />
     </View>
   );
 };

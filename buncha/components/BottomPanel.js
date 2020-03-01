@@ -7,7 +7,6 @@ import EventSearchInput from "./EventSearchInput";
 import PickerButton, { buttonHeight } from "./PickerButton";
 import MenuButton from "./MenuButton";
 import TagList, { TAG_LIST_HEIGHT } from "./TagList";
-import { SearchProvider } from "../utils/Search";
 import { ANDROID } from "../utils/Constants";
 
 export default () => {
@@ -27,40 +26,38 @@ export default () => {
   };
 
   return (
-    <SearchProvider>
-      <Animated.View
-        style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          transform: [panelTransform]
-        }}
-      >
-        <BlurView>
+    <Animated.View
+      style={{
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        transform: [panelTransform]
+      }}
+    >
+      <BlurView>
+        <View
+          style={{
+            height: panelHeight,
+            borderTopWidth: 1,
+            borderColor: "rgba(0,0,0,0.05)"
+          }}
+        >
           <View
             style={{
-              height: panelHeight,
-              borderTopWidth: 1,
-              borderColor: "rgba(0,0,0,0.05)"
+              flexDirection: "row",
+              marginTop: 5,
+              marginHorizontal: 5
             }}
           >
-            <View
-              style={{
-                flexDirection: "row",
-                marginTop: 5,
-                marginHorizontal: 5
-              }}
-            >
-              <EventSearchInput contentContainerStyle={{ flex: 1 }} />
-              <PickerButton />
-              <MenuButton />
-            </View>
-            <TagList />
+            <EventSearchInput contentContainerStyle={{ flex: 1 }} />
+            <PickerButton />
+            <MenuButton />
           </View>
-        </BlurView>
-      </Animated.View>
-    </SearchProvider>
+          <TagList />
+        </View>
+      </BlurView>
+    </Animated.View>
   );
 };
 

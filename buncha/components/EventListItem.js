@@ -29,14 +29,14 @@ export const PADDING = 4;
 
 const TIME_STYLES = [
   {
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: "700",
-    color: "#444"
+    color: "#666"
   },
   {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "700",
-    color: "#777"
+    color: "#999"
   }
 ];
 
@@ -78,119 +78,102 @@ const Item = ({ item, index, width }) => {
       style={{
         width,
         backgroundColor: "#fff",
-        paddingBottom: PADDING * 2,
-        paddingHorizontal: PADDING * 2,
-        paddingTop: index ? PADDING * 2 : 0,
-        flexDirection: "row"
+        padding: PADDING
       }}
       to={`e/${item._id}`}
       onPress={onPress}
     >
-      <View style={{ flex: 1, paddingBottom: 2 }}>
+      <Text
+        numberOfLines={1}
+        allowFontScaling={false}
+        style={{
+          fontSize: 15,
+          fontWeight: "700",
+          color: "#000"
+        }}
+      >
+        {item._source.location}
+      </Text>
+      <Text
+        numberOfLines={1}
+        allowFontScaling={false}
+        style={{
+          fontSize: 10,
+          fontWeight: "500",
+          color: "#555",
+          marginTop: -1
+        }}
+      >
+        {distance ? `${distance} · ` : null}
+        {item._source.neighborhood || item._source.address}
+      </Text>
+      <View
+        style={{
+          height: 80,
+          width: width - PADDING * 2,
+          borderRadius: 3,
+          overflow: "hidden",
+          marginVertical: 3
+        }}
+      >
+        <PhotoView photos={item._source.photos} key={item._id} />
+        <View
+          style={{
+            position: "absolute",
+            bottom: 3,
+            right: 3,
+            borderRadius: 3,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            paddingHorizontal: 4
+          }}
+        >
+          <Text style={{ fontSize: 12, color: "#fff", fontWeight: "700" }}>
+            {index + 1}
+          </Text>
+        </View>
+      </View>
+      <Text
+        allowFontScaling={false}
+        style={{
+          fontSize: 13,
+          fontWeight: "700",
+          color: "#000"
+        }}
+      >
+        {item._source.title}
+        <Text style={time.ending ? TIME_STYLES[1] : TIME_STYLES[0]}>
+          {" "}
+          {time.start}
+          {time.upcoming || time.ending ? null : ` ${time.day}`}
+        </Text>
+        <Text style={time.ending ? TIME_STYLES[0] : TIME_STYLES[1]}>
+          {" "}
+          til {time.end}{" "}
+        </Text>
         <Text
           allowFontScaling={false}
           style={{
             color: time.color,
             fontWeight: "700",
-            fontSize: 17
+            fontSize: 15
           }}
         >
           {time.status}{" "}
-          <Text style={time.ending ? TIME_STYLES[1] : TIME_STYLES[0]}>
-            {time.start}
-            {time.upcoming || time.ending ? null : ` ${time.day}`}
-          </Text>
-          <Text style={time.ending ? TIME_STYLES[0] : TIME_STYLES[1]}>
-            {" "}
-            til {time.end}
-          </Text>
         </Text>
-        <Text
-          numberOfLines={1}
-          allowFontScaling={false}
-          style={{
-            fontSize: 18,
-            fontWeight: "700",
-            color: "#000"
-          }}
-        >
-          {item._source.location}
-        </Text>
-        {item._source.neighborhood ? (
-          <Text
-            numberOfLines={1}
-            allowFontScaling={false}
-            style={{
-              fontSize: 13,
-              fontWeight: "500",
-              color: "#555",
-              marginTop: -0.5
-            }}
-          >
-            {distance ? `${distance} · ` : null}
-            {item._source.neighborhood}
-          </Text>
-        ) : null}
-        <Text
-          allowFontScaling={false}
-          style={{
-            fontSize: 20,
-            fontWeight: "700",
-            color: "#000",
-            marginTop: 0.5
-          }}
-          numberOfLines={1}
-        >
-          {item._source.title}
-        </Text>
-
         <Text
           allowFontScaling={false}
           style={{
             marginTop: 1,
             color: "#555",
-            fontSize: 18,
+            fontSize: 11,
             fontWeight: "500"
           }}
-          numberOfLines={3}
         >
           {item._source.description}
         </Text>
-        {item._source.website ? <WebsiteText item={item} /> : null}
-      </View>
-      <View
-        style={{
-          marginTop: index ? 4 : 2,
-          marginLeft: 10
-        }}
-      >
-        <View
-          style={{
-            height: 100,
-            width: 90,
-
-            borderRadius: 3,
-            overflow: "hidden"
-          }}
-        >
-          <PhotoView photos={item._source.photos} key={item._id} />
-          <View
-            style={{
-              position: "absolute",
-              top: 3,
-              right: 3,
-              borderRadius: 3,
-              backgroundColor: "rgba(0,0,0,0.5)",
-              paddingHorizontal: 4
-            }}
-          >
-            <Text style={{ fontSize: 12, color: "#fff", fontWeight: "700" }}>
-              {index + 1}
-            </Text>
-          </View>
-        </View>
-        <EventActions item={item} />
-      </View>
+      </Text>
+      {item._source.website ? <WebsiteText item={item} /> : null}
+      <EventActions item={item} />
     </Link>
   );
 };

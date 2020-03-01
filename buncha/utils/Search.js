@@ -3,7 +3,7 @@ import Fuse from "fuse.js";
 import _ from "lodash";
 import { useSelector, shallowEqual } from "react-redux";
 import { itemRemaining } from "./Time";
-import { UPCOMING, NOW } from "./Colors";
+import { UPCOMING, NOW, NOT_TODAY } from "./Colors";
 
 export const SearchContext = React.createContext(null);
 
@@ -206,7 +206,7 @@ function getTagTime({ item, upcoming, ending }) {
 
   if (ending) {
     const { status } = itemRemaining(item);
-    return { text: status, color: NOW };
+    return { text: status.split(" ")[0], color: NOW };
   } else if (upcoming) {
     const { text } = itemRemaining(item);
     return { text: text.replace(" today", ""), color: UPCOMING };
@@ -215,8 +215,7 @@ function getTagTime({ item, upcoming, ending }) {
     if (u) {
       return { text: start, color: UPCOMING };
     } else {
-      const away = parseInt(status.replace("d", ""), 10);
-      return { text: `${away} day${away != 1 ? "s" : ""}`, color: "#777" };
+      return { text: status.split(" ")[0], color: NOT_TODAY };
     }
   }
 }
