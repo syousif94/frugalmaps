@@ -138,7 +138,7 @@ const Button = ({ item: i, style, setFilter }) => {
         style={{
           fontSize: 15,
           color: "#555",
-          fontWeight: "600"
+          fontWeight: ANDROID ? "700" : "600"
         }}
       >
         {text}
@@ -149,7 +149,7 @@ const Button = ({ item: i, style, setFilter }) => {
           color: "#777",
           marginTop: ANDROID ? -1.5 : -1,
           fontSize: 12,
-          fontWeight: "600"
+          fontWeight: ANDROID ? "700" : "600"
         }}
       >
         {count} event{count !== 1 ? "s" : ""}

@@ -30,7 +30,7 @@ export default ({ children, style = {}, intensity = 100, tint = "light" }) => {
     };
     return <div style={styles}>{children}</div>;
   } else {
-    const bgColor = { backgroundColor: makeTint(tint) };
+    const bgColor = { backgroundColor: "rgba(240,240,240,0.98)" };
     const styles = Array.isArray(style)
       ? [...style, bgColor]
       : [style, bgColor];

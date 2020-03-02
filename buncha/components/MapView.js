@@ -12,7 +12,6 @@ import { ANDROID } from "../utils/Constants";
 import emitter from "tiny-emitter/instance";
 import { useSafeArea } from "react-native-safe-area-context";
 import locate, { distanceTo } from "../utils/Locate";
-import { TAG_LIST_HEIGHT } from "./TagList";
 
 export default memo(() => {
   const insets = useSafeArea();
@@ -46,7 +45,7 @@ export default memo(() => {
           top: ANDROID ? -50 : insets.top - 10,
           left: 20,
           right: 20,
-          bottom: TAG_LIST_HEIGHT
+          bottom: 0
         }
       });
     });
@@ -84,7 +83,7 @@ export default memo(() => {
             top: ANDROID ? -50 : insets.top - 10,
             left: 20,
             right: 20,
-            bottom: TAG_LIST_HEIGHT
+            bottom: 0
           }
         });
       });

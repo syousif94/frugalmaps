@@ -13,7 +13,7 @@ export default () => {
   const insets = useSafeArea();
   const [dimensions] = useDimensions();
   const panelHeight = dimensions.height - insets.top - 50;
-  const bottomInset = insets.bottom || 20;
+  const bottomInset = insets.bottom || 12;
   const maxTranslate = panelHeight - buttonHeight - bottomInset;
 
   const animation = useAnimateOnKeyboard();
