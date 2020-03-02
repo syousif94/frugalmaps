@@ -11,6 +11,7 @@ import PickerButton from "./PickerButton";
 import MenuButton from "./MenuButton";
 import { SearchProvider } from "../utils/Search";
 import ListError from "./ListError";
+import { WEB } from "../utils/Constants";
 
 export default () => {
   const [dimensions] = useDimensions();
@@ -21,7 +22,7 @@ export default () => {
   const data = useSelector(state => state.events.upNext, shallowEqual);
 
   if (dimensions.width > 850) {
-    const itemWidth = (400 - 14) / 3;
+    const itemWidth = (400 - PADDING * 2) / 3;
     return (
       <View style={{ flex: 1, flexDirection: "row" }}>
         {Map.current}
@@ -100,6 +101,7 @@ export const HeaderView = () => {
           left: 0,
           right: 0
         };
+  const margin = WEB ? 5 : 2;
   return (
     <SearchProvider>
       <View style={[style, , { zIndex: 999 }]}>
@@ -114,8 +116,8 @@ export const HeaderView = () => {
             <View
               style={{
                 flexDirection: "row",
-                marginTop: 2,
-                marginLeft: 2,
+                marginTop: margin,
+                marginLeft: margin,
                 zIndex: 999
               }}
             >
@@ -123,7 +125,7 @@ export const HeaderView = () => {
               <PickerButton />
               <MenuButton />
             </View>
-            <TagList />
+            <TagList horizontal />
           </View>
         </BlurView>
       </View>

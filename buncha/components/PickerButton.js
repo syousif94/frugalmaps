@@ -13,7 +13,7 @@ const TouchableOpacity = WEB
   ? require("react-native").TouchableOpacity
   : require("react-native-gesture-handler/touchables/TouchableOpacity").default;
 
-export const buttonHeight = WEB ? 36 : 42;
+export const buttonHeight = WEB ? 38 : 42;
 
 export default () => {
   const dispatch = useDispatch();

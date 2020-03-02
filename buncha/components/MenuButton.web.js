@@ -46,7 +46,7 @@ export default () => {
       <View
         style={{
           position: "absolute",
-          top: buttonHeight,
+          top: buttonHeight + 3,
           right: 0,
           opacity: menuVisible ? 1 : 0
         }}
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 4,
-    marginHorizontal: 2,
+    marginHorizontal: 5,
     backgroundColor: "rgba(180,180,180,0.1)"
   },
   buttonText: {

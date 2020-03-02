@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import _ from "lodash";
 import { usePreventBackScroll, useEveryMinute } from "../utils/Hooks";
-import { ANDROID } from "../utils/Constants";
+import { ANDROID, WEB } from "../utils/Constants";
 import { SearchContext, getItemCount, getItemText } from "../utils/Search";
 import { useDispatch } from "react-redux";
 import * as Events from "../store/events";
@@ -42,16 +42,34 @@ export default ({ horizontal = false }) => {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={contentContainerStyle}
       >
-        {list.map((item, index) => {
-          return (
-            <Button
-              item={item}
-              key={`${index}`}
-              style={buttonStyle}
-              setFilter={setFilter}
-            />
-          );
-        })}
+        {WEB ? (
+          <View>
+            {makeItems(
+              list,
+              {
+                paddingVertical: 4
+              },
+              setFilter
+            ).map((row, index) => {
+              return (
+                <View style={{ flexDirection: "row" }} key={`${index}`}>
+                  {row}
+                </View>
+              );
+            })}
+          </View>
+        ) : (
+          list.map((item, index) => {
+            return (
+              <Button
+                item={item}
+                key={`${index}`}
+                style={buttonStyle}
+                setFilter={setFilter}
+              />
+            );
+          })
+        )}
       </ScrollView>
     </View>
   );

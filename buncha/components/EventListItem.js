@@ -25,7 +25,7 @@ import EventActions from "./EventActions";
 import * as Browser from "../store/browser";
 import { AWSCF } from "../utils/Constants";
 
-export const PADDING = 4;
+export const PADDING = WEB ? 5 : 4;
 
 const TIME_STYLES = [
   {
@@ -78,7 +78,8 @@ const Item = ({ item, index, width }) => {
       style={{
         width,
         backgroundColor: "#fff",
-        padding: PADDING
+        padding: PADDING,
+        paddingTop: WEB ? 0 : PADDING
       }}
       to={`e/${item._id}`}
       onPress={onPress}
@@ -160,17 +161,16 @@ const Item = ({ item, index, width }) => {
         >
           {time.status}{" "}
         </Text>
-        <Text
+        <MatchableText
           allowFontScaling={false}
           style={{
-            marginTop: 1,
             color: "#555",
             fontSize: 11,
             fontWeight: "500"
           }}
-        >
-          {item._source.description}
-        </Text>
+          match={searchTerm}
+          text={item._source.description}
+        />
       </Text>
       {item._source.website ? <WebsiteText item={item} /> : null}
       <EventActions item={item} />
@@ -189,7 +189,13 @@ const PhotoView = memo(({ photos }) => {
     uri
   };
 
-  return <Image source={source} style={{ flex: 1 }} resizeMode="cover" />;
+  return (
+    <Image
+      source={source}
+      style={{ flex: 1, backgroundColor: "#f4f4f4" }}
+      resizeMode="cover"
+    />
+  );
 });
 
 const WebsiteText = ({ item }) => {
@@ -226,7 +232,6 @@ const WebsiteText = ({ item }) => {
         allowFontScaling={false}
         style={{
           opacity: opacity.current,
-          textDecoration: "underline",
           textDecorationLine: "underline",
           fontSize: 13,
           fontWeight: "400",
