@@ -18,7 +18,7 @@ import { ANDROID } from "../utils/Constants";
 
 export default () => {
   const [dimensions] = useDimensions();
-  const height = 190;
+  const height = 220;
 
   const selectedEvent = useSelector(state => {
     const selected = state.events.selected;

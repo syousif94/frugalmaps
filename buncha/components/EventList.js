@@ -133,7 +133,7 @@ const HeaderContextView = () => {
         bottom: 0,
         left: 0,
         right: 0,
-        height: 50,
+        height: 40,
         borderTopLeftRadius: 8,
         borderTopRightRadius: 8,
         backgroundColor: "#fff",

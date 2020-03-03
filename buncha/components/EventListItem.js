@@ -110,7 +110,7 @@ const Item = ({ item, index, width }) => {
       </Text>
       <View
         style={{
-          height: 80,
+          height: 70,
           width: width - PADDING * 2,
           borderRadius: 3,
           overflow: "hidden",

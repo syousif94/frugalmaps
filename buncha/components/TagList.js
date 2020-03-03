@@ -13,19 +13,24 @@ import { SearchContext, getItemCount, getItemText } from "../utils/Search";
 import { useDispatch } from "react-redux";
 import * as Events from "../store/events";
 
-export default ({ horizontal = false }) => {
+export default ({ horizontal = false, bottomInset = 0 }) => {
   const scrollRef = useRef(null);
   usePreventBackScroll(scrollRef);
   const [, setFilter, list] = useContext(SearchContext);
   const contentContainerStyle = {
     padding: 2.5
   };
-  if (!horizontal) {
+  if (horizontal) {
+    contentContainerStyle.paddingBottom = 0;
+  } else {
     contentContainerStyle.flexDirection = "row";
     contentContainerStyle.flexWrap = "wrap";
+    if (ANDROID && bottomInset > 0) {
+      contentContainerStyle.paddingBottom = bottomInset;
+    }
   }
   const buttonStyle = horizontal
-    ? null
+    ? { marginBottom: 0 }
     : {
         paddingVertical: 5
       };
@@ -36,11 +41,16 @@ export default ({ horizontal = false }) => {
         ref={scrollRef}
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
+        automaticallyAdjustContentInsets={false}
         contentInsetAdjustmentBehavior="never"
         keyboardDismissMode="none"
         keyboardShouldPersistTaps="always"
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={contentContainerStyle}
+        contentInset={{
+          top: 0,
+          bottom: bottomInset
+        }}
       >
         {WEB ? (
           <View>
@@ -114,7 +124,7 @@ const Button = ({ item: i, style, setFilter }) => {
         {
           justifyContent: "center",
           backgroundColor: "rgba(180,180,180,0.1)",
-          paddingHorizontal: 7,
+          paddingHorizontal: 6,
           justifyContent: "center",
           borderRadius: 4,
           margin: 2.5
@@ -136,9 +146,9 @@ const Button = ({ item: i, style, setFilter }) => {
       <Text
         allowFontScaling={false}
         style={{
-          fontSize: 15,
+          fontSize: 13,
           color: "#555",
-          fontWeight: ANDROID ? "700" : "600"
+          fontWeight: "700"
         }}
       >
         {text}
@@ -147,9 +157,9 @@ const Button = ({ item: i, style, setFilter }) => {
       <Text
         style={{
           color: "#777",
-          marginTop: ANDROID ? -1.5 : -1,
-          fontSize: 12,
-          fontWeight: ANDROID ? "700" : "600"
+          marginTop: ANDROID ? -1.5 : null,
+          fontSize: 10,
+          fontWeight: "700"
         }}
       >
         {count} event{count !== 1 ? "s" : ""}

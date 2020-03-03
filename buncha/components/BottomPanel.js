@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, Animated, Keyboard } from "react-native";
 import { useSafeArea } from "react-native-safe-area-context";
 import { useDimensions } from "../utils/Hooks";
@@ -6,17 +6,17 @@ import BlurView from "./BlurView";
 import EventSearchInput from "./EventSearchInput";
 import PickerButton, { buttonHeight } from "./PickerButton";
 import MenuButton from "./MenuButton";
-import TagList, { TAG_LIST_HEIGHT } from "./TagList";
+import TagList from "./TagList";
 import { ANDROID } from "../utils/Constants";
 
 export default () => {
   const insets = useSafeArea();
   const [dimensions] = useDimensions();
-  const panelHeight = dimensions.height - insets.top - 50;
+  const panelHeight = dimensions.height * 0.76;
   const bottomInset = insets.bottom || 12;
   const maxTranslate = panelHeight - buttonHeight - bottomInset;
 
-  const animation = useAnimateOnKeyboard();
+  const [animation, keyboardHeight] = useAnimateOnKeyboard();
 
   const panelTransform = {
     translateY: animation.current.interpolate({
@@ -54,7 +54,7 @@ export default () => {
             <PickerButton />
             <MenuButton />
           </View>
-          <TagList />
+          <TagList bottomInset={keyboardHeight} />
         </View>
       </BlurView>
     </Animated.View>
@@ -66,10 +66,12 @@ const KEYBOARD_EVENTS = ANDROID
   : ["keyboardWillShow", "keyboardWillHide"];
 
 function useAnimateOnKeyboard() {
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
   const animation = useRef(new Animated.Value(0));
 
   useEffect(() => {
     const onShow = e => {
+      const height = e.endCoordinates.height;
       Animated.timing(
         animation.current,
         {
@@ -77,7 +79,9 @@ function useAnimateOnKeyboard() {
           duration: e.duration
         },
         { useNativeDriver: true }
-      ).start();
+      ).start(() => {
+        setKeyboardHeight(height);
+      });
     };
 
     const onHide = e => {
@@ -88,7 +92,9 @@ function useAnimateOnKeyboard() {
           duration: ANDROID ? 150 : e.duration
         },
         { useNativeDriver: true }
-      ).start();
+      ).start(() => {
+        setKeyboardHeight(0);
+      });
     };
 
     Keyboard.addListener(KEYBOARD_EVENTS[0], onShow);
@@ -101,5 +107,5 @@ function useAnimateOnKeyboard() {
     };
   });
 
-  return animation;
+  return [animation, keyboardHeight];
 }
