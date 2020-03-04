@@ -30,8 +30,8 @@ export default () => {
 };
 
 const PlacesList = () => {
-  const dispatch = useDispatch();
-  const cities = useSelector(state => state.cities.popular, shallowEqual);
+  // const dispatch = useDispatch();
+  // const cities = useSelector(state => state.cities.popular, shallowEqual);
   return (
     <View style={styles.placeList}>
       <View
@@ -67,10 +67,10 @@ const PlacesList = () => {
           </Text>
         </TouchableOpacity>
       </View>
-      <Text style={styles.placeText}>
+      {/* <Text style={styles.placeText}>
         or check out some of our current cities
-      </Text>
-      <View>
+      </Text> */}
+      {/* <View>
         {cities.map(city => {
           const onPress = () => {
             dispatch(Events.getCity(city));
@@ -131,7 +131,7 @@ const PlacesList = () => {
             </View>
           );
         })}
-      </View>
+      </View> */}
     </View>
   );
 };
@@ -155,7 +155,7 @@ const RetryButton = () => {
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    paddingTop: 60,
+    paddingVertical: 20,
     paddingHorizontal: 35
   },
   titleText: {

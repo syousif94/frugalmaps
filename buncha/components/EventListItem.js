@@ -140,6 +140,7 @@ const Item = ({ item, index, width }) => {
           fontWeight: "700",
           color: "#000"
         }}
+        numberOfLines={7}
       >
         {item._source.title}
         <Text style={time.ending ? TIME_STYLES[1] : TIME_STYLES[0]}>

@@ -56,7 +56,13 @@ function useSearch() {
 function useCities() {
   const [list, setList] = useState([]);
 
-  const cities = useSelector(state => state.cities.closest, shallowEqual);
+  const cities = useSelector(
+    state =>
+      state.cities.error || !state.events.closest.length
+        ? state.cities.popular
+        : state.events.closest,
+    shallowEqual
+  );
 
   useEffect(() => {
     setList(

@@ -9,6 +9,7 @@ import MapEventButton from "./MapEventButton";
 import { SearchProvider } from "../utils/Search";
 import BottomPanel from "./BottomPanel";
 import TagList from "./TagList";
+import ListError from "./ListError";
 
 export default () => {
   const animatedScrollOffset = useRef(new Animated.Value(0));
@@ -55,6 +56,7 @@ export default () => {
             paddingHorizontal: PADDING,
             paddingBottom: insets.bottom
           }}
+          ListEmptyComponent={ListError}
           data={data}
           showsHorizontalScrollIndicator={false}
           removeClippedSubviews

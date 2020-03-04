@@ -1,4 +1,4 @@
-import React, { useRef, useContext } from "react";
+import React, { useRef, useContext, useEffect } from "react";
 import {
   View,
   Text,
@@ -17,11 +17,14 @@ export default ({ horizontal = false, bottomInset = 0 }) => {
   const scrollRef = useRef(null);
   usePreventBackScroll(scrollRef);
   const [, setFilter, list] = useContext(SearchContext);
+  useEffect(() => {
+    scrollRef.current.scrollTo({ x: 0, animated: false });
+  }, [list]);
   const contentContainerStyle = {
     padding: 2.5
   };
   if (horizontal) {
-    contentContainerStyle.paddingBottom = 0;
+    contentContainerStyle.paddingBottom = WEB ? 2.5 : 0;
   } else {
     contentContainerStyle.flexDirection = "row";
     contentContainerStyle.flexWrap = "wrap";
@@ -136,11 +139,13 @@ const Button = ({ item: i, style, setFilter }) => {
         switch (item.type) {
           case "tag":
             dispatch(Events.filter({ tag: item.text }));
-            setFilter("");
             break;
+          case "city":
+            dispatch(Events.getCity(item.city));
           default:
             break;
         }
+        setFilter("");
       }}
     >
       <Text

@@ -132,7 +132,14 @@ function useMarkers(map, allMarkers, day, notNow, now, currentTime) {
         time = itemRemaining(data);
       }
 
-      const timeText = time.remaining && time.remaining.split(" ")[0];
+      let timeText = time.ending;
+      if (time.ending) {
+        timeText = time.end.replace("m", "");
+      } else if (time.upcoming || time.tomorrow) {
+        timeText = time.start.replace("m", "");
+      } else {
+        timeText = `${time.day} ${time.start.replace("m", "")}`;
+      }
 
       markers.set(
         data._source.placeid,
@@ -177,24 +184,26 @@ function annotationFactory(coordinate, options) {
   const title = options.title;
 
   const div = document.createElement("div");
-  div.style = `height: 60px; width: 60px; border-radius: 30px; background-color: ${color}; position: relative; display: flex; flex-direction: column; cursor: pointer; transform: scale(0.5); align-items: center; justify-content: center; font-weight: 700; color: #fff; font-size: 17px;`;
+  div.style = `height: 60px; width: 60px; border-radius: 20px; background-color: ${color}; position: relative; display: flex; flex-direction: column; cursor: pointer; transform: scale(0.5); align-items: center; justify-content: center;  color: #fff; text-align: center;`;
 
   const chevronDiv = document.createElement("div");
   chevronDiv.classList.add("marker-chevron");
   chevronDiv.style = `position: absolute; align-self: center; height: 12px; width: 12px; background-color: ${color}; transform: rotate(45deg); bottom: -4px; z-index: 1`;
   div.appendChild(chevronDiv);
 
-  const titleText = document.createElement("div");
-  titleText.classList.add("marker-title");
-  titleText.innerText = title.replace(/^(the |a )/gi, "").substr(0, 4);
-  titleText.style = "margin-top: -2px";
-  div.appendChild(titleText);
-
   const subText = document.createElement("div");
   subText.classList.add("marker-subtext");
   subText.innerText = time;
-  subText.style = "margin-top: -2px";
+  subText.style =
+    "margin-top: -2px; z-index: 2; font-size: 15px; line-height: 15px; font-weight: 800; max-width: 54px;";
   div.appendChild(subText);
+
+  const titleText = document.createElement("div");
+  titleText.classList.add("marker-title");
+  titleText.innerText = title.replace(/^(the |a )/gi, "");
+  titleText.style =
+    "z-index: 2; font-size: 12px; line-height: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font-weight: 700; overflow: hidden; max-width: 54px; margin-top: 2px";
+  div.appendChild(titleText);
 
   return div;
 }
