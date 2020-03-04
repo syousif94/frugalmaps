@@ -58,9 +58,9 @@ function useCities() {
 
   const cities = useSelector(
     state =>
-      state.cities.error || !state.events.closest.length
+      state.cities.error || !state.cities.closest.length
         ? state.cities.popular
-        : state.events.closest,
+        : state.cities.closest,
     shallowEqual
   );
 

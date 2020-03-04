@@ -184,7 +184,7 @@ function annotationFactory(coordinate, options) {
   const title = options.title;
 
   const div = document.createElement("div");
-  div.style = `height: 60px; width: 60px; border-radius: 20px; background-color: ${color}; position: relative; display: flex; flex-direction: column; cursor: pointer; transform: scale(0.5); align-items: center; justify-content: center;  color: #fff; text-align: center;`;
+  div.style = `height: 50px; width: 50px; border-radius: 25px; background-color: ${color}; position: relative; display: flex; flex-direction: column; cursor: pointer; transform: scale(0.5); align-items: center; justify-content: center;`;
 
   const chevronDiv = document.createElement("div");
   chevronDiv.classList.add("marker-chevron");
@@ -195,14 +195,14 @@ function annotationFactory(coordinate, options) {
   subText.classList.add("marker-subtext");
   subText.innerText = time;
   subText.style =
-    "margin-top: -2px; z-index: 2; font-size: 15px; line-height: 15px; font-weight: 800; max-width: 54px;";
+    "margin-top: -2px; z-index: 2; font-size: 16px; line-height: 16px; font-weight: 800; max-width: 54px; color: #fff; text-align: center;";
   div.appendChild(subText);
 
   const titleText = document.createElement("div");
   titleText.classList.add("marker-title");
   titleText.innerText = title.replace(/^(the |a )/gi, "");
   titleText.style =
-    "z-index: 2; font-size: 12px; line-height: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font-weight: 700; overflow: hidden; max-width: 54px; margin-top: 2px";
+    "z-index: 2; font-size: 15px; font-weight: 600; position: absolute; top: 60px; -webkit-text-stroke: 4px #fff; text-stroke: 4px #fff; pointer-events: none; paint-order: stroke fill; color: #000; text-align: center; width: 110px";
   div.appendChild(titleText);
 
   return div;
