@@ -23,7 +23,7 @@
     "expo-secure-store": "~8.0.0",
     "fuse.js": "^3.4.6",
     "google-maps": "3.2.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "moment": "^2.24.0",
     "react": "~16.9.0",
     "react-dom": "~16.9.0",
