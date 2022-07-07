@@ -24,7 +24,7 @@
     "fuse.js": "^3.4.6",
     "google-maps": "3.2.1",
     "lodash": "^4.17.15",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "react": "~16.9.0",
     "react-dom": "~16.9.0",
     "react-helmet": "^5.2.1",
